@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- 
+		Shared parent. 
+		
+		Doesn't define a lot of things but does define the settings common to all projects at Service Libre 
+					       
+        Standard versions of plugins are defined but these may be overridden by individual projects as needed.
+        
+        https://svn.apache.org/viewvc/maven/pom/trunk/asf/pom.xml?view=markup
+	-->
+
+	<groupId>com.servicelibre</groupId>
+	<artifactId>servicelibre-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>1-SNAPSHOT</version>
+
+	<name>Service Libre</name>
+	<description>
+		Service Libre is a small IT company from Quebec, Canada. 
+	</description>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3.0</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+			<comments/>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Service Libre</name>
+		<url>http://www.servicelibre.com</url>
+	</organization>
+
+	<url>http://www.servicelibre.com</url>
+
+	<inceptionYear>2011</inceptionYear>
+
+	<repositories>
+		<repository>
+			<id>maven-central</id>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>jxsl-repo</id>
+			<url>https://jxsl.googlecode.com/svn/maven2/releases</url>
+		</repository>
+	</repositories>
+
+	<!--<properties>
+		<saxon.version>9.3.0.2j</saxon.version>
+		<lucene.version>3.0.3</lucene.version>
+		<ehcache.version>1.6.2</ehcache.version>
+<!-\-		<ehcache.version>2.2.0</ehcache.version>-\->
+		<logback.version>0.9.26</logback.version>
+		<slf4j.version>1.6.1</slf4j.version>
+		<spring.version>3.0.5.RELEASE</spring.version>
+		<spring-security.version>3.0.5.RELEASE</spring-security.version>
+		<jdk.version>1.6</jdk.version>
+	</properties>-->
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>1.6.2</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>1.4.2</version>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-dbcp</groupId>
+				<artifactId>commons-dbcp</artifactId>
+				<version>1.2.2</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
+
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- set versions of common plugins for reproducibility, ordered alphabetically -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>1.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.4.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.4</source>
+						<target>1.4</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-docck-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-invoker-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.1</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							</manifest>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<!-- NOTE: 2.6.x is generally unusuable due to MJAVADOC-275 -->
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>2.7</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.1</version>
+					<!--			<configuration>
+						<useReleaseProfile>false</useReleaseProfile>
+						<goals>deploy</goals>
+						<arguments>-Papache-release</arguments>
+					</configuration>-->
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-remote-resources-plugin</artifactId>
+					<version>1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4.3</version>
+					<configuration>
+						<encoding>${project.build.sourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>1.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.1.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.7.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins/>
+	</build>
+
+	<distributionManagement>
+		<!-- Site omitted - each project must provide their own -->
+		<repository>
+			<id>web-corpus</id>
+			<name>Alternate Maven repository of releases</name>
+			<url>dav:https://web-corpus.googlecode.com/svn/maven2/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>web-corpus-snapshots</id>
+			<name>Alternate Maven repository of snapshots</name>
+			<url>dav:https://web-corpus.googlecode.com/svn/maven2/snapshots</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<properties>
+		<distMgmtSnapshotsName>Service Libre Snapshot Repository</distMgmtSnapshotsName>
+		<distMgmtSnapshotsUrl>dav:https://web-corpus.googlecode.com/svn/maven2/snapshots</distMgmtSnapshotsUrl>
+		<organization.logo>http://www.servicelibre.com/logo.png</organization.logo>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
+	</properties>
+
+	<scm>
+		<connection>scm:svn:http://web-corpus.googlecode.com/svn</connection>
+		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn</developerConnection>
+		<url>http://code.google.com/p/web-corpus/source/browse</url>
+	</scm>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.3.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>
