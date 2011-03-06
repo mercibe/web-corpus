@@ -468,9 +468,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:svn:http://web-corpus.googlecode.com/svn</connection>
-		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn</developerConnection>
-		<url>http://code.google.com/p/web-corpus/source/browse</url>
+		<connection>scm:svn:http://web-corpus.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn/trunk</developerConnection>
+		<url>http://code.google.com/p/web-corpus/source/browse/trunk</url>
 	</scm>
 
 	<reporting>
