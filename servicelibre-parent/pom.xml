@@ -15,7 +15,7 @@
 
 	<groupId>com.servicelibre</groupId>
 	<artifactId>servicelibre-parent</artifactId>
-	<version>4-SNAPSHOT</version>
+	<version>3-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
