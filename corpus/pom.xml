@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.servicelibre</groupId>
 		<artifactId>servicelibre-parent</artifactId>
-		<version>1-SNAPSHOT</version>
+		<version>1</version>
 	</parent>
 
 	<groupId>com.servicelibre</groupId>
@@ -53,6 +53,30 @@
 		</developer>
 	</developers>
 
+<!--	<repositories>-->
+<!--		<repository>-->
+<!--			<id>maven-central</id>-->
+<!--			<url>http://repo1.maven.org/maven2/</url>-->
+<!--		</repository>-->
+<!--		<repository>-->
+<!--			<id>java-net</id>-->
+<!--			<url>http://download.java.net/maven/2/</url>-->
+<!--		</repository>-->
+<!--		<repository>-->
+<!--			<id>xebia-france</id>-->
+<!--			<url>http://xebia-france.googlecode.com/svn/repository/maven2/</url>-->
+<!--		</repository>-->
+<!--		<repository>-->
+<!--			<id>jxsl-repo</id>-->
+<!--			<name>jxsl repository</name>-->
+<!--			<url>https://jxsl.googlecode.com/svn/maven2/releases</url>-->
+<!--		</repository>-->
+<!--		<repository>-->
+<!--			<id>web-corpus-repo</id>-->
+<!--			<name>web-corpus repository</name>-->
+<!--			<url>https://web-corpus.googlecode.com/svn/maven2/releases</url>-->
+<!--		</repository>			-->
+<!--	</repositories>-->
 
 	<distributionManagement>
 		<repository>
