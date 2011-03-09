@@ -15,7 +15,7 @@
 
 	<groupId>com.servicelibre</groupId>
 	<artifactId>servicelibre-parent</artifactId>
-	<version>4</version>
+	<version>5-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -426,9 +426,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:svn:http://web-corpus.googlecode.com/svn/tags/servicelibre-parent-4</connection>
-		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn/tags/servicelibre-parent-4</developerConnection>
-		<url>http://code.google.com/p/web-corpus/source/browse/tags/servicelibre-parent-4</url>
+		<connection>scm:svn:http://web-corpus.googlecode.com/svn/trunk/servicelibre-parent</connection>
+		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn/trunk/servicelibre-parent</developerConnection>
+		<url>http://code.google.com/p/web-corpus/source/browse/trunk/servicelibre-parent</url>
 	</scm>
 
 	<reporting>
