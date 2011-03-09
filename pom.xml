@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- 
-		Shared parent. 
+		Parent commun (ancêtre). 
 		
-		Doesn't define a lot of things but does define the settings common to all projects at Service Libre 
+		Définition des paramètres communs à tous les projets de Service Libre 
 					       
-        Standard versions of plugins are defined but these may be overridden by individual projects as needed.
+        Les versions des plugins sont définies ici également, mais peuvent être surchargées individuellement au besoin par chaque projet.
         
         https://svn.apache.org/viewvc/maven/pom/trunk/asf/pom.xml?view=markup
 	-->
@@ -21,7 +21,7 @@
 
 	<name>Service Libre</name>
 	<description>
-		Service Libre is a small IT company from Quebec, Canada. 
+		Service Libre est une petite entreprise individuelle établie au Québec, Canada. 
 	</description>
 
 	<licenses>
@@ -41,38 +41,6 @@
 	<url>http://www.servicelibre.com</url>
 
 	<inceptionYear>2011</inceptionYear>
-
-	<repositories>
-		<repository>
-			<id>maven-central</id>
-			<url>http://repo1.maven.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>java-net</id>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-		<repository>
-			<id>xebia-france</id>
-			<url>http://xebia-france.googlecode.com/svn/repository/maven2/</url>
-		</repository>
-		<repository>
-			<id>jxsl-repo</id>
-			<name>jxsl repository</name>
-			<url>https://jxsl.googlecode.com/svn/maven2/releases</url>
-		</repository>		
-	</repositories>
-	
-	<pluginRepositories>
-		<pluginRepository>
-			<id>mc-release</id>
-			<name>maven-license-plugin repository</name>
-			<url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
-			<releases> </releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<properties>
 		<distMgmtSnapshotsName>Service Libre Snapshot Repository</distMgmtSnapshotsName>
@@ -312,9 +280,16 @@
 
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
 		<pluginManagement>
 			<plugins>
-				<!-- set versions of common plugins for reproducibility, ordered alphabetically -->
+				<!-- Versions des plugins (ordre alphabétique) -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
@@ -386,7 +361,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<!-- NOTE: 2.6.x is generally unusuable due to MJAVADOC-275 -->
+					<!-- NOTE: 2.6.x pose des problèmes, cf. MJAVADOC-275 -->
 					<version>2.5</version>
 				</plugin>
 				<plugin>
@@ -453,7 +428,7 @@
 	</build>
 
 	<distributionManagement>
-		<!-- Site omitted - each project must provide their own -->
+		<!-- Site omis - chaque projet doit fournir le sien -->
 		<repository>
 			<id>web-corpus</id>
 			<name>Alternate Maven repository of releases</name>
