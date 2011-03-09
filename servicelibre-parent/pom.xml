@@ -443,9 +443,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:svn:http://web-corpus.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn/trunk</developerConnection>
-		<url>http://code.google.com/p/web-corpus/source/browse/trunk</url>
+		<connection>scm:svn:http://web-corpus.googlecode.com/svn/trunk/servicelibre-parent</connection>
+		<developerConnection>scm:svn:https://web-corpus.googlecode.com/svn/trunk/servicelibre-parent</developerConnection>
+		<url>http://code.google.com/p/web-corpus/source/browse/trunk/servicelibre-parent</url>
 	</scm>
 
 	<reporting>
