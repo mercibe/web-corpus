@@ -18,22 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.servicelibre.corpus.analyzis;
+package com.servicelibre.corpus;
 
-import java.text.Collator;
-import java.util.Comparator;
-import java.util.Locale;
-
-public class MotComparator<T extends MotInfo> implements Comparator<MotInfo>
+public class CorpusFieldConstants
 {
 
-    private Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
-    
-    
-    @Override
-    public int compare(MotInfo o1, MotInfo o2)
-    {
-        return collator.compare(o1.mot, o2.mot);
-    }
+    public static final String ORDRE_FIELD = "doc_id";
 
+    
 }

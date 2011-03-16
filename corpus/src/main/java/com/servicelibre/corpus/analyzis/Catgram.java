@@ -20,20 +20,35 @@
 
 package com.servicelibre.corpus.analyzis;
 
-import java.text.Collator;
-import java.util.Comparator;
-import java.util.Locale;
+public class Catgram {
 
-public class MotComparator<T extends MotInfo> implements Comparator<MotInfo>
-{
+	
+	public String id;
+	public String nom;
+	public String description;
+	public String étiquette;
+	public boolean motGrammatical;
+	
+	public Catgram(String id, String nom, String étiquette, boolean motGrammatical) {
+		this(id, nom, étiquette, motGrammatical, "");
+	}
 
-    private Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
-    
-    
+	public Catgram(String id, String nom, String étiquette, boolean motGrammatical, String description) {
+		super();
+		this.id = id;
+		this.nom = nom;
+		this.étiquette = étiquette;
+		this.motGrammatical = motGrammatical;
+		this.description = description;
+	}
+
     @Override
-    public int compare(MotInfo o1, MotInfo o2)
+    public String toString()
     {
-        return collator.compare(o1.mot, o2.mot);
+        
+        return id;
     }
 
+	
+	
 }

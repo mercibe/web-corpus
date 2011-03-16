@@ -1,3 +1,23 @@
+/**
+ * Code library for textual corpus management
+ *
+ * Copyright (C) 2011 Benoit Mercier <benoit.mercier@servicelibre.com> — Tous droits réservés.
+ *
+ * Ce programme est un logiciel libre ; vous pouvez le redistribuer ou le
+ * modifier suivant les termes de la “GNU General Public License” telle que
+ * publiée par la Free Software Foundation : soit la version 3 de cette
+ * licence, soit (à votre gré) toute version ultérieure.
+ *
+ * Ce programme est distribué dans l’espoir qu’il vous sera utile, mais SANS
+ * AUCUNE GARANTIE : sans même la garantie implicite de COMMERCIALISABILITÉ
+ * ni d’ADÉQUATION À UN OBJECTIF PARTICULIER. Consultez la Licence Générale
+ * Publique GNU pour plus de détails.
+ *
+ * Vous devriez avoir reçu une copie de la Licence Générale Publique GNU avec
+ * ce programme ; si ce n’est pas le cas, consultez :
+ * <http://www.gnu.org/licenses/>.
+ */
+
 package com.servicelibre.corpus.analyzis;
 
 import java.io.BufferedWriter;
@@ -9,8 +29,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import com.servicelibre.corpus.analyzis.Lemmatiseur.CatgramFranqus;
-
 public class MotInfo
 {
     public enum FreqPrecision
@@ -20,7 +38,7 @@ public class MotInfo
 
     public String mot;
     String lemme;
-    CatgramFranqus catgram;
+    Catgram catgram;
     double freqMot;
     double freqLemme;
     boolean isLemme;
@@ -36,12 +54,12 @@ public class MotInfo
         this(mot, null, null, null);
     }
 
-    public MotInfo(String mot, String lemme, CatgramFranqus catgram, String note)
+    public MotInfo(String mot, String lemme, Catgram catgram, String note)
     {
         this(mot,lemme, catgram, note, 0, 0, false);
     }
     
-    public MotInfo(String mot, String lemme, CatgramFranqus catgram, String note, double freqMot, double freqLemme, boolean isLemme)
+    public MotInfo(String mot, String lemme, Catgram catgram, String note, double freqMot, double freqLemme, boolean isLemme)
     {
         this.mot = mot;
         this.lemme = lemme;
@@ -63,8 +81,8 @@ public class MotInfo
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(mot).append("|").append(lemme)
-            .append("|").append(catgram)
+        sb.append(mot).append("|").append(lemme)        
+            .append("|").append(catgram.id) // Si NULL, problème
             .append("|").append(freqMot)
             .append("|").append(freqLemme)
             .append("|").append(isLemme);
@@ -94,12 +112,12 @@ public class MotInfo
         return this;
     }
 
-    public CatgramFranqus getCatgram()
+    public Catgram getCatgram()
     {
         return catgram;
     }
 
-    public MotInfo setCatgram(CatgramFranqus catgram)
+    public MotInfo setCatgram(Catgram catgram)
     {
         this.catgram = catgram;
         return this;
@@ -179,6 +197,7 @@ public class MotInfo
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8"));
             for (MotInfo motInfo : motInfoList)
             {
+                System.out.println(motInfo);
                 writer.append(motInfo.toString());
                 writer.newLine();
             }
@@ -256,7 +275,7 @@ public class MotInfo
         {
             if (other.catgram != null) return false;
         }
-        else if (!catgram.equals(other.catgram)) return false;
+        else if (!catgram.id.equals(other.catgram.id)) return false;
         
         if (lemme == null)
         {

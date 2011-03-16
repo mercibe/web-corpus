@@ -1,7 +1,7 @@
 /**
- * Librairie de code pour la création d'index textuels
+ * Code library for textual corpus management
  *
- * Copyright (C) 2009 Benoit Mercier <benoit.mercier@servicelibre.com> — Tous droits réservés.
+ * Copyright (C) 2011 Benoit Mercier <benoit.mercier@servicelibre.com> — Tous droits réservés.
  *
  * Ce programme est un logiciel libre ; vous pouvez le redistribuer ou le
  * modifier suivant les termes de la “GNU General Public License” telle que

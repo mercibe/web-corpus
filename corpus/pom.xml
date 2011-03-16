@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.servicelibre</groupId>
 		<artifactId>servicelibre-parent</artifactId>
-		<version>1</version>
+		<version>5-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.servicelibre</groupId>
@@ -27,7 +27,7 @@
 		<url>http://servicelibre.com</url>
 	</organization>
 
-	<inceptionYear>2009</inceptionYear>
+	<inceptionYear>2011</inceptionYear>
 
 	<licenses>
 		<license>
@@ -215,7 +215,8 @@
 						<exclude>web/**</exclude>
 						<exclude>**/logback.xml</exclude>
 					</excludes>
-					<useDefaultExcludes>true</useDefaultExcludes>
+					<useDefaultExcludes>true</useDefaultExcludes>		
+					<strictCheck>true</strictCheck>			
 					<properties>
 						<owner>Benoit Mercier</owner>
 						<email>benoit.mercier@servicelibre.com</email>
@@ -372,6 +373,12 @@
 			<groupId>com.servicelibre</groupId>
 			<artifactId>common-lib</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
