@@ -49,7 +49,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sourceReleaseAssemblyDescriptor>source-release</sourceReleaseAssemblyDescriptor>
 
-		<saxon.version>9.3.0.2j</saxon.version>
 		<lucene.version>3.0.3</lucene.version>
 		<logback.version>0.9.26</logback.version>
 		<slf4j.version>1.6.1</slf4j.version>
@@ -88,9 +87,19 @@
 				<version>2.4</version>
 			</dependency>
 			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.0.1</version>
+			</dependency>
+			<dependency>
 				<groupId>commons-collections</groupId>
 				<artifactId>commons-collections</artifactId>
 				<version>3.2</version>
+			</dependency>
+			<dependency>
+				<groupId>xalan</groupId>
+				<artifactId>xalan</artifactId>
+				<version>2.7.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.poi</groupId>
@@ -137,8 +146,13 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.4</version>
+				<version>4.7</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.lucene</groupId>
@@ -180,6 +194,16 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
@@ -241,6 +265,12 @@
 				<groupId>commons-dbcp</groupId>
 				<artifactId>commons-dbcp</artifactId>
 				<version>1.4</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon</artifactId>
+				<version>9.3.0.2j</version>
 			</dependency>
 
 			<dependency>
