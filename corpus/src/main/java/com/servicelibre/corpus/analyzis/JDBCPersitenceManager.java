@@ -141,9 +141,9 @@ public abstract class JDBCPersitenceManager {
 				metaCols.put("freqmot", motInfo.getFreqMot());
 				metaCols.put("lemme", motInfo.getLemme());
 				metaCols.put("freqlemme", motInfo.getFreqLemme());
-				metaCols.put("catgram", motInfo.getCatgram().value);
+				metaCols.put("catgram", motInfo.getCatgram().étiquette);
 				metaCols.put("note", motInfo.getNote());
-				metaCols.put("motgram", motInfo.getCatgram().isMotGrammatical());
+				metaCols.put("motgram", motInfo.getCatgram().motGrammatical);
 				metaCols.put("freqmotprecision", motInfo.getFreqMotPrecision().name());
 
 				// FIXME!!! Est-ce nécessaire? Pourquoi?
