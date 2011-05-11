@@ -6,67 +6,79 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "liste")
-public class Liste {
-	@Id
-	String id;
-	
-	@Column
-	String nom;
-	
-	@Column
-	String description;
-	
-	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name="liste_id")
-	List<Lemme> lemmes = new ArrayList<Lemme>();
+public class Liste
+{
 
-	public Liste(String id, String nom, String description) {
-		this.id = id;
-		this.nom = nom;
-		this.description = description;
-	}
+    @Id
+    @GeneratedValue
+    int id;
 
-	public String getId() {
-		return id;
-	}
+    @Column
+    String nom;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    @Column
+    String description;
 
-	public String getNom() {
-		return nom;
-	}
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "liste_id")
+    List<Mot> mots = new ArrayList<Mot>();
 
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
+    public Liste(int id, String nom, String description)
+    {
+        this.id = id;
+        this.nom = nom;
+        this.description = description;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public int getId()
+    {
+        return id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setId(int id)
+    {
+        this.id = id;
+    }
 
-	public List<Lemme> getLemmes() {
-		return lemmes;
-	}
+    public String getNom()
+    {
+        return nom;
+    }
 
-	public void setLemmes(List<Lemme> lemmes) {
-		this.lemmes = lemmes;
-	}
+    public void setNom(String nom)
+    {
+        this.nom = nom;
+    }
 
-	public int size() {
-		return lemmes.size();
-	}
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    public List<Mot> getMots()
+    {
+        return mots;
+    }
+
+    public void setMots(List<Mot> mots)
+    {
+        this.mots = mots;
+    }
+
+    public int size()
+    {
+        return mots.size();
+    }
 
 }

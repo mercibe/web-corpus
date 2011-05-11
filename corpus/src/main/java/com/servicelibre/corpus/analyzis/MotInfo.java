@@ -48,7 +48,6 @@ public class MotInfo
 
     // Ajouter un tableau de genre/nombre + mode/temps/personne
 
-
     public MotInfo(String mot)
     {
         this(mot, null, null, null);
@@ -56,10 +55,11 @@ public class MotInfo
 
     public MotInfo(String mot, String lemme, Catgram catgram, String note)
     {
-        this(mot,lemme, catgram, note, 0, 0, false);
+        this(mot, lemme, catgram, note, 0, 0, false);
     }
-    
-    public MotInfo(String mot, String lemme, Catgram catgram, String note, double freqMot, double freqLemme, boolean isLemme)
+
+    public MotInfo(String mot, String lemme, Catgram catgram, String note, double freqMot, double freqLemme,
+            boolean isLemme)
     {
         this.mot = mot;
         this.lemme = lemme;
@@ -69,7 +69,6 @@ public class MotInfo
         this.freqLemme = freqLemme;
         this.isLemme = isLemme;
     }
-    
 
     public MotInfo()
     {
@@ -81,13 +80,24 @@ public class MotInfo
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(mot).append("|").append(lemme)        
-            .append("|").append(catgram.id) // Si NULL, problème
-            .append("|").append(freqMot)
-            .append("|").append(freqLemme)
-            .append("|").append(isLemme);
+        sb.append(mot).append("|").append(lemme).append("|");
+
+        // Si catgram NULL, problème à signaler
+        if (catgram == null)
+        {
+            System.err.println("catgram.id == NULL pour " + mot + "|" + lemme);
+            sb.append("NULL");
+        }
+        else
+        {
+
+            sb.append(catgram.id);
+        }
+
+        sb.append("|").append(freqMot).append("|").append(freqLemme).append("|").append(isLemme).append("|").append(note);
 
         return sb.toString();
+
     }
 
     public String getMot()
@@ -133,8 +143,6 @@ public class MotInfo
         this.freqMotprecision = freqMotPrecision;
         return this;
     }
-    
-    
 
     public FreqPrecision getFreqLemmePrecision()
     {
@@ -197,7 +205,7 @@ public class MotInfo
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8"));
             for (MotInfo motInfo : motInfoList)
             {
-                System.out.println(motInfo);
+                //System.out.println(motInfo);
                 writer.append(motInfo.toString());
                 writer.newLine();
             }
@@ -217,8 +225,8 @@ public class MotInfo
             e.printStackTrace();
         }
 
-    }   
-    
+    }
+
     public static void dumpMotInfosList(List<List<MotInfo>> motInfoList, String dumpFilename)
     {
         File dumpFile = new File(dumpFilename);
@@ -268,31 +276,28 @@ public class MotInfo
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        
+
         MotInfo other = (MotInfo) obj;
-        
+
         if (catgram == null)
         {
             if (other.catgram != null) return false;
         }
         else if (!catgram.id.equals(other.catgram.id)) return false;
-        
+
         if (lemme == null)
         {
             if (other.lemme != null) return false;
         }
         else if (!lemme.equals(other.lemme)) return false;
-        
+
         if (mot == null)
         {
             if (other.mot != null) return false;
         }
         else if (!mot.equals(other.mot)) return false;
-        
+
         return true;
-    }    
-    
-    
-    
+    }
 
 }

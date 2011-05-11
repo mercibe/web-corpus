@@ -4,38 +4,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.servicelibre.corpus.liste.Lemme;
 import com.servicelibre.corpus.liste.Liste;
+import com.servicelibre.corpus.liste.Mot;
 
 public class InMemoryListeManager implements ListeManager {
 
-	Map<String, Liste> listes = new HashMap<String, Liste>();
+	Map<Integer, Liste> listes = new HashMap<Integer, Liste>();
 	private int maxLemmes;
 	
 	@Override
-	public Map<String, Liste> getListes() {
+	public Map<Integer, Liste> getListes() {
 		return listes;
 	}
 
 	@Override
-	public List<Lemme> getListeLemmes(String listeId) {
-		return listes.get(listeId).getLemmes();
+	public List<Mot> getMots(int listeId) {
+		return listes.get(listeId).getMots();
 	}
 
 	@Override
-	public void setMaxLemmes(int maxLemmes) {
+	public void setMaxMots(int maxLemmes) {
 		this.maxLemmes = maxLemmes;
 	}
 
 	@Override
-	public int getMaxLemmes() {
+	public int getMaxMots() {
 		return maxLemmes;
 	}
 
 	@Override
-	public void addListe(Liste liste) {
+	public Liste save(Liste liste) {
 		listes.put(liste.getId(), liste);
+		return liste;
 		
 	}
+
+    @Override
+    public Liste getListe(int listeId)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
