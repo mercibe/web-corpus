@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 
 	<!-- Importation de la configuration de l'application -->
 	<import resource="classpath:application-context.xml" />
@@ -16,7 +15,7 @@
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="true" />
 				<property name="generateDdl" value="true" />
-				<property name="database" value="HSQL"></property>
+				<property name="database" value="MYSQL"></property>
 			</bean>
 		</property>
 		<property name="jpaProperties">
@@ -26,10 +25,12 @@
 		</property>
 	</bean>
 
-		<!-- Creates an in-memory "rewards" database populated with test data for fast testing -->
-		<jdbc:embedded-database id="dataSource" type="HSQL">
-<!-- 			<jdbc:script location="classpath:testdb/schema.sql"/> -->
-<!-- 			<jdbc:script location="classpath:testdb/test-data.sql"/> -->
-		</jdbc:embedded-database>
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="username" value="corpus" />
+		<property name="password" value="corpus" />
+		<property name="url" value="jdbc:mysql://agar/corpus"></property>
+	</bean>
 
 </beans>

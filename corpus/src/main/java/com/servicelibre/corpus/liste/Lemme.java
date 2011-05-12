@@ -13,15 +13,10 @@ import com.servicelibre.corpus.analyzis.MotInfo.FreqPrecision;
 
 
 //TODO : lemme <> mots d'une liste (= lemme sans fréquence)
-@Entity
-@Table(name= "lemme")
 public class Lemme {
 	
 	static CatgramsPivot catgrams = new CatgramsPivot();
 	
-	@Id
-	@Column(name = "lemme_id")
-	@GeneratedValue
 	private Integer id;
 	
 	

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
 
+
 public interface ListeManager
 {
 

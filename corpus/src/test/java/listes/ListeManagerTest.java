@@ -20,7 +20,7 @@ import com.servicelibre.corpus.manager.ListeManager;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ListeManagerTest
 {
-
+ 
     @Test
     public void créationListes()
     {

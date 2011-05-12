@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
@@ -19,11 +18,6 @@ public class JpaListeManager implements ListeManager
 
 	@PersistenceContext
     private EntityManager entityManager;
-    
-//    public void setEntityManager(EntityManager entityManager) {
-//        this.entityManager = entityManager;
-//    }
-    
     
     @Override
     public Map<Integer, Liste> getListes()
@@ -49,7 +43,6 @@ public class JpaListeManager implements ListeManager
     }
 
     @Override
-    @Transactional
     public Liste save(Liste liste)
     {
         entityManager.persist(liste);

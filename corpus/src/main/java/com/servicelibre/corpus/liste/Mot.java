@@ -2,16 +2,19 @@ package com.servicelibre.corpus.liste;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-//@Table(uniqueConstraints=@UniqueConstraint(columnNames="liste,mot"))
+@Table(uniqueConstraints=@UniqueConstraint(columnNames={"liste_id","mot"}))
 public class Mot
 {
-    @ManyToOne
-    @Column(name="liste_id")
+    @Id
+    private int id;
+    
+    @ManyToOne(optional=false)
     private Liste liste;
     
     @Column(nullable=false)
@@ -28,6 +31,7 @@ public class Mot
     
     @Column
     String note;
+    
 
     public Mot(String mot, String lemme, boolean isLemme, String catgram, String note)
     {
