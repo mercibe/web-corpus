@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -20,7 +19,8 @@
 	<name>corpus</name>
 	<description>Code library for textual corpus management</description>
 
-	<properties> </properties>
+	<properties>
+	</properties>
 
 	<organization>
 		<name>Service Libre</name>
@@ -53,30 +53,30 @@
 		</developer>
 	</developers>
 
-<!--	<repositories>-->
-<!--		<repository>-->
-<!--			<id>maven-central</id>-->
-<!--			<url>http://repo1.maven.org/maven2/</url>-->
-<!--		</repository>-->
-<!--		<repository>-->
-<!--			<id>java-net</id>-->
-<!--			<url>http://download.java.net/maven/2/</url>-->
-<!--		</repository>-->
-<!--		<repository>-->
-<!--			<id>xebia-france</id>-->
-<!--			<url>http://xebia-france.googlecode.com/svn/repository/maven2/</url>-->
-<!--		</repository>-->
-<!--		<repository>-->
-<!--			<id>jxsl-repo</id>-->
-<!--			<name>jxsl repository</name>-->
-<!--			<url>https://jxsl.googlecode.com/svn/maven2/releases</url>-->
-<!--		</repository>-->
-<!--		<repository>-->
-<!--			<id>web-corpus-repo</id>-->
-<!--			<name>web-corpus repository</name>-->
-<!--			<url>https://web-corpus.googlecode.com/svn/maven2/releases</url>-->
-<!--		</repository>			-->
-<!--	</repositories>-->
+	<!-- <repositories> -->
+	<!-- <repository> -->
+	<!-- <id>maven-central</id> -->
+	<!-- <url>http://repo1.maven.org/maven2/</url> -->
+	<!-- </repository> -->
+	<!-- <repository> -->
+	<!-- <id>java-net</id> -->
+	<!-- <url>http://download.java.net/maven/2/</url> -->
+	<!-- </repository> -->
+	<!-- <repository> -->
+	<!-- <id>xebia-france</id> -->
+	<!-- <url>http://xebia-france.googlecode.com/svn/repository/maven2/</url> -->
+	<!-- </repository> -->
+	<!-- <repository> -->
+	<!-- <id>jxsl-repo</id> -->
+	<!-- <name>jxsl repository</name> -->
+	<!-- <url>https://jxsl.googlecode.com/svn/maven2/releases</url> -->
+	<!-- </repository> -->
+	<!-- <repository> -->
+	<!-- <id>web-corpus-repo</id> -->
+	<!-- <name>web-corpus repository</name> -->
+	<!-- <url>https://web-corpus.googlecode.com/svn/maven2/releases</url> -->
+	<!-- </repository> -->
+	<!-- </repositories> -->
 
 	<distributionManagement>
 		<repository>
@@ -98,6 +98,13 @@
 	</distributionManagement>
 
 	<build>
+		<!-- <extensions> -->
+		<!-- <extension> -->
+		<!-- <groupId>org.apache.maven.wagon</groupId> -->
+		<!-- <artifactId>wagon-webdav</artifactId> -->
+		<!-- <version>1.0-beta-2</version> -->
+		<!-- </extension> -->
+		<!-- </extensions> -->
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -136,7 +143,8 @@
 							<Implementation-Title>${project.artifactId}</Implementation-Title>
 							<Implementation-Vendor-Id>${project.groupId}</Implementation-Vendor-Id>
 							<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-							<Implementation-Version>${project.version} (révision ${buildNumber})</Implementation-Version>
+							<Implementation-Version>${project.version} (révision
+								${buildNumber})</Implementation-Version>
 							<Implementation-Build>${buildNumber}</Implementation-Build>
 							<Built-on>${timestamp}</Built-on>
 						</manifestEntries>
@@ -149,7 +157,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<archive>
-						<!--  waiting for bug MWAR-167 correction -->
+						<!-- waiting for bug MWAR-167 correction -->
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
@@ -168,33 +176,16 @@
 					<locales>fr</locales>
 				</configuration>
 			</plugin>
-			<!--
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<finalName>${project.artifactId}</finalName>
-					<outputDirectory>${assembly.outputDirectory}</outputDirectory>
-					<appendAssemblyId>true</appendAssemblyId>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<mainClass>com.servicelibre.corpus.CorpusIdx</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Implementation-Build>${buildNumber}</Implementation-Build>
-							<Class-Path>.</Class-Path>
-						</manifestEntries>
-					</archive>
-					<excludes>
-						<exclude>**/log4j.xml</exclude>
-					</excludes>
-				</configuration>
-			</plugin>-->
+			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
+				<descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> </descriptorRefs> 
+				<finalName>${project.artifactId}</finalName> <outputDirectory>${assembly.outputDirectory}</outputDirectory> 
+				<appendAssemblyId>true</appendAssemblyId> <archive> <manifest> <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
+				<mainClass>com.servicelibre.corpus.CorpusIdx</mainClass> </manifest> <manifestEntries> 
+				<Implementation-Build>${buildNumber}</Implementation-Build> <Class-Path>.</Class-Path> 
+				</manifestEntries> </archive> <excludes> <exclude>**/log4j.xml</exclude> 
+				</excludes> </configuration> </plugin> -->
 
-			<!--  Insertion du header de licence -->
+			<!-- Insertion du header de licence -->
 			<plugin>
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
@@ -215,8 +206,8 @@
 						<exclude>web/**</exclude>
 						<exclude>**/logback.xml</exclude>
 					</excludes>
-					<useDefaultExcludes>true</useDefaultExcludes>		
-					<strictCheck>true</strictCheck>			
+					<useDefaultExcludes>true</useDefaultExcludes>
+					<strictCheck>true</strictCheck>
 					<properties>
 						<owner>Benoit Mercier</owner>
 						<email>benoit.mercier@servicelibre.com</email>
@@ -243,9 +234,17 @@
 				</includes>
 				<filtering>false</filtering>
 			</resource>
+			<resource>
+				<directory>${basedir}/src/test/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.xsl</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
 		</resources>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -368,7 +367,7 @@
 			<artifactId>hsqldb</artifactId>
 		</dependency>
 
-	<!-- TODO move to Google code web-corpus/common-->
+		<!-- TODO move to Google code web-corpus/common -->
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
@@ -389,27 +388,40 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+<!-- 		<dependency> -->
+<!--     <groupId>org.apache.openjpa</groupId> -->
+<!--     <artifactId>openjpa-persistence</artifactId> -->
+<!--     <version>2.1.0</version> -->
+<!-- </dependency> -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>3.6.3.Final</version>
-			<type>pom</type>
+			<version>3.6.4.Final</version>
+			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.6.3.Final</version>
-			<type>pom</type>
+			<version>3.6.4.Final</version>
+			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.0-api</artifactId>
 			<version>1.0.0.Final</version>
-			<type>pom</type>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-hibernate3</artifactId>
+			<version>2.0.8</version>
+			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-	
+
+
 </project>

@@ -12,7 +12,7 @@ import com.servicelibre.corpus.analyzis.MotInfo;
 import com.servicelibre.corpus.analyzis.MotInfo.FreqPrecision;
 
 
-//TODO : lemme <> mots d'une liste
+//TODO : lemme <> mots d'une liste (= lemme sans fréquence)
 @Entity
 @Table(name= "lemme")
 public class Lemme {

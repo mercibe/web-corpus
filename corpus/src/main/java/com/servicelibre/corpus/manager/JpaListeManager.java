@@ -12,16 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
 
-@Repository
+
+@Repository // Essentiellement pour traduction des exceptions « vendor-neutral »
 public class JpaListeManager implements ListeManager
 {
 
+	@PersistenceContext
     private EntityManager entityManager;
     
-    @PersistenceContext
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+//    public void setEntityManager(EntityManager entityManager) {
+//        this.entityManager = entityManager;
+//    }
     
     
     @Override
