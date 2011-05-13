@@ -6,29 +6,29 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.liste.Liste;
+import com.servicelibre.corpus.liste.Corpus;
 
 @Repository
 // Essentiellement pour traduction des exceptions « vendor-neutral »
 @Transactional
-public class JpaListeManager implements ListeManager
+public class JpaCorpusManager implements CorpusManager
 {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Liste findOne(long listeId)
+    public Corpus findOne(long corpusId)
     {
-        return (Liste) entityManager.createQuery("select l from Liste l where l.id = ?").setParameter(1, listeId)
+        return (Corpus) entityManager.createQuery("select c from Corpus c where c.id = ?").setParameter(1, corpusId)
                 .getSingleResult();
     }
 
     @Override
-    public Liste save(Liste liste)
+    public Corpus save(Corpus corpus)
     {
-        entityManager.persist(liste);
-        return liste;
+        entityManager.persist(corpus);
+        return corpus;
     }
 
 }

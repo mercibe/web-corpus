@@ -27,14 +27,15 @@ public class ListeImport
         
         ListeManager lm = (ListeManager)ctx.getBean("listeManager");
         
-        Liste liste = lm.getListe(1);
+        Liste liste = lm.findOne((long) 1);
         System.err.println(liste);
         
         List<Mot> mots = liste.getMots();
 		System.err.println(mots);
         
-        mots.add(new Mot("boirons", "boire", false, "v.", "une note", liste));
-        mots.add(new Mot("buvais", "boire", false, "v.", "une note", liste));
+        mots.add(new Mot("boiraient", "boire", false, "v.", "une note", liste));
+//        mots.add(new Mot("boirons", "boire", false, "v.", "une note", liste));
+//        mots.add(new Mot("buvais", "boire", false, "v.", "une note", liste));
         
         
         return 0;

@@ -1,24 +1,15 @@
 package com.servicelibre.corpus.manager;
 
-import java.util.List;
-import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.liste.Liste;
-import com.servicelibre.corpus.liste.Mot;
 
 
-public interface ListeManager
+@Transactional
+public interface ListeManager //extends JpaRepository<Liste, Long>
 {
-
-    Map<Integer, Liste> getListes();
     
-    List<Mot> getMots(int listeId);
-
-    Liste getListe(int listeId);
-    
+    Liste findOne(long listeId);
     Liste save(Liste liste);
-
-    void setMaxMots(int maxMots);
-
-    int getMaxMots();
+    
 }

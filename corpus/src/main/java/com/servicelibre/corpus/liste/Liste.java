@@ -1,12 +1,10 @@
 package com.servicelibre.corpus.liste;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -19,7 +17,7 @@ public class Liste
 
     @Id
     @GeneratedValue
-    int id;
+    long id;
 
     @Column
     String nom;
@@ -27,28 +25,26 @@ public class Liste
     @Column
     String description;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "liste_id")
     List<Mot> mots;
-    
-    @ManyToOne(optional=false)
+
+    @ManyToOne(optional = false)
     Corpus corpus;
 
-    
-    
     public Liste()
     {
         super();
     }
 
-    public Liste(int id, String nom, String description)
+    public Liste(String nom, String description, Corpus corpus)
     {
-        this.id = id;
         this.nom = nom;
         this.description = description;
+        this.corpus = corpus;
     }
 
-    public int getId()
+    public long getId()
     {
         return id;
     }
@@ -93,13 +89,20 @@ public class Liste
         return mots.size();
     }
 
+    public Corpus getCorpus()
+    {
+        return corpus;
+    }
+
+    public void setCorpus(Corpus corpus)
+    {
+        this.corpus = corpus;
+    }
+
     @Override
     public String toString()
     {
-        return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus="
-                + corpus + "]";
+        return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
     }
-    
-    
 
 }

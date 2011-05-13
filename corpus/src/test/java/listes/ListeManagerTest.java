@@ -1,35 +1,49 @@
 package listes;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.liste.Corpus;
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
-import com.servicelibre.corpus.manager.InMemoryListeManager;
+import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ListeManagerTest
 {
- 
+    @Autowired
+    ListeManager lm;
+
+    @Autowired
+    CorpusManager cm;
+
     @Test
+    @Transactional
     public void créationListes()
     {
 
-        ListeManager lm = new InMemoryListeManager();
+        Corpus corpus = new Corpus("Corpus de test", "description du corpus de test");
 
-        Liste listeTest1 = new Liste(1, "Liste de test", "Liste de test TDD");
+        Liste listeTest1 = new Liste("Liste de test", "Liste de test TDD", corpus);
 
-        assertEquals(1, listeTest1.getId());
+        System.err.println("corpus_id: " + corpus.getId());
+
+        cm.save(corpus);
+
+        System.err.println("corpus_id: " + corpus.getId());
+
         assertEquals("Liste de test", listeTest1.getNom());
         assertEquals("Liste de test TDD", listeTest1.getDescription());
 
@@ -41,22 +55,22 @@ public class ListeManagerTest
         // Ajout de la liste de lemmes à la définition de la liste
         listeTest1.setMots(mots);
 
+        Liste saved = lm.save(listeTest1);
+        
+        System.err.println(listeTest1.getId());
+        
         List<Mot> mots2 = listeTest1.getMots();
         assertNotNull(mots2);
         assertEquals(mots.size(), mots2.size());
         assertEquals(mots.size(), listeTest1.size());
 
-        lm.save(listeTest1);
-        List<Mot> mots3 = lm.getMots(listeTest1.getId());
+        List<Mot> mots3 = listeTest1.getMots();
         assertNotNull(mots3);
         for (int i = 0; i < listeTest1.size(); i++)
         {
             assertEquals(mots.get(i), mots3.get(i));
             System.out.println(mots.get(i));
         }
-
-        lm.setMaxMots(200);
-        assertEquals(200, lm.getMaxMots());
 
     }
 

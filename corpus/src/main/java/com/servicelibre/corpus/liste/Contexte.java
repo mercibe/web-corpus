@@ -11,8 +11,8 @@ public class Contexte
     @Id
     @GeneratedValue
     int Id;
-    
-    @ManyToOne(optional=false)
+
+    @ManyToOne(optional = false)
     Mot mot;
-    
+
 }
