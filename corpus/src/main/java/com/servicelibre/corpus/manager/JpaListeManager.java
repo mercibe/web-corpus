@@ -7,12 +7,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
 
 
 @Repository // Essentiellement pour traduction des exceptions « vendor-neutral »
+@Transactional
 public class JpaListeManager implements ListeManager
 {
 

@@ -35,8 +35,8 @@ public class ListeManagerTest
 
         // Création de la liste de lemmes
         List<Mot> mots = new ArrayList<Mot>();
-        mots.add(new Mot("manger", "manger", true, "VERBE", ""));
-        mots.add(new Mot("pomme", "pomme", true, "NOM_COMMUN", ""));
+        mots.add(new Mot("manger", "manger", true, "VERBE", "", listeTest1));
+        mots.add(new Mot("pomme", "pomme", true, "NOM_COMMUN", "", listeTest1));
 
         // Ajout de la liste de lemmes à la définition de la liste
         listeTest1.setMots(mots);

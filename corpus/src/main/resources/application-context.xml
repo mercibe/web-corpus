@@ -9,6 +9,7 @@
 
 	<!-- Chargement des listes via JPA -->
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
+	<bean id="listeImport" class="com.servicelibre.corpus.liste.ListeImport" />
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -19,7 +20,7 @@
 		@Transactionnal -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-	<!-- pour le support de l'annotation @PersitenceContext, et en général, pour toutes les post-processors d'annotations de configuration standard (traduction des exceptions, etc.) -->
+	<!-- pour le support de l'annotation @PersistenceContext, et en général, pour toutes les post-processors d'annotations de configuration standard (traduction des exceptions, etc.) -->
 	<context:annotation-config />
 
 </beans>
