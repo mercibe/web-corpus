@@ -10,6 +10,7 @@ public interface ListeManager //extends JpaRepository<Liste, Long>
 {
     
     Liste findOne(long listeId);
+    Liste findByNom(String nom);
     Liste save(Liste liste);
     
 }

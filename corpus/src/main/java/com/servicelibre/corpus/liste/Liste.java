@@ -1,5 +1,6 @@
 package com.servicelibre.corpus.liste;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,8 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
 public class Liste
 {
 
@@ -27,7 +31,7 @@ public class Liste
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "liste_id")
-    List<Mot> mots;
+    List<Mot> mots = new ArrayList<Mot>();
 
     @ManyToOne(optional = false)
     Corpus corpus;

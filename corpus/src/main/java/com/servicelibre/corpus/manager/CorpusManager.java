@@ -9,5 +9,7 @@ public interface CorpusManager// extends JpaRepository<Corpus, Long>
 {
     
     Corpus findOne(long corpusId);
+    Corpus findByNom(String nom);
     Corpus save(Corpus corpus);
+    void flush();
 }

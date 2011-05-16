@@ -10,6 +10,7 @@
 		<config>src/main/resources/application-context.xml</config>
 		<config>src/test/java/listes/ListeManagerTest-context.xml</config>
 		<config>src/main/resources/system-context.xml</config>
+		<config>src/main/resources/listeImport-config.xml</config>
 	</configs>
 	<configSets>
 		<configSet>

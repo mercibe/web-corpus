@@ -11,7 +11,6 @@
 	<!-- Chargement des listes via JPA -->
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" />
-	<bean id="listeImport" class="com.servicelibre.corpus.liste.ListeImport" />
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

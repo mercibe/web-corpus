@@ -1,7 +1,7 @@
 package listes;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class ListeManagerTest
         // Ajout de la liste de lemmes à la définition de la liste
         listeTest1.setMots(mots);
 
-        Liste saved = lm.save(listeTest1);
+        lm.save(listeTest1);
         
         System.err.println(listeTest1.getId());
         

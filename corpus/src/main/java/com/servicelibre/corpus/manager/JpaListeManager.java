@@ -1,8 +1,11 @@
 package com.servicelibre.corpus.manager;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import com.servicelibre.corpus.liste.Liste;
 @Transactional
 public class JpaListeManager implements ListeManager
 {
+    private static Logger logger = LoggerFactory.getLogger(JpaListeManager.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -28,6 +32,23 @@ public class JpaListeManager implements ListeManager
     public Liste save(Liste liste)
     {
         entityManager.persist(liste);
+        return liste;
+    }
+
+    @Override
+    public Liste findByNom(String nom)
+    {
+        Liste liste = null;
+
+        try
+        {
+            liste = (Liste) entityManager.createQuery("select l from Liste l where l.nom = ?").setParameter(1, nom)
+                    .getSingleResult();
+        }
+        catch (NoResultException e)
+        {
+            logger.warn("La liste du nom [{}] est introuvable dans la table des listes. ({})", nom, e.getMessage());
+        }
         return liste;
     }
 
