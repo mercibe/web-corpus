@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id", "mot" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id", "lemme", "mot", "catgram" }))
 public class Mot {
 	@Id
 	@GeneratedValue
@@ -27,8 +27,20 @@ public class Mot {
 	@Column
 	boolean isLemme;
 
-	@Column
+	@Column(nullable = false)
 	String catgram;
+	
+	@Column
+	String genre;
+	
+	@Column
+	String nombre;
+	
+	@Column (name="catgram_precision")
+	String catgramPrésicion;
+	
+	@Column
+	boolean ro;
 
 	@Column
 	String note;
@@ -42,16 +54,26 @@ public class Mot {
 	}
 
 	public Mot(String mot, String lemme, boolean isLemme, String catgram, String note, Liste liste) {
-		super();
-		this.mot = mot;
-		this.lemme = lemme;
-		this.isLemme = isLemme;
-		this.catgram = catgram;
-		this.note = note;
-		this.liste = liste;
+	    this(liste,mot,lemme, isLemme, catgram, "","", "", false, note);
 	}
 
-	@Override
+	public Mot(Liste liste, String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre,
+            String catgramPrécision, boolean ro, String note)
+    {
+        super();
+        this.liste = liste;
+        this.mot = mot;
+        this.lemme = lemme;
+        this.isLemme = isLemme;
+        this.catgram = catgram;
+        this.genre = genre;
+        this.nombre = nombre;
+        this.catgramPrésicion = catgramPrécision;
+        this.ro = ro;
+        this.note = note;
+    }
+
+    @Override
 	public String toString() {
 		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", catgram=" + catgram + ", note=" + note + "]";
 	}

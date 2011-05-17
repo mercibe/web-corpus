@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * mot\tlemme\tcatgram\tnote
+ * mot\tlemme\tcatgram\tcatgram_precision\tgenre\tnomre\tro\tnote
  * 
  * @author benoitm
  * 

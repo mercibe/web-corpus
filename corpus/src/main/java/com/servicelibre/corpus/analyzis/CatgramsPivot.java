@@ -58,7 +58,7 @@ public class CatgramsPivot extends CatgramsManager {
 		// autres mots (mot plein)
 		catgrams.put("ADJECTIF", new Catgram("ADJECTIF", "adjectif", "adjective", false, "adj")); // 13174+
 		catgrams.put("ADJECTIF_POSSESSIF", new Catgram("ADJECTIF_POSSESSIF", "adjectif possessif", "adjectif_possessif", false)); // 6: leur, mien, tien, sien, nôtre, vôtre
-		catgrams.put("ADJECTIF_NUMÉRAL_ORDINAL", new Catgram("ADJECTIF_NUMÉRAL_ORDINAL", "adjectif numéral ordinal", "adjectif_numéral_ordinal", false)); // 31
+		catgrams.put("ADJECTIF_NUMÉRAL_ORDINAL", new Catgram("ADJECTIF_NUMÉRAL_ORDINAL", "adjectif numéral ordinal", "adjectif_numéral_ordinal", false, "adj. numéral")); // 31
 		catgrams.put("ADJECTIF_NUMÉRAL_CARDINAL", new Catgram("ADJECTIF_NUMÉRAL_CARDINAL", "adjectif numéral cardinal", "adjectif_numéral_cardinal", false)); // 31
 		catgrams.put("ADJECTIF_FRACTIONNAIRE", new Catgram("ADJECTIF_FRACTIONNAIRE", "adjectif fractionnaire", "adjectif_fractionnaire", false));
 		catgrams.put("ADVERBE", new Catgram("ADVERBE", "adverbe", "adverb", false, "adv."));

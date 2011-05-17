@@ -19,16 +19,23 @@
 	</bean>
 
 	<bean id="listeCyclePrimaire1" class="com.servicelibre.corpus.liste.Liste">
-		<constructor-arg value="1er cycle primaire 2"/>
-		<constructor-arg value="Liste du premier cycle du primaire"/>
+		<constructor-arg value="1er cycle primaire"/>
+		<constructor-arg value="Liste 1er cycle primaire"/>
 		<constructor-arg ref="corpus"/>
 	</bean>
 
-	<bean id="listeCyclePrimaire1Fichier" class="java.io.File">
-		<constructor-arg value="${java.io.tmpdir}/primaire-1erCycle.csv" />
+	<bean id="listeCyclePrimaire2" class="com.servicelibre.corpus.liste.Liste">
+		<constructor-arg value="2e cycle primaire"/>
+		<constructor-arg value="Liste 2e cycle primaire"/>
+		<constructor-arg ref="corpus"/>
 	</bean>
 
-	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneSimpleSplitter"/>
+
+	<bean id="listeCyclePrimaire1Fichier" class="java.io.File">
+		<constructor-arg value="${java.io.tmpdir}/primaire-2.csv" />
+	</bean>
+
+	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneMtlSplitter"/>
 
 	<!--${properties}-->
 	<context:property-placeholder/>
