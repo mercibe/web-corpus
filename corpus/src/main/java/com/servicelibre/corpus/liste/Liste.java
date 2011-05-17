@@ -1,6 +1,7 @@
 package com.servicelibre.corpus.liste;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -78,10 +79,6 @@ public class Liste
         this.description = description;
     }
 
-    public List<Mot> getMots()
-    {
-        return mots;
-    }
 
     public void setMots(List<Mot> mots)
     {
@@ -108,5 +105,33 @@ public class Liste
     {
         return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
     }
+
+    /*
+     * Gestion relation bidirectionnelle liste/mot
+     */
+    
+    public List<Mot> getMots()
+    {
+        return Collections.unmodifiableList(mots);
+    }
+
+    public void ajouteMot(Mot mot){
+    	mot.setListe(this);
+    }
+    
+    public void supprimeMot(Mot mot) {
+    	mot.setListe(null);
+    }
+    
+    public void internalAjouteMot(Mot mot) {
+    	mots.add(mot);
+    	
+    }
+    
+	public void internalSupprimeMot(Mot mot) {
+		mots.remove(mot);
+		
+	}
+
 
 }

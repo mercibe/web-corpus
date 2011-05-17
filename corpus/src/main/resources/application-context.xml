@@ -9,8 +9,11 @@
 
 
 	<!-- Chargement des listes via JPA -->
-	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" />
+<!-- 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.CorpusManager" /> -->
+	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
+<!-- 	<bean id="listeManager" class="com.servicelibre.corpus.manager.ListeManager" /> -->
+	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -26,9 +29,9 @@
 		des exceptions, etc.) -->
 	<context:annotation-config />
 
-	<!-- Pour activer le support des Repository par JPA et scanner tous les 
+	<!-- Spring-data: pour activer le support des Repository par JPA et scanner tous les 
 		package sous com.servicelibre.corpus.manager qui contiennent des interfaces 
 		qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
-	<jpa:repositories base-package="com.servicelibre.corpus.manager" />
+<!-- 	<jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
 
 </beans>

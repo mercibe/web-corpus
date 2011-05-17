@@ -4,12 +4,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.liste.Corpus;
 
-@Transactional
-public interface CorpusManager// extends JpaRepository<Corpus, Long>
+@Transactional(readOnly = true)
+public interface CorpusManager // extends JpaRepository<Corpus, Long>
 {
-    
-    Corpus findOne(long corpusId);
-    Corpus findByNom(String nom);
-    Corpus save(Corpus corpus);
-    void flush();
+
+	Corpus findOne(long corpusId);
+
+	Corpus findByNom(String nom);
+
+	Corpus save(Corpus corpus);
+
+	void flush();
 }
