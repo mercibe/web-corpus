@@ -1,5 +1,6 @@
 package com.servicelibre.corpus.liste;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -36,20 +38,26 @@ public class Liste
 
     @ManyToOne(optional = false)
     Corpus corpus;
+    
+    @Transient
+    File fichierSource;
+    
+    @Transient
+    LigneSplitter ligneSplitter;
 
     public Liste()
     {
         super();
     }
 
-    public Liste(String nom, String description, Corpus corpus)
-    {
-        this.nom = nom;
-        this.description = description;
-        this.corpus = corpus;
-    }
+    public Liste(String nom, String description, Corpus corpus) {
+		super();
+		this.nom = nom;
+		this.description = description;
+		this.corpus = corpus;
+	}
 
-    public long getId()
+	public long getId()
     {
         return id;
     }
@@ -133,5 +141,22 @@ public class Liste
 		
 	}
 
+	public File getFichierSource() {
+		return fichierSource;
+	}
+
+	public void setFichierSource(File fichierSource) {
+		this.fichierSource = fichierSource;
+	}
+
+	public LigneSplitter getLigneSplitter() {
+		return ligneSplitter;
+	}
+
+	public void setLigneSplitter(LigneSplitter ligneSplitter) {
+		this.ligneSplitter = ligneSplitter;
+	}
+
+	
 
 }

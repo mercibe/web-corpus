@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * mot\tlemme\tcatgram\tcatgram_precision\tgenre\tnomre\tro\tnote
+ * 
+ * mot\tlemme\tcatgram\tgenre\tnombre\tcatgram_precision\tro\tnote
+ * 
+ * ro=> true ou false
  * 
  * @author benoitm
  * 
@@ -22,7 +25,7 @@ public class LigneSimpleSplitter implements LigneSplitter
 
         nettoie(cols);
 
-        mots.add(new Mot(cols[0], cols[1], cols[0].equals(cols[1]), cols[2], "", liste));
+        mots.add(new Mot(liste, cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), cols[7]));
         
         return mots;
     }

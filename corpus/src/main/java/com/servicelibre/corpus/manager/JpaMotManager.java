@@ -38,9 +38,9 @@ public class JpaMotManager implements MotManager {
 	}
 
 	@Override
-	public void deleteFromListe(Liste liste) {
+	public int deleteFromListe(Liste liste) {
 		logger.info("Suppression de tous les mots de la liste [{}].", liste);
-		entityManager.createQuery("delete from Mot m where m.liste = ?").setParameter(1, liste).executeUpdate();
+		return entityManager.createQuery("delete from Mot m where m.liste = ?").setParameter(1, liste).executeUpdate();
 	}
 
 }

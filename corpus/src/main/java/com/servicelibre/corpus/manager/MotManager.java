@@ -14,5 +14,5 @@ public interface MotManager {
 
 	Mot save(Mot mot);
 
-	void deleteFromListe(Liste liste);
+	int deleteFromListe(Liste liste);
 }

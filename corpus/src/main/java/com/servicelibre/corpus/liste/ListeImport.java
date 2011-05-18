@@ -25,141 +25,126 @@ public class ListeImport {
 
 	private static ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("listeImport-config.xml", "system-context.xml");
 
-	private Corpus corpus;
-	private Liste liste;
-	private File fichierMots;
-	private LigneSplitter splitter;
+	private List<Liste> listes;
 
 	@Transactional
-	public int execute() {
+	public int execute(Liste currentListe) {
 
-		logger.info("Exécution de l'importation de la liste");
+		logger.info("Exécution de l'importation de la liste {}", currentListe);
 
-		getOrCreateCorpus();
+		getOrCreateCorpus(currentListe);
 
-		if (corpus == null) {
+		if (currentListe.corpus == null) {
 			return -1;
 		}
 
-		getOrCreateListe();
+		currentListe = getOrCreateListe(currentListe);
 
-		if (liste == null) {
+		if (currentListe == null) {
 			return -1;
 		}
 
+		LigneSplitter splitter = currentListe.getLigneSplitter();
+
+		File fichierSource = currentListe.getFichierSource();
 		// Chargement du fichier en liste
-		if (fichierMots != null && fichierMots.exists()) {
+		if (fichierSource != null && fichierSource.exists()) {
 
 			MotManager mm = (MotManager) ctx.getBean("motManager");
 
 			// Suppression des mots qui existeraient déjà pour cette liste
-			mm.deleteFromListe(liste);
+			int deleteCount = mm.deleteFromListe(currentListe);
+			logger.info("{} mots ont été supprimés de la liste {}.", deleteCount, currentListe);
 
 			try {
-				List<String> lignes = FileUtils.readLines(fichierMots);
+				List<String> lignes = FileUtils.readLines(fichierSource);
 
+				int cptMot = 0;
 				for (String ligne : lignes) {
-					List<Mot> mots = splitter.splitLigne(ligne, liste);
+					List<Mot> mots = splitter.splitLigne(ligne, currentListe);
 					for (Mot mot : mots) {
 						mm.save(mot);
+						cptMot++;
 					}
 				}
 
+				logger.info("{} mots ont été ajoutés à la liste {}.", cptMot, currentListe);
+
 			} catch (IOException e) {
-				logger.error("Erreur lors de la lecture de la liste des mots {}", fichierMots, e);
+				logger.error("Erreur lors de la lecture de la liste des mots {}", fichierSource, e);
 			}
 
 		} else {
-			logger.error("Fichier null ou inexistant: {}", fichierMots);
+			logger.error("Fichier null ou inexistant: {}", fichierSource);
 		}
 
 		return 0;
 	}
 
-	private void getOrCreateListe() {
+	private Liste getOrCreateListe(Liste currentListe) {
+
 		ListeManager lm = (ListeManager) ctx.getBean("listeManager");
 
-		if (liste == null) {
+		if (currentListe == null) {
 			logger.error("Pour importer une liste, il faut préciser cette liste!");
-			return;
+			return null;
 		}
 
 		// Est-ce que la liste existe déjà?
-		Liste dbListe = lm.findByNom(liste.getNom());
+		Liste dbListe = lm.findByNom(currentListe.getNom());
 
 		if (dbListe == null) {
-			liste.setCorpus(corpus);
-
-			logger.info("Création de la liste {} dans la base de données.", liste);
-			lm.save(liste);
+			logger.info("Création de la liste {} dans la base de données.", currentListe);
+			lm.save(currentListe);
+			return currentListe;
 		} else {
-			liste = dbListe;
-			logger.info("La liste {} a été trouvé dans la base de données.", liste);
+
+			// récupération des champs transient éventuels
+			dbListe.setFichierSource(currentListe.getFichierSource());
+			dbListe.setLigneSplitter(currentListe.getLigneSplitter());
+
+			logger.info("La liste {} a été trouvé dans la base de données.", currentListe);
+			return dbListe;
 		}
 
 	}
 
-	private void getOrCreateCorpus() {
+	private void getOrCreateCorpus(Liste currentListe) {
 		CorpusManager cm = (CorpusManager) ctx.getBean("corpusManager");
 
-		if (corpus == null) {
+		if (currentListe.corpus == null) {
 			logger.error("Pour importer une liste, il faut préciser son corpus!");
 			return;
 		}
 
 		// Est-ce que le corpus existe-déjà?
-		Corpus dbCorpus = cm.findByNom(corpus.getNom());
+		Corpus dbCorpus = cm.findByNom(currentListe.corpus.getNom());
 
 		if (dbCorpus == null) {
-			cm.save(corpus);
-			logger.info("Création du corpus {} dans la base de données.", corpus);
+			cm.save(currentListe.corpus);
+			logger.info("Création du corpus {} dans la base de données.", currentListe.corpus);
 		} else {
-			corpus = dbCorpus;
-			logger.info("Le corpus {} a été trouvé dans la base de données.", corpus);
+			currentListe.corpus = dbCorpus;
+			logger.info("Le corpus {} a été trouvé dans la base de données.", currentListe.corpus);
 		}
 
-	}
-
-	public Corpus getCorpus() {
-		return corpus;
-	}
-
-	public void setCorpus(Corpus corpus) {
-		this.corpus = corpus;
 	}
 
 	public static void main(String[] args) {
 
 		ListeImport li = (ListeImport) ctx.getBean("listeImport");
 
-		int exitCode = li.execute();
-
-		System.exit(exitCode);
-
+		for (Liste liste : li.getListes()) {
+			li.execute(liste);
+		}
 	}
 
-	public Liste getListe() {
-		return liste;
+	public List<Liste> getListes() {
+		return listes;
 	}
 
-	public void setListe(Liste liste) {
-		this.liste = liste;
-	}
-
-	public File getFichierMots() {
-		return fichierMots;
-	}
-
-	public void setFichierMots(File fichierMots) {
-		this.fichierMots = fichierMots;
-	}
-
-	public LigneSplitter getSplitter() {
-		return splitter;
-	}
-
-	public void setSplitter(LigneSplitter splitter) {
-		this.splitter = splitter;
+	public void setListes(List<Liste> listes) {
+		this.listes = listes;
 	}
 
 }
