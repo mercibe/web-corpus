@@ -8,9 +8,9 @@
 
 	<bean id="listeImport" class="com.servicelibre.corpus.liste.ListeImport">
 		<property name="corpus" ref="corpus" />
-		<property name="liste" ref="listeCyclePrimaire1"/>
+		<property name="liste" ref="listeCyclePrimaire2"/>
 		<property name="splitter" ref="splitter"/>
-		<property name="fichierMots" ref="listeCyclePrimaire1Fichier"/>
+		<property name="fichierMots" ref="listeCyclePrimaire2Fichier"/>
 	</bean>
 
 	<bean id="corpus" class="com.servicelibre.corpus.liste.Corpus">
@@ -32,6 +32,10 @@
 
 
 	<bean id="listeCyclePrimaire1Fichier" class="java.io.File">
+		<constructor-arg value="${java.io.tmpdir}/primaire-1.csv" />
+	</bean>
+	
+	<bean id="listeCyclePrimaire2Fichier" class="java.io.File">
 		<constructor-arg value="${java.io.tmpdir}/primaire-2.csv" />
 	</bean>
 

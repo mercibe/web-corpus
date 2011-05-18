@@ -40,9 +40,11 @@ public class LigneMtlSplitter implements LigneSplitter
     private static final String SÉPARATEUR = "\\t";
 
     @Override
-    public Mot splitLigne(String ligne, Liste liste)
+    public List<Mot> splitLigne(String ligne, Liste liste)
     {
 
+    	List<Mot> mots = new ArrayList<Mot>(1);
+    	
         String[] cols = ligne.split(SÉPARATEUR);
 
         nettoie(cols);
@@ -65,11 +67,33 @@ public class LigneMtlSplitter implements LigneSplitter
         nombre = getNombre(classe);
         catgramPrécision = classe.replace(catgram, "").replace(genre, "").replace(nombre, "").trim();
         
-        // TODO Traiter double graphie (RO ou non) : «goût / *gout» ou «paie / paye» 
+        // TODO Traiter double graphie (RO ou non) : «goût / *gout» ou «paie / paye»
+        int indexOfSlash = lemme.indexOf("/");
+        if(indexOfSlash > 0)
+        {
+        	String graphie2 = graphie.substring(indexOfSlash+1).trim();
+        	if(graphie2.indexOf("*") >= 0){
+        		isRo = true;
+        		graphie2 = graphie2.replace("*","").trim();
+        	}
+        	
+        	String lemme2 = graphie2;
+        	
+        	mots.add(new Mot(liste, graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+        	
+        	
+        	graphie = graphie.substring(0,indexOfSlash).trim();
+        	lemme = graphie;
+        	isRo = false;
+        	mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+        }
+        else
+        {
+        	System.err.println("split simple de " + lemme);
+        	mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+        }
         
-        Mot mot = new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note);
-        
-        return mot;
+        return mots;
     }
 
     private String getNombre(String classe)
@@ -111,20 +135,6 @@ public class LigneMtlSplitter implements LigneSplitter
     private String getCatgram(String classe)
     {
         return classe.substring(0,classe.indexOf(".")+1);
-    }
-
-    @Override
-    public List<Mot> splitLigneMulti(String ligne, Liste liste)
-    {
-        List<Mot> mots = new ArrayList<Mot>(1);
-
-        String[] cols = ligne.split(SÉPARATEUR);
-
-        nettoie(cols);
-
-        mots.add(new Mot(cols[0], cols[1], cols[0] == cols[1], cols[2], "", liste));
-
-        return mots;
     }
 
     /**

@@ -59,7 +59,10 @@ public class ListeImport {
 				List<String> lignes = FileUtils.readLines(fichierMots);
 
 				for (String ligne : lignes) {
-					mm.save(splitter.splitLigne(ligne, liste));
+					List<Mot> mots = splitter.splitLigne(ligne, liste);
+					for (Mot mot : mots) {
+						mm.save(mot);
+					}
 				}
 
 			} catch (IOException e) {
