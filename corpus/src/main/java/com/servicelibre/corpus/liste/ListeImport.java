@@ -7,6 +7,9 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +23,13 @@ import com.servicelibre.corpus.manager.MotManager;
  * @author benoitm
  * 
  */
-public class ListeImport {
+public class ListeImport{
+	
 	private static Logger logger = LoggerFactory.getLogger(ListeImport.class);
 
-	private static ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("listeImport-config.xml", "system-context.xml");
-
 	private List<Liste> listes;
+
+	private ApplicationContext ctx;
 
 	@Transactional
 	public int execute(Liste currentListe) {
@@ -102,7 +106,6 @@ public class ListeImport {
 			// récupération des champs transient éventuels
 			dbListe.setFichierSource(currentListe.getFichierSource());
 			dbListe.setLigneSplitter(currentListe.getLigneSplitter());
-
 			logger.info("La liste {} a été trouvé dans la base de données.", currentListe);
 			return dbListe;
 		}
@@ -130,14 +133,7 @@ public class ListeImport {
 
 	}
 
-	public static void main(String[] args) {
-
-		ListeImport li = (ListeImport) ctx.getBean("listeImport");
-
-		for (Liste liste : li.getListes()) {
-			li.execute(liste);
-		}
-	}
+	
 
 	public List<Liste> getListes() {
 		return listes;
@@ -146,5 +142,11 @@ public class ListeImport {
 	public void setListes(List<Liste> listes) {
 		this.listes = listes;
 	}
+
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.ctx = applicationContext;
+		
+	}
+
 
 }
