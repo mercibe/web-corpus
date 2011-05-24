@@ -64,13 +64,13 @@ public class CatgramsPivot extends CatgramsManager {
 		catgrams.put("ADVERBE", new Catgram("ADVERBE", "adverbe", "adverb", false, "adv."));
 		catgrams.put("NOM_COMMUN", new Catgram("NOM_COMMUN", "nom commun", "commonnoun", false, "n.")); // 38439+
 		catgrams.put("LOCUTION", new Catgram("LOCUTION", "locution", "locution", false, "loc."));
-		catgrams.put("LOCUTION_ADJ", new Catgram("LOCUTION_ADJ", "locution adjectivale", "locution_adj.", false));
-		catgrams.put("LOCUTION_ADV", new Catgram("LOCUTION_ADV", "locution adverbiale", "locution_adv.", false));
-		catgrams.put("LOCUTION_CONJ", new Catgram("LOCUTION_CONJ", "locution conjonctive", "locution_conj.", false));
-		catgrams.put("LOCUTION_INTERJ", new Catgram("LOCUTION_INTERJ", "locution interjective", "locution_interj.", false));
-		catgrams.put("LOCUTION_LATINE", new Catgram("LOCUTION_LATINE", "locution latine", "locution_latine", false));
-		catgrams.put("LOCUTION_PRÉP", new Catgram("LOCUTION_PRÉP", "locution prépositionnelle", "locution_prép.", false));
-		catgrams.put("LOCUTION_VERB", new Catgram("LOCUTION_VERB", "locution verbiale", "locution_verb.", false));
+		catgrams.put("LOCUTION_ADJ", new Catgram("LOCUTION_ADJ", "locution adjectivale", "locution_adj.", false, "loc. adj."));
+		catgrams.put("LOCUTION_ADV", new Catgram("LOCUTION_ADV", "locution adverbiale", "locution_adv.", false, "loc. adv."));
+		catgrams.put("LOCUTION_CONJ", new Catgram("LOCUTION_CONJ", "locution conjonctive", "locution_conj.", false, "loc. conj."));
+		catgrams.put("LOCUTION_INTERJ", new Catgram("LOCUTION_INTERJ", "locution interjective", "locution_interj.", false, "loc. interj."));
+		catgrams.put("LOCUTION_LATINE", new Catgram("LOCUTION_LATINE", "locution latine", "locution_latine", false, "loc. lat."));
+		catgrams.put("LOCUTION_PRÉP", new Catgram("LOCUTION_PRÉP", "locution prépositionnelle", "locution_prép.", false, "loc. prép."));
+		catgrams.put("LOCUTION_VERB", new Catgram("LOCUTION_VERB", "locution verbiale", "locution_verb.", false, "loc. verb."));
 		catgrams.put("PHRASÉOLOGISME", new Catgram("PHRASÉOLOGISME", "phraséologisme", "phraséologisme", false));
 		catgrams.put("UNITÉ_COMPLEXE", new Catgram("UNITÉ_COMPLEXE", "unité complexe", "unité_complexe", false));
 		catgrams.put("MOT_LATIN", new Catgram("MOT_LATIN", "mot latin", "mot_latin", false)); // confer, exit, pax romana (3)

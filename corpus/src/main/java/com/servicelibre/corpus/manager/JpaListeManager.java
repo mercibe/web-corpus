@@ -1,5 +1,8 @@
 package com.servicelibre.corpus.manager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -9,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.liste.Corpus;
 import com.servicelibre.corpus.liste.Liste;
 
 @Repository
@@ -50,6 +54,27 @@ public class JpaListeManager implements ListeManager
             logger.warn("La liste du nom [{}] est introuvable dans la table des listes. ({})", nom, e.getMessage());
         }
         return liste;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Liste> findByCorpusId(long corpusId)
+    {
+        List<Liste> listes = new ArrayList<Liste>();
+        
+        try
+        {
+            Corpus c = new Corpus();
+            c.setId((int) corpusId);
+            listes = (List<Liste>) entityManager.createQuery("select l from Liste l where l.corpus = ?").setParameter(1, c).getResultList();
+            System.err.println("listes = " + listes);
+        }
+        catch (NoResultException e)
+        {
+            logger.warn("Aucune liste pour le corpus [{}]. ({})", corpusId, e.getMessage());
+        }        
+        
+        return listes;
     }
 
 }
