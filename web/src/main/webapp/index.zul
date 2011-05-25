@@ -1,0 +1,56 @@
+<?page title="Web corpus" contentType="text/html;charset=UTF-8"?>
+
+<?link rel="stylesheet" type="text/css" href="/css/corpus.css"?>
+
+<zk>
+
+	<!-- Pour empêcher les effets sur combobox -->
+	<script defer="true"><![CDATA[
+		zul.inp.Combobox.prototype.slideDown_ = function(pp) {
+			pp.style.visibility = "visible";
+			pp.style.display = "block";
+		};
+		zul.inp.Bandbox.prototype.slideDown_ = zul.inp.Combobox.prototype.slideDown_;
+	]]></script>
+
+<window border="none" width="100%" height="100%" apply="com.servicelibre.zk.controller.ListeCtrl">
+
+	<label value="Corpus de littérature jeunesse"/>
+	<tabbox>
+	<tabs >
+		<tab label="Listes" />
+		<tab label="Contextes" />
+	</tabs>
+	<tabpanels>
+		<tabpanel>
+			<combobox id="liste" readonly="true" >
+			   <comboitem id="" label="" description=""/>
+			</combobox>
+		
+			<combobox id="gp" readonly="true" width="100px" >
+				<attribute name="onCreate">
+					gp.setSelectedIndex(0);
+				</attribute>
+				<comboitem label="graphème" value="g"/>
+				<comboitem label="phonème" value="p"/>
+			</combobox>
+		
+			<combobox id="scope" readonly="true" width="120px" >
+			<attribute name="onCreate">
+				scope.setSelectedIndex(0);
+			</attribute>
+				<comboitem label="commence par" value="a*"/>
+				<comboitem label="se termine par" value="*a"/>
+				<comboitem label="contient" value="*a*"/>
+			</combobox>
+			<bandbox id="cherche" ><bandpopup> </bandpopup></bandbox>
+		
+		
+		</tabpanel>
+		<tabpanel></tabpanel>
+	</tabpanels>
+</tabbox>
+
+   
+</window>
+</zk>
