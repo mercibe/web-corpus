@@ -19,7 +19,6 @@
 			<incomplete>false</incomplete>
 			<configs>
 				<config>src/main/resources/application-context.xml</config>
-				<config>src/main/resources/system-context.xml</config>
 			</configs>
 		</configSet>
 		<configSet>
