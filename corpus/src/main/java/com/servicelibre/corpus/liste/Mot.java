@@ -2,6 +2,7 @@ package com.servicelibre.corpus.liste;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -22,9 +23,11 @@ public class Mot {
 	String mot;
 
 	@Column
+	public
 	String lemme;
 
 	@Column
+	public
 	boolean isLemme;
 
 	@Column(nullable = false)
@@ -91,5 +94,71 @@ public class Mot {
 			liste.internalAjouteMot(this);
 		}
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getMot() {
+		return mot;
+	}
+
+	public void setMot(String mot) {
+		this.mot = mot;
+	}
+
+	public String getCatgram() {
+		return catgram;
+	}
+
+	public void setCatgram(String catgram) {
+		this.catgram = catgram;
+	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getCatgramPrésicion() {
+		return catgramPrésicion;
+	}
+
+	public void setCatgramPrésicion(String catgramPrésicion) {
+		this.catgramPrésicion = catgramPrésicion;
+	}
+
+	public boolean isRo() {
+		return ro;
+	}
+
+	public void setRo(boolean ro) {
+		this.ro = ro;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+	
+	
 
 }

@@ -30,7 +30,7 @@
     <!-- Mapping de la servlet Spring MVC avec une URL -->
     <servlet-mapping>
     	<servlet-name>webcorpus</servlet-name>
-    	<url-pattern>/</url-pattern>
+    	<url-pattern>/corpus/*</url-pattern>
     </servlet-mapping>
     
 </web-app>
