@@ -21,13 +21,13 @@ public class MotController {
 
 	@RequestMapping(value = "/mot/tous", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody MotJqgrid getMots() {
+	public @ResponseBody
+	List<Mot> getMots() {
 
 		List<Mot> mots = motManager.findAll();
 
 		System.err.println("Trouvé " + mots.size() + " mots.");
 
-		return new MotJqgrid(0, 10, mots.size(), mots);
+		return mots;
 	}
-
 }

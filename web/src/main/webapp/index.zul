@@ -2,7 +2,28 @@
 
 <?link rel="stylesheet" type="text/css" href="/css/corpus.css"?>
 
+<?variable-resolver class="com.servicelibre.zk.controller.ListeCtrl"?>
+
 <zk>
+
+    <style>
+    .z-label { 
+      display: block; 
+    } 
+    tr.z-row td.z-row-inner { 
+      padding: 2px 5px; 
+    } 
+    .z-row-cnt, .z-column-cnt {
+      text-align: center; 
+    } 
+    .category-center .z-auxheader-cnt { 
+      text-align: center; 
+    }
+    .footer_right .z-footer-cnt {
+          text-align: right;
+          font-weight: bold; 
+        }
+    </style>
 
 	<!-- Pour empêcher les effets sur combobox -->
 	<script defer="true"><![CDATA[
@@ -23,28 +44,50 @@
 	</tabs>
 	<tabpanels>
 		<tabpanel>
-			<combobox id="liste" readonly="true" >
-			   <comboitem id="" label="" description=""/>
+		<hbox  style="margin-top:10px;">
+			<combobox id="liste" readonly="true">
+				<attribute name="onCreate">
+					liste.setSelectedIndex(0);
+				</attribute>
+			   <comboitem  forEach="${listes}" id="${each.id}" label="${each.nom}" value="${each.id}" description="${each.description}"/>
 			</combobox>
 		
 			<combobox id="gp" readonly="true" width="100px" >
 				<attribute name="onCreate">
 					gp.setSelectedIndex(0);
 				</attribute>
-				<comboitem label="graphème" value="g"/>
-				<comboitem label="phonème" value="p"/>
+				<comboitem label="graphèmes" value="g"/>
+				<comboitem label="phonèmes" value="p"/>
 			</combobox>
 		
-			<combobox id="scope" readonly="true" width="120px" >
+			<combobox id="condition" readonly="true" width="120px" >
 			<attribute name="onCreate">
-				scope.setSelectedIndex(0);
+				condition.setSelectedIndex(0);
 			</attribute>
-				<comboitem label="commence par" value="a*"/>
-				<comboitem label="se termine par" value="*a"/>
-				<comboitem label="contient" value="*a*"/>
+				<comboitem label="commencent par" value="a*"/>
+				<comboitem label="se terminent par" value="*a"/>
+				<comboitem label="contiennent" value="*a*"/>
 			</combobox>
-			<bandbox id="cherche" ><bandpopup> </bandpopup></bandbox>
+			<bandbox id="cherche" >
+			</bandbox>
+		</hbox>
 		
+		<vbox style="margin-top:20px;" width="50%">
+			<grid id="mots" mold="paging" pageSize="1" >
+<!-- 			pagingPosition="both"> -->
+				<columns>
+					<column hflex="4" label="Mot" sort="auto(1)"/>
+					<column hflex="1" label="Catégorie" sort="auto(2)"/>
+					<column hflex="1" label="Nombre" sort="auto(3)"/>
+					<column hflex="1" label="Genre" sort="auto(4)"/>
+					<column hflex="1" label="Précision" sort="auto(5)"/>
+				</columns>
+				<rows>
+					<row><cell>a</cell><cell>a</cell><cell>d</cell><cell>e</cell><cell>j</cell></row>
+					<row><cell>b</cell><cell>b</cell><cell>c</cell><cell>f</cell><cell>i</cell></row>
+				</rows>
+			</grid>
+		</vbox>
 		
 		</tabpanel>
 		<tabpanel></tabpanel>
