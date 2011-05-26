@@ -35,7 +35,7 @@ public class ListeManagerTest implements ApplicationContextAware {
 	CorpusManager cm;
 
 	@Autowired
-	ListeImport li;
+	ListeImport listeImport;
 
 	@Autowired
 	Liste listeTest1;
@@ -49,10 +49,10 @@ public class ListeManagerTest implements ApplicationContextAware {
 	@Transactional
 	@Rollback(value = false)
 	public void createListeDBNoRollabck() {
-		li.setApplicationContext(ctx);
+		listeImport.setApplicationContext(ctx);
 
-		for (Liste liste : li.getListes()) {
-			li.execute(liste);
+		for (Liste liste : listeImport.getListes()) {
+			listeImport.execute(liste);
 		}
 	}
 

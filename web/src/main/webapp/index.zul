@@ -4,7 +4,11 @@
 
 <?variable-resolver class="com.servicelibre.zk.controller.ListeCtrl"?>
 
+
 <zk>
+
+<!-- http://books.zkoss.org/wiki/ZK_Developer's_Reference/Performance_Tips/Listbox,_Grid_and_Tree_for_Huge_Data/Turn_on_Render_on_Demand -->
+<custom-attributes org.zkoss.zul.grid.rod="true" scope="page"/>
 
     <style>
     .z-label { 
@@ -46,49 +50,38 @@
 		<tabpanel>
 		<hbox  style="margin-top:10px;">
 			<combobox id="liste" readonly="true">
-				<attribute name="onCreate">
-					liste.setSelectedIndex(0);
-				</attribute>
 			   <comboitem  forEach="${listes}" id="${each.id}" label="${each.nom}" value="${each.id}" description="${each.description}"/>
 			</combobox>
 		
 			<combobox id="gp" readonly="true" width="100px" >
-				<attribute name="onCreate">
-					gp.setSelectedIndex(0);
-				</attribute>
 				<comboitem label="graphèmes" value="g"/>
 				<comboitem label="phonèmes" value="p"/>
 			</combobox>
 		
-			<combobox id="condition" readonly="true" width="120px" >
-			<attribute name="onCreate">
-				condition.setSelectedIndex(0);
-			</attribute>
-				<comboitem label="commencent par" value="a*"/>
-				<comboitem label="se terminent par" value="*a"/>
-				<comboitem label="contiennent" value="*a*"/>
+			<combobox id="condition" readonly="true" width="185px" >
+				<comboitem label="commencent par" value="MOT_COMMENCE_PAR"/>
+				<comboitem label="se terminent par" value="MOT_FINIT_PAR"/>
+				<comboitem label="contiennent" value="MOT_CONTIENT"/>
+				<comboitem label="correspondent exactement à" value="MOT_ENTIER"/>
 			</combobox>
 			<bandbox id="cherche" >
 			</bandbox>
 		</hbox>
 		
-		<vbox style="margin-top:20px;" width="50%">
-			<grid id="mots" mold="paging" pageSize="1" >
-<!-- 			pagingPosition="both"> -->
+		<vbox style="margin-top:20px;" width="43%">
+			<grid id="motsGrid" mold="paging" pageSize="25" emptyMessage="Aucun mot trouvé." height="660px">
+<!-- 			pagingPosition="both" sizedByContent="true"> -->
 				<columns>
-					<column hflex="4" label="Mot" sort="auto(1)"/>
-					<column hflex="1" label="Catégorie" sort="auto(2)"/>
-					<column hflex="1" label="Nombre" sort="auto(3)"/>
-					<column hflex="1" label="Genre" sort="auto(4)"/>
-					<column hflex="1" label="Précision" sort="auto(5)"/>
+					<column hflex="4" label="Mot"  align="left" />
+					<column hflex="1" label="Catégorie" align="left"/>
+					<column hflex="1" label="Genre" />
+					<column hflex="1" label="Nombre" align="right"/>
+					<column hflex="1" label="Précision" />
 				</columns>
-				<rows>
-					<row><cell>a</cell><cell>a</cell><cell>d</cell><cell>e</cell><cell>j</cell></row>
-					<row><cell>b</cell><cell>b</cell><cell>c</cell><cell>f</cell><cell>i</cell></row>
-				</rows>
+				<rows/>
 			</grid>
 		</vbox>
-		
+				
 		</tabpanel>
 		<tabpanel></tabpanel>
 	</tabpanels>

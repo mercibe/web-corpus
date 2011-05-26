@@ -67,7 +67,6 @@ public class JpaListeManager implements ListeManager
             Corpus c = new Corpus();
             c.setId((int) corpusId);
             listes = (List<Liste>) entityManager.createQuery("select l from Liste l where l.corpus = ?").setParameter(1, c).getResultList();
-            System.err.println("listes = " + listes);
         }
         catch (NoResultException e)
         {

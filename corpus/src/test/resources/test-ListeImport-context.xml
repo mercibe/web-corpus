@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<bean id="listeImport" class="com.servicelibre.corpus.liste.ListeImport">
+		<property name="listes" ref="listes" />
+	</bean>
+
+	<bean id="corpus" class="com.servicelibre.corpus.liste.Corpus">
+		<constructor-arg value="corpus-test" />
+		<constructor-arg value="Corpus de test"></constructor-arg>
+	</bean>
+
+	<util:list id="listes" list-class="java.util.ArrayList"
+		value-type="com.servicelibre.corpus.liste.Liste">
+		<ref bean="listeTest1" />
+		<ref bean="listeTest2" />
+	</util:list>
+	
+	<!-- Listes -->
+	<bean id="listeTest1" class="com.servicelibre.corpus.liste.Liste">
+		<constructor-arg value="liste-test-1" />
+		<constructor-arg value="Liste de test 1" />
+		<constructor-arg ref="corpus" />
+		<property name="fichierSource" ref="fichierMots1" />
+		<property name="ligneSplitter" ref="splitter" />
+	</bean>
+
+	<bean id="listeTest2" class="com.servicelibre.corpus.liste.Liste">
+		<constructor-arg value="liste-test-2" />
+		<constructor-arg value="Liste de test 2" />
+		<constructor-arg ref="corpus" />
+		<property name="fichierSource" ref="fichierMots2" />
+		<property name="ligneSplitter" ref="splitter" />
+	</bean>
+
+	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneSimpleSplitter" />
+
+
+	<!-- Instanciation de File depuis le Classpath -->
+	<bean id="fichierMots1Resource" class="org.springframework.core.io.ClassPathResource">
+		<constructor-arg value="exemple-liste-mots1.csv" />
+	</bean>
+	<bean id="fichierMots1"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="fichierMots1Resource" />
+		<property name="targetMethod" value="getFile" />
+	</bean>
+
+	<bean id="fichierMots2Resource" class="org.springframework.core.io.ClassPathResource">
+		<constructor-arg value="exemple-liste-mots2.csv" />
+	</bean>
+	<bean id="fichierMots2"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="fichierMots2Resource" />
+		<property name="targetMethod" value="getFile" />
+	</bean>
+	<!--${properties} -->
+	<context:property-placeholder />
+
+
+</beans>

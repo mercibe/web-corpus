@@ -13,7 +13,7 @@ import javax.persistence.UniqueConstraint;
 public class Mot {
 	@Id
 	@GeneratedValue
-	private int id;
+	private long id;
 
 	@ManyToOne(optional = false)
 	private Liste liste;
@@ -75,12 +75,17 @@ public class Mot {
         this.note = note;
     }
 
-    @Override
-	public String toString() {
-		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", catgram=" + catgram + ", note=" + note + "]";
-	}
+	
 
-	public Liste getListe() {
+	@Override
+    public String toString()
+    {
+        return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", catgram=" + catgram
+                + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro
+                + ", note=" + note + "]";
+    }
+
+    public Liste getListe() {
 		return liste;
 	}
 
@@ -94,11 +99,11 @@ public class Mot {
 		}
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

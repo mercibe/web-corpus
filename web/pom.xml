@@ -184,6 +184,9 @@
 				<version>6.1.24</version>
 				<configuration>
 					<contextPath>/</contextPath>
+					<systemProperties>
+						<systemProperty><name>corpus.log.dir</name><value>${basedir}/target</value></systemProperty>
+					</systemProperties>
 				</configuration>
 			</plugin>
 
