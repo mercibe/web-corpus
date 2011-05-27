@@ -5,14 +5,14 @@ import java.util.Map;
 
 public class FiltreMot
 {
-    public enum cleFiltre
+    public enum CléFiltre
     {
-        corpus, liste
+        corpus, liste, catgram, genre
     };
     
-    Map<cleFiltre, String[]> filtres= new HashMap<FiltreMot.cleFiltre, String[]>();
+    Map<CléFiltre, Object[]> filtres= new HashMap<FiltreMot.CléFiltre, Object[]>();
 
-    public void addFiltre(cleFiltre clé, String[] valeurs)
+    public void addFiltre(CléFiltre clé, Object[] valeurs)
     {
         filtres.put(clé, valeurs);
     }
@@ -22,11 +22,11 @@ public class FiltreMot
     {
         StringBuilder sb = new StringBuilder("FiltreMot [\n");
         
-        for (FiltreMot.cleFiltre clé : filtres.keySet())
+        for (FiltreMot.CléFiltre clé : filtres.keySet())
         {
             sb.append(clé).append(": ");
             String séparateur = "";
-            for(String val : filtres.get(clé)) {
+            for(Object val : filtres.get(clé)) {
                 sb.append(séparateur).append(val);
                 séparateur = " OU ";
             }
@@ -36,6 +36,10 @@ public class FiltreMot
         
         return sb.toString();
     }
+
+	public Map<CléFiltre, Object[]> getFiltres() {
+		return filtres;
+	}
     
     
 }

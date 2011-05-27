@@ -1,8 +1,8 @@
 package mots;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.liste.Mot;
+import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
 import com.servicelibre.corpus.manager.MotManager;
 
 @ContextConfiguration
@@ -49,6 +51,7 @@ public class MotManagerTest implements ApplicationContextAware
     }
     
     @Test
+    @Ignore
     public void motManagerSimpleTest() {
         
         Mot mot = motManager.findOne((long)1);
@@ -62,6 +65,7 @@ public class MotManagerTest implements ApplicationContextAware
     }
     
     @Test
+    @Ignore
     public void motManagerGraphieTest() {
         
         List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.MOT_ENTIER);
@@ -77,11 +81,24 @@ public class MotManagerTest implements ApplicationContextAware
         
         mots = motManager.findByGraphie("ari", MotManager.Condition.MOT_CONTIENT);        
         System.out.println(mots);
-
-        
         
     }
     
+    @Test
+    public void motManagerFilterTest() {
+    	FiltreMot f = new FiltreMot();
+    	
+    	f.addFiltre(CléFiltre.liste, new Long[]{1L});
+    	f.addFiltre(CléFiltre.catgram, new String[]{"n.", "adv."});
+    	f.addFiltre(CléFiltre.genre, new String[]{"f."});
+    	
+    	String graphie = "a";
+    	
+		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.MOT_COMMENCE_PAR, f);
+    	System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.MOT_COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+    	assertEquals(152, mots.size());
+    	
+    }
     
 
     @Override

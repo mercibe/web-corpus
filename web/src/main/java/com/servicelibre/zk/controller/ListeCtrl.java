@@ -133,9 +133,10 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         FiltreMot filtres = new FiltreMot();
         
         // Récupération de la liste active
-        String listeActive = liste.getItemAtIndex(liste.getSelectedIndex()).getValue().toString();
+        Long listeActive = (Long)liste.getItemAtIndex(liste.getSelectedIndex()).getValue();
         
-        filtres.addFiltre(FiltreMot.cleFiltre.liste, new String[]{listeActive});
+        filtres.addFiltre(FiltreMot.CléFiltre.liste, new Long[]{listeActive});
+        
         
         return filtres;
     }

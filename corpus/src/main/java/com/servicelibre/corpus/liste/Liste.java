@@ -57,6 +57,10 @@ public class Liste
 		this.corpus = corpus;
 	}
 
+	public Liste(long id) {
+		this.id = id;
+	}
+
 	public long getId()
     {
         return id;
