@@ -32,7 +32,7 @@
 	<!-- Mapping de la servlet Spring MVC avec une URL -->
 	<servlet-mapping>
 		<servlet-name>webcorpus</servlet-name>
-		<url-pattern>/corpus/*</url-pattern>
+		<url-pattern>/corpus-srv/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -53,6 +53,11 @@
 	<servlet-mapping>
 		<servlet-name>zkLoader</servlet-name>
 		<url-pattern>*.zul</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>zkLoader</servlet-name>
+		<url-pattern>/corpus/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

@@ -1,6 +1,7 @@
 SET storage_engine=INNODB;
 CREATE database corpus;
-ALTER DATABASE corpus DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+ALTER DATABASE corpus DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+# ALTER DATABASE corpus DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 
 USE corpus;
 CREATE USER 'corpus'@'localhost' IDENTIFIED BY 'corpus';

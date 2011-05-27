@@ -133,6 +133,26 @@
 							<Built-on>${timestamp}</Built-on>
 						</manifestEntries>
 					</archive>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp/WEB-INF</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF</targetPath>
+							<includes>
+								<!--
+									Inclure tous les fichiers qui contiennent des références à des
+									propriétés définies dans le pom.xml et qui doivent être
+									substituées par leur valeur
+								-->
+								<include>application-context.xml</include>
+								<include>system-context.xml</include>
+								<include>webcorpus-servlet-context.xml</include>
+								<include>application-security.xml</include>
+								<include>${pom.webxml.spring-security.users}</include>
+								<include>web.xml</include>
+							</includes>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 
@@ -183,10 +203,18 @@
 				<artifactId>maven-jetty-plugin</artifactId>
 				<version>6.1.24</version>
 				<configuration>
-					<contextPath>/</contextPath>
 					<systemProperties>
-						<systemProperty><name>corpus.log.dir</name><value>${basedir}/target</value></systemProperty>
+						<systemProperty>
+							<name>corpus.log.dir</name>
+							<value>${basedir}/target</value>
+						</systemProperty>
 					</systemProperties>
+					<webAppConfig>
+						<!-- overridder le contexte par défaut -->
+						<contextPath>/corpus</contextPath>
+						<defaultsDescriptor>src/main/webapp/WEB-INF/webdefault.xml</defaultsDescriptor>
+						<jettyEnvXmlFile>src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXmlFile>
+					</webAppConfig>
 				</configuration>
 			</plugin>
 
@@ -329,5 +357,24 @@
 
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<pom.jpa.showSql>true</pom.jpa.showSql>
+				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-memory.xml</pom.webxml.spring-security.users>				
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<pom.jpa.showSql>false</pom.jpa.showSql>
+				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-jdbc.xml</pom.webxml.spring-security.users>
+			</properties>
+		</profile>		
+	</profiles>
 
 </project>
