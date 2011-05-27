@@ -8,13 +8,15 @@
     <!--  You need to specify resource-ref="true" or prepend "java:comp/env/" (as you did) to make such a JNDI lookup work according to J2EE environment naming conventions. -->
     <Arg>jdbc/corpus</Arg>
     <Arg>
-     <New class="org.apache.commons.dbcp.BasicDataSource">
-                 <Set name="driverClassName">com.mysql.jdbc.Driver</Set>
-                 <Set name="url">jdbc:mysql://localhost:3306/corpus?autoReconnect=true</Set>
-                 <Set name="username">corpus</Set>
-                 <Set name="password">corpus</Set>
-                 <Set name="InitialSize">5</Set>  
-                 <Set name="MaxActive">10</Set>
+    
+<!--          <New class="org.apache.commons.dbcp.BasicDataSource"> -->
+<!--                  <Set name="driverClassName">com.mysql.jdbc.Driver</Set> -->
+<!--                  <Set name="url">jdbc:mysql://localhost:3306/corpus?autoReconnect=true</Set> -->
+<!--                  <Set name="username">corpus</Set> -->
+<!--                  <Set name="password">corpus</Set> -->
+<!--                  <Set name="InitialSize">5</Set>   -->
+<!--                  <Set name="MaxActive">10</Set> -->
+
                  <!-- 
                 Q: What if the pooled Connections are com.mysql.jdbc.Connection instances
 				This works perfectly well if you are using a GenericObjectPool that has 'testOnBorrow' set. 
@@ -25,6 +27,14 @@
 				but that you can run the query again and the Connection will try to reconnect on this second try. 
 				As DBCP does not do second tries on the same Connection instance, the 'autoReconnect' case will not arise. 
 				-->
+				
+     <New class="org.apache.commons.dbcp.BasicDataSource">
+                 <Set name="driverClassName">org.postgresql.Driver</Set>
+                 <Set name="url">jjdbc:postgresql:corpus:5432</Set>
+                 <Set name="username">corpus</Set>
+                 <Set name="password">corpus</Set>
+                 <Set name="InitialSize">5</Set>  
+                 <Set name="MaxActive">10</Set>
                  <Set name="validationQuery">SELECT 1</Set>
                  <Set name="testOnBorrow">true</Set>
                  <Set name="testOnReturn">false</Set> 

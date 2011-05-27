@@ -15,7 +15,7 @@
 		<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="false" />
 				<property name="generateDdl" value="true" />
-				<property name="database" value="MYSQL"></property>
+				<property name="database" value="POSTGRESQL"/>
 			</bean>
 		</property>
 		<property name="jpaProperties">
@@ -25,12 +25,20 @@
 		</property>
 	</bean>
 
+<!-- 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+<!-- 		destroy-method="close"> -->
+<!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+<!-- 		<property name="username" value="corpus" /> -->
+<!-- 		<property name="password" value="corpus" /> -->
+<!-- 		<property name="url" value="jdbc:mysql://localhost/corpus"></property> -->
+<!-- 	</bean> -->
+	
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="driverClassName" value="org.postgresql.Driver" />
 		<property name="username" value="corpus" />
 		<property name="password" value="corpus" />
-		<property name="url" value="jdbc:mysql://localhost/corpus"></property>
+		<property name="url" value="jdbc:postgresql:corpus:5432"></property>
 	</bean>
 
 </beans>

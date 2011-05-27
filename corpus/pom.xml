@@ -361,6 +361,14 @@
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 
+		<!-- FIXME remonter numéro de version dans parent servicelibre -->
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.0-801.jdbc3</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -403,16 +411,16 @@
 			<scope>compile</scope>
 		</dependency>
 
-<!--    <dependency> -->
-<!--       <groupId>org.eclipse.persistence</groupId> -->
-<!--       <artifactId>eclipselink</artifactId> -->
-<!--       <version>2.0.1</version> -->
-<!-- </dependency> -->
-<!-- <dependency> -->
-<!--     <groupId>org.apache.openjpa</groupId> -->
-<!--     <artifactId>openjpa</artifactId> -->
-<!--     <version>2.1.0</version> -->
-<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.eclipse.persistence</groupId> -->
+		<!-- <artifactId>eclipselink</artifactId> -->
+		<!-- <version>2.0.1</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.apache.openjpa</groupId> -->
+		<!-- <artifactId>openjpa</artifactId> -->
+		<!-- <version>2.1.0</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.springframework</groupId>

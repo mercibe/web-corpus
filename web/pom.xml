@@ -355,6 +355,14 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 
+		<!-- FIXME remonter numéro de version dans parent servicelibre -->
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.0-801.jdbc3</version>
+			<scope>compile</scope>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>
