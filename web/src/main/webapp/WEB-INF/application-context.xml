@@ -10,10 +10,17 @@
 
 	<!-- Chargement des listes via JPA -->
 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" />
-<!-- 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.CorpusManager" /> -->
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
-<!-- 	<bean id="listeManager" class="com.servicelibre.corpus.manager.ListeManager" /> -->
 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
+
+	<bean id="listeMotFiltre" class="com.servicelibre.zk.controller.ListeMotFiltre"
+		init-method="init">
+		<property name="corpusId" ref="corpusId"/>
+	</bean>
+
+	<bean id="corpusId" class="java.lang.Long">
+		<constructor-arg value="1"/>
+	</bean>
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -29,9 +36,9 @@
 		des exceptions, etc.) -->
 	<context:annotation-config />
 
-	<!-- Spring-data: pour activer le support des Repository par JPA et scanner tous les 
-		package sous com.servicelibre.corpus.manager qui contiennent des interfaces 
-		qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
-<!-- 	<jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
+	<!-- Spring-data: pour activer le support des Repository par JPA et scanner 
+		tous les package sous com.servicelibre.corpus.manager qui contiennent des 
+		interfaces qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
+	<!-- <jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
 
 </beans>

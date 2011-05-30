@@ -6,7 +6,7 @@
 
 
 	<!-- Importation de la configuration de l'application -->
-	<import resource="classpath:application-context.xml" />
+	<import resource="application-context.xml" />
 
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

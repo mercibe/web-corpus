@@ -2,7 +2,10 @@ package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
@@ -10,12 +13,14 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
+import org.zkoss.zul.SimpleListModel;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.liste.Mot;
@@ -34,14 +39,19 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     private static final int CORPUS_ID_PAR_DÉFAUT = 1;
     
-    Combobox liste; //autowire car même type/ID que le composant dans la page ZUL
+    
     Combobox gp; //autowire car même type/ID que le composant dans la page ZUL
     Combobox condition; //autowire car même type/ID que le composant dans la page ZUL
+    
     Bandbox cherche; //autowire car même type/ID que le composant dans la page ZUL
     Grid motsGrid; //autowire car même type/ID que le composant dans la page ZUL
+    
+    Combobox nomFiltre;
+    Combobox valeurFiltre;
 
     ListeManager listeManager = ServiceLocator.getListeManager();
     MotManager motManager = ServiceLocator.getMotManager();
+    ListeMotFiltre filtresManager = ServiceLocator.getListeMotFiltre();
 
     private static final long serialVersionUID = 779679285074159073L;
 
@@ -71,6 +81,19 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         chercheEtAfficheMot();
     }
+    
+    public void onChange$nomFiltre(Event event)
+    {
+        System.err.println("Remplir les valeurs pour " + nomFiltre.getValue());
+        
+        // Vider la liste des valeurs
+        List<DefaultKeyValue> filtreValeurs = filtresManager.getFiltreValeurs(nomFiltre.getValue());
+        //FIXME !
+        valeurFiltre.setModel(new SimpleListModel(filtreValeurs));
+        
+    }
+    
+    
 
     /**
      * Permet d'associer dynamiquement le contenu d'un composant via variable
@@ -133,9 +156,9 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         FiltreMot filtres = new FiltreMot();
         
         // Récupération de la liste active
-        Long listeActive = (Long)liste.getItemAtIndex(liste.getSelectedIndex()).getValue();
-        
-        filtres.addFiltre(FiltreMot.CléFiltre.liste, new Long[]{listeActive});
+//        Long listeActive = (Long)liste.getItemAtIndex(liste.getSelectedIndex()).getValue();
+//        
+//        filtres.addFiltre(FiltreMot.CléFiltre.liste, new Long[]{listeActive});
         
         
         return filtres;
@@ -150,7 +173,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         StringBuilder desc = new StringBuilder();
 
-        desc.append("Rechercher tous les ").append(gp.getValue()).append(" de la liste « ").append(liste.getValue()).append(" »");
+        desc.append("Rechercher tous les ").append(gp.getValue()).append(" de la liste « ").append("TODO:liste des listes").append(" »");
 
         String aChercher = cherche.getValue().trim();
 
@@ -167,10 +190,20 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         super.doAfterCompose(comp);
         
-        liste.setSelectedIndex(0);
         gp.setSelectedIndex(0);
+        
         condition.setSelectedIndex(0);
-
+        
+        
+        // Initialisation des filtres (noms)
+        Set<String> filtreNoms = filtresManager.getFiltreNoms();
+        for (String filtre : filtreNoms)
+        {
+            System.err.println("filtre: " + filtre);
+            nomFiltre.appendItem(filtre);
+        }
+        
+        
         motsGrid.setModel(new ListModelList(getMotsRecherchés()));
         
         motsGrid.setRowRenderer(new RowRenderer()
@@ -181,11 +214,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
             {
                 Mot mot = (Mot) model;
 
-//                Cell motCell = new Cell();
-//                motCell.setAlign("left");
-//                motCell.appendChild(new Label(mot.getMot()));
-//                row.appendChild(motCell);
-                //System.err.println(mot);
                 row.appendChild(new Label(mot.getMot()));
                 row.appendChild(new Label(mot.getCatgram()));
                 row.appendChild(new Label(mot.getGenre()));
@@ -194,6 +222,11 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
             }
         });
+        
+        
+        
+        //valeurFiltre.
+        
     }
 
 }

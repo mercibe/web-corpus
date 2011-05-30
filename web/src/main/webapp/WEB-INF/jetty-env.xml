@@ -30,7 +30,7 @@
 				
      <New class="org.apache.commons.dbcp.BasicDataSource">
                  <Set name="driverClassName">org.postgresql.Driver</Set>
-                 <Set name="url">jjdbc:postgresql:corpus:5432</Set>
+                 <Set name="url">jdbc:postgresql:corpus:5432</Set>
                  <Set name="username">corpus</Set>
                  <Set name="password">corpus</Set>
                  <Set name="InitialSize">5</Set>  

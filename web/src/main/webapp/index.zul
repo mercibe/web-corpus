@@ -48,40 +48,53 @@
 	</tabs>
 	<tabpanels>
 		<tabpanel>
-		<hbox  style="margin-top:10px;">
-			<combobox id="liste" readonly="true">
-			   <comboitem  forEach="${listes}" id="${each.id}" label="${each.nom}" value="${each.id}" description="${each.description}"/>
-			</combobox>
-		
-			<combobox id="gp" readonly="true" width="100px" >
-				<comboitem label="graphèmes" value="g"/>
-				<comboitem label="phonèmes" value="p"/>
-			</combobox>
-		
-			<combobox id="condition" readonly="true" width="185px" >
-				<comboitem label="commencent par" value="MOT_COMMENCE_PAR"/>
-				<comboitem label="se terminent par" value="MOT_FINIT_PAR"/>
-				<comboitem label="contiennent" value="MOT_CONTIENT"/>
-				<comboitem label="correspondent exactement à" value="MOT_ENTIER"/>
-			</combobox>
-			<bandbox id="cherche" >
-			</bandbox>
+
+		<groupbox>
+			<caption>Recherche</caption>
+			<hbox style="margin-top:10px;">
+
+				<combobox id="gp" readonly="true" width="100px">
+					<comboitem label="graphèmes" value="g" />
+					<comboitem label="phonèmes" value="p" />
+				</combobox>
+
+				<combobox id="condition" readonly="true"
+					width="185px">
+					<comboitem label="commencent par"
+						value="MOT_COMMENCE_PAR" />
+					<comboitem label="se terminent par"
+						value="MOT_FINIT_PAR" />
+					<comboitem label="contiennent" value="MOT_CONTIENT" />
+					<comboitem label="correspondent exactement à"
+						value="MOT_ENTIER" />
+				</combobox>
+				<bandbox id="cherche"></bandbox>
+
+			</hbox>
+		</groupbox>
+
+		<hbox width="100%" style="margin-top:20px;">
+			<groupbox>
+				<caption>Filtre</caption>
+				<combobox id="nomFiltre" readonly="true" width="100px"/>
+				<combobox id="valeurFiltre" readonly="true" width="100px"/>
+			</groupbox>
+
+
+				<grid id="motsGrid" mold="paging" pageSize="25"
+					emptyMessage="Aucun mot trouvé." height="660px">
+					<!-- 			pagingPosition="both" sizedByContent="true"> -->
+					<columns>
+						<column hflex="4" label="Mot" align="left" />
+						<column hflex="1" label="Catégorie"
+							align="left" />
+						<column hflex="1" label="Genre" />
+						<column hflex="1" label="Nombre" align="right" />
+						<column hflex="1" label="Précision" />
+					</columns>
+					<rows />
+				</grid>
 		</hbox>
-		
-		<vbox style="margin-top:20px;" width="43%">
-			<grid id="motsGrid" mold="paging" pageSize="25" emptyMessage="Aucun mot trouvé." height="660px">
-<!-- 			pagingPosition="both" sizedByContent="true"> -->
-				<columns>
-					<column hflex="4" label="Mot"  align="left" />
-					<column hflex="1" label="Catégorie" align="left"/>
-					<column hflex="1" label="Genre" />
-					<column hflex="1" label="Nombre" align="right"/>
-					<column hflex="1" label="Précision" />
-				</columns>
-				<rows/>
-			</grid>
-		</vbox>
-				
 		</tabpanel>
 		<tabpanel></tabpanel>
 	</tabpanels>
