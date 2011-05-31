@@ -46,12 +46,16 @@
 		<tab label="Listes" />
 		<tab label="Contextes" />
 	</tabs>
-	<tabpanels>
-		<tabpanel>
+	<tabpanels width="100%">
+		<tabpanel width="100%">
 
 		<groupbox>
 			<caption>Recherche</caption>
 			<hbox style="margin-top:10px;">
+
+			<combobox id="liste" readonly="true">
+			   <comboitem  forEach="${listes}" id="${each.id}" label="${each.nom}" value="${each.id}" description="${each.description}"/>
+			</combobox>
 
 				<combobox id="gp" readonly="true" width="100px">
 					<comboitem label="graphèmes" value="g" />
@@ -74,23 +78,58 @@
 		</groupbox>
 
 		<hbox width="100%" style="margin-top:20px;">
-			<groupbox>
+			<groupbox width="400px">
 				<caption>Filtre</caption>
-				<combobox id="nomFiltre" readonly="true" width="100px"/>
-				<combobox id="valeurFiltre" readonly="true" width="100px"/>
+				<listbox id="nomFiltre" width="200px" mold="select"/>
+				<listbox id="valeurFiltre"  width="200px" mold="select"/>
+				
+				
+				<button id="boutonAjoutFiltre" label="ajouter"/>
+				
+				<!-- emptyMessage="Aucun filtre actif." -->
+<!-- 				<grid id="gridFiltreActif" fixedLayout="true" >  -->
+<!-- 					<columns> -->
+<!-- 						<column label="Filtres actifs"/> -->
+<!-- 					</columns> -->
+<!-- 					<rows> -->
+<!-- 						<group label="Catégorie grammaticale"/> -->
+<!-- 					<row><label value="test"/></row> -->
+<!-- 					<group label="Genre"/> -->
+<!-- 					<row><label value="test"/></row> -->
+<!-- 					<row><label value="test"/></row> -->
+<!-- 					<group label="Nombre"/> -->
+<!-- 					<row><label value="test"/></row> -->
+<!-- 					</rows> -->
+<!-- 				</grid> -->
+				<grid id="gridFiltreActif" fixedLayout="true">
+					<auxhead sclass="category-center">
+						<auxheader label="Filtres actifs" colspan="3"
+							rowspan="1" />
+					</auxhead>
+					<columns>
+						<column label="filtre" />
+						<column label="valeur" />
+						<column label="action" />
+					</columns>
+					<rows>
+
+					</rows>
+				</grid>
+
 			</groupbox>
 
 
 				<grid id="motsGrid" mold="paging" pageSize="25"
-					emptyMessage="Aucun mot trouvé." height="660px">
-					<!-- 			pagingPosition="both" sizedByContent="true"> -->
+					 height="660px" width="700px" >
+					<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
 					<columns>
-						<column hflex="4" label="Mot" align="left" />
+						<column hflex="3" label="Mot" align="left" />
 						<column hflex="1" label="Catégorie"
 							align="left" />
 						<column hflex="1" label="Genre" />
 						<column hflex="1" label="Nombre" align="right" />
 						<column hflex="1" label="Précision" />
+						<column hflex="2" label="Liste" />
 					</columns>
 					<rows />
 				</grid>
