@@ -337,6 +337,14 @@
 			<version>3.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkex</artifactId>
+			<version>5.0.7.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -362,6 +370,7 @@
 			<version>9.0-801.jdbc3</version>
 			<scope>compile</scope>
 		</dependency>
+
 
 	</dependencies>
 

@@ -3,8 +3,11 @@ package mots;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.liste.Mot;
+import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
 import com.servicelibre.corpus.manager.MotManager;
@@ -86,11 +90,20 @@ public class MotManagerTest implements ApplicationContextAware
     
     @Test
     public void motManagerFilterTest() {
+
     	FiltreMot f = new FiltreMot();
+
+    	// Syntaxe verbeuse
+    	Set<DefaultKeyValue> keyValues = new HashSet<DefaultKeyValue>(1);
+    	keyValues.add(new DefaultKeyValue(1L, "Détail: corpus_id=1"));
+    	Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
+    	f.addFiltre(filtre);
     	
-    	f.addFiltre(CléFiltre.liste, new Long[]{1L});
-    	f.addFiltre(CléFiltre.catgram, new String[]{"n.", "adv."});
-    	f.addFiltre(CléFiltre.genre, new String[]{"f."});
+  
+    	// Syntaxe allégée
+    	f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[]{"n.", "adv."}));
+  
+    	f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[]{"f."}));
     	
     	String graphie = "a";
     	

@@ -5,7 +5,7 @@ import org.zkoss.spring.SpringUtil;
 
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.zk.controller.ListeMotFiltre;
+import com.servicelibre.zk.controller.FiltreManager;
 
 public class ServiceLocator
 {
@@ -32,9 +32,9 @@ public class ServiceLocator
         return (MotManager) ctx.getBean("motManager");
     }
 
-    public static ListeMotFiltre getListeMotFiltre()
+    public static FiltreManager getFiltreManager()
     {
-        return (ListeMotFiltre) ctx.getBean("listeMotFiltre");
+        return (FiltreManager) ctx.getBean("filtreManager");
     }
 
 }

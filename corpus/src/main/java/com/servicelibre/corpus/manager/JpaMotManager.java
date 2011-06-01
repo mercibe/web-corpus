@@ -1,8 +1,9 @@
 package com.servicelibre.corpus.manager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -10,9 +11,11 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -20,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
-import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
 
 @Repository
 @Transactional
@@ -139,15 +141,28 @@ public class JpaMotManager implements MotManager {
 
 	private Predicate addFiltresToPrédicat(CriteriaBuilder cb, Root<Mot> motRacine, Predicate p, FiltreMot filtres) {
 
-		Map<CléFiltre, Object[]> f = filtres.getFiltres();
+		LinkedHashSet<Filtre> f = filtres.getFiltres();
 
-		for (CléFiltre clé : f.keySet()) {
-			In<Object> in = cb.in(motRacine.get(clé.name()));
-			Object[] inValues = f.get(clé);
-			for (int i = 0; i < inValues.length; i++) {
-				in.value(inValues[i]);
+		for (Iterator<Filtre> it = f.iterator(); it.hasNext();) {
+
+			Filtre filtre = it.next();
+
+			// Fonctionne à condition que le nom du filtre corresponde
+			// exactement au nom de la colonne dans la DB / modèle
+			System.err.println("filtre avant NPE = " + filtre);
+			Path<Object> path = motRacine.get(filtre.nom);
+			if (path != null) {
+				In<Object> in = cb.in(path);
+
+				for (DefaultKeyValue kv : filtre.keyValues) {
+					in.value(kv.getKey());
+				}
+				p = cb.and(p, in);
 			}
-			p = cb.and(p, in);
+			else
+			{
+				logger.error("{} ne correspond à aucune colonne dans la DB/modèle.",filtre.nom);
+			}
 		}
 
 		return p;

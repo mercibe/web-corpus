@@ -11,13 +11,14 @@
 <custom-attributes org.zkoss.zul.grid.rod="true" scope="page"/>
 
     <style>
-    .z-label { 
-      display: block; 
-    } 
+<!--     .z-label {  -->
+<!--       display: block;  -->
+<!--     }  -->
     tr.z-row td.z-row-inner { 
       padding: 2px 5px; 
     } 
-    .z-row-cnt, .z-column-cnt {
+    <!-- .z-row-cnt, -->
+    .z-column-cnt {
       text-align: center; 
     } 
     .category-center .z-auxheader-cnt { 
@@ -87,34 +88,50 @@
 				<button id="boutonAjoutFiltre" label="ajouter"/>
 				
 				<!-- emptyMessage="Aucun filtre actif." -->
-<!-- 				<grid id="gridFiltreActif" fixedLayout="true" >  -->
-<!-- 					<columns> -->
-<!-- 						<column label="Filtres actifs"/> -->
-<!-- 					</columns> -->
-<!-- 					<rows> -->
-<!-- 						<group label="Catégorie grammaticale"/> -->
-<!-- 					<row><label value="test"/></row> -->
-<!-- 					<group label="Genre"/> -->
-<!-- 					<row><label value="test"/></row> -->
-<!-- 					<row><label value="test"/></row> -->
-<!-- 					<group label="Nombre"/> -->
-<!-- 					<row><label value="test"/></row> -->
-<!-- 					</rows> -->
-<!-- 				</grid> -->
-				<grid id="gridFiltreActif" fixedLayout="true">
+				<grid id="gridFiltreActif" fixedLayout="true"
+					width="100%" style="margin-top:20px;">
 					<auxhead sclass="category-center">
 						<auxheader label="Filtres actifs" colspan="3"
 							rowspan="1" />
 					</auxhead>
 					<columns>
-						<column label="filtre" />
 						<column label="valeur" />
 						<column label="action" />
 					</columns>
 					<rows>
-
+<!-- 						<group label="Catégorie grammaticale" spans="2" /> -->
+<!-- 						<row> -->
+<!-- 							<label value="test" /> -->
+<!-- 						</row> -->
+<!-- 						<group label="Genre" /> -->
+<!-- 						<row> -->
+<!-- 							<label value="test" /> -->
+<!-- 						</row> -->
+<!-- 						<row> -->
+<!-- 							<label value="test" /> -->
+<!-- 						</row> -->
+<!-- 						<group label="Nombre" /> -->
+<!-- 						<row> -->
+<!-- 							<label value="test" /> -->
+<!-- 						</row> -->
 					</rows>
 				</grid>
+
+
+				<!-- 				<grid id="gridFiltreActif" fixedLayout="true"> -->
+<!-- 					<auxhead sclass="category-center"> -->
+<!-- 						<auxheader label="Filtres actifs" colspan="3" -->
+<!-- 							rowspan="1" /> -->
+<!-- 					</auxhead> -->
+<!-- 					<columns> -->
+<!-- 						<column label="filtre" /> -->
+<!-- 						<column label="valeur" /> -->
+<!-- 						<column label="action" /> -->
+<!-- 					</columns> -->
+<!-- 					<rows> -->
+
+<!-- 					</rows> -->
+<!-- 				</grid> -->
 
 			</groupbox>
 

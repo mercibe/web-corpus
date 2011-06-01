@@ -1,6 +1,7 @@
 package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -10,17 +11,12 @@ import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.GroupsModel;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
@@ -28,11 +24,13 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
+import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.Mot;
+import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
@@ -61,10 +59,24 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
     Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
+    
+    /**
+     * Permet de remplir les choix de filtres/valeurs possibles
+     */
+    FiltreManager filtreManager = ServiceLocator.getFiltreManager();
+    
+    /**
+     * Filtre qui sera passé au MotManager pour filtrer les mots à retourner.
+     * Ce filtre sert également comme Model (GroupModel) pour le Grid qui affiche
+     * le filtre en construction par l'utilisateur.
+     */
+    FiltreMot filtreActifModel = new FiltreMot();
+    
 
     ListeManager listeManager = ServiceLocator.getListeManager();
     MotManager motManager = ServiceLocator.getMotManager();
-    ListeMotFiltre filtresManager = ServiceLocator.getListeMotFiltre();
+
+    
 
     private static final long serialVersionUID = 779679285074159073L;
 
@@ -97,37 +109,17 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     public void onClick$boutonAjoutFiltre(Event event)
     {
-        System.err.println("Ajouter le filtre courant: "
-                + nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex()).getValue() + " = "
-                + valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex()).getValue());
-     
-        // FIXME jouer sur le modèle et utiliser setModel / Renderer
-        // Le modèle pourrait être directement un héritage de FiltreMot qui implémenterait/hériterait de ListModel
+		Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
+        String nom = filtreNomActuel.getValue().toString();
+        String description = filtreNomActuel.getLabel();
         
-        Row r = new Row();
-        r.appendChild(new Label(nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex()).getValue().toString()));
-        r.appendChild(new Label(valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex()).getValue().toString()));
-        final Div d = new Div(); 
-        Button button = new Button("Supprimer");
-        button.setParent(d);
-        button.addEventListener(Events.ON_CLICK, new EventListener()
-        {
-            
-            @Override
-            public void onEvent(Event event) throws Exception
-            {
-                System.err.println(event);
-            }
-        });
-        r.appendChild(d);
+        Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
+        Set<DefaultKeyValue> valeurs = new HashSet<DefaultKeyValue>(1);
+        valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
+        filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
         
-        gridFiltreActif.getRows().appendChild(r);
-//        GroupsModel groupsModel = gridFiltreActif.getGroupsModel();
-//        int groupCount = groupsModel.getGroupCount();
-//        for(int i=0;i < groupCount; i++) {
-//            Object group = groupsModel.getGroup(i);
-//            System.err.println("group " + i + " du type " + group.getClass().getName());
-//        }
+        gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
+        
     }
 
     public void onSelect$nomFiltre(Event event)
@@ -148,8 +140,8 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
         if (currentItem.getValue() != null)
         {
-            List<DefaultKeyValue> filtreValeurs = filtresManager.getFiltreValeurs(currentItem.getValue().toString());
-            valeurFiltre.setModel(new SimpleListModel(filtreValeurs));
+            Set<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
+            valeurFiltre.setModel(new SimpleListModel(filtreValeurs.toArray()));
             valeurFiltre.setSelectedIndex(0);
         }
     }
@@ -181,12 +173,10 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         List<Mot> mots = new ArrayList<Mot>();
 
-        // TODO rechercher les mots de la liste courante et remplir la table
         System.out.println(getDescriptionRecherche());
 
         String conditionActive = (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
 
-        // TODO ajouter filtre pour liste et corpus
         // TODO sort sur colonnes
         // TODO historique des recherches
 
@@ -194,6 +184,11 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         if (gpActif.equals("g"))
         {
             FiltreMot filtres = getFiltres();
+            
+            System.err.println(filtres);
+            System.err.println("cherche.getValue() = " +cherche.getValue());
+            System.err.println("MotManager.Condition.valueOf(conditionActive) = " + MotManager.Condition.valueOf(conditionActive));
+            
             mots = motManager.findByGraphie(cherche.getValue(), MotManager.Condition.valueOf(conditionActive), filtres);
         }
         else
@@ -213,28 +208,29 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         return mots;
     }
 
+    /**
+     * Retourne le filtre à appliquer pour la recherche des mots
+     * @return
+     */
     private FiltreMot getFiltres()
     {
         FiltreMot filtres = new FiltreMot();
 
-        // Récupération de la liste active
+        // Récupération de la liste active (filtre hors de la boîte des filtres!)
         int selectedIndex = liste.getSelectedIndex();
         if (selectedIndex > 0)
         {
             Long listeActive = (Long) liste.getItemAtIndex(selectedIndex).getValue();
-            filtres.addFiltre(FiltreMot.CléFiltre.liste, new Long[] { listeActive });
+            Filtre filtre = new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste de mot", new Long[] { listeActive });
+            filtres.addFiltre(filtre);
         }
         
-        // Récupération des autres filtres actifs
-        for (Iterator<Row> it = gridFiltreActif.getRows().getChildren().iterator(); it.hasNext();)
-        {
-            Row row = it.next();
-            System.err.println("TODO: récupérer attribut et créer filtre");
-            //row.getAttribute(name);
-            //filtres.addFiltre(FiltreMot.CléFiltre.valueOf(), valeurs)
-            
-            
-        }
+        // Ajout des autres filtres
+       for(Filtre filtre : filtreActifModel.getFiltres())
+       {
+    	   System.err.println("Ajout du filtre utilisateur " + filtre);
+    	   filtres.addFiltre(filtre);
+       }
 
         return filtres;
     }
@@ -292,7 +288,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         });
 
         // Initialisation des filtres (noms)
-        nomFiltre.setModel(new SimpleListModel(filtresManager.getFiltreNoms()));
+        nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
 
         nomFiltre.setItemRenderer(new ListitemRenderer()
         {
@@ -321,6 +317,29 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         });
 
         nomFiltre.setSelectedIndex(0);
+        
+        
+        //DefaultKeyValue
+        Object[][] data = new Object[][]{}; 
+        Object[] heads = new Object[]{}; 
+        
+        gridFiltreActif.setModel(new SimpleGroupsModel(data, heads));
+        
+        gridFiltreActif.setRowRenderer(new RowRenderer() {
+			
+			@Override
+			public void render(Row row, Object model) throws Exception {
+				
+				DefaultKeyValue cv = (DefaultKeyValue) model;
+				
+				System.err.println("cv = " + cv.getKey() + " => " + cv.getValue());
+				row.appendChild(new Label(cv.getValue().toString()));
+				
+				
+			}
+		});
+        
+        
 
     }
 
