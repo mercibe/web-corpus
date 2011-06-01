@@ -9,15 +9,23 @@ import java.util.List;
  * Tous les mots de la liste sont considérés comme des lemmes (seuls les lemmes
  * sont retenus)
  * 
- * Exemple d'entrées -----------------
+ * Exemple d'entrées 
+ * -----------------
  * 
- * malade \t \t adj. vite \t \t adv. comme \t \t conj.. deux \t \t dét. auto \t
- * \t n.f. bars \t \t n.m.
+ * malade \t \t adj. 
+ * vite \t \t adv. 
+ * comme \t \t conj.. 
+ * deux \t \t dét. 
+ * auto \t \t n.f. 
+ * bars \t \t n.m.
  * 
- * ami, amie \t \t n.m., n.f. il \t elle, ils, elles \t pron.
+ * ami, amie \t \t n.m., n.f. 
+ * il \t elle, ils, elles \t pron.
  * 
- * beau \t bel, belle \t adj. animal \t animaux \t n.m. ne pas \t ne...pas,
- * n'…pas \t adv. du \t de l', de la, des \t dét.
+ * beau \t bel, belle \t adj. 
+ * animal \t animaux \t n.m. 
+ * ne pas \t ne...pas, n'…pas \t adv. 
+ * du \t de l', de la, des \t dét.
  * 
  * RO:
  * 

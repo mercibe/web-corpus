@@ -2,7 +2,6 @@ package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -11,11 +10,15 @@ import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Bandbox;
+import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Group;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -59,46 +62,57 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
     Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
-    
+
     /**
      * Permet de remplir les choix de filtres/valeurs possibles
      */
     FiltreManager filtreManager = ServiceLocator.getFiltreManager();
-    
+
     /**
-     * Filtre qui sera passé au MotManager pour filtrer les mots à retourner.
-     * Ce filtre sert également comme Model (GroupModel) pour le Grid qui affiche
+     * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
+     * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
      * le filtre en construction par l'utilisateur.
      */
     FiltreMot filtreActifModel = new FiltreMot();
-    
 
     ListeManager listeManager = ServiceLocator.getListeManager();
     MotManager motManager = ServiceLocator.getMotManager();
 
-    
-
     private static final long serialVersionUID = 779679285074159073L;
 
-    public void onOpen$cherche(Event event)
-    {
-        chercheEtAfficheMot();
-
-    }
 
     // Enregistrement des événements onOK (la touche ENTER) sur tous les composants de la recherche
     public void onOK$cherche(Event event)
     {
         chercheEtAfficheMot();
     }
+    public void onClick$cherche(Event event)
+    {
+        chercheEtAfficheMot();
+    }
+    
+    public void onOpen$cherche(Event event)
+    {
+        System.err.println("onOpen");
+        chercheEtAfficheMot();
+        
+    }
+    
 
     public void onOK$liste(Event event)
     {
         chercheEtAfficheMot();
     }
+    
+    public void onSelect$liste(Event event) {
+        chercheEtAfficheMot();
+    }
 
     public void onOK$condition(Event event)
     {
+        chercheEtAfficheMot();
+    }
+    public void onSelect$condition(Event event) {
         chercheEtAfficheMot();
     }
 
@@ -109,17 +123,20 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     public void onClick$boutonAjoutFiltre(Event event)
     {
-		Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
+        Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
         String nom = filtreNomActuel.getValue().toString();
         String description = filtreNomActuel.getLabel();
-        
+
         Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
         Set<DefaultKeyValue> valeurs = new HashSet<DefaultKeyValue>(1);
         valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
+
         filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
+        gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel
+                .getFiltreGroupes()));
         
-        gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
-        
+        chercheEtAfficheMot();
+
     }
 
     public void onSelect$nomFiltre(Event event)
@@ -184,11 +201,12 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         if (gpActif.equals("g"))
         {
             FiltreMot filtres = getFiltres();
-            
+
             System.err.println(filtres);
-            System.err.println("cherche.getValue() = " +cherche.getValue());
-            System.err.println("MotManager.Condition.valueOf(conditionActive) = " + MotManager.Condition.valueOf(conditionActive));
-            
+            System.err.println("cherche.getValue() = " + cherche.getValue());
+            System.err.println("MotManager.Condition.valueOf(conditionActive) = "
+                    + MotManager.Condition.valueOf(conditionActive));
+
             mots = motManager.findByGraphie(cherche.getValue(), MotManager.Condition.valueOf(conditionActive), filtres);
         }
         else
@@ -210,6 +228,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     /**
      * Retourne le filtre à appliquer pour la recherche des mots
+     * 
      * @return
      */
     private FiltreMot getFiltres()
@@ -224,13 +243,13 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
             Filtre filtre = new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste de mot", new Long[] { listeActive });
             filtres.addFiltre(filtre);
         }
-        
+
         // Ajout des autres filtres
-       for(Filtre filtre : filtreActifModel.getFiltres())
-       {
-    	   System.err.println("Ajout du filtre utilisateur " + filtre);
-    	   filtres.addFiltre(filtre);
-       }
+        for (Filtre filtre : filtreActifModel.getFiltres())
+        {
+            System.err.println("Ajout du filtre utilisateur " + filtre);
+            filtres.addFiltre(filtre);
+        }
 
         return filtres;
     }
@@ -317,29 +336,56 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         });
 
         nomFiltre.setSelectedIndex(0);
-        
-        
+
         //DefaultKeyValue
-        Object[][] data = new Object[][]{}; 
-        Object[] heads = new Object[]{}; 
-        
+        Object[][] data = new Object[][] {};
+        Object[] heads = new Object[] {};
+
         gridFiltreActif.setModel(new SimpleGroupsModel(data, heads));
-        
-        gridFiltreActif.setRowRenderer(new RowRenderer() {
-			
-			@Override
-			public void render(Row row, Object model) throws Exception {
-				
-				DefaultKeyValue cv = (DefaultKeyValue) model;
-				
-				System.err.println("cv = " + cv.getKey() + " => " + cv.getValue());
-				row.appendChild(new Label(cv.getValue().toString()));
-				
-				
-			}
-		});
-        
-        
+
+        gridFiltreActif.setRowRenderer(new RowRenderer()
+        {
+
+            @Override
+            public void render(Row row, Object model) throws Exception
+            {
+
+                DefaultKeyValue cv = (DefaultKeyValue) model;
+
+                final Row currentRow = row;
+
+                Label label = new Label(cv.getValue().toString());
+                label.setAttribute("key", cv.getKey());
+                label.setParent(row);
+
+                // Ajouter bouton « supprimer » si pas un groupe
+                if (!(row instanceof Group))
+                {
+
+                    final Button supprimeBtn = new Button("Supprimer");
+                    supprimeBtn.setMold("os");
+                    supprimeBtn.setParent(row);
+                    supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener()
+                    {
+
+                        @Override
+                        public void onEvent(Event arg0) throws Exception
+                        {
+
+
+                            Label labelValeur = (Label) currentRow.getFirstChild();
+                            Label labelGroupe = (Label) currentRow.getGroup().getFirstChild();
+                            filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key").toString());
+                            gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
+                            
+                            chercheEtAfficheMot();
+
+                        }
+                    });
+                }
+
+            }
+        });
 
     }
 

@@ -1,6 +1,5 @@
 package com.servicelibre.corpus.manager;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
@@ -26,9 +25,8 @@ public class FiltreMot
     {
     	// Si le filtre existe déjà, ajouter les éventuelles nouvelles valeurs
         if(!filtres.add(filtre)){
-        	for (Iterator<Filtre> it = filtres.iterator(); it.hasNext();)
+            for (Filtre f : filtres)
     		{
-    			Filtre f = it.next();
     			if(f.equals(filtre)) {
     				f.keyValues.addAll(filtre.keyValues);
     			}
@@ -36,6 +34,32 @@ public class FiltreMot
         }
     }
 
+    public void removeFiltre(String nom, String value) {
+        
+        System.err.println("Suppression de la valeur " + value + " du groupe " + nom);
+        
+        // Recherche le filtre
+        for (Filtre f : filtres)
+        {
+            System.err.println("f.nom = " + f.nom);
+            if(f.nom.equals(nom)) {
+                System.err.println("Trouvé nom " + nom + " dans le filtre...");
+                for(DefaultKeyValue cléVal : f.keyValues) {
+                    System.err.println("Recherche de la valeur " + value + " dans " + cléVal);
+                    if(cléVal.getKey().equals(value)) {
+                        System.err.println("Trouvé cléVal: suppression!");
+                        f.keyValues.remove(cléVal);
+                        break;
+                    }
+                }
+                if(f.keyValues.size() == 0) {
+                    filtres.remove(f);
+                    break;
+                }
+            }
+        }
+    }
+    
     @Override
     public String toString()
     {
@@ -43,10 +67,8 @@ public class FiltreMot
         
         
         
-        for (Iterator<Filtre> it = filtres.iterator(); it.hasNext();)
+        for (Filtre filtre : filtres)
         {
-        	Filtre filtre = it.next();
-        	
             sb.append(filtre.nom).append(": ");
             String séparateur = "";
             
@@ -69,9 +91,8 @@ public class FiltreMot
 		
 		DefaultKeyValue[] groupes = new DefaultKeyValue[filtres.size()];
 		int index = 0;
-		for (Iterator<Filtre> it = filtres.iterator(); it.hasNext();)
+        for (Filtre filtre : filtres)
 		{
-			Filtre filtre = it.next();
 			System.err.println("filtre.nom, filtre.description => " + filtre.nom +", "  +filtre.description);
 			groupes[index] = new DefaultKeyValue(filtre.nom, filtre.description);
 			index++;
@@ -85,9 +106,8 @@ public class FiltreMot
 		Object[][] valeurs = new Object[filtres.size()][1];
 		int index = 0;
 		
-		for (Iterator<Filtre> it = filtres.iterator(); it.hasNext();)
+        for (Filtre filtre : filtres)
 		{
-			Filtre filtre = it.next();
 			//valeurs[index] contient un  DefaultKeyValue[]
 			valeurs[index] = filtre.keyValues.toArray();
 			index++;

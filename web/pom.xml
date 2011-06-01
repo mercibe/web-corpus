@@ -139,11 +139,9 @@
 							<filtering>true</filtering>
 							<targetPath>WEB-INF</targetPath>
 							<includes>
-								<!--
-									Inclure tous les fichiers qui contiennent des références à des
-									propriétés définies dans le pom.xml et qui doivent être
-									substituées par leur valeur
-								-->
+								<!-- Inclure tous les fichiers qui contiennent des références à des 
+									propriétés définies dans le pom.xml et qui doivent être substituées par leur 
+									valeur -->
 								<include>application-context.xml</include>
 								<include>system-context.xml</include>
 								<include>webcorpus-servlet-context.xml</include>
@@ -374,6 +372,13 @@
 
 	</dependencies>
 
+<!-- 	<repositories> -->
+<!-- 		<repository> -->
+<!-- 			<id>zk-ee</id> -->
+<!-- 			<url>https://maven.zkoss.org/repo/zk/ee</url> -->
+<!-- 		</repository> -->
+<!-- 	</repositories> -->
+
 	<profiles>
 		<profile>
 			<id>dev</id>
@@ -382,7 +387,7 @@
 			</activation>
 			<properties>
 				<pom.jpa.showSql>true</pom.jpa.showSql>
-				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-memory.xml</pom.webxml.spring-security.users>				
+				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-memory.xml</pom.webxml.spring-security.users>
 			</properties>
 		</profile>
 		<profile>
@@ -391,7 +396,7 @@
 				<pom.jpa.showSql>false</pom.jpa.showSql>
 				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-jdbc.xml</pom.webxml.spring-security.users>
 			</properties>
-		</profile>		
+		</profile>
 	</profiles>
 
 </project>

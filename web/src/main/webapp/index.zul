@@ -89,7 +89,7 @@
 				
 				<!-- emptyMessage="Aucun filtre actif." -->
 				<grid id="gridFiltreActif" fixedLayout="true"
-					width="100%" style="margin-top:20px;">
+					width="95%" style="margin-top:20px;" emptyMessage="Aucun filtre actif.">
 					<auxhead sclass="category-center">
 						<auxheader label="Filtres actifs" colspan="3"
 							rowspan="1" />
@@ -98,46 +98,14 @@
 						<column label="valeur" />
 						<column label="action" />
 					</columns>
-					<rows>
-<!-- 						<group label="Catégorie grammaticale" spans="2" /> -->
-<!-- 						<row> -->
-<!-- 							<label value="test" /> -->
-<!-- 						</row> -->
-<!-- 						<group label="Genre" /> -->
-<!-- 						<row> -->
-<!-- 							<label value="test" /> -->
-<!-- 						</row> -->
-<!-- 						<row> -->
-<!-- 							<label value="test" /> -->
-<!-- 						</row> -->
-<!-- 						<group label="Nombre" /> -->
-<!-- 						<row> -->
-<!-- 							<label value="test" /> -->
-<!-- 						</row> -->
-					</rows>
+					<rows/>
 				</grid>
-
-
-				<!-- 				<grid id="gridFiltreActif" fixedLayout="true"> -->
-<!-- 					<auxhead sclass="category-center"> -->
-<!-- 						<auxheader label="Filtres actifs" colspan="3" -->
-<!-- 							rowspan="1" /> -->
-<!-- 					</auxhead> -->
-<!-- 					<columns> -->
-<!-- 						<column label="filtre" /> -->
-<!-- 						<column label="valeur" /> -->
-<!-- 						<column label="action" /> -->
-<!-- 					</columns> -->
-<!-- 					<rows> -->
-
-<!-- 					</rows> -->
-<!-- 				</grid> -->
 
 			</groupbox>
 
 
 				<grid id="motsGrid" mold="paging" pageSize="25"
-					 height="660px" width="700px" >
+					 height="660px" width="700px" emptyMessage="Aucun mot trouvé.">
 					<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
 					<columns>
 						<column hflex="3" label="Mot" align="left" />
