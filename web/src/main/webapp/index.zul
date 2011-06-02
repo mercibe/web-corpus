@@ -73,7 +73,10 @@
 					<comboitem label="correspondent exactement à"
 						value="MOT_ENTIER" />
 				</combobox>
-				<bandbox id="cherche"></bandbox>
+				
+				
+				<textbox id="cherche"></textbox>
+				<button id="boutonRecherche" label="Recherche"/>
 
 			</hbox>
 		</groupbox>
@@ -87,7 +90,6 @@
 				
 				<button id="boutonAjoutFiltre" label="ajouter"/>
 				
-				<!-- emptyMessage="Aucun filtre actif." -->
 				<grid id="gridFiltreActif" fixedLayout="true"
 					width="95%" style="margin-top:20px;" emptyMessage="Aucun filtre actif.">
 					<auxhead sclass="category-center">
@@ -102,22 +104,39 @@
 				</grid>
 
 			</groupbox>
+			
+			
+			<zscript><![CDATA[
+		class Comp implements Comparator {
+			private boolean _asc;
+			public Comp(boolean asc) {
+				_asc = asc;
+			}
+			public int compare(Object o1, Object o2) {
+				String s1 = o1.getCatgram(),
+				s2 = o2.getCatgram();
+				int v = s1.compareTo(s2);
+				return _asc ? v: -v;
+			}
+		}
+		Comp asc = new Comp(true), dsc = new Comp(false);
+		]]></zscript>
 
+			<grid id="motsGrid" mold="paging" pageSize="25"
+				height="660px" width="700px" emptyMessage="Aucun mot trouvé.">
+				<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
+	
+				<columns sizable="true">
 
-				<grid id="motsGrid" mold="paging" pageSize="25"
-					 height="660px" width="700px" emptyMessage="Aucun mot trouvé.">
-					<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
-					<columns>
-						<column hflex="3" label="Mot" align="left" />
-						<column hflex="1" label="Catégorie"
-							align="left" />
-						<column hflex="1" label="Genre" />
-						<column hflex="1" label="Nombre" align="right" />
-						<column hflex="1" label="Précision" />
-						<column hflex="2" label="Liste" />
-					</columns>
-					<rows />
-				</grid>
+					<column hflex="3" id="mot" label="Mot" sortDirection="ascending" sort="auto" />
+					<column hflex="1" label="Catégorie"  sort="auto(catgram)"/> <!--  sortAscending="${asc}"	sortDescending="${dsc} -->
+					<column hflex="1" label="Genre" sort="auto(genre)"/>
+					<column hflex="1" label="Nombre"  sort="auto(catgram)"/>
+					<column hflex="1" label="Précision" sort="auto(catgramPrésicion)"/>
+					<column hflex="2" label="Liste" sort="auto(liste)"/>
+				</columns>
+				<rows />
+			</grid>
 		</hbox>
 		</tabpanel>
 		<tabpanel></tabpanel>

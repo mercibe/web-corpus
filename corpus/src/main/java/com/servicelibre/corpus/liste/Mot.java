@@ -1,5 +1,8 @@
 package com.servicelibre.corpus.liste;
 
+import java.text.Collator;
+import java.util.Locale;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +13,10 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id", "lemme", "mot", "catgram", "genre" }))
-public class Mot {
+public class Mot implements Comparable<Mot>{
+	
+	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
+	
 	@Id
 	@GeneratedValue
 	private long id;
@@ -161,6 +167,11 @@ public class Mot {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	@Override
+	public int compareTo(Mot autreMot) {
+		return collator.compare(this.lemme, autreMot.lemme);
 	}
 	
 	

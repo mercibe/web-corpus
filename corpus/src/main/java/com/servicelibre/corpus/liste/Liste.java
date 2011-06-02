@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
-public class Liste
+public class Liste implements Comparable<Liste>
 {
 
     @Id
@@ -159,6 +159,11 @@ public class Liste
 
 	public void setLigneSplitter(LigneSplitter ligneSplitter) {
 		this.ligneSplitter = ligneSplitter;
+	}
+
+	@Override
+	public int compareTo(Liste o) {
+		return this.getNom().compareTo(o.getNom());
 	}
 
 	

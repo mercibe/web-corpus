@@ -133,6 +133,9 @@ public class JpaMotManager implements MotManager {
 		}
 
 		criteria.where(p);
+		
+		// Order by
+		// criteria.orderBy(cb.asc(motRacine.get("lemme")));
 
 		TypedQuery<Mot> q = entityManager.createQuery(criteria);
 

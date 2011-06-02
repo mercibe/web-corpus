@@ -13,9 +13,8 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zul.Bandbox;
-import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
@@ -29,6 +28,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
+import org.zkoss.zul.Textbox;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.liste.Liste;
@@ -54,7 +54,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     Combobox gp; //autowire car même type/ID que le composant dans la page ZUL
     Combobox condition; //autowire car même type/ID que le composant dans la page ZUL
 
-    Bandbox cherche; //autowire car même type/ID que le composant dans la page ZUL
+    Textbox cherche; //autowire car même type/ID que le composant dans la page ZUL
     Grid motsGrid; //autowire car même type/ID que le composant dans la page ZUL
 
     Listbox nomFiltre; //autowire car même type/ID que le composant dans la page ZUL
@@ -62,6 +62,8 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
     Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
+    
+    Button boutonRecherche;
 
     /**
      * Permet de remplir les choix de filtres/valeurs possibles
@@ -86,14 +88,10 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         chercheEtAfficheMot();
     }
-    public void onClick$cherche(Event event)
+
+    public void onClick$boutonRecherche(Event event)
     {
-        chercheEtAfficheMot();
-    }
-    
-    public void onOpen$cherche(Event event)
-    {
-        System.err.println("onOpen");
+    	
         chercheEtAfficheMot();
         
     }
@@ -104,15 +102,9 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         chercheEtAfficheMot();
     }
     
-    public void onSelect$liste(Event event) {
-        chercheEtAfficheMot();
-    }
 
     public void onOK$condition(Event event)
     {
-        chercheEtAfficheMot();
-    }
-    public void onSelect$condition(Event event) {
         chercheEtAfficheMot();
     }
 
@@ -121,6 +113,13 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         chercheEtAfficheMot();
     }
 
+//    public void onSelect$liste(Event event) {
+//    	chercheEtAfficheMot();
+//    }
+//    public void onSelect$condition(Event event) {
+//    	chercheEtAfficheMot();
+//    }
+    
     public void onClick$boutonAjoutFiltre(Event event)
     {
         Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
@@ -183,6 +182,12 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     public void chercheEtAfficheMot()
     {
         motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+        // les mots sont toujours retournés par ordre alphabétique => refléter dans la colonne (réinitialisation du marqueur de tri)
+        
+        // tri ZK
+        // TODO conserver le tri de l'utilisateur avant de lancer la recherche et le réappliquer après
+		Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
+        motColumn.sort(true);
 
     }
 
@@ -203,11 +208,11 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
             FiltreMot filtres = getFiltres();
 
             System.err.println(filtres);
-            System.err.println("cherche.getValue() = " + cherche.getValue());
+            System.err.println("cherche.getValue() = " + cherche.getText() + " - " + cherche.getValue());
             System.err.println("MotManager.Condition.valueOf(conditionActive) = "
                     + MotManager.Condition.valueOf(conditionActive));
 
-            mots = motManager.findByGraphie(cherche.getValue(), MotManager.Condition.valueOf(conditionActive), filtres);
+            mots = motManager.findByGraphie(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
         }
         else
         {
