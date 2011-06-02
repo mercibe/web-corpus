@@ -62,7 +62,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
     Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
-    
+
     Button boutonRecherche;
 
     /**
@@ -82,7 +82,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     private static final long serialVersionUID = 779679285074159073L;
 
-
     // Enregistrement des événements onOK (la touche ENTER) sur tous les composants de la recherche
     public void onOK$cherche(Event event)
     {
@@ -91,17 +90,15 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     public void onClick$boutonRecherche(Event event)
     {
-    	
+
         chercheEtAfficheMot();
-        
+
     }
-    
 
     public void onOK$liste(Event event)
     {
         chercheEtAfficheMot();
     }
-    
 
     public void onOK$condition(Event event)
     {
@@ -113,13 +110,13 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         chercheEtAfficheMot();
     }
 
-//    public void onSelect$liste(Event event) {
-//    	chercheEtAfficheMot();
-//    }
-//    public void onSelect$condition(Event event) {
-//    	chercheEtAfficheMot();
-//    }
-    
+    //    public void onSelect$liste(Event event) {
+    //    	chercheEtAfficheMot();
+    //    }
+    //    public void onSelect$condition(Event event) {
+    //    	chercheEtAfficheMot();
+    //    }
+
     public void onClick$boutonAjoutFiltre(Event event)
     {
         Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
@@ -133,7 +130,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
         gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel
                 .getFiltreGroupes()));
-        
+
         chercheEtAfficheMot();
 
     }
@@ -183,10 +180,11 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         motsGrid.setModel(new ListModelList(getMotsRecherchés()));
         // les mots sont toujours retournés par ordre alphabétique => refléter dans la colonne (réinitialisation du marqueur de tri)
-        
+
         // tri ZK
         // TODO conserver le tri de l'utilisateur avant de lancer la recherche et le réappliquer après
-		Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
+        Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
+
         motColumn.sort(true);
 
     }
@@ -206,11 +204,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         if (gpActif.equals("g"))
         {
             FiltreMot filtres = getFiltres();
-
-            System.err.println(filtres);
-            System.err.println("cherche.getValue() = " + cherche.getText() + " - " + cherche.getValue());
-            System.err.println("MotManager.Condition.valueOf(conditionActive) = "
-                    + MotManager.Condition.valueOf(conditionActive));
 
             mots = motManager.findByGraphie(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
         }
@@ -377,12 +370,13 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
                         public void onEvent(Event arg0) throws Exception
                         {
 
-
                             Label labelValeur = (Label) currentRow.getFirstChild();
                             Label labelGroupe = (Label) currentRow.getGroup().getFirstChild();
-                            filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key").toString());
-                            gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
-                            
+                            filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur
+                                    .getAttribute("key").toString());
+                            gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(),
+                                    filtreActifModel.getFiltreGroupes()));
+
                             chercheEtAfficheMot();
 
                         }

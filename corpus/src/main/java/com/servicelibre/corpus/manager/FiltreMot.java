@@ -36,18 +36,12 @@ public class FiltreMot
 
     public void removeFiltre(String nom, String value) {
         
-        System.err.println("Suppression de la valeur " + value + " du groupe " + nom);
-        
         // Recherche le filtre
         for (Filtre f : filtres)
         {
-            System.err.println("f.nom = " + f.nom);
             if(f.nom.equals(nom)) {
-                System.err.println("Trouvé nom " + nom + " dans le filtre...");
                 for(DefaultKeyValue cléVal : f.keyValues) {
-                    System.err.println("Recherche de la valeur " + value + " dans " + cléVal);
                     if(cléVal.getKey().equals(value)) {
-                        System.err.println("Trouvé cléVal: suppression!");
                         f.keyValues.remove(cléVal);
                         break;
                     }
@@ -93,7 +87,6 @@ public class FiltreMot
 		int index = 0;
         for (Filtre filtre : filtres)
 		{
-			System.err.println("filtre.nom, filtre.description => " + filtre.nom +", "  +filtre.description);
 			groupes[index] = new DefaultKeyValue(filtre.nom, filtre.description);
 			index++;
 		}

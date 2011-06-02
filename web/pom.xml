@@ -372,12 +372,14 @@
 
 	</dependencies>
 
+	<!-- sudo keytool -import -trustcacerts -alias maven-zk-ee-certificate -file ~/tmp/ZKOSS_root_CA.crt -keystore /etc/java-6-sun/security/cacerts -->
+<!-- Ajouter dans ~/.m2/settings.xml (via Profile)-->
 <!-- 	<repositories> -->
-<!-- 		<repository> -->
-<!-- 			<id>zk-ee</id> -->
-<!-- 			<url>https://maven.zkoss.org/repo/zk/ee</url> -->
-<!-- 		</repository> -->
-<!-- 	</repositories> -->
+<!-- 	   <repository> -->
+<!-- 	     <id>zk-ee</id> -->
+<!-- 	     <url>https://maven.zkoss.org/repo/zk/ee</url> -->
+<!-- 	   </repository> -->
+<!-- 	 </repositories> -->
 
 	<profiles>
 		<profile>

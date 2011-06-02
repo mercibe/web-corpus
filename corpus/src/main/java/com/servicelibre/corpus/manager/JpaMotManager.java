@@ -152,7 +152,7 @@ public class JpaMotManager implements MotManager {
 
 			// Fonctionne à condition que le nom du filtre corresponde
 			// exactement au nom de la colonne dans la DB / modèle
-			System.err.println("filtre avant NPE = " + filtre);
+			// Sinon, NPE!
 			Path<Object> path = motRacine.get(filtre.nom);
 			if (path != null) {
 				In<Object> in = cb.in(path);
