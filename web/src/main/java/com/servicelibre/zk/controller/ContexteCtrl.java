@@ -44,18 +44,16 @@ import com.servicelibre.corpus.manager.MotManager;
  * @author benoitm
  * 
  */
-public class ListeCtrl extends GenericForwardComposer implements VariableResolver
+public class ContexteCtrl extends GenericForwardComposer implements VariableResolver
 {
 
     private static final int CORPUS_ID_PAR_DÉFAUT = 1;
 
-    Combobox liste; //autowire car même type/ID que le composant dans la page ZUL
-
-    Combobox gp; //autowire car même type/ID que le composant dans la page ZUL
     Combobox condition; //autowire car même type/ID que le composant dans la page ZUL
-
     Textbox cherche; //autowire car même type/ID que le composant dans la page ZUL
-    Grid motsGrid; //autowire car même type/ID que le composant dans la page ZUL
+    Button boutonRecherche;
+    
+    Grid contextesGrid; //autowire car même type/ID que le composant dans la page ZUL
 
     Listbox nomFiltre; //autowire car même type/ID que le composant dans la page ZUL
     Listbox valeurFiltre;//autowire car même type/ID que le composant dans la page ZUL
@@ -63,12 +61,11 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
     Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
 
-    Button boutonRecherche;
 
     /**
      * Permet de remplir les choix de filtres/valeurs possibles
      */
-    FiltreManager filtreManager = ServiceLocator.getListeFiltreManager();
+    FiltreManager filtreManager = ServiceLocator.getContexteFiltreManager();
 
     /**
      * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
@@ -85,29 +82,29 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     // Enregistrement des événements onOK (la touche ENTER) sur tous les composants de la recherche
     public void onOK$cherche(Event event)
     {
-        chercheEtAfficheMot();
+        chercheEtAfficheContextes();
     }
 
     public void onClick$boutonRecherche(Event event)
     {
 
-        chercheEtAfficheMot();
+        chercheEtAfficheContextes();
 
     }
 
     public void onOK$liste(Event event)
     {
-        chercheEtAfficheMot();
+        chercheEtAfficheContextes();
     }
 
     public void onOK$condition(Event event)
     {
-        chercheEtAfficheMot();
+        chercheEtAfficheContextes();
     }
 
     public void onOK$gp(Event event)
     {
-        chercheEtAfficheMot();
+        chercheEtAfficheContextes();
     }
 
     //    public void onSelect$liste(Event event) {
@@ -131,7 +128,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel
                 .getFiltreGroupes()));
 
-        chercheEtAfficheMot();
+        chercheEtAfficheContextes();
 
     }
 
@@ -176,16 +173,16 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         return null;
     }
 
-    public void chercheEtAfficheMot()
+    public void chercheEtAfficheContextes()
     {
-        motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+        //motsGrid.setModel(new ListModelList(getMotsRecherchés()));
         // les mots sont toujours retournés par ordre alphabétique => refléter dans la colonne (réinitialisation du marqueur de tri)
 
         // tri ZK
         // TODO conserver le tri de l'utilisateur avant de lancer la recherche et le réappliquer après
-        Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
+        //Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
 
-        motColumn.sort(true);
+        //motColumn.sort(true);
 
     }
 
@@ -197,29 +194,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
         String conditionActive = (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
 
-        // TODO sort sur colonnes
-        // TODO historique des recherches
-
-        String gpActif = (String) gp.getItemAtIndex(gp.getSelectedIndex()).getValue();
-        if (gpActif.equals("g"))
-        {
-            FiltreMot filtres = getFiltres();
-
-            mots = motManager.findByGraphie(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
-        }
-        else
-        {
-            try
-            {
-                Messagebox.show("La recherche par phonème n'est pas encore implémentée.", "Corpus", Messagebox.OK,
-                        Messagebox.INFORMATION);
-            }
-            catch (InterruptedException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+        // TODO       
 
         return mots;
     }
@@ -232,15 +207,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     private FiltreMot getFiltres()
     {
         FiltreMot filtres = new FiltreMot();
-
-        // Récupération de la liste active (filtre hors de la boîte des filtres!)
-        int selectedIndex = liste.getSelectedIndex();
-        if (selectedIndex > 0)
-        {
-            Long listeActive = (Long) liste.getItemAtIndex(selectedIndex).getValue();
-            Filtre filtre = new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste de mot", new Long[] { listeActive });
-            filtres.addFiltre(filtre);
-        }
 
         // Ajout des autres filtres
         for (Filtre filtre : filtreActifModel.getFiltres())
@@ -261,14 +227,13 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         StringBuilder desc = new StringBuilder();
 
-        desc.append("Rechercher tous les ").append(gp.getValue()).append(" de la liste « ").append(liste.getValue())
-                .append(" »");
+        desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
 
         String aChercher = cherche.getValue().trim();
 
         if (!aChercher.isEmpty())
         {
-            desc.append(" qui ").append(condition.getValue()).append(" « ").append(aChercher).append(" »");
+            desc.append(" « ").append(aChercher).append(" »");
         }
 
         return desc.toString();
@@ -279,30 +244,28 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         super.doAfterCompose(comp);
 
-        liste.setSelectedIndex(0);
-        gp.setSelectedIndex(0);
 
         condition.setSelectedIndex(0);
 
-        motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+        //motsGrid.setModel(new ListModelList(getMotsRecherchés()));
 
-        motsGrid.setRowRenderer(new RowRenderer()
-        {
-
-            @Override
-            public void render(Row row, Object model) throws Exception
-            {
-                Mot mot = (Mot) model;
-
-                row.appendChild(new Label(mot.getMot()));
-                row.appendChild(new Label(mot.getCatgram()));
-                row.appendChild(new Label(mot.getGenre()));
-                row.appendChild(new Label(mot.getNombre()));
-                row.appendChild(new Label(mot.getCatgramPrésicion()));
-                row.appendChild(new Label(mot.getListe().getNom()));
-
-            }
-        });
+//        motsGrid.setRowRenderer(new RowRenderer()
+//        {
+//
+//            @Override
+//            public void render(Row row, Object model) throws Exception
+//            {
+//                Mot mot = (Mot) model;
+//
+//                row.appendChild(new Label(mot.getMot()));
+//                row.appendChild(new Label(mot.getCatgram()));
+//                row.appendChild(new Label(mot.getGenre()));
+//                row.appendChild(new Label(mot.getNombre()));
+//                row.appendChild(new Label(mot.getCatgramPrésicion()));
+//                row.appendChild(new Label(mot.getListe().getNom()));
+//
+//            }
+//        });
 
         // Initialisation des filtres (noms)
         nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
@@ -377,7 +340,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
                             gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(),
                                     filtreActifModel.getFiltreGroupes()));
 
-                            chercheEtAfficheMot();
+                            chercheEtAfficheContextes();
 
                         }
                     });

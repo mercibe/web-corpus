@@ -13,7 +13,12 @@
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
 
-	<bean id="filtreManager" class="com.servicelibre.zk.controller.FiltreManager"
+	<bean id="listeFiltreManager" class="com.servicelibre.zk.controller.ListeFiltreManager"
+		init-method="init">
+		<property name="corpusId" ref="corpusId"/>
+	</bean>
+	
+	<bean id="contexteFiltreManager" class="com.servicelibre.zk.controller.ContexteFiltreManager"
 		init-method="init">
 		<property name="corpusId" ref="corpusId"/>
 	</bean>

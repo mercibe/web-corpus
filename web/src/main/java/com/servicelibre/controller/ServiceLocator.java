@@ -32,9 +32,14 @@ public class ServiceLocator
         return (MotManager) ctx.getBean("motManager");
     }
 
-    public static FiltreManager getFiltreManager()
+    public static FiltreManager getListeFiltreManager()
     {
-        return (FiltreManager) ctx.getBean("filtreManager");
+        return (FiltreManager) ctx.getBean("listeFiltreManager");
     }
 
+    public static FiltreManager getContexteFiltreManager()
+    {
+        return (FiltreManager) ctx.getBean("contexteFiltreManager");
+    }
+    
 }

@@ -1,0 +1,69 @@
+<?page title="Web corpus - Contextes" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window border="none" width="100%" height="100%" apply="com.servicelibre.zk.controller.ContexteCtrl">
+	<groupbox>
+		<caption>Recherche</caption>
+		<hbox style="margin-top:10px;">
+			<combobox id="condition" readonly="true"
+				width="185px">
+				<comboitem label="Exactement le mot"
+					value="EXACTEMENT_LE_MOT" />
+				<comboitem label="Toutes les formes du mot"
+					value="TOUTES_LES_FORMES_DU_MOT" />
+			</combobox>
+			
+			<textbox id="cherche"></textbox>
+				
+			<button id="boutonRecherche" label="Recherche"/>
+			
+		</hbox>
+	</groupbox>
+	
+	
+		<hbox width="100%" style="margin-top:20px;">
+		
+		
+			<groupbox width="400px">
+				<caption>Filtre</caption>
+				<listbox id="nomFiltre" width="200px" mold="select"/>
+				<listbox id="valeurFiltre"  width="200px" mold="select"/>
+				
+				
+				<button id="boutonAjoutFiltre" label="ajouter"/>
+				
+				<grid id="gridFiltreActif" fixedLayout="true"
+					width="95%" style="margin-top:20px;" emptyMessage="Aucun filtre actif.">
+					<auxhead sclass="category-center">
+						<auxheader label="Filtres actifs" colspan="3"
+							rowspan="1" />
+					</auxhead>
+					<columns>
+						<column label="valeur" />
+						<column label="action" />
+					</columns>
+					<rows/>
+				</grid>
+
+			</groupbox>
+			
+
+			<grid id="contextesGrid" mold="paging" pageSize="25"
+				height="660px" width="700px" emptyMessage="Aucun contexte trouvé.">
+				<!-- 	pagingPosition="both" sizedByContent="true"> -->
+	
+				<columns sizable="true">
+
+					<column hflex="3" id="contexte" label="Contexte" />
+<!-- 					<column hflex="1" label="Catégorie"  sort="auto(catgram,lemme)"/>  -->
+<!-- 					<column hflex="1" label="Genre" sort="auto(genre, lemme)"/> -->
+<!-- 					<column hflex="1" label="Nombre"  sort="auto(catgram, lemme)"/> -->
+<!-- 					<column hflex="1" label="Précision" sort="auto(catgramPrésicion, lemme)"/> -->
+<!-- 					<column hflex="2" label="Liste" sort="auto(liste, lemme)"/> -->
+				</columns>
+				<rows />
+			</grid>
+		</hbox>	
+	
+	
+</window>
+</zk>
