@@ -21,8 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.Liste;
-import com.servicelibre.corpus.liste.Mot;
+
 
 @Repository
 @Transactional

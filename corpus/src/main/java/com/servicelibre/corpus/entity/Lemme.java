@@ -1,4 +1,4 @@
-package com.servicelibre.corpus.liste;
+package com.servicelibre.corpus.entity;
 
 import com.servicelibre.corpus.analyzis.Catgram;
 import com.servicelibre.corpus.analyzis.CatgramsPivot;

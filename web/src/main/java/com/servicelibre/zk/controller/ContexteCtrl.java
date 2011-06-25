@@ -31,12 +31,13 @@ import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Textbox;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.Liste;
-import com.servicelibre.corpus.liste.Mot;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
+
 
 /**
  * Démontre MVC: Autowire UI objects to data members

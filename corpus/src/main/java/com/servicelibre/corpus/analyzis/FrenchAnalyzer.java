@@ -20,23 +20,6 @@
 
 package com.servicelibre.corpus.analyzis;
 
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -58,172 +41,192 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.util.Version;
 
 /**
- * {@link Analyzer} for French language. 
+ * {@link Analyzer} for French language.
  * <p>
- * Supports an external list of stopwords (words that
- * will not be indexed at all) and an external list of exclusions (word that will
- * not be stemmed, but indexed).
- * A default set of stopwords is used unless an alternative list is specified, but the
- * exclusion list is empty by default.
+ * Supports an external list of stopwords (words that will not be indexed at
+ * all) and an external list of exclusions (word that will not be stemmed, but
+ * indexed). A default set of stopwords is used unless an alternative list is
+ * specified, but the exclusion list is empty by default.
  * </p>
- *
+ * 
  * <a name="version"/>
- * <p>You must specify the required {@link Version}
- * compatibility when creating FrenchAnalyzer:
+ * <p>
+ * You must specify the required {@link Version} compatibility when creating
+ * FrenchAnalyzer:
  * <ul>
- *   <li> As of 2.9, StopFilter preserves position
- *        increments
+ * <li>As of 2.9, StopFilter preserves position increments
  * </ul>
- *
- * <p><b>NOTE</b>: This class uses the same {@link Version}
- * dependent settings as {@link StandardAnalyzer}.</p>
- *
+ * 
+ * <p>
+ * <b>NOTE</b>: This class uses the same {@link Version} dependent settings as
+ * {@link StandardAnalyzer}.
+ * </p>
+ * 
  * @version $Id$
  */
-public final class FrenchAnalyzer extends Analyzer {
+public final class FrenchAnalyzer extends Analyzer
+{
 
-  private static final String[] DET_ART_ELISION = new String[]{"l", "m", "t", "n", "s", "j", "d", "c", "qu", "jusqu", "quelqu", "lorsqu", "puisqu", "quoiqu"};
+    private static final String[] DET_ART_ELISION = new String[] { "l", "m", "t", "n", "s", "j", "d", "c", "qu",
+            "jusqu", "quelqu", "lorsqu", "puisqu", "quoiqu" };
 
-/**
-   * Extended list of typical French stopwords.
-   */
-  public final static String[] FRENCH_STOP_WORDS = { };
+    /**
+     * Extended list of typical French stopwords.
+     */
+    public final static String[] FRENCH_STOP_WORDS = {};
 
-  /**
-   * Contains the stopwords used with the {@link StopFilter}.
-   */
-  private Set<Object> stoptable = new HashSet<Object>();
-  private final Version matchVersion;
+    /**
+     * Contains the stopwords used with the {@link StopFilter}.
+     */
+    private Set<Object> stoptable = new HashSet<Object>();
+    private final Version matchVersion;
 
-  /**
-   * Builds an analyzer with the default stop words ({@link #FRENCH_STOP_WORDS}).
-   *
-   * @deprecated Use {@link #FrenchAnalyzer(Version)} instead.
-   */
-  public FrenchAnalyzer() {
-    this(Version.LUCENE_30);
-  }
-
-  /**
-   * Builds an analyzer with the default stop words ({@link #FRENCH_STOP_WORDS}).
-   */
-  public FrenchAnalyzer(Version matchVersion) {
-    stoptable = StopFilter.makeStopSet(FRENCH_STOP_WORDS);
-    this.matchVersion = matchVersion;
-  }
-
-  /**
-   * Builds an analyzer with the given stop words.
-   *
-   * @deprecated Use {@link #FrenchAnalyzer(Version,
-   * String[])} instead.
-   */
-  public FrenchAnalyzer(String[] stopwords) {
-    this(Version.LUCENE_23, stopwords);
-  }
-
-  /**
-   * Builds an analyzer with the given stop words.
-   */
-  public FrenchAnalyzer(Version matchVersion, String[] stopwords) {
-    stoptable = StopFilter.makeStopSet(stopwords);
-    this.matchVersion = matchVersion;
-  }
-
-  /**
-   * Builds an analyzer with the given stop words.
-   * @throws IOException
-   *
-   * @deprecated Use {@link #FrenchAnalyzer(Version, File)} instead
-   */
-  public FrenchAnalyzer(File stopwords) throws IOException {
-    this(Version.LUCENE_23, stopwords);
-  }
-
-  /**
-   * Builds an analyzer with the given stop words.
-   * @throws IOException
-   */
-  public FrenchAnalyzer(Version matchVersion, File stopwords) throws IOException {
-    stoptable = new HashSet<Object>(WordlistLoader.getWordSet(stopwords));
-    this.matchVersion = matchVersion;
-  }
-
-  /**
-   * Builds an exclusionlist from an array of Strings.
-   */
-  public void setStemExclusionTable(String[] exclusionlist) {
-    StopFilter.makeStopSet(exclusionlist);
-    setPreviousTokenStream(null); // force a new stemmer to be created
-  }
-
-  /**
-   * Builds an exclusionlist from a Map.
-   */
-  public void setStemExclusionTable(Map<?, ?> exclusionlist) {
-    new HashSet<Object>(exclusionlist.keySet());
-    setPreviousTokenStream(null); // force a new stemmer to be created
-  }
-
-  /**
-   * Builds an exclusionlist from the words contained in the given file.
-   * @throws IOException
-   */
-  public void setStemExclusionTable(File exclusionlist) throws IOException {
-    new HashSet<Object>(WordlistLoader.getWordSet(exclusionlist));
-    setPreviousTokenStream(null); // force a new stemmer to be created
-  }
-
-  /**
-   * Creates a {@link TokenStream} which tokenizes all the text in the provided
-   * {@link Reader}.
-   *
-   * @return A {@link TokenStream} built from a {@link StandardTokenizer} 
-   *         filtered with {@link StandardFilter}, {@link StopFilter}, 
-   *         {@link FrenchStemFilter} and {@link LowerCaseFilter}
-   */
-  public final TokenStream tokenStream(String fieldName, Reader reader) {
-
-    if (fieldName == null) throw new IllegalArgumentException("fieldName must not be null");
-    if (reader == null) throw new IllegalArgumentException("reader must not be null");
-
-    TokenStream result = new StandardTokenizer(matchVersion, reader);
-    result = new StandardFilter(result);
-    //result = new StopFilter(StopFilter.getEnablePositionIncrementsVersionDefault(matchVersion), result, stoptable);
-    result = new ElisionFilter(result,DET_ART_ELISION);
-    result = new LowerCaseFilter(result);
-    return result;
-  }
-  
-  private class SavedStreams {
-    Tokenizer source;
-    TokenStream result;
-  };
-  
-  /**
-   * Returns a (possibly reused) {@link TokenStream} which tokenizes all the 
-   * text in the provided {@link Reader}.
-   *
-   * @return A {@link TokenStream} built from a {@link StandardTokenizer} 
-   *         filtered with {@link StandardFilter}, {@link StopFilter}, 
-   *         {@link FrenchStemFilter} and {@link LowerCaseFilter}
-   */
-  public TokenStream reusableTokenStream(String fieldName, Reader reader)
-      throws IOException {
-    SavedStreams streams = (SavedStreams) getPreviousTokenStream();
-    if (streams == null) {
-      streams = new SavedStreams();
-      streams.source = new StandardTokenizer(matchVersion, reader);
-      streams.result = new StandardFilter(streams.source);
-      streams.result = new ElisionFilter(streams.result,DET_ART_ELISION);
-      //streams.result = new StopFilter(StopFilter.getEnablePositionIncrementsVersionDefault(matchVersion), streams.result, stoptable);
-      streams.result = new LowerCaseFilter(streams.result);
-      
-      setPreviousTokenStream(streams);
-    } else {
-      streams.source.reset(reader);
+    /**
+     * Builds an analyzer with the default stop words (
+     * {@link #FRENCH_STOP_WORDS}).
+     * 
+     * @deprecated Use {@link #FrenchAnalyzer(Version)} instead.
+     */
+    public FrenchAnalyzer()
+    {
+        this(Version.LUCENE_30);
     }
-    return streams.result;
-  }
-}
 
+    /**
+     * Builds an analyzer with the default stop words (
+     * {@link #FRENCH_STOP_WORDS}).
+     */
+    public FrenchAnalyzer(Version matchVersion)
+    {
+        stoptable = StopFilter.makeStopSet(FRENCH_STOP_WORDS);
+        this.matchVersion = matchVersion;
+    }
+
+    /**
+     * Builds an analyzer with the given stop words.
+     * 
+     * @deprecated Use {@link #FrenchAnalyzer(Version, String[])} instead.
+     */
+    public FrenchAnalyzer(String[] stopwords)
+    {
+        this(Version.LUCENE_23, stopwords);
+    }
+
+    /**
+     * Builds an analyzer with the given stop words.
+     */
+    public FrenchAnalyzer(Version matchVersion, String[] stopwords)
+    {
+        stoptable = StopFilter.makeStopSet(stopwords);
+        this.matchVersion = matchVersion;
+    }
+
+    /**
+     * Builds an analyzer with the given stop words.
+     * 
+     * @throws IOException
+     * 
+     * @deprecated Use {@link #FrenchAnalyzer(Version, File)} instead
+     */
+    public FrenchAnalyzer(File stopwords) throws IOException
+    {
+        this(Version.LUCENE_23, stopwords);
+    }
+
+    /**
+     * Builds an analyzer with the given stop words.
+     * 
+     * @throws IOException
+     */
+    public FrenchAnalyzer(Version matchVersion, File stopwords) throws IOException
+    {
+        stoptable = new HashSet<Object>(WordlistLoader.getWordSet(stopwords));
+        this.matchVersion = matchVersion;
+    }
+
+    /**
+     * Builds an exclusionlist from an array of Strings.
+     */
+    public void setStemExclusionTable(String[] exclusionlist)
+    {
+        StopFilter.makeStopSet(exclusionlist);
+        setPreviousTokenStream(null); // force a new stemmer to be created
+    }
+
+    /**
+     * Builds an exclusionlist from a Map.
+     */
+    public void setStemExclusionTable(Map<?, ?> exclusionlist)
+    {
+        new HashSet<Object>(exclusionlist.keySet());
+        setPreviousTokenStream(null); // force a new stemmer to be created
+    }
+
+    /**
+     * Builds an exclusionlist from the words contained in the given file.
+     * 
+     * @throws IOException
+     */
+    public void setStemExclusionTable(File exclusionlist) throws IOException
+    {
+        new HashSet<Object>(WordlistLoader.getWordSet(exclusionlist));
+        setPreviousTokenStream(null); // force a new stemmer to be created
+    }
+
+    /**
+     * Creates a {@link TokenStream} which tokenizes all the text in the
+     * provided {@link Reader}.
+     * 
+     * @return A {@link TokenStream} built from a {@link StandardTokenizer}
+     *         filtered with {@link StandardFilter}, {@link StopFilter},
+     *         {@link FrenchStemFilter} and {@link LowerCaseFilter}
+     */
+    public final TokenStream tokenStream(String fieldName, Reader reader)
+    {
+
+        if (fieldName == null) throw new IllegalArgumentException("fieldName must not be null");
+        if (reader == null) throw new IllegalArgumentException("reader must not be null");
+
+        TokenStream result = new StandardTokenizer(matchVersion, reader);
+        result = new StandardFilter(result);
+        //result = new StopFilter(StopFilter.getEnablePositionIncrementsVersionDefault(matchVersion), result, stoptable);
+        result = new ElisionFilter(result, DET_ART_ELISION);
+        result = new LowerCaseFilter(result);
+        return result;
+    }
+
+    private class SavedStreams
+    {
+        Tokenizer source;
+        TokenStream result;
+    };
+
+    /**
+     * Returns a (possibly reused) {@link TokenStream} which tokenizes all the
+     * text in the provided {@link Reader}.
+     * 
+     * @return A {@link TokenStream} built from a {@link StandardTokenizer}
+     *         filtered with {@link StandardFilter}, {@link StopFilter},
+     *         {@link FrenchStemFilter} and {@link LowerCaseFilter}
+     */
+    public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException
+    {
+        SavedStreams streams = (SavedStreams) getPreviousTokenStream();
+        if (streams == null)
+        {
+            streams = new SavedStreams();
+            streams.source = new StandardTokenizer(matchVersion, reader);
+            streams.result = new StandardFilter(streams.source);
+            streams.result = new ElisionFilter(streams.result, DET_ART_ELISION);
+            //streams.result = new StopFilter(StopFilter.getEnablePositionIncrementsVersionDefault(matchVersion), streams.result, stoptable);
+            streams.result = new LowerCaseFilter(streams.result);
+
+            setPreviousTokenStream(streams);
+        }
+        else
+        {
+            streams.source.reset(reader);
+        }
+        return streams.result;
+    }
+}

@@ -11,9 +11,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.Corpus;
+import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
+
 
 /**
  * Outil d'importation de listes

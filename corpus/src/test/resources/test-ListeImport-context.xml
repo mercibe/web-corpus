@@ -11,7 +11,7 @@
 		<property name="listes" ref="listes" />
 	</bean>
 
-	<bean id="corpus" class="com.servicelibre.corpus.liste.Corpus">
+	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
 		<constructor-arg value="corpus-test" />
 		<constructor-arg value="Corpus de test"></constructor-arg>
 	</bean>

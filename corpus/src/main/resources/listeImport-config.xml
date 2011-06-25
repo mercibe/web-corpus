@@ -20,7 +20,7 @@
 		<ref bean="listeSecondaire" />
 	</util:list>
 
-	<bean id="corpus" class="com.servicelibre.corpus.liste.Corpus">
+	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
 		<constructor-arg value="MELS-CJ" />
 		<constructor-arg value="Corpus de Littérature Jeunesse du MELS"></constructor-arg>
 	</bean>

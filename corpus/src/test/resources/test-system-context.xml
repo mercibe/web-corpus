@@ -32,4 +32,10 @@
 		<!-- <jdbc:script location="classpath:testdb/schema.sql"/> -->
 		<!-- <jdbc:script location="classpath:testdb/test-data.sql"/> -->
 	</jdbc:embedded-database>
+
+	<!-- Création du bean responsable de la gestion des transactions -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>	
+	
 </beans>

@@ -3,6 +3,9 @@ package com.servicelibre.corpus.liste;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.servicelibre.corpus.entity.Mot;
+
+
 /**
  * mot\tlemme\tcatgram\tcatgram_precision\tgenre\tnombre\tro\tnote
  * 

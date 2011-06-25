@@ -2,7 +2,8 @@ package com.servicelibre.corpus.manager;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.liste.Corpus;
+import com.servicelibre.corpus.entity.Corpus;
+
 
 @Transactional(readOnly = true)
 public interface CorpusManager // extends JpaRepository<Corpus, Long>

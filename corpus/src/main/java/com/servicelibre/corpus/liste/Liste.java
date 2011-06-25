@@ -17,6 +17,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import com.servicelibre.corpus.entity.Corpus;
+import com.servicelibre.corpus.entity.Mot;
+
+
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
 public class Liste implements Comparable<Liste>

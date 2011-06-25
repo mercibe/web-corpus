@@ -1,4 +1,4 @@
-package com.servicelibre.corpus.liste;
+package com.servicelibre.corpus.entity;
 
 import java.text.Collator;
 import java.util.Locale;
@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.servicelibre.corpus.liste.Liste;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id", "lemme", "mot", "catgram", "genre" }))
