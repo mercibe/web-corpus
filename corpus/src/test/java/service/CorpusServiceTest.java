@@ -17,6 +17,7 @@ import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.corpus.service.FormeService;
 
 
 @ContextConfiguration
@@ -26,6 +27,9 @@ public class CorpusServiceTest
 
     @Autowired
     CorpusManager cm;
+    
+    @Autowired
+    FormeService formeService;
 
     @Ignore
     @Test
@@ -56,6 +60,7 @@ public class CorpusServiceTest
 
     }
     
+    
     @Test
     public void contextesTest() {
        
@@ -63,11 +68,9 @@ public class CorpusServiceTest
         
         corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
         
-        // TODO set Franqus analyseur?  Sans le donner...
-        
         CorpusService cs = new CorpusService(cm, corpus);
         
-        List<Contexte> contextes = cs.contextes("chien");
+        List<Contexte> contextes = cs.contextesMot("chien");
         
         assertNotNull("La liste des contextes ne peut être null.", contextes);
         assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
@@ -78,6 +81,25 @@ public class CorpusServiceTest
 //            System.out.println("------"+ cpt++ +"------");
 //            System.out.println(c);
 //        }
+        
+    }
+    
+    @Test
+    public void contextesLemmeTest() {
+       
+        Corpus corpus = new Corpus("Corpus de test nouveau", "");
+        
+        corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
+        
+        CorpusService cs = new CorpusService(cm, corpus);
+        cs.setFormeService(formeService);
+        
+        List<Contexte> contextes = cs.contextesLemme("manger");
+        
+        assertNotNull("La liste des contextes ne peut être null.", contextes);
+        assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
+        
+        System.err.println("# contextes: " + contextes.size());
         
     }
 

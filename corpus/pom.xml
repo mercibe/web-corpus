@@ -227,6 +227,13 @@
 				<filtering>true</filtering>
 			</resource>
 			<resource>
+				<directory>${basedir}/src/main/resources/unfiltered</directory>
+				<includes>
+					<include>*</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
 					<include>**/*.xml</include>

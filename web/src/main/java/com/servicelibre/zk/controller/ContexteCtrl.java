@@ -9,6 +9,7 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -26,20 +27,18 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
-import com.servicelibre.corpus.manager.ListeManager;
-import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.CorpusService;
 
-
 /**
- * Démontre MVC: Autowire UI objects to data members
+ * 
  * 
  * @author benoitm
  * 
@@ -47,13 +46,13 @@ import com.servicelibre.corpus.service.CorpusService;
 public class ContexteCtrl extends GenericForwardComposer implements VariableResolver
 {
 
-    private static final int CORPUS_ID_PAR_DÉFAUT = 1;
+    //private static final int CORPUS_ID_PAR_DÉFAUT = 1;
 
     Combobox condition; //autowire car même type/ID que le composant dans la page ZUL
     Textbox cherche; //autowire car même type/ID que le composant dans la page ZUL
     Button boutonRecherche;
     Combobox voisinage;
-    
+
     Grid contextesGrid; //autowire car même type/ID que le composant dans la page ZUL
 
     Listbox nomFiltre; //autowire car même type/ID que le composant dans la page ZUL
@@ -62,6 +61,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
     Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
 
+    Window contexteWindow;
 
     /**
      * Permet de remplir les choix de filtres/valeurs possibles
@@ -75,9 +75,11 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
      */
     FiltreMot filtreActifModel = new FiltreMot();
 
-    CorpusService corpusService = ServiceLocator.getCorpusService(); 
+    CorpusService corpusService = ServiceLocator.getCorpusService();
 
     private static final long serialVersionUID = 779679285074159073L;
+
+    private Window webCorpusWindow;
 
     // Enregistrement des événements onOK (la touche ENTER) sur tous les composants de la recherche
     public void onOK$cherche(Event event)
@@ -105,6 +107,29 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     public void onOK$gp(Event event)
     {
         chercheEtAfficheContextes();
+    }
+
+    public void onAfficheContexte$contexteWindow(Event event)
+    {
+
+        //System.err.println(event.getName() + ": affiche contexte de " + event.getData());
+        String lemme = (String) contexteWindow.getAttribute("lemme");
+
+        // Mettre le lemme dans le champ recherche
+        cherche.setValue(lemme);
+
+        // Chercher toutes les formes
+        condition.setSelectedIndex(1);
+
+        // TODO devrions-nous réinitialiser filtre ?
+
+        // Sélectionner l'onglet Contexte
+        Tab contexteTab = (Tab) webCorpusWindow.getFellow("contexteTab");
+        contexteTab.setSelected(true);
+
+        // Lancer la recherche
+        chercheEtAfficheContextes();
+
     }
 
     //    public void onSelect$liste(Event event) {
@@ -145,7 +170,6 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
     private void rafraichiValeurFiltreCourant()
     {
-
         Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
 
         if (currentItem.getValue() != null)
@@ -163,13 +187,13 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     @Override
     public Object resolveVariable(String variableName) throws XelException
     {
-//        if (variableName.equals("listes"))
-//        {
-//            List<Liste> listes = new ArrayList<Liste>(1);
-//            listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
-//            listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
-//            return listes;
-//        }
+        //        if (variableName.equals("listes"))
+        //        {
+        //            List<Liste> listes = new ArrayList<Liste>(1);
+        //            listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
+        //            listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
+        //            return listes;
+        //        }
         return null;
     }
 
@@ -189,21 +213,32 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     {
 
         String aChercher = cherche.getText();
-        
-        if(aChercher == null || aChercher.trim().isEmpty()) {
-        	return new ArrayList<Contexte>();
+
+        if (aChercher == null || aChercher.trim().isEmpty())
+        {
+            return new ArrayList<Contexte>();
         }
-        
+
         System.out.println(getDescriptionRecherche());
-        
+
         corpusService.setTailleVoisinnage(Integer.parseInt(voisinage.getSelectedItem().getValue().toString()));
-        
+
         // TODO chercher toutes les formes en fonction de condition.getValue()
-        if(condition.getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
-        	return  corpusService.contextesLemme(aChercher);
+
+        System.err.println("condition.getValue()=" + condition.getValue());
+        System.err.println("condition.getItemAtIndex(condition.getSelectedIndex()).getValue()="
+                + condition.getItemAtIndex(condition.getSelectedIndex()).getValue());
+
+        if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue().equals("TOUTES_LES_FORMES_DU_MOT"))
+        {
+            //FIXME quid si le mot n'est pas un lemme?  Rechercher son lemme et lancer la recherche?
+            System.err.println("recherche toutes les formes.....");
+            return corpusService.contextesLemme(aChercher);
         }
-        else {
-        	return  corpusService.contextes(aChercher);
+        else
+        {
+            System.err.println("recherche le mot exact.....");
+            return corpusService.contextesMot(aChercher);
         }
     }
 
@@ -234,13 +269,13 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     public String getDescriptionRecherche()
     {
         StringBuilder desc = new StringBuilder();
-        
+
         String aChercher = cherche.getValue().trim();
 
         if (!aChercher.isEmpty())
         {
-        	desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
-        	
+            desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
+
             desc.append(" « ").append(aChercher).append(" »");
         }
 
@@ -252,26 +287,32 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     {
         super.doAfterCompose(comp);
 
+        initialiseChamps();
 
-        condition.setSelectedIndex(0);
-        voisinage.setSelectedIndex(5);
+        initialiseRecherche();
 
-        contextesGrid.setModel(new ListModelList(getContextes()));
+        initialiseContexteGrid();
 
-        contextesGrid.setRowRenderer(new RowRenderer()
-        {
+        initialiseFiltre();
 
-            @Override
-            public void render(Row row, Object model) throws Exception
-            {
-                Contexte contexte = (Contexte) model;
+    }
 
-                row.appendChild(new Label(contexte.texteAvant + contexte.mot + contexte.texteAprès));
-              
+    @Override
+    public void onEvent(Event evt) throws Exception
+    {
+        super.onEvent(evt);
+        System.err.println("ContexteCtrl" + evt.getName());
+    }
 
-            }
-        });
+    private void initialiseChamps()
+    {
+        Page webCorpusPage = desktop.getPage("webCorpusPage");
+        webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
 
+    }
+
+    private void initialiseFiltre()
+    {
         // Initialisation des filtres (noms)
         nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
 
@@ -353,6 +394,32 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
             }
         });
+
+    }
+
+    private void initialiseContexteGrid()
+    {
+        contextesGrid.setModel(new ListModelList(getContextes()));
+
+        contextesGrid.setRowRenderer(new RowRenderer()
+        {
+
+            @Override
+            public void render(Row row, Object model) throws Exception
+            {
+                Contexte contexte = (Contexte) model;
+
+                row.appendChild(new Label(contexte.texteAvant + contexte.mot + contexte.texteAprès));
+
+            }
+        });
+
+    }
+
+    private void initialiseRecherche()
+    {
+        condition.setSelectedIndex(0);
+        voisinage.setSelectedIndex(5);
 
     }
 

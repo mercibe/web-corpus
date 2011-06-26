@@ -48,5 +48,9 @@ public class ServiceLocator
         return (CorpusService) ctx.getBean("corpusService");
     }
     
+    public static CorpusService getFormeService()
+    {
+        return (CorpusService) ctx.getBean("formeService");
+    }
     
 }

@@ -1,6 +1,6 @@
-<?page title="Web corpus - Contextes" contentType="text/html;charset=UTF-8"?>
+<?page id="contextePage" title="Web corpus - Contextes" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window border="none" width="100%" height="100%" apply="com.servicelibre.zk.controller.ContexteCtrl">
+<window id="contexteWindow" border="none" width="100%" height="100%" apply="com.servicelibre.zk.controller.ContexteCtrl">
 	<groupbox>
 		<caption>Recherche</caption>
 		<hbox style="margin-top:10px;">

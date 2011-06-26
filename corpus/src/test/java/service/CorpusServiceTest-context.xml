@@ -8,6 +8,7 @@
 	<!-- Importation de la configuration de l'application -->
 	<import resource="classpath:test-system-context.xml" />
 
+	<bean id="formeService" class="com.servicelibre.corpus.service.FormeService" init-method="init"/>
 	
 	<!--${properties} -->
 	<context:property-placeholder />

@@ -176,4 +176,10 @@ public class LigneMtlSplitter implements LigneSplitter {
 			cols[2] = cols[2].split(",")[0].trim();
 		}
 	}
+
+    @Override
+    public List<Mot> splitLigne(String ligne)
+    {
+        return splitLigne(ligne, new Liste());
+    }
 }

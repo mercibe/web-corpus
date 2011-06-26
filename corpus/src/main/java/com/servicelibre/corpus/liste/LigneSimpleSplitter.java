@@ -41,4 +41,10 @@ public class LigneSimpleSplitter implements LigneSplitter
             cols[i] = cols[i].trim();
         }
     }
+    
+    @Override
+    public List<Mot> splitLigne(String ligne)
+    {
+        return splitLigne(ligne, new Liste());
+    }
 }

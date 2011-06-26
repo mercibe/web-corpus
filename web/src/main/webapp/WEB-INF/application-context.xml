@@ -23,6 +23,7 @@
 	<bean id="corpusService" class="com.servicelibre.corpus.service.CorpusService">
 		<constructor-arg ref="corpusManager" />
 		<constructor-arg ref="corpusParDéfaut"/>
+		<property name="formeService" ref="formeService"/>
 	</bean>
 
 	<bean id="corpusParDéfaut" class="com.servicelibre.corpus.entity.Corpus">
@@ -30,6 +31,7 @@
 		<constructor-arg value=""/>
 	</bean>
 
+	<bean id="formeService" class="com.servicelibre.corpus.service.FormeService" init-method="init"/>
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

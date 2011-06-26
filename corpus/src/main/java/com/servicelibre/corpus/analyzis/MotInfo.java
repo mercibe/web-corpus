@@ -37,7 +37,7 @@ public class MotInfo
     };
 
     public String mot;
-    String lemme;
+    public String lemme;
     Catgram catgram;
     double freqMot;
     double freqLemme;

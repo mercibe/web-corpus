@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -18,6 +21,7 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
+import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -29,6 +33,7 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.entity.Mot;
@@ -37,7 +42,6 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
-
 
 /**
  * Démontre MVC: Autowire UI objects to data members
@@ -48,6 +52,8 @@ import com.servicelibre.corpus.manager.MotManager;
 public class ListeCtrl extends GenericForwardComposer implements VariableResolver
 {
 
+    private static Logger logger = LoggerFactory.getLogger(ListeCtrl.class);
+
     private static final int CORPUS_ID_PAR_DÉFAUT = 1;
 
     Combobox liste; //autowire car même type/ID que le composant dans la page ZUL
@@ -57,6 +63,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
     Textbox cherche; //autowire car même type/ID que le composant dans la page ZUL
     Grid motsGrid; //autowire car même type/ID que le composant dans la page ZUL
+    Column mot;
 
     Listbox nomFiltre; //autowire car même type/ID que le composant dans la page ZUL
     Listbox valeurFiltre;//autowire car même type/ID que le composant dans la page ZUL
@@ -82,6 +89,10 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     MotManager motManager = ServiceLocator.getMotManager();
 
     private static final long serialVersionUID = 779679285074159073L;
+
+    private Column motColumn;
+
+    private Window webCorpusWindow;
 
     // Enregistrement des événements onOK (la touche ENTER) sur tous les composants de la recherche
     public void onOK$cherche(Event event)
@@ -110,13 +121,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         chercheEtAfficheMot();
     }
-
-    //    public void onSelect$liste(Event event) {
-    //    	chercheEtAfficheMot();
-    //    }
-    //    public void onSelect$condition(Event event) {
-    //    	chercheEtAfficheMot();
-    //    }
 
     public void onClick$boutonAjoutFiltre(Event event)
     {
@@ -181,10 +185,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         motsGrid.setModel(new ListModelList(getMotsRecherchés()));
         // les mots sont toujours retournés par ordre alphabétique => refléter dans la colonne (réinitialisation du marqueur de tri)
-
-        // tri ZK
-        // TODO conserver le tri de l'utilisateur avant de lancer la recherche et le réappliquer après
-        Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
 
         motColumn.sort(true);
 
@@ -280,31 +280,32 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     {
         super.doAfterCompose(comp);
 
-        liste.setSelectedIndex(0);
-        gp.setSelectedIndex(0);
+        initialiseChamps();
 
-        condition.setSelectedIndex(0);
+        initialiseRecherche();
 
-        motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+        initialiseMotsGrid();
 
-        motsGrid.setRowRenderer(new RowRenderer()
-        {
+        initialiseFiltre();
 
-            @Override
-            public void render(Row row, Object model) throws Exception
-            {
-                Mot mot = (Mot) model;
+    }
 
-                row.appendChild(new Label(mot.getMot()));
-                row.appendChild(new Label(mot.getCatgram()));
-                row.appendChild(new Label(mot.getGenre()));
-                row.appendChild(new Label(mot.getNombre()));
-                row.appendChild(new Label(mot.getCatgramPrésicion()));
-                row.appendChild(new Label(mot.getListe().getNom()));
+    @Override
+    public void onEvent(Event evt) throws Exception
+    {
+        super.onEvent(evt);
+        System.err.println("ListeCtrl: " + evt.getName());
+    }
 
-            }
-        });
+    private void initialiseChamps()
+    {
+        Page webCorpusPage = desktop.getPage("webCorpusPage");
+        webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
 
+    }
+
+    private void initialiseFiltre()
+    {
         // Initialisation des filtres (noms)
         nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
 
@@ -386,6 +387,83 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
             }
         });
+
+    }
+
+    private void initialiseMotsGrid()
+    {
+        motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+
+        motsGrid.setRowRenderer(new RowRenderer()
+        {
+
+            @Override
+            public void render(Row row, Object model) throws Exception
+            {
+                Mot mot = (Mot) model;
+
+                Label motLabel = new Label(mot.getMot());
+                motLabel.setStyle("cursor:hand;cursor:pointer");
+
+                motLabel.addEventListener(Events.ON_CLICK, new EventListener()
+                {
+
+                    @Override
+                    public void onEvent(Event event) throws Exception
+                    {
+                        Label label = (Label) event.getTarget();
+                        afficheContexte(label.getValue());
+                    }
+                });
+
+                row.appendChild(motLabel);
+                row.appendChild(new Label(mot.getCatgram()));
+                row.appendChild(new Label(mot.getGenre()));
+                row.appendChild(new Label(mot.getNombre()));
+                row.appendChild(new Label(mot.getCatgramPrésicion()));
+                row.appendChild(new Label(mot.getListe().getNom()));
+
+            }
+        });
+
+        // Enregistrement événement pour lien vers contextes
+        motColumn = (Column) motsGrid.getColumns().getFellow("mot");
+
+    }
+
+    private void initialiseRecherche()
+    {
+        liste.setSelectedIndex(0);
+        gp.setSelectedIndex(0);
+        condition.setSelectedIndex(0);
+
+    }
+
+    private void afficheContexte(String lemme)
+    {
+
+        logger.debug("Afficher les contextes de « {} »", lemme);
+
+        Include contexteInclude = (Include) webCorpusWindow.getFellow("contexteInclude");
+        Window contexteWindow = (Window) contexteInclude.getFellow("contexteWindow");
+
+        contexteWindow.setAttribute("lemme", lemme);
+        Events.sendEvent("onAfficheContexte", contexteWindow, lemme);
+
+    }
+
+    @SuppressWarnings("unused")
+    private void displayChildren(Component comp, String sep)
+    {
+        @SuppressWarnings("unchecked")
+        List<Component> children = comp.getChildren();
+
+        System.out.println("Children of " + comp.getUuid() + "(" + comp.getId() + ")");
+        for (Component component : children)
+        {
+            System.out.println(component.getUuid() + "(" + component.getId() + ")");
+            displayChildren(component, sep + "\t");
+        }
 
     }
 
