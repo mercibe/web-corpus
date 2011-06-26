@@ -5,6 +5,7 @@ import org.zkoss.spring.SpringUtil;
 
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.zk.controller.FiltreManager;
 
 public class ServiceLocator
@@ -41,5 +42,11 @@ public class ServiceLocator
     {
         return (FiltreManager) ctx.getBean("contexteFiltreManager");
     }
+    
+    public static CorpusService getCorpusService()
+    {
+        return (CorpusService) ctx.getBean("corpusService");
+    }
+    
     
 }

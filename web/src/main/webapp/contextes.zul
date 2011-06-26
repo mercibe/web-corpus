@@ -13,6 +13,21 @@
 			</combobox>
 			
 			<textbox id="cherche"></textbox>
+			
+			<combobox id="voisinage" readonly="true">
+				<comboitem label="entouré de 5 mots" value="5"/>
+				<comboitem label="entouré de 6 mots" value="6"/>
+				<comboitem label="entouré de 7 mots" value="7"/>
+				<comboitem label="entouré de 8 mots" value="8"/>
+				<comboitem label="entouré de 9 mots" value="9"/>
+				<comboitem label="entouré de 10 mots" value="10"/>
+				<comboitem label="entouré de 15 mots" value="15"/>
+				<comboitem label="entouré de 20 mots" value="20"/>
+				<comboitem label="entouré de 25 mots" value="25"/>
+				<comboitem label="entouré de 30 mots" value="30"/>
+				<comboitem label="entouré de 40 mots" value="40"/>
+				<comboitem label="entouré de 50 mots" value="50"/>
+			</combobox>
 				
 			<button id="boutonRecherche" label="Recherche"/>
 			
@@ -47,7 +62,7 @@
 			</groupbox>
 			
 
-			<grid id="contextesGrid" mold="paging" pageSize="25"
+			<grid id="contextesGrid" mold="paging" pageSize="15"
 				height="660px" width="700px" emptyMessage="Aucun contexte trouvé.">
 				<!-- 	pagingPosition="both" sizedByContent="true"> -->
 	

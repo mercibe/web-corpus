@@ -14,18 +14,22 @@
 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
 
 	<bean id="listeFiltreManager" class="com.servicelibre.zk.controller.ListeFiltreManager"
-		init-method="init">
-		<property name="corpusId" ref="corpusId"/>
-	</bean>
-	
+		init-method="init" />
+
 	<bean id="contexteFiltreManager" class="com.servicelibre.zk.controller.ContexteFiltreManager"
-		init-method="init">
-		<property name="corpusId" ref="corpusId"/>
+		init-method="init" />
+
+
+	<bean id="corpusService" class="com.servicelibre.corpus.service.CorpusService">
+		<constructor-arg ref="corpusManager" />
+		<constructor-arg ref="corpusParDéfaut"/>
 	</bean>
 
-	<bean id="corpusId" class="java.lang.Long">
-		<constructor-arg value="1"/>
+	<bean id="corpusParDéfaut" class="com.servicelibre.corpus.entity.Corpus">
+		<constructor-arg value="MELS-CJ"/>
+		<constructor-arg value=""/>
 	</bean>
+
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

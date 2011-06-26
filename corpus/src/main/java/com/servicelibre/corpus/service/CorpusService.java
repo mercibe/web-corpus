@@ -34,6 +34,8 @@ public class CorpusService
     private CorpusManager corpusManager;
 
     private LuceneIndexManager indexManager;
+    
+    protected int tailleVoisinage = 10;
 
     public CorpusService(CorpusManager cm, Corpus corpus)
     {
@@ -88,14 +90,15 @@ public class CorpusService
      */
     public List<Contexte> contextes(String mot)
     {
-        List<Contexte> contextes = new ArrayList<Contexte>();
 
-        // TODO se connecter à l'index Lucene et faire la recherche
+        // connecter à l'index Lucene et faire la recherche
         LuceneIndexManager manager = getLuceneIndexManager();
 
-        RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, null, 1, 30);
+        RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, 1, tailleVoisinage);
         
         logger.debug("Trouvé " + résultats.scoreDocs.length + " documents => " + résultats.spanCount);
+        
+        List<Contexte> contextes = new ArrayList<Contexte>(résultats.spanCount);
         
         for(int i=0 ; i<  résultats.scoreDocs.length; i++)
         {
@@ -110,6 +113,20 @@ public class CorpusService
 
         return contextes;
     }
+    
+	public List<Contexte> contextesLemme(String lemme) {
+		
+		// TODO rechercher toutes les formes du lemme
+		
+		
+		
+		// FIXME passer liste de formes au lieu de lemme
+		 RésultatRecherche résultats = getLuceneIndexManager().getDocumentsWithContexts(lemme, 1, tailleVoisinage);
+		 
+		 List<Contexte> contextes = new ArrayList<Contexte>(résultats.spanCount);
+		 
+		return contextes;
+	}
 
     public LuceneIndexManager getLuceneIndexManager()
     {
@@ -140,7 +157,7 @@ public class CorpusService
                     manager = new LuceneIndexManager(fsDirectory, perFieldAnalyzerWrapper);
                 }
                 else {
-                    logger.error("Le dossier qui contient l'index Lucene est introuvable: {}",dossierLuceneIndex);
+                    logger.error("Le dossier qui contient l'index Lucene pour le corpus {} est introuvable: {}",corpus, dossierLuceneIndex);
                 }
             }
             catch (IOException e)
@@ -200,4 +217,16 @@ public class CorpusService
         return null;
     }
 
+	public int getTailleVoisinnage() {
+		return tailleVoisinage;
+	}
+
+	public void setTailleVoisinnage(int tailleVoisinnage) {
+		this.tailleVoisinage = tailleVoisinnage;
+	}
+
+
+
+    
+    
 }

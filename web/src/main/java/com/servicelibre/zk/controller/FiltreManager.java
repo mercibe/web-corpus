@@ -13,16 +13,11 @@ public abstract class FiltreManager {
 
 	protected List<Filtre> filtres = new ArrayList<Filtre>(3);
 
-	protected long corpusId;
 
 	public FiltreManager() {
 		super();
 	}
 
-	public FiltreManager(long corpusId) {
-		super();
-		this.corpusId = corpusId;
-	}
 
 	public List<DefaultKeyValue> getFiltreNoms() {
 
@@ -62,12 +57,5 @@ public abstract class FiltreManager {
 
 	abstract public void init();
 
-	public long getCorpusId() {
-		return corpusId;
-	}
-
-	public void setCorpusId(long corpusId) {
-		this.corpusId = corpusId;
-	}
 
 }

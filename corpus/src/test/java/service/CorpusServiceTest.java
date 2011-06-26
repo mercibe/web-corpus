@@ -72,12 +72,12 @@ public class CorpusServiceTest
         assertNotNull("La liste des contextes ne peut être null.", contextes);
         assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
         
-        System.err.println("# contextes: " + contextes.size());
-        int cpt = 1;
-        for(Contexte c : contextes) {
-            System.out.println("------"+ cpt++ +"------");
-            System.out.println(c);
-        }
+//        System.err.println("# contextes: " + contextes.size());
+//        int cpt = 1;
+//        for(Contexte c : contextes) {
+//            System.out.println("------"+ cpt++ +"------");
+//            System.out.println(c);
+//        }
         
     }
 

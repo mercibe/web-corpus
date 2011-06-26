@@ -14,7 +14,6 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
@@ -23,7 +22,6 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
@@ -32,11 +30,12 @@ import org.zkoss.zul.Textbox;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.service.Contexte;
+import com.servicelibre.corpus.service.CorpusService;
 
 
 /**
@@ -53,6 +52,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     Combobox condition; //autowire car même type/ID que le composant dans la page ZUL
     Textbox cherche; //autowire car même type/ID que le composant dans la page ZUL
     Button boutonRecherche;
+    Combobox voisinage;
     
     Grid contextesGrid; //autowire car même type/ID que le composant dans la page ZUL
 
@@ -75,8 +75,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
      */
     FiltreMot filtreActifModel = new FiltreMot();
 
-    ListeManager listeManager = ServiceLocator.getListeManager();
-    MotManager motManager = ServiceLocator.getMotManager();
+    CorpusService corpusService = ServiceLocator.getCorpusService(); 
 
     private static final long serialVersionUID = 779679285074159073L;
 
@@ -164,40 +163,48 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     @Override
     public Object resolveVariable(String variableName) throws XelException
     {
-        if (variableName.equals("listes"))
-        {
-            List<Liste> listes = new ArrayList<Liste>(1);
-            listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
-            listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
-            return listes;
-        }
+//        if (variableName.equals("listes"))
+//        {
+//            List<Liste> listes = new ArrayList<Liste>(1);
+//            listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
+//            listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
+//            return listes;
+//        }
         return null;
     }
 
     public void chercheEtAfficheContextes()
     {
-        //motsGrid.setModel(new ListModelList(getMotsRecherchés()));
-        // les mots sont toujours retournés par ordre alphabétique => refléter dans la colonne (réinitialisation du marqueur de tri)
+        contextesGrid.setModel(new ListModelList(getContextes()));
 
+        // les contextes sont toujours retournés par ordre de documents  => refléter dans la colonne (réinitialisation du marqueur de tri)
         // tri ZK
         // TODO conserver le tri de l'utilisateur avant de lancer la recherche et le réappliquer après
-        //Column motColumn = (Column) motsGrid.getColumns().getFellow("mot");
-
+        //Column motColumn = (Column) contextesGrid.getColumns().getFellow("mot");
         //motColumn.sort(true);
 
     }
 
-    private List<Mot> getMotsRecherchés()
+    private List<Contexte> getContextes()
     {
-        List<Mot> mots = new ArrayList<Mot>();
 
+        String aChercher = cherche.getText();
+        
+        if(aChercher == null || aChercher.trim().isEmpty()) {
+        	return new ArrayList<Contexte>();
+        }
+        
         System.out.println(getDescriptionRecherche());
-
-        String conditionActive = (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
-
-        // TODO       
-
-        return mots;
+        
+        corpusService.setTailleVoisinnage(Integer.parseInt(voisinage.getSelectedItem().getValue().toString()));
+        
+        // TODO chercher toutes les formes en fonction de condition.getValue()
+        if(condition.getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
+        	return  corpusService.contextesLemme(aChercher);
+        }
+        else {
+        	return  corpusService.contextes(aChercher);
+        }
     }
 
     /**
@@ -227,13 +234,13 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
     public String getDescriptionRecherche()
     {
         StringBuilder desc = new StringBuilder();
-
-        desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
-
+        
         String aChercher = cherche.getValue().trim();
 
         if (!aChercher.isEmpty())
         {
+        	desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
+        	
             desc.append(" « ").append(aChercher).append(" »");
         }
 
@@ -247,26 +254,23 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 
         condition.setSelectedIndex(0);
+        voisinage.setSelectedIndex(5);
 
-        //motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+        contextesGrid.setModel(new ListModelList(getContextes()));
 
-//        motsGrid.setRowRenderer(new RowRenderer()
-//        {
-//
-//            @Override
-//            public void render(Row row, Object model) throws Exception
-//            {
-//                Mot mot = (Mot) model;
-//
-//                row.appendChild(new Label(mot.getMot()));
-//                row.appendChild(new Label(mot.getCatgram()));
-//                row.appendChild(new Label(mot.getGenre()));
-//                row.appendChild(new Label(mot.getNombre()));
-//                row.appendChild(new Label(mot.getCatgramPrésicion()));
-//                row.appendChild(new Label(mot.getListe().getNom()));
-//
-//            }
-//        });
+        contextesGrid.setRowRenderer(new RowRenderer()
+        {
+
+            @Override
+            public void render(Row row, Object model) throws Exception
+            {
+                Contexte contexte = (Contexte) model;
+
+                row.appendChild(new Label(contexte.texteAvant + contexte.mot + contexte.texteAprès));
+              
+
+            }
+        });
 
         // Initialisation des filtres (noms)
         nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));

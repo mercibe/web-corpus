@@ -6,9 +6,9 @@ public class Contexte
     
     // TODO ajouter metadonnées du document source
     
-    String texteAvant;
-    String mot;
-    String texteAprès;
+    public String texteAvant;
+    public String mot;
+    public String texteAprès;
     
     public Contexte(String texteAvant, String mot, String texteAprès)
     {
