@@ -3,9 +3,11 @@ package com.servicelibre.controller;
 import org.springframework.context.ApplicationContext;
 import org.zkoss.spring.SpringUtil;
 
+import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
 
 public class ServiceLocator
@@ -38,9 +40,9 @@ public class ServiceLocator
         return (FiltreManager) ctx.getBean("listeFiltreManager");
     }
 
-    public static FiltreManager getContexteFiltreManager()
+    public static ContexteFiltreManager getContexteFiltreManager()
     {
-        return (FiltreManager) ctx.getBean("contexteFiltreManager");
+        return (ContexteFiltreManager) ctx.getBean("contexteFiltreManager");
     }
     
     public static CorpusService getCorpusService()
@@ -52,5 +54,11 @@ public class ServiceLocator
     {
         return (CorpusService) ctx.getBean("formeService");
     }
+    
+    public static DocMetadataManager getDocMetataManager()
+    {
+        return (DocMetadataManager) ctx.getBean("docMetadataManager");
+    }
+    
     
 }

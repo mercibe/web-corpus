@@ -70,7 +70,7 @@ public class CorpusServiceTest
         
         CorpusService cs = new CorpusService(cm, corpus);
         
-        List<Contexte> contextes = cs.contextesMot("chien");
+        List<Contexte> contextes = cs.getContextesMot("chien");
         
         assertNotNull("La liste des contextes ne peut être null.", contextes);
         assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
@@ -94,7 +94,7 @@ public class CorpusServiceTest
         CorpusService cs = new CorpusService(cm, corpus);
         cs.setFormeService(formeService);
         
-        List<Contexte> contextes = cs.contextesLemme("manger");
+        List<Contexte> contextes = cs.getContextesLemme("manger");
         
         assertNotNull("La liste des contextes ne peut être null.", contextes);
         assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);

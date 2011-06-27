@@ -29,13 +29,6 @@ public abstract class FiltreManager {
 		return noms;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.servicelibre.zk.controller.FiltreManager#getFiltreValeurs(java.lang
-	 * .String)
-	 */
 	public Set<DefaultKeyValue> getFiltreValeurs(String nom) {
 		Set<DefaultKeyValue> values = new HashSet<DefaultKeyValue>();
 

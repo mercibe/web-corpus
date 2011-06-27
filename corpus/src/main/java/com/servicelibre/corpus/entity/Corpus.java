@@ -14,7 +14,7 @@ public class Corpus
 
     @Id
     @GeneratedValue
-    int id;
+    long id;
 
     @Column
     String nom;
@@ -59,12 +59,12 @@ public class Corpus
         this.analyseurLexicalFQCN = analyseurLexicalFQCN;
     }
 
-    public int getId()
+    public long getId()
     {
         return id;
     }
 
-    public void setId(int id)
+    public void setId(long id)
     {
         this.id = id;
     }

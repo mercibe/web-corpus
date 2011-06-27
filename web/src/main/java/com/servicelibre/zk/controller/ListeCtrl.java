@@ -335,7 +335,9 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
             }
         });
 
-        nomFiltre.setSelectedIndex(0);
+        if (nomFiltre.getItemCount() > 0) {
+			nomFiltre.setSelectedIndex(0);
+		}
 
         //DefaultKeyValue
         Object[][] data = new Object[][] {};
