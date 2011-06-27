@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Corpus;
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
@@ -26,7 +27,7 @@ import com.servicelibre.corpus.manager.MotManager;
  */
 public class ListeImport
 {
-
+	
     private static Logger logger = LoggerFactory.getLogger(ListeImport.class);
 
     private List<Liste> listes;
@@ -41,7 +42,7 @@ public class ListeImport
 
         getOrCreateCorpus(currentListe);
 
-        if (currentListe.corpus == null)
+        if (currentListe.getCorpus() == null)
         {
             return -1;
         }
@@ -134,24 +135,24 @@ public class ListeImport
     {
         CorpusManager cm = (CorpusManager) ctx.getBean("corpusManager");
 
-        if (currentListe.corpus == null)
+        if (currentListe.getCorpus() == null)
         {
             logger.error("Pour importer une liste, il faut préciser son corpus!");
             return;
         }
 
         // Est-ce que le corpus existe-déjà?
-        Corpus dbCorpus = cm.findByNom(currentListe.corpus.getNom());
+        Corpus dbCorpus = cm.findByNom(currentListe.getCorpus().getNom());
 
         if (dbCorpus == null)
         {
-            cm.save(currentListe.corpus);
-            logger.info("Création du corpus {} dans la base de données.", currentListe.corpus);
+            cm.save(currentListe.getCorpus());
+            logger.info("Création du corpus {} dans la base de données.", currentListe.getCorpus());
         }
         else
         {
-            currentListe.corpus = dbCorpus;
-            logger.info("Le corpus {} a été trouvé dans la base de données.", currentListe.corpus);
+            currentListe.setCorpus(dbCorpus);
+            logger.info("Le corpus {} a été trouvé dans la base de données.", currentListe.getCorpus());
         }
 
     }

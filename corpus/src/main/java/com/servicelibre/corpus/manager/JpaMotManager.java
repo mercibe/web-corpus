@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.liste.Liste;
 
 
 @Repository
@@ -100,12 +100,16 @@ public class JpaMotManager implements MotManager {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreMot filtres) {
+		
 		CriteriaBuilder cb = getBuilder();
 		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
 		Root<Mot> motRacine = criteria.from(Mot.class);
 		criteria.select(motRacine);
 
+		// Tous les mots sont en minuscules
+		graphie = graphie.toLowerCase();
+		
 		// criteria.where(builder.like(arg0, arg1))
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Predicate p;

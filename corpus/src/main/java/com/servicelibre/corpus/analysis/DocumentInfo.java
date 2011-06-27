@@ -18,31 +18,55 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.servicelibre.corpus.analyzis;
+package com.servicelibre.corpus.analysis;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.lucene.store.Directory;
 
 import com.servicelibre.corpus.metadata.Metadata;
 
+
 /**
- *
- *
+ * Contenueur d'information sur un document d'un corpus
+ * - métadonnées 
+ * - information sur les mots contenus dans le document (fréquence, etc.)
  * @author benoitm
  *
  */
-public interface Lemmatiseur
+public class DocumentInfo
 {
+    public String docId;
+    
+    protected List<Metadata> metadatas = new ArrayList<Metadata>();
+    
+    protected List<MotInfo> mots = new ArrayList<MotInfo>(25000);
 
-    public List<MotInfo> getMotInfo(List<MotInfo> candidatList);
+    public DocumentInfo(String docId)
+    {
+        super();
+        this.docId = docId;
+    }
 
-    public CorpusInfo analyze(Directory fsDirectory, Map<String, Map<String, Metadata>> metadatas,
-            String docIdFieldName, String txtlexFieldname);
+    public List<Metadata> getMetadatas()
+    {
+        return metadatas;
+    }
 
-    public void init();
+    public void setMetadatas(List<Metadata> metadatas)
+    {
+        this.metadatas = metadatas;
+    }
 
-    public String normalize(String mot);
+    public List<MotInfo> getMots()
+    {
+        return mots;
+    }
+
+    public void setMots(List<MotInfo> mots)
+    {
+        this.mots = mots;
+    }
+    
+    
 
 }

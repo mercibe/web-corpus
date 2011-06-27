@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.servicelibre.corpus.analyzis;
+package com.servicelibre.corpus.analysis;
 
 import java.io.File;
 import java.io.IOException;

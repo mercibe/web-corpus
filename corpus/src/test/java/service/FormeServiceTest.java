@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.servicelibre.corpus.analyzis.MotInfo;
+import com.servicelibre.corpus.analysis.MotInfo;
 import com.servicelibre.corpus.service.FormeService;
 
 @ContextConfiguration

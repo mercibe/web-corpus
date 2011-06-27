@@ -1,9 +1,9 @@
 package com.servicelibre.corpus.entity;
 
-import com.servicelibre.corpus.analyzis.Catgram;
-import com.servicelibre.corpus.analyzis.CatgramsPivot;
-import com.servicelibre.corpus.analyzis.MotInfo;
-import com.servicelibre.corpus.analyzis.MotInfo.FreqPrecision;
+import com.servicelibre.corpus.analysis.Catgram;
+import com.servicelibre.corpus.analysis.CatgramsPivot;
+import com.servicelibre.corpus.analysis.MotInfo;
+import com.servicelibre.corpus.analysis.MotInfo.FreqPrecision;
 
 //TODO : lemme <> mots d'une liste (= lemme sans fréquence)
 public class Lemme

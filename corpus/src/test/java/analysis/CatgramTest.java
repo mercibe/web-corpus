@@ -30,9 +30,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.servicelibre.corpus.analyzis.Catgram;
-import com.servicelibre.corpus.analyzis.CatgramsLexique3;
-import com.servicelibre.corpus.analyzis.CatgramsPivot;
+import com.servicelibre.corpus.analysis.Catgram;
+import com.servicelibre.corpus.analysis.CatgramsLexique3;
+import com.servicelibre.corpus.analysis.CatgramsPivot;
 
 public class CatgramTest
 {

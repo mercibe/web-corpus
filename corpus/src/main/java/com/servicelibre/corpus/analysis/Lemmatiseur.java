@@ -18,17 +18,31 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.servicelibre.corpus.analyzis;
+package com.servicelibre.corpus.analysis;
 
-import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
-public class MotNaturalComparator<T extends MotInfo> implements Comparator<MotInfo>
+import org.apache.lucene.store.Directory;
+
+import com.servicelibre.corpus.metadata.Metadata;
+
+/**
+ *
+ *
+ * @author benoitm
+ *
+ */
+public interface Lemmatiseur
 {
 
-    @Override
-    public int compare(MotInfo o1, MotInfo o2)
-    {
-        return o1.mot.compareTo(o2.mot);
-    }
+    public List<MotInfo> getMotInfo(List<MotInfo> candidatList);
+
+    public CorpusInfo analyze(Directory fsDirectory, Map<String, Map<String, Metadata>> metadatas,
+            String docIdFieldName, String txtlexFieldname);
+
+    public void init();
+
+    public String normalize(String mot);
 
 }

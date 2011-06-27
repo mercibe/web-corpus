@@ -18,8 +18,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Corpus;
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.liste.Liste;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;

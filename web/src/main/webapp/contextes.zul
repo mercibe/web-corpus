@@ -62,7 +62,7 @@
 			</groupbox>
 			
 
-			<grid id="contextesGrid" mold="paging" pageSize="15"
+			<grid id="contextesGrid" mold="paging" pageSize="18"
 				height="660px" width="700px" emptyMessage="Aucun contexte trouvé.">
 				<!-- 	pagingPosition="both" sizedByContent="true"> -->
 	

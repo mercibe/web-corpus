@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.liste.Liste;
 
 
 public class InMemoryListeManager  {

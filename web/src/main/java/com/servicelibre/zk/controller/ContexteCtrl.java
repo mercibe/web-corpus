@@ -18,6 +18,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -27,6 +28,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
+import org.zkoss.zul.Span;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -408,8 +410,20 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
             public void render(Row row, Object model) throws Exception
             {
                 Contexte contexte = (Contexte) model;
+                
+                Span ctxSpan = new Span();
+                ctxSpan.appendChild(new Label(contexte.texteAvant));
+                
+                Label mot = new Label(contexte.mot);
+                mot.setStyle("font-weight: bold;");
+                //mot.setHeight("20px");
+                ctxSpan.appendChild(mot);
+                
+                ctxSpan.appendChild(new Label(contexte.texteAprès));
 
-                row.appendChild(new Label(contexte.texteAvant + contexte.mot + contexte.texteAprès));
+                row.appendChild(ctxSpan);
+                
+               // row.appendChild(new Label(contexte.texteAvant + contexte.mot + contexte.texteAprès));
 
             }
         });

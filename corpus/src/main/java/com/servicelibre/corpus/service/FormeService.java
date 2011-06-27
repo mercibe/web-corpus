@@ -20,10 +20,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.servicelibre.corpus.analyzis.CatgramsPivot;
-import com.servicelibre.corpus.analyzis.LemmeNaturalComparator;
-import com.servicelibre.corpus.analyzis.MotInfo;
-import com.servicelibre.corpus.analyzis.MotNaturalComparator;
+import com.servicelibre.corpus.analysis.CatgramsPivot;
+import com.servicelibre.corpus.analysis.LemmeNaturalComparator;
+import com.servicelibre.corpus.analysis.MotInfo;
+import com.servicelibre.corpus.analysis.MotNaturalComparator;
 import com.servicelibre.corpus.liste.LigneSplitter;
 
 public class FormeService
@@ -108,7 +108,7 @@ public class FormeService
         List<MotInfo> info = new ArrayList<MotInfo>();
 
         // Recherche du mot dans les formes triées
-        int idx = Collections.binarySearch(lemmes, lemme);
+        int idx = Collections.binarySearch(lemmes, lemme.toLowerCase());
 
         // renvoyer toutes les occurences (candidats possibles)
         if (idx >= 0)
@@ -129,7 +129,7 @@ public class FormeService
         Set<String> info = new HashSet<String>();
 
         // Recherche du mot dans les formes triées
-        int idx = Collections.binarySearch(lemmes, lemme);
+        int idx = Collections.binarySearch(lemmes, lemme.toLowerCase());
 
         // renvoyer toutes les occurences (candidats possibles)
         if (idx >= 0)

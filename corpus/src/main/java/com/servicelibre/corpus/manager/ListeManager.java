@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.liste.Liste;
+import com.servicelibre.corpus.entity.Liste;
 
 @Transactional
 public interface ListeManager // extends JpaRepository<Liste, Long>

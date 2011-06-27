@@ -2,6 +2,7 @@ package com.servicelibre.corpus.liste;
 
 import java.util.List;
 
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 
 

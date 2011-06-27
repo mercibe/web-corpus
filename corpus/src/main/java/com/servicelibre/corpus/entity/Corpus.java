@@ -29,7 +29,7 @@ public class Corpus
     String dossierData;
     
     @Column
-    String analyseurRechercheFQCN = "com.servicelibre.corpus.analyzis.FrenchAnalyzer";
+    String analyseurRechercheFQCN = "com.servicelibre.corpus.analysis.FrenchAnalyzer";
     
     @Column
     String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";

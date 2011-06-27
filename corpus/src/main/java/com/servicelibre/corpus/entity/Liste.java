@@ -1,4 +1,4 @@
-package com.servicelibre.corpus.liste;
+package com.servicelibre.corpus.entity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,8 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.corpus.liste.LigneSplitter;
 
 
 @Entity

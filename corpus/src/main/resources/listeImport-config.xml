@@ -13,7 +13,7 @@
 	</bean>
 
 	<util:list id="listes" list-class="java.util.ArrayList"
-		value-type="com.servicelibre.corpus.liste.Liste">
+		value-type="com.servicelibre.corpus.entity.Liste">
 		<ref bean="listeCyclePrimaire1" />
 		<ref bean="listeCyclePrimaire2" />
 		<ref bean="listeCyclePrimaire3" />
@@ -26,7 +26,7 @@
 	</bean>
 
 	<!-- Listes -->
-	<bean id="listeCyclePrimaire1" class="com.servicelibre.corpus.liste.Liste">
+	<bean id="listeCyclePrimaire1" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="1er cycle primaire" />
 		<constructor-arg value="Liste 1er cycle primaire" />
 		<constructor-arg ref="corpus" />
@@ -38,7 +38,7 @@
 		<property name="ligneSplitter" ref="splitter" />
 	</bean>
 
-	<bean id="listeCyclePrimaire2" class="com.servicelibre.corpus.liste.Liste">
+	<bean id="listeCyclePrimaire2" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="2e cycle primaire" />
 		<constructor-arg value="Liste 2e cycle primaire" />
 		<constructor-arg ref="corpus" />
@@ -50,7 +50,7 @@
 		<property name="ligneSplitter" ref="splitter" />
 	</bean>
 	
-	<bean id="listeCyclePrimaire3" class="com.servicelibre.corpus.liste.Liste">
+	<bean id="listeCyclePrimaire3" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="3e cycle primaire" />
 		<constructor-arg value="Liste 3e cycle primaire" />
 		<constructor-arg ref="corpus" />
@@ -62,7 +62,7 @@
 		<property name="ligneSplitter" ref="splitter" />
 	</bean>
 
-	<bean id="listeSecondaire" class="com.servicelibre.corpus.liste.Liste">
+	<bean id="listeSecondaire" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="secondaire" />
 		<constructor-arg value="Liste du secondaire" />
 		<constructor-arg ref="corpus" />
