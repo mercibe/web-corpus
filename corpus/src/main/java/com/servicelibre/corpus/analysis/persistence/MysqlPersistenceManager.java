@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package com.servicelibre.corpus.analyzis.persistence;
+package com.servicelibre.corpus.analysis.persistence;
 
 import java.sql.SQLException;
 
