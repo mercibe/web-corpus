@@ -37,17 +37,19 @@
 	
 		<hbox width="100%" style="margin-top:20px;">
 		
-		
-			<groupbox width="400px">
+		<!-- width="400px" -->
+			<groupbox width="286px">
 				<caption>Filtre</caption>
-				<listbox id="nomFiltre" width="200px" mold="select"/>
-				<listbox id="valeurFiltre"  width="200px" mold="select"/>
+				<!-- width="200px" -->
+				<listbox id="nomFiltre"  style="width:100px" mold="select"/>
+				<!-- width="200px" -->
+				<listbox id="valeurFiltre" style="width:100px" mold="select"/>
 				
 				
 				<button id="boutonAjoutFiltre" label="ajouter"/>
 				
 				<grid id="gridFiltreActif" fixedLayout="true"
-					width="95%" style="margin-top:20px;" emptyMessage="Aucun filtre actif.">
+					 style="margin-top:20px;" emptyMessage="Aucun filtre actif.">
 					<auxhead sclass="category-center">
 						<auxheader label="Filtres actifs" colspan="3"
 							rowspan="1" />
@@ -61,9 +63,9 @@
 
 			</groupbox>
 			
-
+			<!-- height="660px" width="700px" -->
 			<grid id="contextesGrid" mold="paging" pageSize="18"
-				height="660px" width="700px" emptyMessage="Aucun contexte trouvé.">
+				 emptyMessage="Aucun contexte trouvé." height="660px" width="700px">
 				<!-- 	pagingPosition="both" sizedByContent="true"> -->
 	
 				<columns sizable="true">

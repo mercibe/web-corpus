@@ -17,7 +17,11 @@
  * ce programme ; si ce n’est pas le cas, consultez :
  * <http://www.gnu.org/licenses/>.
  */
-
 @CHARSET "ISO-8859-1";
 
-
+body {
+	overflow-x: auto;
+	overflow-y: auto;
+	width: 1030px;
+	height: 830px
+}
