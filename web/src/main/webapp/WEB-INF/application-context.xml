@@ -16,7 +16,10 @@
 
 	<!-- Définition managers objets ZK -->
 	<bean id="listeFiltreManager" class="com.servicelibre.zk.controller.ListeFiltreManager"
-		init-method="init" />
+		init-method="init">
+		<property name="corpusService" ref="corpusService"/>
+		<property name="listeManager" ref="listeManager"/>
+	</bean>
 
 	<bean id="contexteFiltreManager" class="com.servicelibre.zk.controller.ContexteFiltreManager"
 		init-method="init" >

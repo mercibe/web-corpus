@@ -49,424 +49,387 @@ import com.servicelibre.corpus.manager.MotManager;
  * @author benoitm
  * 
  */
-public class ListeCtrl extends GenericForwardComposer implements VariableResolver
-{
+public class ListeCtrl extends GenericForwardComposer implements VariableResolver {
 
-    private static Logger logger = LoggerFactory.getLogger(ListeCtrl.class);
+	private static Logger logger = LoggerFactory.getLogger(ListeCtrl.class);
 
-    private static final int CORPUS_ID_PAR_DÉFAUT = 1;
+	private static final int CORPUS_ID_PAR_DÉFAUT = 1;
 
-    Combobox liste; //autowire car même type/ID que le composant dans la page ZUL
+	Combobox gp; // autowire car même type/ID que le composant dans la page ZUL
+	Combobox condition; // autowire car même type/ID que le composant dans la
+						// page ZUL
 
-    Combobox gp; //autowire car même type/ID que le composant dans la page ZUL
-    Combobox condition; //autowire car même type/ID que le composant dans la page ZUL
+	Textbox cherche; // autowire car même type/ID que le composant dans la page
+						// ZUL
+	Grid motsGrid; // autowire car même type/ID que le composant dans la page
+					// ZUL
+	Column mot;
 
-    Textbox cherche; //autowire car même type/ID que le composant dans la page ZUL
-    Grid motsGrid; //autowire car même type/ID que le composant dans la page ZUL
-    Column mot;
+	Listbox nomFiltre; // autowire car même type/ID que le composant dans la
+						// page ZUL
+	Listbox valeurFiltre;// autowire car même type/ID que le composant dans la
+							// page ZUL
 
-    Listbox nomFiltre; //autowire car même type/ID que le composant dans la page ZUL
-    Listbox valeurFiltre;//autowire car même type/ID que le composant dans la page ZUL
+	Button boutonAjoutFiltre;// autowire car même type/ID que le composant dans
+								// la page ZUL
+	Grid gridFiltreActif;// autowire car même type/ID que le composant dans la
+							// page ZUL
 
-    Button boutonAjoutFiltre;//autowire car même type/ID que le composant dans la page ZUL
-    Grid gridFiltreActif;//autowire car même type/ID que le composant dans la page ZUL
+	Button boutonRecherche;
 
-    Button boutonRecherche;
+	/**
+	 * Permet de remplir les choix de filtres/valeurs possibles
+	 */
+	FiltreManager filtreManager = ServiceLocator.getListeFiltreManager();
+
+	/**
+	 * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
+	 * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
+	 * le filtre en construction par l'utilisateur.
+	 */
+	FiltreMot filtreActifModel = new FiltreMot();
+
+	ListeManager listeManager = ServiceLocator.getListeManager();
+	MotManager motManager = ServiceLocator.getMotManager();
+
+	private static final long serialVersionUID = 779679285074159073L;
 
-    /**
-     * Permet de remplir les choix de filtres/valeurs possibles
-     */
-    FiltreManager filtreManager = ServiceLocator.getListeFiltreManager();
+	private Column motColumn;
+
+	private Window webCorpusWindow;
 
-    /**
-     * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
-     * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
-     * le filtre en construction par l'utilisateur.
-     */
-    FiltreMot filtreActifModel = new FiltreMot();
+	// Enregistrement des événements onOK (la touche ENTER) sur tous les
+	// composants de la recherche
+	public void onOK$cherche(Event event) {
+		chercheEtAfficheMot();
+	}
 
-    ListeManager listeManager = ServiceLocator.getListeManager();
-    MotManager motManager = ServiceLocator.getMotManager();
+	public void onClick$boutonRecherche(Event event) {
 
-    private static final long serialVersionUID = 779679285074159073L;
+		chercheEtAfficheMot();
 
-    private Column motColumn;
+	}
 
-    private Window webCorpusWindow;
+	public void onOK$liste(Event event) {
+		chercheEtAfficheMot();
+	}
 
-    // Enregistrement des événements onOK (la touche ENTER) sur tous les composants de la recherche
-    public void onOK$cherche(Event event)
-    {
-        chercheEtAfficheMot();
-    }
+	public void onOK$condition(Event event) {
+		chercheEtAfficheMot();
+	}
 
-    public void onClick$boutonRecherche(Event event)
-    {
+	public void onOK$gp(Event event) {
+		chercheEtAfficheMot();
+	}
 
-        chercheEtAfficheMot();
+	public void onClick$boutonAjoutFiltre(Event event) {
+		Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
+		String nom = filtreNomActuel.getValue().toString();
+		String description = filtreNomActuel.getLabel();
+
+		Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
+
+		if (filtreValeurActuel != null) {
+			
+			Set<DefaultKeyValue> valeurs = new HashSet<DefaultKeyValue>(1);
+			valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
+			
+			filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
+			SimpleGroupsModel model = new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes());
+			gridFiltreActif.setModel(model);
+			
+			// suppression de la valeur active de la liste de choix
+			//valeurFiltre.removeChild(filtreValeurActuel);
+			//valeurFiltre.setSelectedIndex(0);
+			filtreManager.exclus(new DefaultKeyValue(nom,filtreValeurActuel.getValue()));
+			rafraichiValeurFiltreCourant();
+
+			chercheEtAfficheMot();
+		}
+
+	}
+
+	public void onSelect$nomFiltre(Event event) {
+		rafraichiValeurFiltreCourant();
+
+	}
+
+	public void onAfterRender$nomFiltre() {
+		rafraichiValeurFiltreCourant();
+	}
+
+	private void rafraichiValeurFiltreCourant() {
+
+		Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
+
+		if (currentItem.getValue() != null) {
+			Set<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
+			valeurFiltre.setModel(new SimpleListModel(filtreValeurs.toArray()));
+			valeurFiltre.setSelectedIndex(0);
+		}
+	}
 
-    }
+	/**
+	 * Permet d'associer dynamiquement le contenu d'un composant via variable
+	 * resolver et EL expression (read-only seulement)
+	 */
+	@Override
+	public Object resolveVariable(String variableName) throws XelException {
+		if (variableName.equals("listes")) {
+			List<Liste> listes = new ArrayList<Liste>(1);
+			listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
+			listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
+			return listes;
+		}
+		return null;
+	}
 
-    public void onOK$liste(Event event)
-    {
-        chercheEtAfficheMot();
-    }
+	public void chercheEtAfficheMot() {
+		motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+		// les mots sont toujours retournés par ordre alphabétique => refléter
+		// dans la colonne (réinitialisation du marqueur de tri)
 
-    public void onOK$condition(Event event)
-    {
-        chercheEtAfficheMot();
-    }
+		motColumn.sort(true);
 
-    public void onOK$gp(Event event)
-    {
-        chercheEtAfficheMot();
-    }
-
-    public void onClick$boutonAjoutFiltre(Event event)
-    {
-        Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
-        String nom = filtreNomActuel.getValue().toString();
-        String description = filtreNomActuel.getLabel();
-
-        Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
-        Set<DefaultKeyValue> valeurs = new HashSet<DefaultKeyValue>(1);
-        valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
-
-        filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
-        gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel
-                .getFiltreGroupes()));
-
-        chercheEtAfficheMot();
-
-    }
-
-    public void onSelect$nomFiltre(Event event)
-    {
-        rafraichiValeurFiltreCourant();
-
-    }
-
-    public void onAfterRender$nomFiltre()
-    {
-        rafraichiValeurFiltreCourant();
-    }
-
-    private void rafraichiValeurFiltreCourant()
-    {
-
-        Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
-
-        if (currentItem.getValue() != null)
-        {
-            Set<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
-            valeurFiltre.setModel(new SimpleListModel(filtreValeurs.toArray()));
-            valeurFiltre.setSelectedIndex(0);
-        }
-    }
-
-    /**
-     * Permet d'associer dynamiquement le contenu d'un composant via variable
-     * resolver et EL expression (read-only seulement)
-     */
-    @Override
-    public Object resolveVariable(String variableName) throws XelException
-    {
-        if (variableName.equals("listes"))
-        {
-            List<Liste> listes = new ArrayList<Liste>(1);
-            listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
-            listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
-            return listes;
-        }
-        return null;
-    }
-
-    public void chercheEtAfficheMot()
-    {
-        motsGrid.setModel(new ListModelList(getMotsRecherchés()));
-        // les mots sont toujours retournés par ordre alphabétique => refléter dans la colonne (réinitialisation du marqueur de tri)
-
-        motColumn.sort(true);
-
-    }
-
-    private List<Mot> getMotsRecherchés()
-    {
-        List<Mot> mots = new ArrayList<Mot>();
-
-        System.out.println(getDescriptionRecherche());
-
-        String conditionActive = (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
-
-        // TODO sort sur colonnes
-        // TODO historique des recherches
-
-        String gpActif = (String) gp.getItemAtIndex(gp.getSelectedIndex()).getValue();
-        if (gpActif.equals("g"))
-        {
-            FiltreMot filtres = getFiltres();
-
-            mots = motManager.findByGraphie(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
-        }
-        else
-        {
-            try
-            {
-                Messagebox.show("La recherche par phonème n'est pas encore implémentée.", "Corpus", Messagebox.OK,
-                        Messagebox.INFORMATION);
-            }
-            catch (InterruptedException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        return mots;
-    }
-
-    /**
-     * Retourne le filtre à appliquer pour la recherche des mots
-     * 
-     * @return
-     */
-    private FiltreMot getFiltres()
-    {
-        FiltreMot filtres = new FiltreMot();
-
-        // Récupération de la liste active (filtre hors de la boîte des filtres!)
-        int selectedIndex = liste.getSelectedIndex();
-        if (selectedIndex > 0)
-        {
-            Long listeActive = (Long) liste.getItemAtIndex(selectedIndex).getValue();
-            Filtre filtre = new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste de mot", new Long[] { listeActive });
-            filtres.addFiltre(filtre);
-        }
-
-        // Ajout des autres filtres
-        for (Filtre filtre : filtreActifModel.getFiltres())
-        {
-            System.err.println("Ajout du filtre utilisateur " + filtre);
-            filtres.addFiltre(filtre);
-        }
-
-        return filtres;
-    }
-
-    /**
-     * Retourne une phrase qui décrit les critères de recherche courant
-     * 
-     * @return
-     */
-    public String getDescriptionRecherche()
-    {
-        StringBuilder desc = new StringBuilder();
-
-        desc.append("Rechercher tous les ").append(gp.getValue()).append(" de la liste « ").append(liste.getValue())
-                .append(" »");
-
-        String aChercher = cherche.getValue().trim();
-
-        if (!aChercher.isEmpty())
-        {
-            desc.append(" qui ").append(condition.getValue()).append(" « ").append(aChercher).append(" »");
-        }
-
-        return desc.toString();
-    }
-
-    @Override
-    public void doAfterCompose(Component comp) throws Exception
-    {
-        super.doAfterCompose(comp);
-
-        initialiseChamps();
-
-        initialiseRecherche();
-
-        initialiseMotsGrid();
-
-        initialiseFiltre();
-
-    }
-
-    @Override
-    public void onEvent(Event evt) throws Exception
-    {
-        super.onEvent(evt);
-        System.err.println("ListeCtrl: " + evt.getName());
-    }
-
-    private void initialiseChamps()
-    {
-        Page webCorpusPage = desktop.getPage("webCorpusPage");
-        webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
-
-    }
-
-    private void initialiseFiltre()
-    {
-        // Initialisation des filtres (noms)
-        nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
-
-        nomFiltre.setItemRenderer(new ListitemRenderer()
-        {
-
-            @Override
-            public void render(Listitem item, Object keyValue) throws Exception
-            {
-                DefaultKeyValue kv = (DefaultKeyValue) keyValue;
-                item.setValue(kv.getKey());
-                item.setLabel(kv.getValue().toString());
-
-            }
-        });
-
-        valeurFiltre.setItemRenderer(new ListitemRenderer()
-        {
-
-            @Override
-            public void render(Listitem item, Object keyValue) throws Exception
-            {
-                DefaultKeyValue kv = (DefaultKeyValue) keyValue;
-                item.setValue(kv.getKey());
-                item.setLabel(kv.getValue().toString());
-
-            }
-        });
-
-        if (nomFiltre.getItemCount() > 0) {
+	}
+
+	private List<Mot> getMotsRecherchés() {
+		List<Mot> mots = new ArrayList<Mot>();
+
+		System.out.println(getDescriptionRecherche());
+
+		String conditionActive = (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
+
+		// TODO sort sur colonnes
+		// TODO historique des recherches
+
+		String gpActif = (String) gp.getItemAtIndex(gp.getSelectedIndex()).getValue();
+		if (gpActif.equals("g")) {
+			FiltreMot filtres = getFiltres();
+
+			mots = motManager.findByGraphie(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
+		} else {
+			try {
+				Messagebox.show("La recherche par phonème n'est pas encore implémentée.", "Corpus", Messagebox.OK, Messagebox.INFORMATION);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return mots;
+	}
+
+	/**
+	 * Retourne le filtre à appliquer pour la recherche des mots
+	 * 
+	 * @return
+	 */
+	private FiltreMot getFiltres() {
+		FiltreMot filtres = new FiltreMot();
+
+		// Ajout des filtres
+		for (Filtre filtre : filtreActifModel.getFiltres()) {
+			System.err.println("Ajout du filtre utilisateur " + filtre);
+			filtres.addFiltre(filtre);
+		}
+
+		return filtres;
+	}
+
+	/**
+	 * Retourne une phrase qui décrit les critères de recherche courant
+	 * 
+	 * @return
+	 */
+	public String getDescriptionRecherche() {
+		StringBuilder desc = new StringBuilder();
+
+		desc.append("Rechercher tous les ").append(gp.getValue());
+
+		String aChercher = cherche.getValue().trim();
+
+		if (!aChercher.isEmpty()) {
+			desc.append(" qui ").append(condition.getValue()).append(" « ").append(aChercher).append(" »");
+		}
+
+		return desc.toString();
+	}
+
+	@Override
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+
+		initialiseChamps();
+
+		initialiseRecherche();
+
+		initialiseMotsGrid();
+
+		initialiseFiltre();
+
+	}
+
+	@Override
+	public void onEvent(Event evt) throws Exception {
+		super.onEvent(evt);
+		System.err.println("ListeCtrl: " + evt.getName());
+	}
+
+	private void initialiseChamps() {
+		Page webCorpusPage = desktop.getPage("webCorpusPage");
+		webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
+
+	}
+
+	private void initialiseFiltre() {
+		// Initialisation des filtres (noms)
+		nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
+
+		nomFiltre.setItemRenderer(new ListitemRenderer() {
+
+			@Override
+			public void render(Listitem item, Object keyValue) throws Exception {
+				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
+				item.setValue(kv.getKey());
+				item.setLabel(kv.getValue().toString());
+
+			}
+		});
+
+		valeurFiltre.setItemRenderer(new ListitemRenderer() {
+
+			@Override
+			public void render(Listitem item, Object keyValue) throws Exception {
+				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
+				item.setValue(kv.getKey());
+				item.setLabel(kv.getValue().toString());
+
+			}
+		});
+
+		if (nomFiltre.getItemCount() > 0) {
 			nomFiltre.setSelectedIndex(0);
 		}
 
-        //DefaultKeyValue
-        Object[][] data = new Object[][] {};
-        Object[] heads = new Object[] {};
+		// DefaultKeyValue
+		Object[][] data = new Object[][] {};
+		Object[] heads = new Object[] {};
 
-        gridFiltreActif.setModel(new SimpleGroupsModel(data, heads));
+		gridFiltreActif.setModel(new SimpleGroupsModel(data, heads));
 
-        gridFiltreActif.setRowRenderer(new RowRenderer()
-        {
+		gridFiltreActif.setRowRenderer(new RowRenderer() {
 
-            @Override
-            public void render(Row row, Object model) throws Exception
-            {
+			@Override
+			public void render(Row row, Object model) throws Exception {
 
-                DefaultKeyValue cv = (DefaultKeyValue) model;
+				DefaultKeyValue cv = (DefaultKeyValue) model;
 
-                final Row currentRow = row;
+				final Row currentRow = row;
 
-                Label label = new Label(cv.getValue().toString());
-                label.setAttribute("key", cv.getKey());
-                label.setParent(row);
+				Label label = new Label(cv.getValue().toString());
+				label.setAttribute("key", cv.getKey());
+				label.setParent(row);
 
-                // Ajouter bouton « supprimer » si pas un groupe
-                if (!(row instanceof Group))
-                {
+				// Ajouter bouton « supprimer » si pas un groupe
+				if (!(row instanceof Group)) {
 
-                    final Button supprimeBtn = new Button("Supprimer");
-                    supprimeBtn.setMold("os");
-                    supprimeBtn.setParent(row);
-                    supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener()
-                    {
+					final Button supprimeBtn = new Button("Supprimer");
+					supprimeBtn.setMold("os");
+					supprimeBtn.setParent(row);
+					supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener() {
 
-                        @Override
-                        public void onEvent(Event arg0) throws Exception
-                        {
+						@Override
+						public void onEvent(Event arg0) throws Exception {
 
-                            Label labelValeur = (Label) currentRow.getFirstChild();
-                            Label labelGroupe = (Label) currentRow.getGroup().getFirstChild();
-                            filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur
-                                    .getAttribute("key").toString());
-                            gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(),
-                                    filtreActifModel.getFiltreGroupes()));
+							Label labelValeur = (Label) currentRow.getFirstChild();
+							Label labelGroupe = (Label) currentRow.getGroup().getFirstChild();
+							
+							DefaultKeyValue keyValue = new DefaultKeyValue(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key").toString());
+							
+							filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key").toString());
+							SimpleGroupsModel model = new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes());
+							gridFiltreActif.setModel(model);
 
-                            chercheEtAfficheMot();
+							filtreManager.inclus(keyValue);
+							rafraichiValeurFiltreCourant();
+							
+							chercheEtAfficheMot();
 
-                        }
-                    });
-                }
+						}
+					});
+				}
 
-            }
-        });
+			}
+		});
 
-    }
+	}
 
-    private void initialiseMotsGrid()
-    {
-        motsGrid.setModel(new ListModelList(getMotsRecherchés()));
+	private void initialiseMotsGrid() {
+		motsGrid.setModel(new ListModelList(getMotsRecherchés()));
 
-        motsGrid.setRowRenderer(new RowRenderer()
-        {
+		motsGrid.setRowRenderer(new RowRenderer() {
 
-            @Override
-            public void render(Row row, Object model) throws Exception
-            {
-                Mot mot = (Mot) model;
+			@Override
+			public void render(Row row, Object model) throws Exception {
+				Mot mot = (Mot) model;
 
-                Label motLabel = new Label(mot.getMot());
-                motLabel.setStyle("cursor:hand;cursor:pointer");
+				Label motLabel = new Label(mot.getMot());
+				motLabel.setStyle("cursor:hand;cursor:pointer");
 
-                motLabel.addEventListener(Events.ON_CLICK, new EventListener()
-                {
+				motLabel.addEventListener(Events.ON_CLICK, new EventListener() {
 
-                    @Override
-                    public void onEvent(Event event) throws Exception
-                    {
-                        Label label = (Label) event.getTarget();
-                        afficheContexte(label.getValue());
-                    }
-                });
+					@Override
+					public void onEvent(Event event) throws Exception {
+						Label label = (Label) event.getTarget();
+						afficheContexte(label.getValue());
+					}
+				});
 
-                row.appendChild(motLabel);
-                row.appendChild(new Label(mot.getCatgram()));
-                row.appendChild(new Label(mot.getGenre()));
-                row.appendChild(new Label(mot.getNombre()));
-                row.appendChild(new Label(mot.getCatgramPrésicion()));
-                row.appendChild(new Label(mot.getListe().getNom()));
+				row.appendChild(motLabel);
+				row.appendChild(new Label(mot.getCatgram()));
+				row.appendChild(new Label(mot.getGenre()));
+				row.appendChild(new Label(mot.getNombre()));
+				row.appendChild(new Label(mot.getCatgramPrésicion()));
+				row.appendChild(new Label(mot.getListe().getNom()));
 
-            }
-        });
+			}
+		});
 
-        // Enregistrement événement pour lien vers contextes
-        motColumn = (Column) motsGrid.getColumns().getFellow("mot");
+		// Enregistrement événement pour lien vers contextes
+		motColumn = (Column) motsGrid.getColumns().getFellow("mot");
 
-    }
+	}
 
-    private void initialiseRecherche()
-    {
-        liste.setSelectedIndex(0);
-        gp.setSelectedIndex(0);
-        condition.setSelectedIndex(0);
+	private void initialiseRecherche() {
+		gp.setSelectedIndex(0);
+		condition.setSelectedIndex(0);
 
-    }
+	}
 
-    private void afficheContexte(String lemme)
-    {
+	private void afficheContexte(String lemme) {
 
-        logger.debug("Afficher les contextes de « {} »", lemme);
+		logger.debug("Afficher les contextes de « {} »", lemme);
 
-        Include contexteInclude = (Include) webCorpusWindow.getFellow("contexteInclude");
-        Window contexteWindow = (Window) contexteInclude.getFellow("contexteWindow");
+		Include contexteInclude = (Include) webCorpusWindow.getFellow("contexteInclude");
+		Window contexteWindow = (Window) contexteInclude.getFellow("contexteWindow");
 
-        contexteWindow.setAttribute("lemme", lemme);
-        Events.sendEvent("onAfficheContexte", contexteWindow, lemme);
+		contexteWindow.setAttribute("lemme", lemme);
+		Events.sendEvent("onAfficheContexte", contexteWindow, lemme);
 
-    }
+	}
 
-    @SuppressWarnings("unused")
-    private void displayChildren(Component comp, String sep)
-    {
-        @SuppressWarnings("unchecked")
-        List<Component> children = comp.getChildren();
+	@SuppressWarnings("unused")
+	private void displayChildren(Component comp, String sep) {
+		@SuppressWarnings("unchecked")
+		List<Component> children = comp.getChildren();
 
-        System.out.println("Children of " + comp.getUuid() + "(" + comp.getId() + ")");
-        for (Component component : children)
-        {
-            System.out.println(component.getUuid() + "(" + component.getId() + ")");
-            displayChildren(component, sep + "\t");
-        }
+		System.out.println("Children of " + comp.getUuid() + "(" + comp.getId() + ")");
+		for (Component component : children) {
+			System.out.println(component.getUuid() + "(" + component.getId() + ")");
+			displayChildren(component, sep + "\t");
+		}
 
-    }
+	}
 
 }

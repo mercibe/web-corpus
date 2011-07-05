@@ -12,13 +12,9 @@
 			<caption>Recherche</caption>
 			<hbox style="margin-top:10px;">
 
-				<combobox id="liste" readonly="true">
-				   <comboitem  forEach="${listes}" id="${each.id}" label="${each.nom}" value="${each.id}" description="${each.description}"/>
-				</combobox>
-	
 				<combobox id="gp" readonly="true" width="100px">
 						<comboitem label="mots" value="g" />
-						<comboitem label="phonèmes" value="p" />
+						<comboitem label="prononciation" value="p" />
 					</combobox>
 	
 				<combobox id="condition" readonly="true"

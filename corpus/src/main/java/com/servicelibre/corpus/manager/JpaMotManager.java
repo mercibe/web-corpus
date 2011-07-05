@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 
-
 @Repository
 @Transactional
 public class JpaMotManager implements MotManager {
@@ -100,7 +99,6 @@ public class JpaMotManager implements MotManager {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreMot filtres) {
-		
 		CriteriaBuilder cb = getBuilder();
 		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
@@ -109,7 +107,7 @@ public class JpaMotManager implements MotManager {
 
 		// Tous les mots sont en minuscules
 		graphie = graphie.toLowerCase();
-		
+
 		// criteria.where(builder.like(arg0, arg1))
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Predicate p;
@@ -138,7 +136,7 @@ public class JpaMotManager implements MotManager {
 		}
 
 		criteria.where(p);
-		
+
 		// Order by
 		// criteria.orderBy(cb.asc(motRacine.get("lemme")));
 
@@ -158,18 +156,26 @@ public class JpaMotManager implements MotManager {
 			// Fonctionne à condition que le nom du filtre corresponde
 			// exactement au nom de la colonne dans la DB / modèle
 			// Sinon, NPE!
+
 			Path<Object> path = motRacine.get(filtre.nom);
+
 			if (path != null) {
+
 				In<Object> in = cb.in(path);
 
-				for (DefaultKeyValue kv : filtre.keyValues) {
-					in.value(kv.getKey());
+				if (filtre.nom.equals("liste")) {
+					for (DefaultKeyValue kv : filtre.keyValues) {
+						in.value(new Liste(Long.parseLong(kv.getKey().toString())));
+					}
+				} else {
+					for (DefaultKeyValue kv : filtre.keyValues) {
+						in.value(kv.getKey());
+					}
 				}
+
 				p = cb.and(p, in);
-			}
-			else
-			{
-				logger.error("{} ne correspond à aucune colonne dans la DB/modèle.",filtre.nom);
+			} else {
+				logger.error("{} ne correspond à aucune colonne dans la DB/modèle.", filtre.nom);
 			}
 		}
 

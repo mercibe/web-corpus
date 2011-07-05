@@ -1,10 +1,14 @@
 package com.servicelibre.zk.controller;
 
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 
@@ -22,17 +26,20 @@ public class ListeFiltreManager extends FiltreManager {
 	public void init() {
 
 		// ajout du filtre des listes
-		// List<Liste> listes = listeManager.findByCorpusId(corpusId);
+		List<Liste> listes = listeManager.findByCorpusId(corpusService.getCorpus().getId());
 
-		// List<DefaultKeyValue> listesClésValeurs = new
-		// ArrayList<DefaultKeyValue>(listes.size());
-		// for (Liste liste : listes)
-		// {
-		// listesClésValeurs.add(new DefaultKeyValue(liste.getId(),
-		// liste.getNom()));
-		// }
-		// filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste",
-		// listesClésValeurs));
+		Set<DefaultKeyValue> listesClésValeurs = new TreeSet<DefaultKeyValue>(new Comparator<DefaultKeyValue>() {
+
+			@Override
+			public int compare(DefaultKeyValue arg0, DefaultKeyValue arg1) {
+				return arg0.getKey().toString().compareTo(arg1.getKey().toString());
+			}
+		});
+		
+		for (Liste liste : listes) {
+			listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
+		}
+		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste", listesClésValeurs));
 
 		// Ajout de la liste des catgram
 		Set<DefaultKeyValue> catgramClésValeurs = new HashSet<DefaultKeyValue>(4);
