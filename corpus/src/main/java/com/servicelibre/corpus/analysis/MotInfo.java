@@ -39,10 +39,13 @@ public class MotInfo
     public String mot;
     public String lemme;
     Catgram catgram;
+    public String prononciation;
+    
+    
     double freqMot;
     double freqLemme;
     boolean isLemme;
-    String note;
+    public String note;
     FreqPrecision freqMotprecision;
     FreqPrecision freqLemmePrecision;
 
@@ -94,7 +97,11 @@ public class MotInfo
             sb.append(catgram.id);
         }
 
-        sb.append("|").append(freqMot).append("|").append(freqLemme).append("|").append(isLemme).append("|").append(note);
+        sb.append("|").append(freqMot)
+        .append("|").append(freqLemme)
+        .append("|").append(isLemme)
+        .append("|").append(note)
+        .append("|").append(prononciation);
 
         return sb.toString();
 

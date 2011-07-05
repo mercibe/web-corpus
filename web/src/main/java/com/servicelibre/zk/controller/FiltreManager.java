@@ -1,94 +1,140 @@
 package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
-import org.zkoss.zul.SimpleGroupsModel;
 
 import com.servicelibre.corpus.manager.Filtre;
+import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.service.CorpusService;
 
-public abstract class FiltreManager {
+public abstract class FiltreManager
+{
 
-	protected List<Filtre> filtres = new ArrayList<Filtre>(3);
+    protected List<Filtre> filtres = new ArrayList<Filtre>(3);
 
-	protected CorpusService corpusService;
+    protected CorpusService corpusService;
 
-	protected ListeManager listeManager;
-	
-	protected Set<DefaultKeyValue> exclusions = new HashSet<DefaultKeyValue>();
+    protected ListeManager listeManager;
 
-	public FiltreManager() {
-		super();
-	}
+    private FiltreMot filtreActifModel;
 
-	public List<DefaultKeyValue> getFiltreNoms() {
+    private Comparator<DefaultKeyValue> keyValueComparator;
 
-		List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
-		for (Filtre filtre : filtres) {
-			noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
-		}
+    public FiltreManager()
+    {
+        super();
 
-		return noms;
-	}
+        keyValueComparator = new Comparator<DefaultKeyValue>()
+        {
 
-	public Set<DefaultKeyValue> getFiltreValeurs(String nom) {
-		Set<DefaultKeyValue> values = new HashSet<DefaultKeyValue>();
+            @Override
+            public int compare(DefaultKeyValue arg0, DefaultKeyValue arg1)
+            {
+                return arg0.getKey().toString().compareTo(arg1.getKey().toString());
+            }
+        };
+    }
 
-		// recherche du filtre
-		Filtre f = null;
-		for (Filtre filtre : filtres) {
-			if (filtre.nom.equalsIgnoreCase(nom)) {
-				f = filtre;
-				break;
-			}
-		}
+    public List<DefaultKeyValue> getFiltreNoms()
+    {
 
-		if (f != null) {
+        List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
+        for (Filtre filtre : filtres)
+        {
+            noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
+        }
 
-			values = supprimeFiltreActif(f.keyValues);
+        return noms;
+    }
 
-		}
+    public Set<DefaultKeyValue> getFiltreValeurs(String nom)
+    {
+        Set<DefaultKeyValue> values = new HashSet<DefaultKeyValue>();
 
-		return values;
-	}
+        // recherche du filtre
+        Filtre f = null;
+        for (Filtre filtre : filtres)
+        {
+            if (filtre.nom.equalsIgnoreCase(nom))
+            {
+                f = filtre;
+                break;
+            }
+        }
 
-	private Set<DefaultKeyValue> supprimeFiltreActif(Set<DefaultKeyValue> keyValues) {
-		keyValues.removeAll(exclusions);
-		return keyValues;
-	}
+        if (f != null)
+        {
 
-	public CorpusService getCorpusService() {
-		return corpusService;
-	}
+            values = getValeursActives(nom, f.keyValues);
 
-	public void setCorpusService(CorpusService corpusService) {
-		this.corpusService = corpusService;
-	}
+        }
 
-	public ListeManager getListeManager() {
-		return listeManager;
-	}
+        return values;
+    }
 
-	public void setListeManager(ListeManager listeManager) {
-		this.listeManager = listeManager;
-	}
+    private Set<DefaultKeyValue> getValeursActives(String nom, Set<DefaultKeyValue> keyValues)
+    {
 
-	abstract public void init();
+        Set<DefaultKeyValue> valeursActives = new TreeSet<DefaultKeyValue>(keyValueComparator);
 
-	public void exclus(DefaultKeyValue keyValue) {
-		System.out.println("Exclusion de " + keyValue);
-		this.exclusions.add(keyValue);
-		
-	}
+        if (filtreActifModel != null)
+        {
 
-	public void inclus(DefaultKeyValue keyValue) {
-		boolean remove = this.exclusions.remove(keyValue);
-		System.out.println("Inclusion de " + keyValue + " : " + remove);
-	}
+            for (DefaultKeyValue keyValue : keyValues)
+            {
+                String valeur = keyValue.getKey().toString();
+                if (!filtreActifModel.isActif(nom, valeur))
+                {
+                    valeursActives.add(keyValue);
+                }
+            }
+        }
+        else
+        {
+            return keyValues;
+        }
+
+        return valeursActives;
+    }
+
+    public CorpusService getCorpusService()
+    {
+        return corpusService;
+    }
+
+    public void setCorpusService(CorpusService corpusService)
+    {
+        this.corpusService = corpusService;
+    }
+
+    public ListeManager getListeManager()
+    {
+        return listeManager;
+    }
+
+    public void setListeManager(ListeManager listeManager)
+    {
+        this.listeManager = listeManager;
+    }
+
+    abstract public void init();
+
+    public void setFiltreActif(FiltreMot filtreActifModel)
+    {
+        this.filtreActifModel = filtreActifModel;
+
+    }
+    
+    public Comparator<DefaultKeyValue> getKeyValueComparator()
+    {
+        return keyValueComparator;
+    }
 
 }

@@ -108,5 +108,21 @@ public class FiltreMot
 		
 		return valeurs;
 	}
+
+    public boolean isActif(String nom, String valeur)
+    {
+        // Recherche le filtre
+        for (Filtre f : filtres)
+        {
+            if(f.nom.equals(nom)) {
+                for(DefaultKeyValue cléVal : f.keyValues) {
+                    if(cléVal.getKey().equals(valeur)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     
 }
