@@ -111,18 +111,18 @@ public class JpaMotManager implements MotManager {
 		// criteria.where(builder.like(arg0, arg1))
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Predicate p;
-		if (condition == Condition.MOT_ENTIER) {
+		if (condition == Condition.ENTIER) {
 			p = cb.equal(motRacine.get("lemme"), graphie);
 		} else {
 			String likeCondition = "";
 			switch (condition) {
-			case MOT_COMMENCE_PAR:
+			case COMMENCE_PAR:
 				likeCondition = graphie + "%";
 				break;
-			case MOT_CONTIENT:
+			case CONTIENT:
 				likeCondition = "%" + graphie + "%";
 				break;
-			case MOT_FINIT_PAR:
+			case FINIT_PAR:
 				likeCondition = "%" + graphie;
 				break;
 

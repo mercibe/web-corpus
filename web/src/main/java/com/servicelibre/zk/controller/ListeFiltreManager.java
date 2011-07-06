@@ -1,10 +1,7 @@
 package com.servicelibre.zk.controller;
 
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
@@ -28,13 +25,7 @@ public class ListeFiltreManager extends FiltreManager {
 		// ajout du filtre des listes
 		List<Liste> listes = listeManager.findByCorpusId(corpusService.getCorpus().getId());
 
-		Set<DefaultKeyValue> listesClésValeurs = new TreeSet<DefaultKeyValue>(new Comparator<DefaultKeyValue>() {
-
-			@Override
-			public int compare(DefaultKeyValue arg0, DefaultKeyValue arg1) {
-				return arg0.getKey().toString().compareTo(arg1.getKey().toString());
-			}
-		});
+		List<DefaultKeyValue> listesClésValeurs = new ArrayList<DefaultKeyValue>(listes.size());
 		
 		for (Liste liste : listes) {
 			listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
@@ -42,22 +33,21 @@ public class ListeFiltreManager extends FiltreManager {
 		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste", listesClésValeurs));
 
 		// Ajout de la liste des catgram
-		Set<DefaultKeyValue> catgramClésValeurs = new HashSet<DefaultKeyValue>(4);
+		List<DefaultKeyValue> catgramClésValeurs = new ArrayList<DefaultKeyValue>(4);
 		catgramClésValeurs.add(new DefaultKeyValue("adj.", "adjectif"));
+		catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
 		catgramClésValeurs.add(new DefaultKeyValue("n.", "nom"));
 		catgramClésValeurs.add(new DefaultKeyValue("v.", "verbe"));
-		catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.catgram.name(), "Catégorie grammaticale", catgramClésValeurs));
 
 		// Ajout de la liste des genres
-		Set<DefaultKeyValue> genreClésValeurs = new HashSet<DefaultKeyValue>(2);
-		genreClésValeurs.add(new DefaultKeyValue("m.", "masculin"));
+		List<DefaultKeyValue> genreClésValeurs = new ArrayList<DefaultKeyValue>(2);
 		genreClésValeurs.add(new DefaultKeyValue("f.", "féminin"));
+		genreClésValeurs.add(new DefaultKeyValue("m.", "masculin"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.genre.name(), "Genre", genreClésValeurs));
 
 		// Ajout de la liste des nombres
-		Set<DefaultKeyValue> nombreClésValeurs = new HashSet<DefaultKeyValue>(3);
-		nombreClésValeurs.add(new DefaultKeyValue("s.", "singulier"));
+		List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
 		nombreClésValeurs.add(new DefaultKeyValue("inv.", "invariable"));
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "pluriel"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));

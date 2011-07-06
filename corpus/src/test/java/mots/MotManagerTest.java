@@ -3,9 +3,8 @@ package mots;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.junit.Ignore;
@@ -73,18 +72,18 @@ public class MotManagerTest implements ApplicationContextAware
     @Ignore
     public void motManagerGraphieTest() {
         
-        List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.MOT_ENTIER);
+        List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);
         assertEquals("pomme", mots.get(0).lemme);
         System.out.println(mots);
         
         //FIXME ajouter assertions
-        mots = motManager.findByGraphie("pom", MotManager.Condition.MOT_COMMENCE_PAR);
+        mots = motManager.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
         System.out.println(mots);
         
-        mots = motManager.findByGraphie("ment", MotManager.Condition.MOT_FINIT_PAR);
+        mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
         System.out.println(mots);
         
-        mots = motManager.findByGraphie("ari", MotManager.Condition.MOT_CONTIENT);        
+        mots = motManager.findByGraphie("ari", MotManager.Condition.CONTIENT);        
         System.out.println(mots);
         
     }
@@ -95,7 +94,7 @@ public class MotManagerTest implements ApplicationContextAware
     	FiltreMot f = new FiltreMot();
 
     	// Syntaxe verbeuse
-    	Set<DefaultKeyValue> keyValues = new HashSet<DefaultKeyValue>(1);
+    	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
     	keyValues.add(new DefaultKeyValue(1L, "Détail: corpus_id=1"));
     	Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
     	f.addFiltre(filtre);
@@ -108,8 +107,8 @@ public class MotManagerTest implements ApplicationContextAware
     	
     	String graphie = "a";
     	
-		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.MOT_COMMENCE_PAR, f);
-    	System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.MOT_COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+    	System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
     	assertEquals(152, mots.size());
     	
     }

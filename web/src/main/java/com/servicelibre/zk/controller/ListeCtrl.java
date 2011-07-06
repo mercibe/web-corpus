@@ -2,8 +2,6 @@ package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.slf4j.Logger;
@@ -82,7 +80,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
      * Permet de remplir les choix de filtres/valeurs possibles
      */
     FiltreManager filtreManager = ServiceLocator.getListeFiltreManager();
-
+ 
     /**
      * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
      * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
@@ -139,7 +137,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
             String description = filtreNomActuel.getLabel();
 
             Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
-            Set<DefaultKeyValue> valeurs = new TreeSet<DefaultKeyValue>(filtreManager.getKeyValueComparator());
+            List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(1);
             valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
 
             filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
@@ -174,7 +172,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
         if (currentItem.getValue() != null)
         {
-            Set<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
+            List<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
             valeurFiltre.setModel(new SimpleListModel(filtreValeurs.toArray()));
             if (filtreValeurs.size() > 0)
             {

@@ -14,18 +14,18 @@
 
 				<combobox id="gp" readonly="true" width="100px">
 						<comboitem label="mots" value="g" />
-						<comboitem label="prononciation" value="p" />
+						<comboitem label="prononciations" value="p" />
 					</combobox>
 	
 				<combobox id="condition" readonly="true"
 						width="185px">
 						<comboitem label="commencent par"
-							value="MOT_COMMENCE_PAR" />
+							value="COMMENCE_PAR" />
 						<comboitem label="se terminent par"
-							value="MOT_FINIT_PAR" />
-						<comboitem label="contiennent" value="MOT_CONTIENT" />
+							value="FINIT_PAR" />
+						<comboitem label="contiennent" value="CONTIENT" />
 						<comboitem label="correspondent exactement à"
-							value="MOT_ENTIER" />
+							value="ENTIER" />
 					</combobox>
 					
 				<textbox id="cherche"></textbox>

@@ -65,7 +65,7 @@ public class JpaListeManager implements ListeManager
         
         try
         {
-            listes = (List<Liste>) entityManager.createQuery("select l from Liste l where l.corpus.id = ?").setParameter(1, corpusId).getResultList();
+            listes = (List<Liste>) entityManager.createQuery("select l from Liste l where l.corpus.id = ? order by l.ordre, l.nom").setParameter(1, corpusId).getResultList();
         }
         catch (NoResultException e)
         {

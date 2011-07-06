@@ -1,11 +1,7 @@
 package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
@@ -25,21 +21,9 @@ public abstract class FiltreManager
 
     private FiltreMot filtreActifModel;
 
-    private Comparator<DefaultKeyValue> keyValueComparator;
-
     public FiltreManager()
     {
         super();
-
-        keyValueComparator = new Comparator<DefaultKeyValue>()
-        {
-
-            @Override
-            public int compare(DefaultKeyValue arg0, DefaultKeyValue arg1)
-            {
-                return arg0.getKey().toString().compareTo(arg1.getKey().toString());
-            }
-        };
     }
 
     public List<DefaultKeyValue> getFiltreNoms()
@@ -54,9 +38,9 @@ public abstract class FiltreManager
         return noms;
     }
 
-    public Set<DefaultKeyValue> getFiltreValeurs(String nom)
+    public List<DefaultKeyValue> getFiltreValeurs(String nom)
     {
-        Set<DefaultKeyValue> values = new HashSet<DefaultKeyValue>();
+        List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
 
         // recherche du filtre
         Filtre f = null;
@@ -79,10 +63,10 @@ public abstract class FiltreManager
         return values;
     }
 
-    private Set<DefaultKeyValue> getValeursActives(String nom, Set<DefaultKeyValue> keyValues)
+    private List<DefaultKeyValue> getValeursActives(String nom, List<DefaultKeyValue> keyValues)
     {
 
-        Set<DefaultKeyValue> valeursActives = new TreeSet<DefaultKeyValue>(keyValueComparator);
+        List<DefaultKeyValue> valeursActives = new ArrayList<DefaultKeyValue>(keyValues.size());
 
         if (filtreActifModel != null)
         {
@@ -130,11 +114,6 @@ public abstract class FiltreManager
     {
         this.filtreActifModel = filtreActifModel;
 
-    }
-    
-    public Comparator<DefaultKeyValue> getKeyValueComparator()
-    {
-        return keyValueComparator;
     }
 
 }

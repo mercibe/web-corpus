@@ -1,7 +1,7 @@
 package mots;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class FiltreMotTest {
 	public void FiltreTest() {
 		FiltreMot fm = new FiltreMot();
 		
-		Set<DefaultKeyValue> kv = new HashSet<DefaultKeyValue>();
+		List<DefaultKeyValue> kv = new ArrayList<DefaultKeyValue>();
 		kv.add(new DefaultKeyValue("clé1", "valeur1"));
 		kv.add(new DefaultKeyValue("clé2", "valeur2"));
 		

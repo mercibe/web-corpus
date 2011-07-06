@@ -12,7 +12,7 @@ import com.servicelibre.corpus.entity.Mot;
 public interface MotManager {
 
 
-	enum Condition {MOT_ENTIER, MOT_COMMENCE_PAR, MOT_FINIT_PAR, MOT_CONTIENT};
+	enum Condition {ENTIER, COMMENCE_PAR, FINIT_PAR, CONTIENT};
 
     List<Mot> findAll();
 	

@@ -34,6 +34,9 @@ public class Liste implements Comparable<Liste>
 
     @Column
     String description;
+    
+    @Column
+    int ordre;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "liste_id")
@@ -164,11 +167,24 @@ public class Liste implements Comparable<Liste>
 		this.ligneSplitter = ligneSplitter;
 	}
 
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public int getOrdre() {
+		return ordre;
+	}
+
+	public void setOrdre(int ordre) {
+		this.ordre = ordre;
+	}
+
 	@Override
 	public int compareTo(Liste o) {
 		return this.getNom().compareTo(o.getNom());
 	}
 
+	
 	
 
 }

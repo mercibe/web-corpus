@@ -1,7 +1,7 @@
 package com.servicelibre.corpus.manager;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
@@ -15,25 +15,25 @@ public class Filtre {
 
 	public String nom;
 	public String description;
-	public Set<DefaultKeyValue> keyValues;
+	public List<DefaultKeyValue> keyValues;
 
-	public Filtre(String nom, String description, Set<DefaultKeyValue> keyValues) {
+	public Filtre(String nom, String description, List<DefaultKeyValue> keyValues) {
 		super();
 		this.nom = nom;
 		this.description = description;
 		this.keyValues = keyValues;
 	}
-	
+
 	public Filtre(String nom, String description, Object[] values) {
 		super();
 		this.nom = nom;
 		this.description = description;
-		
-		Set<DefaultKeyValue> keyValues = new HashSet<DefaultKeyValue>(values.length);
+
+		List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(values.length);
 		for (int i = 0; i < values.length; i++) {
 			keyValues.add(new DefaultKeyValue(values[i], values[i]));
 		}
-		
+
 		this.keyValues = keyValues;
 	}
 
@@ -66,7 +66,5 @@ public class Filtre {
 	public String toString() {
 		return "Filtre [nom=" + nom + ", description=" + description + ", keyValues=" + keyValues + "]";
 	}
-	
-	
-	
+
 }
