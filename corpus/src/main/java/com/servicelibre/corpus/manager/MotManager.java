@@ -18,7 +18,7 @@ public interface MotManager {
 	
 	Mot findOne(long motId);
 
-	Mot findByMot(String mot);
+	List<Mot> findByMot(String mot);
 	
 	List<Mot> findByGraphie(String graphie, Condition condition);
 

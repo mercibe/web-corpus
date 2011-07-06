@@ -36,7 +36,7 @@ public class Liste implements Comparable<Liste>
     String description;
     
     @Column
-    int ordre;
+    Integer ordre;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "liste_id")
@@ -171,11 +171,11 @@ public class Liste implements Comparable<Liste>
 		this.id = id;
 	}
 
-	public int getOrdre() {
+	public Integer getOrdre() {
 		return ordre;
 	}
 
-	public void setOrdre(int ordre) {
+	public void setOrdre(Integer ordre) {
 		this.ordre = ordre;
 	}
 

@@ -2,12 +2,12 @@ package mots;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -55,7 +55,7 @@ public class MotManagerTest implements ApplicationContextAware
     }
     
     @Test
-    @Ignore
+    //@Ignore
     public void motManagerSimpleTest() {
         
         Mot mot = motManager.findOne((long)1);
@@ -63,13 +63,14 @@ public class MotManagerTest implements ApplicationContextAware
         assertNotNull(mot);
         System.out.println(mot);
         
-        mot = motManager.findByMot("manger");
-        assertNotNull(mot);
-        System.out.println(mot);
+        List<Mot> mots = motManager.findByMot("manger");
+        assertNotNull(mots);
+        assertTrue(mots.size() > 0);
+        System.out.println(mots);
     }
     
     @Test
-    @Ignore
+    //@Ignore
     public void motManagerGraphieTest() {
         
         List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);

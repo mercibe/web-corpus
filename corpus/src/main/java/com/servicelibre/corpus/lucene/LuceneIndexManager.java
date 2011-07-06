@@ -387,6 +387,9 @@ public class LuceneIndexManager
                     // Fin « ne faire qu'une fois»
 
                     String[] contextParts = new String[4];
+                    
+                    // TODO gérer ici voisinage / window en terme de phrase
+                    
                     int startWindow = spans.start() - window;
                     int stopWindow = spans.end() + window - 1;
 
