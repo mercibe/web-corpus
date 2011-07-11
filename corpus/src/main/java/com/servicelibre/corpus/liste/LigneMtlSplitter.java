@@ -90,22 +90,36 @@ public class LigneMtlSplitter implements LigneSplitter {
 			lemme = graphie;
 
 			if (genres.isEmpty()) {
-				mots.add(new Mot(liste, graphie2, lemme2, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
-				mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, false, note));
+				Mot graphie2Mot = new Mot(graphie2, lemme2, isLemme, catgram, "", nombre, catgramPrécision, isRo, note);
+				liste.ajouteMot(graphie2Mot);
+				mots.add(graphie2Mot);
+				
+				Mot graphieMot = new Mot(graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, false, note);
+				liste.ajouteMot(graphieMot);
+				mots.add(graphieMot);
 
 			} else {
 				for (String genre : genres) {
-					mots.add(new Mot(liste, graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
-					mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, false, note));
+					Mot graphie2Mot = new Mot(graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note);
+					liste.ajouteMot(graphie2Mot);
+					mots.add(graphie2Mot);
+					
+					Mot graphieMot = new Mot(graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, false, note);
+					liste.ajouteMot(graphieMot);
+					mots.add(graphieMot);
 				}
 			}
 
 		} else {
 			if (genres.isEmpty()) {
-				mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
+				Mot graphieMot = new Mot(graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, isRo, note);
+				liste.ajouteMot(graphieMot);
+				mots.add(graphieMot);
 			} else {
 				for (String genre : genres) {
-					mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+					Mot graphieMot = new Mot(graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note);
+					liste.ajouteMot(graphieMot);
+					mots.add(graphieMot);
 				}
 			}
 		}

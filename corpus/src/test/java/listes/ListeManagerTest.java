@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -22,6 +23,8 @@ import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.manager.CorpusManager;
+import com.servicelibre.corpus.manager.Filtre;
+import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 
 
@@ -78,11 +81,14 @@ public class ListeManagerTest implements ApplicationContextAware
 
         // Création de la liste de lemmes
         List<Mot> mots = new ArrayList<Mot>();
-        mots.add(new Mot("manger", "manger", true, "VERBE", "", lTest1));
-        mots.add(new Mot("pomme", "pomme", true, "NOM_COMMUN", "", lTest1));
-
-        // Ajout de la liste de lemmes à la définition de la liste
-        lTest1.setMots(mots);
+        
+        Mot mangerMot = new Mot("manger", "manger", true, "VERBE", "");
+        lTest1.ajouteMot(mangerMot);
+		mots.add(mangerMot);
+        
+        Mot pommeMot = new Mot("pomme", "pomme", true, "NOM_COMMUN", "");
+        lTest1.ajouteMot(pommeMot);
+		mots.add(pommeMot);
 
         lm.save(lTest1);
 
@@ -98,7 +104,7 @@ public class ListeManagerTest implements ApplicationContextAware
             assertEquals(mots.get(i), mots3.get(i));
             System.out.println(mots.get(i));
         }
-
+        
     }
 
     @Test

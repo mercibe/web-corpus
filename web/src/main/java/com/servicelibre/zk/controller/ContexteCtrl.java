@@ -71,7 +71,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 	/**
 	 * Permet de remplir les choix de filtres/valeurs possibles
 	 */
-	ContexteFiltreManager filtreManager = ServiceLocator.getContexteFiltreManager();
+	ContexteFiltreManager filtreManager = ServiceLocator.newContexteFiltreManager();
 
 	/**
 	 * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
@@ -277,6 +277,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
+
 		super.doAfterCompose(comp);
 
 		initialiseChamps();

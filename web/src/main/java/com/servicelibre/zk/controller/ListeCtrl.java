@@ -79,7 +79,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     /**
      * Permet de remplir les choix de filtres/valeurs possibles
      */
-    FiltreManager filtreManager = ServiceLocator.getListeFiltreManager();
+    FiltreManager filtreManager = ServiceLocator.newListeFiltreManager();
  
     /**
      * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
@@ -437,7 +437,8 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
                 row.appendChild(new Label(mot.getGenre()));
                 row.appendChild(new Label(mot.getNombre()));
                 row.appendChild(new Label(mot.getCatgramPrésicion()));
-                row.appendChild(new Label(mot.getListe().getNom()));
+                row.appendChild(new Label(""));
+//                row.appendChild(new Label(mot.getListe().getNom()));
 
             }
         });

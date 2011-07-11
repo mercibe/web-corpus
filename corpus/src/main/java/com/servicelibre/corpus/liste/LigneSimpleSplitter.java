@@ -29,7 +29,10 @@ public class LigneSimpleSplitter implements LigneSplitter
 
         nettoie(cols);
         
-        mots.add(new Mot(liste, cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), ""));
+        Mot mot = new Mot(cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), "");
+        liste.ajouteMot(mot);
+        
+		mots.add(mot);
         
         return mots;
     }

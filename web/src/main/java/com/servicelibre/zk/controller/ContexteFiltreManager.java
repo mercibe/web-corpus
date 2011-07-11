@@ -17,7 +17,9 @@ public class ContexteFiltreManager extends FiltreManager {
 
 	@Override
 	public void init() {
-
+System.err.println("corpusService = " + corpusService);
+System.err.println("corpusService.getCorpus() = " + corpusService.getCorpus());
+System.err.println("corpusService.getCorpus().getId() = " + corpusService.getCorpus().getId());
 		List<DocMetadata> metadatas = docMetadataManager.findByCorpusId(corpusService.getCorpus().getId());
 
 		// Ajout d'un filtre pour chaque champ d'index

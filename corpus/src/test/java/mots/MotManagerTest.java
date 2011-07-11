@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -98,8 +99,8 @@ public class MotManagerTest implements ApplicationContextAware
 
     	// Syntaxe verbeuse
     	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
-    	keyValues.add(new DefaultKeyValue(1L, "Détail:listeId=1"));
-    	keyValues.add(new DefaultKeyValue(2L, "Détail: listeId=2"));
+    	keyValues.add(new DefaultKeyValue(1, "Détail:listeId=1"));
+    	keyValues.add(new DefaultKeyValue(2, "Détail: listeId=2"));
     	Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
     	f.addFiltre(filtre);
     	

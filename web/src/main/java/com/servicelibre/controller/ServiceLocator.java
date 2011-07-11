@@ -9,56 +9,56 @@ import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
+import com.servicelibre.zk.controller.ListeFiltreManager;
 
-public class ServiceLocator
-{
+public class ServiceLocator {
 
-    private static ApplicationContext ctx;
+	private static ApplicationContext ctx;
 
-    static
-    {
+	static {
 
-        ctx = SpringUtil.getApplicationContext();
-    }
+		ctx = SpringUtil.getApplicationContext();
+	}
 
-    private ServiceLocator()
-    {
-    }
+	private ServiceLocator() {
+	}
 
-    public static ListeManager getListeManager()
-    {
-        return (ListeManager) ctx.getBean("listeManager");
-    }
+	public static ListeManager getListeManager() {
+		return (ListeManager) ctx.getBean("listeManager");
+	}
 
-    public static MotManager getMotManager()
-    {
-        return (MotManager) ctx.getBean("motManager");
-    }
+	public static MotManager getMotManager() {
+		return (MotManager) ctx.getBean("motManager");
+	}
 
-    public static FiltreManager getListeFiltreManager()
-    {
-        return (FiltreManager) ctx.getBean("listeFiltreManager");
-    }
+	public static FiltreManager newListeFiltreManager() {
 
-    public static ContexteFiltreManager getContexteFiltreManager()
-    {
-        return (ContexteFiltreManager) ctx.getBean("contexteFiltreManager");
-    }
-    
-    public static CorpusService getCorpusService()
-    {
-        return (CorpusService) ctx.getBean("corpusService");
-    }
-    
-    public static CorpusService getFormeService()
-    {
-        return (CorpusService) ctx.getBean("formeService");
-    }
-    
-    public static DocMetadataManager getDocMetataManager()
-    {
-        return (DocMetadataManager) ctx.getBean("docMetadataManager");
-    }
-    
-    
+		FiltreManager fm = new ListeFiltreManager();
+		fm.setCorpusService(getCorpusService());
+		fm.setListeManager(getListeManager());
+		fm.init();
+		return fm;
+	}
+
+	public static ContexteFiltreManager newContexteFiltreManager() {
+		ContexteFiltreManager cfm = new ContexteFiltreManager();
+		cfm.setCorpusService(getCorpusService());
+		cfm.setListeManager(getListeManager());
+		cfm.setDocMetadataManager(getDocMetataManager());
+		cfm.init();
+		return cfm;
+	}
+
+	public static CorpusService getCorpusService() {
+		return (CorpusService) ctx.getBean("corpusService");
+	}
+
+	public static CorpusService getFormeService() {
+		return (CorpusService) ctx.getBean("formeService");
+	}
+
+	public static DocMetadataManager getDocMetataManager() {
+		return (DocMetadataManager) ctx.getBean("docMetadataManager");
+	}
+
 }
