@@ -55,6 +55,7 @@ public class MotManagerTest implements ApplicationContextAware
     }
     
     @Test
+    @Transactional
     //@Ignore
     public void motManagerSimpleTest() {
         
@@ -70,6 +71,7 @@ public class MotManagerTest implements ApplicationContextAware
     }
     
     @Test
+    @Transactional
     //@Ignore
     public void motManagerGraphieTest() {
         
@@ -96,7 +98,8 @@ public class MotManagerTest implements ApplicationContextAware
 
     	// Syntaxe verbeuse
     	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
-    	keyValues.add(new DefaultKeyValue(1L, "Détail: corpus_id=1"));
+    	keyValues.add(new DefaultKeyValue(1L, "Détail:listeId=1"));
+    	keyValues.add(new DefaultKeyValue(2L, "Détail: listeId=2"));
     	Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
     	f.addFiltre(filtre);
     	

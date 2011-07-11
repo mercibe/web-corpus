@@ -76,7 +76,7 @@ public class PrononciationImport
                     for (Mot mot : mots)
                     {
                         logger.debug("liaison de la prononciation {} à la forme {}", prononc.prononciation, mot);
-                        mot.addPrononciation(prononc);
+                        mot.ajoutePrononciation(prononc);
                         liaisonCpt++;
                     }
                         

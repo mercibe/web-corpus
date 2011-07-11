@@ -70,14 +70,14 @@ public class PrononciationManagerTest implements ApplicationContextAware
         System.out.println(mangerMot);
 
         Prononciation prononc = new Prononciation("mɑ̃ʒe");
-        mangerMot.addPrononciation(prononc);
+        mangerMot.ajoutePrononciation(prononc);
         motManager.save(mangerMot);
         System.out.println("mangerMot ++++++++++++++  " + mangerMot);
 
         List<Mot> mots2 = motManager.findByMot("blancheur");
         Mot blancheurMot = mots2.get(0);
         Prononciation prononc2 = new Prononciation("blɑ̃ʃœʀ");
-        blancheurMot.addPrononciation(prononc2);
+        blancheurMot.ajoutePrononciation(prononc2);
         motManager.save(blancheurMot);
         System.out.println("blancheurMot ++++++++++++++  " + blancheurMot);
 

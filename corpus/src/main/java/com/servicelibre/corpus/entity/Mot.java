@@ -205,7 +205,7 @@ public class Mot implements Comparable<Mot>{
      * @param prononc
      * @return
      */
-    public Mot addPrononciation(Prononciation prononc) {
+    public Mot ajoutePrononciation(Prononciation prononc) {
         if(!getPrononciations().contains(prononc))
         {
             getPrononciations().add(prononc);
