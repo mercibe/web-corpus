@@ -40,6 +40,7 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.manager.PrononciationManager;
 
 /**
  * Démontre MVC: Autowire UI objects to data members
@@ -89,7 +90,10 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
     FiltreMot filtreActifModel = new FiltreMot();
 
     ListeManager listeManager = ServiceLocator.getListeManager();
+    
     MotManager motManager = ServiceLocator.getMotManager();
+    PrononciationManager prononciationManager  = ServiceLocator.getPrononciationManager();
+    
 
     private static final long serialVersionUID = 779679285074159073L;
 
@@ -220,24 +224,27 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
         // TODO historique des recherches
 
         String gpActif = (String) gp.getItemAtIndex(gp.getSelectedIndex()).getValue();
+        
+        FiltreMot filtres = getFiltres();
+        
         if (gpActif.equals("g"))
         {
-            FiltreMot filtres = getFiltres();
-
             mots = motManager.findByGraphie(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
         }
         else
         {
-            try
-            {
-                Messagebox.show("La recherche par phonème n'est pas encore implémentée.", "Corpus", Messagebox.OK,
-                        Messagebox.INFORMATION);
-            }
-            catch (InterruptedException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            mots = motManager.findByPrononciation(cherche.getText(), MotManager.Condition.valueOf(conditionActive), filtres);
+            
+//            try
+//            {
+//                Messagebox.show("La recherche par phonème n'est pas encore implémentée.", "Corpus", Messagebox.OK,
+//                        Messagebox.INFORMATION);
+//            }
+//            catch (InterruptedException e)
+//            {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
         }
 
         return mots;

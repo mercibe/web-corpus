@@ -12,7 +12,7 @@
 			<caption>Recherche</caption>
 			<hbox style="margin-top:10px;">
 
-				<combobox id="gp" readonly="true" width="100px">
+				<combobox id="gp" readonly="true" width="120px">
 						<comboitem label="mots" value="g" />
 						<comboitem label="prononciations" value="p" />
 					</combobox>

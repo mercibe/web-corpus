@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -26,6 +27,7 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
 import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.prononciation.PrononciationImport;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,6 +37,7 @@ public class MotManagerTest implements ApplicationContextAware {
 
     @Autowired
     ListeImport listImport;
+    
 
     private ApplicationContext ctx;
 
@@ -50,11 +53,13 @@ public class MotManagerTest implements ApplicationContextAware {
 	for (Liste liste : listImport.getListes()) {
 	    listImport.execute(liste);
 	}
+	
+	
     }
 
     @Test
     @Transactional
-    // @Ignore
+    @Ignore
     public void motManagerSimpleTest() {
 
 	Mot mot = motManager.findOne((long) 1);
@@ -70,7 +75,7 @@ public class MotManagerTest implements ApplicationContextAware {
 
     @Test
     @Transactional
-    // @Ignore
+     @Ignore
     public void motManagerGraphieTest() {
 
 	List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);
@@ -88,8 +93,30 @@ public class MotManagerTest implements ApplicationContextAware {
 	System.out.println(mots);
 
     }
+    
+    @Test
+    @Transactional
+    // @Ignore
+    public void motManagerPrononciationTest() {
+
+	List<Mot> mots = motManager.findByPrononciation("vɛʀ", MotManager.Condition.ENTIER, null);
+	//assertEquals("pomme", mots.get(0).lemme);
+	System.out.println(mots);
+
+	// FIXME ajouter assertions
+//	mots = motManager.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
+//	System.out.println(mots);
+//
+//	mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
+//	System.out.println(mots);
+//
+//	mots = motManager.findByGraphie("ari", MotManager.Condition.CONTIENT);
+//	System.out.println(mots);
+
+    }
 
     @Test
+    @Ignore
     public void motManagerFilterTest() {
 
 	FiltreMot f = new FiltreMot();

@@ -27,9 +27,11 @@ public interface MotManager {
 
     List<Mot> findByGraphie(String value, Condition valueOf, FiltreMot filtres);
 
-	EntityManager getEntityManager();
+    EntityManager getEntityManager();
 
-	void setEntityManager(EntityManager entityManager);
+    void setEntityManager(EntityManager entityManager);
 
-	int ajoutePrononciation(String forme, String phonétique);
+    int ajoutePrononciation(String forme, String phonétique);
+
+    List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreMot filtres);
 }
