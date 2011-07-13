@@ -54,6 +54,7 @@ public class JpaMotManager implements MotManager
      * "avant";3 "mal";3 "attendre";2 => FIXME (contrainte DB) "bref";2
      * "sourire";2 "jeune";2 "rose";2 "intérieur";2
      */
+    @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
     @Override
     public List<Mot> findByMot(String mot)

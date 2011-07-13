@@ -44,5 +44,19 @@ public class JpaPrononciationManager implements PrononciationManager
         entityManager.persist(prononciation);
         return prononciation;
     }
+    
+    @Transactional
+    @Override
+    public Prononciation findByPrononciation(String prononciation)
+    {
+	Prononciation prononc = null;
+        try {
+	    prononc = (Prononciation) entityManager.createQuery("SELECT p FROM Prononciation p WHERE p.prononciation = ?").setParameter(1, prononciation)
+	            .getSingleResult();
+	} catch (javax.persistence.NoResultException e) {
+	    //Ignorer
+	}
+	return prononc;
+    }
 
 }

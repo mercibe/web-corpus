@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.service.Contexte;
+import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.FormeService;
 import com.servicelibre.corpus.service.PhraseService;
@@ -71,10 +72,13 @@ public class CorpusServiceTest
         
         CorpusService cs = new CorpusService(cm, corpus);
         
-        List<Contexte> contextes = cs.getContextesMot("chien");
+        String mot = "chien";
+	ContexteSet contexteSet = cs.getContextesMot(mot);
         
-        assertNotNull("La liste des contextes ne peut être null.", contextes);
-        assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
+        assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+        assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+        
+        System.out.println("Trouvé " + contexteSet.size() + " occurrences du mot " + mot + " dans " + contexteSet.getDocumentCount() + " documents.");
         
 //        System.err.println("# contextes: " + contextes.size());
 //        int cpt = 1;
@@ -95,12 +99,13 @@ public class CorpusServiceTest
         CorpusService cs = new CorpusService(cm, corpus);
         cs.setFormeService(formeService);
         
-        List<Contexte> contextes = cs.getContextesLemme("manger");
+        String lemme = "manger";
+	ContexteSet contexteSet = cs.getContextesLemme(lemme);
         
-        assertNotNull("La liste des contextes ne peut être null.", contextes);
-        assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
+        assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+        assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
         
-        System.err.println("# contextes: " + contextes.size());
+        System.out.println("Trouvé " + contexteSet.size() + " formes du lemme " + lemme + " dans " + contexteSet.getDocumentCount() + " documents.");
         
     }
     
@@ -120,16 +125,16 @@ public class CorpusServiceTest
 		
         cs.setTailleVoisinnage(tailleVoisinnage);
         
-        List<Contexte> contextes = cs.getContextesMot("chien");
+        ContexteSet contexteSet = cs.getContextesMot("chien");
         
-        assertNotNull("La liste des contextes ne peut être null.", contextes);
-        assertTrue("La liste des contextes de ne peut être vide.", contextes.size() > 0);
+        assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+        assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
         
         PhraseService phraseService = new PhraseService(); 
         
-        System.err.println("# contextes: " + contextes.size());
+        System.err.println("# contextes: " + contexteSet.size());
         int cpt = 1;
-        for(Contexte c : contextes) {
+        for(Contexte c : contexteSet.getContextes()) {
             System.out.println("------"+ cpt++ +"------");
             
            List<String> phrases = phraseService.getPhrasesComplètes(c);

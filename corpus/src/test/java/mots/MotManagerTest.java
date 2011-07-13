@@ -27,19 +27,17 @@ import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
 import com.servicelibre.corpus.manager.MotManager;
 
-
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-public class MotManagerTest implements ApplicationContextAware 
-{
+public class MotManagerTest implements ApplicationContextAware {
     @Autowired
     MotManager motManager;
-    
+
     @Autowired
     ListeImport listImport;
 
     private ApplicationContext ctx;
-    
+
     /**
      * Devrait être @Before, mais celui-ci fait un rollback...
      */
@@ -47,82 +45,76 @@ public class MotManagerTest implements ApplicationContextAware
     @Transactional
     @Rollback(value = false)
     public void createListeDBNoRollabck() {
-        listImport.setApplicationContext(ctx);
+	listImport.setApplicationContext(ctx);
 
-        for (Liste liste : listImport.getListes()) {
-            listImport.execute(liste);
-        }
+	for (Liste liste : listImport.getListes()) {
+	    listImport.execute(liste);
+	}
     }
-    
+
     @Test
-    @Transactional
-    //@Ignore
+    // @Ignore
     public void motManagerSimpleTest() {
-        
-        Mot mot = motManager.findOne((long)1);
-        
-        assertNotNull(mot);
-        System.out.println(mot);
-        
-        List<Mot> mots = motManager.findByMot("manger");
-        assertNotNull(mots);
-        assertTrue(mots.size() > 0);
-        System.out.println(mots);
+
+	Mot mot = motManager.findOne((long) 1);
+
+	assertNotNull(mot);
+	System.out.println(mot);
+
+	List<Mot> mots = motManager.findByMot("manger");
+	assertNotNull(mots);
+	assertTrue(mots.size() > 0);
+	System.out.println(mots);
     }
-    
+
     @Test
-    @Transactional
-    //@Ignore
+    // @Ignore
     public void motManagerGraphieTest() {
-        
-        List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);
-        assertEquals("pomme", mots.get(0).lemme);
-        System.out.println(mots);
-        
-        //FIXME ajouter assertions
-        mots = motManager.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
-        System.out.println(mots);
-        
-        mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
-        System.out.println(mots);
-        
-        mots = motManager.findByGraphie("ari", MotManager.Condition.CONTIENT);        
-        System.out.println(mots);
-        
+
+	List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);
+	assertEquals("pomme", mots.get(0).lemme);
+	System.out.println(mots);
+
+	// FIXME ajouter assertions
+	mots = motManager.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
+	System.out.println(mots);
+
+	mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
+	System.out.println(mots);
+
+	mots = motManager.findByGraphie("ari", MotManager.Condition.CONTIENT);
+	System.out.println(mots);
+
     }
-    
+
     @Test
     public void motManagerFilterTest() {
 
-    	FiltreMot f = new FiltreMot();
+	FiltreMot f = new FiltreMot();
 
-    	// Syntaxe verbeuse
-    	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
-    	keyValues.add(new DefaultKeyValue(1L, "Détail:listeId=1"));
-    	keyValues.add(new DefaultKeyValue(2L, "Détail: listeId=2"));
-    	Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
-    	f.addFiltre(filtre);
-    	
-  
-    	// Syntaxe allégée
-    	f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[]{"n.", "adv."}));
-  
-    	f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[]{"f."}));
-    	
-    	String graphie = "a";
-    	
-		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
-    	System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
-    	assertEquals(152, mots.size());
-    	
+	// Syntaxe verbeuse
+	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
+	keyValues.add(new DefaultKeyValue(1L, "Détail: corpus_id=1"));
+	Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
+	f.addFiltre(filtre);
+
+	// Syntaxe allégée
+	f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[] { "n.", "adv." }));
+
+	f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "f." }));
+
+	String graphie = "a";
+
+	List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+	System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+	assertEquals(152, mots.size());
+
     }
-    
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
-    {
-        this.ctx = applicationContext;
-        
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	this.ctx = applicationContext;
+
     }
 
 }
