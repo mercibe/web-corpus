@@ -2,12 +2,11 @@ package com.servicelibre.corpus.manager;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.EntityManager;
 
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 
-@Transactional
 public interface MotManager {
 
     enum Condition {
@@ -27,4 +26,10 @@ public interface MotManager {
     int deleteFromListe(Liste liste);
 
     List<Mot> findByGraphie(String value, Condition valueOf, FiltreMot filtres);
+
+	EntityManager getEntityManager();
+
+	void setEntityManager(EntityManager entityManager);
+
+	int ajoutePrononciation(String forme, String phonétique);
 }

@@ -59,4 +59,15 @@ public class JpaPrononciationManager implements PrononciationManager
 	return prononc;
     }
 
+    @Override
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+    @Override
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+    
+
 }

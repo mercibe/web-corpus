@@ -53,6 +53,7 @@ public class MotManagerTest implements ApplicationContextAware {
     }
 
     @Test
+    @Transactional
     // @Ignore
     public void motManagerSimpleTest() {
 
@@ -68,6 +69,7 @@ public class MotManagerTest implements ApplicationContextAware {
     }
 
     @Test
+    @Transactional
     // @Ignore
     public void motManagerGraphieTest() {
 

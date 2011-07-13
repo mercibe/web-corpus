@@ -18,14 +18,15 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.corpus.entity.Prononciation;
 
 @Repository
-@Transactional
 public class JpaMotManager implements MotManager
 {
 
@@ -34,6 +35,9 @@ public class JpaMotManager implements MotManager
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+	PrononciationManager prononciationManager;
+    
     private CriteriaBuilder builder;
 
     public JpaMotManager()
@@ -41,7 +45,6 @@ public class JpaMotManager implements MotManager
         super();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Mot findOne(long motId)
     {
@@ -55,7 +58,6 @@ public class JpaMotManager implements MotManager
      * "sourire";2 "jeune";2 "rose";2 "intérieur";2
      */
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     @Override
     public List<Mot> findByMot(String mot)
     {
@@ -64,6 +66,7 @@ public class JpaMotManager implements MotManager
     }
 
     @Override
+    @Transactional(readOnly=false)
     public Mot save(Mot mot)
     {
         entityManager.persist(mot);
@@ -71,6 +74,7 @@ public class JpaMotManager implements MotManager
     }
 
     @Override
+    @Transactional(readOnly=false)
     public int deleteFromListe(Liste liste)
     {
         logger.info("Suppression de tous les mots de la liste [{}].", liste);
@@ -78,7 +82,6 @@ public class JpaMotManager implements MotManager
     }
 
     @SuppressWarnings("unchecked")
-    @Transactional(readOnly = true)
     @Override
     public List<Mot> findAll()
     {
@@ -107,14 +110,12 @@ public class JpaMotManager implements MotManager
         return builder;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Mot> findByGraphie(String graphie, Condition condition)
     {
         return findByGraphie(graphie, condition, null);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<Mot> findByGraphie(String graphie, Condition condition, FiltreMot filtres)
     {
@@ -216,4 +217,43 @@ public class JpaMotManager implements MotManager
         return p;
     }
 
+    @Override
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+    @Override
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+    @Override
+    @Transactional
+    public int ajoutePrononciation(String forme, String phonétique) {
+
+		int liaisonCpt = 0;
+		
+		Prononciation prononciation = null;
+
+		prononciation = prononciationManager.findByPrononciation(phonétique);
+
+		if (prononciation == null) {
+			prononciation = new Prononciation(phonétique);
+		}
+
+		//logger.debug("importation de la prononciation {}", prononciation.prononciation);
+
+		// Rechercher le/les éventuels mot/forme associés et lier
+		List<Mot> mots = findByMot(forme);
+		for (Mot mot : mots) {
+			mot.ajoutePrononciation(prononciation);
+			logger.debug("liaison de la prononciation {} à la forme {}", prononciation.prononciation, forme);
+			save(mot);
+			liaisonCpt++;
+		}
+
+		return liaisonCpt;
+	}
+
+    
 }
