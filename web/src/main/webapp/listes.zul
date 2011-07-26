@@ -63,22 +63,26 @@
 
 			</groupbox>
 			
-<!-- height="660px" width="700px"   -->
-			<grid id="motsGrid" mold="paging" pageSize="25"
-				height="660px" width="700px"
-				emptyMessage="Aucun mot trouvé.">
-				<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
-	
-				<columns sizable="true">
-					<column hflex="3" id="mot" label="Mot" sortDirection="ascending" sort="auto" />
-					<column hflex="1" label="Catégorie"  sort="auto(catgram,lemme)"/> 
-					<column hflex="1" label="Genre" sort="auto(genre, lemme)"/>
-					<column hflex="1" label="Nombre"  sort="auto(catgram, lemme)"/>
-					<column hflex="1" label="Précision" sort="auto(catgramPrésicion, lemme)"/>
-					<column hflex="2" label="Liste" sort="auto(liste, lemme)"/>
-				</columns>
-				<rows />
-			</grid>
+			<vbox  height="660px" width="700px">
+			
+				<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
+				
+				<grid id="motsGrid" mold="paging" pageSize="25"
+					height="660px" width="700px"
+					emptyMessage="Aucun mot trouvé.">
+					<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
+		
+					<columns sizable="true">
+						<column hflex="3" id="mot" label="Mot" sortDirection="ascending" sort="auto" />
+						<column hflex="1" label="Catégorie"  sort="auto(catgram,lemme)"/> 
+						<column hflex="1" label="Genre" sort="auto(genre, lemme)"/>
+						<column hflex="1" label="Nombre"  sort="auto(catgram, lemme)"/>
+						<column hflex="1" label="Précision" sort="auto(catgramPrésicion, lemme)"/>
+						<column hflex="2" label="Liste" sort="auto(liste, lemme)"/>
+					</columns>
+					<rows />
+				</grid>
+			</vbox>
 		</hbox>
 </window>
 </zk>

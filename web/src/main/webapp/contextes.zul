@@ -67,7 +67,6 @@
 			
 					<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
 					
-					<!-- height="660px" width="700px" -->
 					<grid id="contextesGrid" mold="paging" pageSize="18"
 						 emptyMessage="Aucun contexte trouvé." height="640px" width="700px">
 						<!-- 	pagingPosition="both" sizedByContent="true"> -->
