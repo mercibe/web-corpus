@@ -11,7 +11,7 @@ public class ContexteSet {
     
     int documentCount;
     
-    String motCherché;
+    String motCherché = "";
     
     boolean formesDuLemme;
     

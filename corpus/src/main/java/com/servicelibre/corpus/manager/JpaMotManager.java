@@ -13,6 +13,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -167,10 +168,12 @@ public class JpaMotManager implements MotManager {
 	criteria.select(motRacine);
 
 	// Pas d'utilisation de metamodel => pas typesafe pour l'instant
+	Path<Object> prononciationPath = motRacine.join("prononciations").get("prononciation");
+	
 	Predicate p;
 	if (condition == Condition.ENTIER) {
-	    return entityManager.createQuery("SELECT m FROM Mot m JOIN m.prononciations p WHERE p.prononciation = ?").setParameter(1, "%"+prononciation+"%").getResultList();
-	    
+	    //return entityManager.createQuery("SELECT m FROM Mot m JOIN m.prononciations p WHERE p.prononciation = ?").setParameter(1, prononciation).getResultList();
+	    p = cb.equal(prononciationPath, prononciation);
 	} else {
 	    String likeCondition = "";
 	    switch (condition) {
@@ -185,7 +188,7 @@ public class JpaMotManager implements MotManager {
 		break;
 
 	    }
-	    p = cb.like(motRacine.get("lemme").as(String.class), likeCondition);
+	    p = cb.like(prononciationPath.as(String.class), likeCondition);
 
 	}
 
@@ -262,6 +265,7 @@ public class JpaMotManager implements MotManager {
 
 	if (prononciation == null) {
 	    prononciation = new Prononciation(phonétique);
+	    prononciationManager.save(prononciation);
 	}
 
 	// logger.debug("importation de la prononciation {}",

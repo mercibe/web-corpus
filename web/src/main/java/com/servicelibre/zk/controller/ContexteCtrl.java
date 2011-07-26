@@ -230,6 +230,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 	StringBuilder sb = new StringBuilder();
 
+	// TODO rendre plus « intelligent » (cf. listes)
 	String terminaison = contexteSet.size() > 1 ? "s" : "";
 	sb.append(contexteSet.size()).append(" occurrence").append(terminaison).append(contexteSet.isFormesDuLemme() ? " des formes du mot « " : " du mot « ")
 		.append(contexteSet.getMotCherché()).append(" » trouvée").append(terminaison).append(" dans ").append(contexteSet.getDocumentCount())
