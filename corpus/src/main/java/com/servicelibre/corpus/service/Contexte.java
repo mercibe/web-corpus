@@ -4,7 +4,8 @@ public class Contexte
 {
     
     
-    // TODO ajouter metadonnées du document source
+    // TODO ajouter metadonnées du document source (pour affichage/traitement ultérieur éventuel)
+	// Toutes les métas ou seulement une seulement une liste finie passée en argument lors de la construction? (Map<String, String>)
     
     public String texteAvant;
     public String mot;

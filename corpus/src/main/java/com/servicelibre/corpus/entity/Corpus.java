@@ -93,14 +93,12 @@ public class Corpus
     
     public String getDossierData()
     {
-        System.err.println("GET: " + this.dossierData);
         return this.dossierData;
     }
 
     public void setDossierData(String dossierData)
     {
         this.dossierData = dossierData;
-        System.err.println("SET: " + this.dossierData);
     }
 
     public String getAnalyseurRechercheFQCN()

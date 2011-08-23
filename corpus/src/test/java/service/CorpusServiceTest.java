@@ -100,7 +100,8 @@ public class CorpusServiceTest
         cs.setFormeService(formeService);
         
         String lemme = "manger";
-	ContexteSet contexteSet = cs.getContextesLemme(lemme);
+	
+        ContexteSet contexteSet = cs.getContextesLemme(lemme);
         
         assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
         assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
