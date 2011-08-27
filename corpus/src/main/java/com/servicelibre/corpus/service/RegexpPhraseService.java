@@ -64,4 +64,10 @@ public class RegexpPhraseService implements PhraseService {
 		return null;
 	}
 
+	@Override
+	public Contexte getContextePhraseComplète(Contexte c) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

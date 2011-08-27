@@ -35,7 +35,9 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
+import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.corpus.service.PhraseService;
 
 /**
  * 
@@ -70,6 +72,8 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 	Window contexteWindow;
 
 	Label infoRésultats;
+	
+	PhraseService phraseService = new CorpusPhraseService();
 
 	/**
 	 * Permet de remplir les choix de filtres/valeurs possibles
@@ -88,6 +92,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private Window webCorpusWindow;
+	private boolean phraseComplète;
 
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
@@ -241,6 +246,8 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 	private ContexteSet getContexteSet() {
 
+		phraseComplète = false;
+		
 		ContexteSet contexteSet = new ContexteSet();
 
 		String aChercher = cherche.getText();
@@ -251,7 +258,14 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 		System.out.println(getDescriptionRecherche());
 
-		corpusService.setTailleVoisinnage(Integer.parseInt(voisinage.getSelectedItem().getValue().toString()));
+		int voisinnage = Integer.parseInt(voisinage.getSelectedItem().getValue().toString());
+		// Recherche phrase complète
+		if (voisinnage == 0)
+		{
+			phraseComplète = true;
+		}
+		
+		corpusService.setTailleVoisinnage(phraseComplète?50:voisinnage);
 
 		FiltreMot filtres = getFiltres();
 		
@@ -259,10 +273,13 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
 			// FIXME quid si le mot n'est pas un lemme? Rechercher son lemme et
 			// lancer la recherche?
-			return corpusService.getContextesLemme(aChercher, filtres);
+			contexteSet = corpusService.getContextesLemme(aChercher, filtres);
 		} else {
-			return corpusService.getContextesMot(aChercher, filtres);
+			contexteSet =  corpusService.getContextesMot(aChercher, filtres);
 		}
+		
+		
+		return contexteSet;
 	}
 
 	/**
@@ -413,6 +430,10 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 			@Override
 			public void render(Row row, Object model) throws Exception {
 				Contexte contexte = (Contexte) model;
+				
+				if(phraseComplète) {
+					contexte = phraseService.getContextePhraseComplète(contexte);
+				}
 
 				Span ctxSpan = new Span();
 				ctxSpan.appendChild(new Label(contexte.texteAvant));
@@ -436,7 +457,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 	private void initialiseRecherche() {
 		condition.setSelectedIndex(0);
-		voisinage.setSelectedIndex(5);
+		voisinage.setSelectedIndex(0);
 
 	}
 

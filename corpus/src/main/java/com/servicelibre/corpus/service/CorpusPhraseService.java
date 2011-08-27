@@ -37,8 +37,9 @@ public class CorpusPhraseService implements PhraseService {
 	 * Guillemets ironiques [Il évoquait la « culture allemande ».]
 	 * 
 	 * Abréviations
-	 * 
-	 * etc., B.A. => ne pas se faire piéger...
+	 * Utiliser FormeService pour le savoir en lui passant toutes les lettres qui précèdent ce point (jusqu'au premier séparateur de mot)
+		B.A. etc. B. A. c.-a.-d. c.a.d.
+		Abréviation prénom: B. Mercier => si point précédé immédiatement d'une majuscule, toujours ignorer?
 	 * 
 	 * Phrases particulières
 	 * 
@@ -77,7 +78,7 @@ public class CorpusPhraseService implements PhraseService {
 		List<Phrase> phrases = new ArrayList<Phrase>();
 
 		// remplacements pour simplification traitement (pas optimal)
-		texte = texte.replaceAll("\\.\\.\\.", "…");
+		//texte = texte.replaceAll("\\.\\.\\.", "…");
 
 		char[] charArray = texte.toCharArray();
 
@@ -110,6 +111,15 @@ public class CorpusPhraseService implements PhraseService {
 						continue;
 					}
 				}
+				else {
+					// Point de suspension (ou plus!)?
+					if( (curPos + 1) < charArray.length && charArray[curPos+1] == '.'){
+						phraseBuffer[phraseBufferPos++] = curChar;
+						continue;
+					}
+				}
+				
+				//TODO est-ce le point d'une abréviation?  
 
 				if (position == Position.DANS_PHRASE || position == Position.DANS_INCISE) {
 					// la phrase est terminée
@@ -149,6 +159,9 @@ public class CorpusPhraseService implements PhraseService {
 					// citation incomplète
 					phraseBuffer[phraseBufferPos++] = curChar;
 					position = Position.DANS_PHRASE;
+				} else if(position == Position.DANS_INCISE) {
+					phraseBuffer[phraseBufferPos++] = curChar;
+					position = Position.DANS_PHRASE;
 				}
 				break;
 			default:
@@ -174,6 +187,9 @@ public class CorpusPhraseService implements PhraseService {
 		buffer[endBuffer] = curChar;
 
 		curPhrase.phrase = new String(Arrays.copyOfRange(buffer, 0, endBuffer + 1)).trim();
+		
+		// FIXME si position == DANS_INCISE => supprimer chevron éventuellement ouvrant ? (si pas de fermant)
+		
 
 		// Si première lettre n'est pas une majuscule, phrase
 		// incomplète - manque majuscule
@@ -201,20 +217,57 @@ public class CorpusPhraseService implements PhraseService {
 	public Phrase getPhraseComplète(Contexte c) {
 		
 		// Reconstitution d'une string complète
-		StringBuilder sb = new StringBuilder(c.texteAvant).append(c.mot).append(c.texteAprès);
-		List<Phrase> phrasesComplètes = getPhrasesComplètes(sb.toString());
+		List<Phrase> phrasesComplètes = getPhrasesComplètes(c);
 		
-		int max = c.texteAvant.length();// + c.mot.length();
+		int max = c.texteAvant.trim().length();// + c.mot.length();
+		
+		//FIXME hack horrible
+		Phrase phrasePrécédente = null;
 		
 		int posCpt = 0;
 		for(Phrase phrase: phrasesComplètes) {
 			posCpt += phrase.phrase.length();
-			if(posCpt >= max) {
+			//System.out.println(posCpt + "/" + max + ": " + phrase.phrase);
+			if(posCpt >= max-1) {
+				if(phrase.phrase.toLowerCase().indexOf(c.mot.toLowerCase()) < 0){
+					System.err.println("ERREUR!! Le mot [" +c.mot + "] ne se trouve pas dans \n[" + phrase.phrase + "]\n\n Le contexte complet est \n [" + c.toString() + "]\n");
+					return phrasePrécédente;
+				}
 				return phrase;
 			}
+			phrasePrécédente = phrase;
 		}
+		return null;
+	}
+
+	@Override
+	public Contexte getContextePhraseComplète(Contexte c) {
 		
+		Phrase phrase = getPhraseComplète(c);
 		
+		if(phrase != null) {
+			// si mot n'est pas dans phrase: erreur!!!
+			String phraseComplète = phrase.phrase;
+			if(phraseComplète.indexOf(c.mot) < 0) {
+				System.err.println("ERREUR!!!! " + c.mot + " ne se trouve pas dans " + phraseComplète);
+				return null;
+			}
+			// reconstruction d'un contexte à partir de la phrase (offset si plusieurs fois même mot dans la phrase, sinon tjrs première occurence retournée)
+			
+			int positionPhraseDansContexte = c.getPhrase().phrase.indexOf(phraseComplète);
+			if(positionPhraseDansContexte < 0) {
+				System.err.println("c.texteAvant.length() - c.getPhrase().phrase.indexOf(phrase.phrase) => " + c.texteAvant.length() + "-" + Math.max(0,positionPhraseDansContexte));
+				System.err.println("Cherche ["+phraseComplète+"] dans ["+c.getPhrase().phrase+"]");
+				return c;
+			}
+			
+			int offset = c.texteAvant.length() - Math.max(0,positionPhraseDansContexte);
+			
+			int débutMot = phraseComplète.indexOf(c.mot,Math.max(offset-1,0));
+			int finMot = débutMot + c.mot.length();
+			// FIXME problème trim / blanc insécable?
+			return new Contexte(phraseComplète.substring(0, débutMot), phraseComplète.substring(débutMot, finMot ), phraseComplète.substring(finMot));
+		}
 		return null;
 	}
 }

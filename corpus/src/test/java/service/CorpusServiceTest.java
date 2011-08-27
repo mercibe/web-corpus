@@ -196,6 +196,24 @@ public class CorpusServiceTest {
 		phrases = phraseService.getPhrasesComplètes(texte);
 		assertNotNull("phrases ne peut être null", phrases);
 		afficherPhrases(phrases, texte);
+		
+		
+		
+		texte="nos portes ! » Robert, reconnaissant, leva ses pauvres yeux de chien battu vers la princesse. Elle lui sourit. Aussitôt, il en devint amoureux " +
+				" baver de bonheur et à frétiller de la queue pour elle jusqu'à la fin des temps.* Qui mange du chien.De ce jour, Robert ne quitta " +
+				"plus la princesse. Il la suivait partout et, bien vite, l'entourage du roi s'habitua à sa présence. Sauf le sénéchal Enguerrand " +
+				"de La Trémouille, un teigneux, un patte-pelue*, doublé d'un porc qui lorgnait la main de la princesse... ainsi que bien d'autres parties";
+		phrases = phraseService.getPhrasesComplètes(texte);
+		assertNotNull("phrases ne peut être null", phrases);
+		afficherPhrases(phrases, texte);
+		
+		texte="« Eh bien, merci ! dit le chien-saucisse. Marchons ensemble pour voir si nous pouvons atteindre le bout de l’un d’entre nous. » Ils marchèrent " +
+				"pendant des heures et des heures… … et quand ils s’arrêtèrent enfin, l’éléphant se tourna vers le serpent " +
+				"et dit : « Je me demande où est passé le chien-saucisse. On dirait qu’on voit son autre bout, mais lui, où est-il ? » « Je crois que je l’ai mangé" +
+				" tout à l’heure, répondit le serpent. Un peu long à avaler, mais vous savez… j’aime bien les chiens-saucisses. » ";
+		phrases = phraseService.getPhrasesComplètes(texte);
+		assertNotNull("phrases ne peut être null", phrases);
+		afficherPhrases(phrases, texte);
 	}
 
 	private void afficherPhrases(List<Phrase> phrases, String texte) {
@@ -208,6 +226,7 @@ public class CorpusServiceTest {
 	
 	
 	@Test
+	@Ignore
 	public void contextesCorpusPhraseServiceTest() {
 
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
@@ -219,11 +238,12 @@ public class CorpusServiceTest {
 		int nbPhrases = 1;
 		int nbMoyMotPhrase = 50;
 
-		int tailleVoisinnage = nbPhrases * nbMoyMotPhrase / 2;
+		int tailleVoisinnage = nbPhrases * nbMoyMotPhrase ;
 
 		cs.setTailleVoisinnage(tailleVoisinnage);
 
-		ContexteSet contexteSet = cs.getContextesMot("séduire");
+		//ContexteSet contexteSet = cs.getContextesMot("séduire");
+		ContexteSet contexteSet = cs.getContextesMot("chien");
 
 		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
@@ -236,8 +256,10 @@ public class CorpusServiceTest {
 			System.out.println("------" + cpt++ + "------");
 
 			Phrase phrase = phraseService.getPhraseComplète(c);
-
 			System.out.println(phrase.phrase);
+			Contexte contexte = phraseService.getContextePhraseComplète(c);
+			System.out.println(contexte);
+
 		}
 
 	}

@@ -22,9 +22,12 @@ public class Contexte
     @Override
     public String toString()
     {
-        return texteAvant + " ===> " + mot + " <=== " + texteAprès;
+        return texteAvant + "===>" + mot + "<===" + texteAprès;
     }
     
+    public Phrase getPhrase() {
+    	return new Phrase(new StringBuilder(texteAvant).append(mot).append(texteAprès).toString().trim());
+    }
     
     
 }
