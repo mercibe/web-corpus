@@ -32,5 +32,10 @@ public class Phrase {
 		
 	}
 	
+	public Phrase nettoie(){
+		this.phrase = nettoyée();
+		return this;
+	}
+	
 	
 }

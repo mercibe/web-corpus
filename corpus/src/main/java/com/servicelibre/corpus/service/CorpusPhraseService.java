@@ -324,11 +324,11 @@ public class CorpusPhraseService implements PhraseService {
 						continue;
 					}
 				}
-				
-				if(curChar == '»') {
+
+				if (curChar == '»') {
 					position = Position.DANS_PHRASE;
 				}
-				
+
 				if (isFinPhrase(charArray, curPos)) {
 					// la phrase est terminée
 					finPhrase(phrases, curPhrase, curChar, phraseBuffer, phraseBufferPos);
@@ -383,16 +383,13 @@ public class CorpusPhraseService implements PhraseService {
 				} else {
 					return false;
 				}
-				
-			}
-			else if(c == '»') {
+
+			} else if (c == '»') {
 				return false;
-			}
-			else if (c == '\n') {
+			} else if (c == '\n') {
 				// FIXME pour poésie
 				return true;
-			}
-			else if(c == '.' || c == '!') {
+			} else if (c == '.' || c == '!') {
 				return false;
 			}
 			pos++;
@@ -430,19 +427,20 @@ public class CorpusPhraseService implements PhraseService {
 
 		curPhrase.phrase = new String(Arrays.copyOfRange(buffer, 0, endBuffer + 1)).trim();
 
-		// FIXME si position == DANS_INCISE => supprimer chevron éventuellement
-		// ouvrant ? (si pas de fermant)
+		// Ignore les phrases vides
+		if (!curPhrase.phrase.isEmpty()) {
 
-		// Si première lettre n'est pas une majuscule, phrase
-		// incomplète - manque majuscule
-		char premièreLettre = getPremièreLettre(buffer, 0);
-		if (Character.isUpperCase(premièreLettre)) {
-			curPhrase.complète = true;
-		} else {
-			curPhrase.complète = false;
+			// Si première lettre n'est pas une majuscule, phrase
+			// incomplète - manque majuscule
+			char premièreLettre = getPremièreLettre(buffer, 0);
+			if (Character.isUpperCase(premièreLettre)) {
+				curPhrase.complète = true;
+			} else {
+				curPhrase.complète = false;
+			}
+
+			phrases.add(curPhrase);
 		}
-
-		phrases.add(curPhrase);
 
 	}
 
@@ -463,7 +461,6 @@ public class CorpusPhraseService implements PhraseService {
 
 		int max = c.texteAvant.length();
 
-		// FIXME hack horrible
 		Phrase phrasePrécédente = null;
 
 		int posCpt = 0;
@@ -483,13 +480,13 @@ public class CorpusPhraseService implements PhraseService {
 	@Override
 	public Contexte getContextePhraseComplète(Contexte c) {
 
-		Phrase phrase = getPhraseComplète(c);
+		Phrase phrase = getPhraseComplète(c).nettoie();
 
 		if (phrase != null) {
 			// si mot n'est pas dans phrase: erreur!!!
 			String phraseComplète = phrase.phrase;
 			if (phraseComplète.indexOf(c.mot) < 0) {
-				System.err.println("ERREUR!!!! " + c.mot + " ne se trouve pas dans " + phraseComplète);
+				System.out.println("ERREUR 1: [" + c.mot + "] ne se trouve pas dans [" + phraseComplète + "]");
 				return null;
 			}
 			// reconstruction d'un contexte à partir de la phrase (offset si
@@ -498,20 +495,22 @@ public class CorpusPhraseService implements PhraseService {
 
 			int positionPhraseDansContexte = c.getPhrase().phrase.indexOf(phraseComplète);
 			if (positionPhraseDansContexte < 0) {
-				System.err.println("c.texteAvant.length() - c.getPhrase().phrase.indexOf(phrase.phrase) => " + c.texteAvant.length() + "-"
+				System.err.println("ERREUR 2: c.texteAvant.length() - c.getPhrase().phrase.indexOf(phrase.phrase) => " + c.texteAvant.length() + "-"
 						+ Math.max(0, positionPhraseDansContexte));
 				System.err.println("Cherche [" + phraseComplète + "] dans [" + c.getPhrase().phrase + "]");
 				return c;
 			}
 
-			int offset = c.texteAvant.length() - Math.max(0, positionPhraseDansContexte);
+			int nouveauTexteAvantLength = c.texteAvant.length() - Math.max(0, positionPhraseDansContexte);
 
-			int débutMot = phraseComplète.indexOf(c.mot, Math.max(offset - 1, 0));
+			int débutMot = phraseComplète.indexOf(c.mot, Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()));
 			int finMot = débutMot + c.mot.length();
-			// FIXME problème trim / blanc insécable?
-			return new Contexte(phraseComplète.substring(0, débutMot), phraseComplète.substring(débutMot, finMot), phraseComplète.substring(finMot));
+			String texteAvant = phraseComplète.substring(0, débutMot);
+			String mot = phraseComplète.substring(débutMot, finMot);
+			String texteAprès = phraseComplète.substring(finMot);
+			return new Contexte(texteAvant, mot, texteAprès);
 		}
 		return null;
 	}
-	
+
 }

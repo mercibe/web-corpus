@@ -221,6 +221,8 @@ public class CorpusServiceTest {
 //		});
 		
 		
+		// Interjection (Ah! la vache...)
+		
 		// Exécution des tests
 		for(String[] phrasesTest : phrasesÀTester) {
 			String texte = getTexteFromPhrases(phrasesTest);
@@ -390,6 +392,7 @@ public class CorpusServiceTest {
 
 		CorpusPhraseService phraseService = new CorpusPhraseService();
 
+		//TODO assertions!!!!
 		System.err.println("# contextes: " + contexteSet.size());
 		int cpt = 1;
 		for (Contexte c : contexteSet.getContextes()) {
