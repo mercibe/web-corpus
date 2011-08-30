@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.CharMatcher;
+
 public class CorpusPhraseService implements PhraseService {
 
 	enum Position {
@@ -237,7 +239,7 @@ public class CorpusPhraseService implements PhraseService {
 		}
 		// Si pas de point final... (ou autre)
 		if (phraseBufferPos > 0) {
-			curPhrase.phrase = new String(Arrays.copyOfRange(phraseBuffer, 0, phraseBufferPos)).trim();
+			curPhrase.phrase = CharMatcher.WHITESPACE.trimFrom(new String(Arrays.copyOfRange(phraseBuffer, 0, phraseBufferPos)));
 			if (!curPhrase.phrase.isEmpty()) {
 				curPhrase.complète = false; // manque ponctuation finale
 				phrases.add(curPhrase);
@@ -318,7 +320,7 @@ public class CorpusPhraseService implements PhraseService {
 
 		buffer[endBuffer] = curChar;
 
-		curPhrase.phrase = new String(Arrays.copyOfRange(buffer, 0, endBuffer + 1)).trim();
+		curPhrase.phrase = CharMatcher.WHITESPACE.trimFrom(new String(Arrays.copyOfRange(buffer, 0, endBuffer + 1)));
 
 		// Ignore les phrases vides
 		if (!curPhrase.phrase.isEmpty()) {
@@ -405,7 +407,12 @@ public class CorpusPhraseService implements PhraseService {
 			
 			texteAvant = getTexteAvantNettoyé(texteAvant, texteAprès);
 			texteAprès = getTexteAprèsNettoyé(texteAprès, texteAvant);
-			
+
+			if(texteAvant.startsWith("«") && texteAprès.endsWith("»")) {
+				texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replace("«", ""));
+				texteAprès = CharMatcher.WHITESPACE.trimTrailingFrom(texteAprès.replace("»", ""));
+			}
+
 			return new Contexte(texteAvant, mot, texteAprès);
 		}
 		
@@ -414,10 +421,10 @@ public class CorpusPhraseService implements PhraseService {
 	
 	private String getTexteAvantNettoyé(String texteAvant, String texteAprès) {
 		
-		texteAvant = texteAvant.replaceFirst("^—", "").replaceFirst("^–", "").replaceFirst("^-","").replaceAll("^\\s+", "");
+		texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replaceFirst("^—", "").replaceFirst("^–", "").replaceFirst("^-",""));
 		
 		if(texteAvant.startsWith("«") && !texteAvant.contains("»") && !texteAprès.contains("»")){
-			texteAvant = texteAvant.replace("«","").replaceAll("^\\s+", "");
+			texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replace("«",""));
 		}
 		return texteAvant;
 	}
@@ -425,7 +432,11 @@ public class CorpusPhraseService implements PhraseService {
 	private String getTexteAprèsNettoyé(String texteAprès, String texteAvant) {
 		
 		if(texteAprès.endsWith("»") && !texteAprès.contains("«") && !texteAvant.contains("«")){
-			texteAprès = texteAprès.replace("»", "").replaceAll("\\s+$", "");
+			texteAprès = CharMatcher.WHITESPACE.trimTrailingFrom(texteAprès.replace("»", ""));
+		}
+		
+		if(texteAprès.contains("«") && !texteAprès.contains("»")) {
+			texteAprès += "\u00a0»";
 		}
 		return texteAprès;
 	}

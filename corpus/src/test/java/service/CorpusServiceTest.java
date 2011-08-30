@@ -328,6 +328,7 @@ public class CorpusServiceTest {
 	}
 
 	@Test
+	@Ignore
 	public void contextesCorpusPhraseServiceTest() {
 
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
@@ -370,6 +371,7 @@ public class CorpusServiceTest {
 	public void contextesCorpusErreur1Test() {
 		
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
+		CorpusPhraseService phraseService = new CorpusPhraseService();
 
 		corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
 
@@ -377,10 +379,28 @@ public class CorpusServiceTest {
 		
 		ContexteSet contexteSet = cs.getContextesMot("E");
 		
+//		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+//		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+//
+//
+//		System.err.println("# contextes: " + contexteSet.size());
+//		int cpt = 1;
+//		for (Contexte c : contexteSet.getContextes()) {
+//			System.out.println("------" + cpt++ + "------");
+//
+//			Phrase phrase = phraseService.getPhraseComplète(c);
+//			System.out.println(phrase.phrase);
+//			Contexte contexte = phraseService.getContextePhraseComplète(c);
+//			System.out.println(contexte);
+//
+//		}
+		
+		cs.setTailleVoisinnage(50);
+		contexteSet = cs.getContextesMot("Raphaël");
+		
 		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
 
-		CorpusPhraseService phraseService = new CorpusPhraseService();
 
 		System.err.println("# contextes: " + contexteSet.size());
 		int cpt = 1;

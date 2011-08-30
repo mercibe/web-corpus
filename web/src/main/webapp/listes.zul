@@ -10,6 +10,7 @@
 	margin-right:3px; 
 	padding:3px; 
 	font-size:15px; 
+	font-family: 'Doulos SIL', 'Gentium', 'DejaVu Sans', 'Lucida Grande', 'Segoe UI', 'Arial Unicode MS', 'Adobe Pi Std', 'Lucida Sans Unicode', 'Chrysanthi Unicode', Code2000, Gentium, GentiumAlt, 'TITUS Cyberbit Basic', 'Bitstream Vera Sans', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', 'Charis SIL' ,sans-serif;
 }
 
 .apiLettre:hover {
