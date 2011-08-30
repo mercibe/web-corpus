@@ -137,6 +137,8 @@ public class CorpusPhraseService implements PhraseService {
 	 * <li>Pour indiquer un passage coupé dans une citation, on emploie les points de suspension entre crochets : « […]
 	 * ».</li>
 	 * <li>L’âme, c’est-à-dire le principe intelligent et immortel.</li>
+	 * <li>« Il criait: "Les gaz! Poussez-vous!" J'avais un foulard sur le nez, mes lunettes d'aviateur, et je galopais
+	 * comme un chien fou. Je l'ai empoignée par le bras, l'ai remise sur ses pieds ,j'ai hurlé: "COURS!"»</li>
 	 * 
 	 * </ul>
 	 * 
@@ -165,124 +167,6 @@ public class CorpusPhraseService implements PhraseService {
 
 		return getPhrasesComplètes(sb.toString());
 
-	}
-
-	/**
-	 * Retourne le texte passé en paramètre sous forme de phrases
-	 */
-	@Deprecated
-	public List<Phrase> getPhrasesComplètesOld(String texte) {
-
-		List<Phrase> phrases = new ArrayList<Phrase>();
-
-		char[] charArray = texte.toCharArray();
-
-		Phrase curPhrase = null;
-		char curChar;
-		char[] phraseBuffer = new char[charArray.length];
-		int phraseBufferPos = 0;
-		Position position = Position.DANS_PHRASE;
-
-		for (int curPos = 0; curPos < charArray.length; curPos++) {
-
-			curChar = charArray[curPos];
-
-			if (curPhrase == null) {
-				curPhrase = new Phrase();
-			}
-
-			switch (curChar) {
-			case '!':
-			case '?':
-			case '…':
-			case '.':
-
-				if (curChar != '.') {
-					// si le premier caractère qui suit est minuscule, phrase
-					// pas terminée
-					if (Character.isLowerCase(getPremièreLettre(charArray, curPos))) {
-						phraseBuffer[phraseBufferPos++] = curChar;
-						position = Position.DANS_INCISE;
-						continue;
-					}
-				} else {
-					// Point de suspension (ou plus!)?
-					if ((curPos + 1) < charArray.length && charArray[curPos + 1] == '.') {
-						phraseBuffer[phraseBufferPos++] = curChar;
-						continue;
-					}
-				}
-
-				// TODO est-ce le point d'une abréviation?
-
-				if (position == Position.DANS_PHRASE || position == Position.DANS_INCISE) {
-					// la phrase est terminée
-					finPhrase(phrases, curPhrase, curChar, phraseBuffer, phraseBufferPos);
-
-					curPhrase = null;
-					phraseBufferPos = 0;
-					position = Position.DANS_PHRASE;
-				} else if (position == Position.DANS_GUILLEMET) {
-					phraseBuffer[phraseBufferPos++] = curChar;
-					position = Position.FIN_CITATION_COMPLÈTE;
-				} else { // on ignore les ponctuations finales entre
-							// parenthèse
-					phraseBuffer[phraseBufferPos++] = curChar;
-				}
-
-				break;
-			case '(':
-				position = Position.DANS_PARENTHÈSE;
-				phraseBuffer[phraseBufferPos++] = curChar;
-				break;
-			case ')':
-				position = Position.DANS_PHRASE;
-				phraseBuffer[phraseBufferPos++] = curChar;
-				break;
-			case '«':
-				position = Position.DANS_GUILLEMET;
-				phraseBuffer[phraseBufferPos++] = curChar;
-				break;
-			case '»':
-				if (position == Position.FIN_CITATION_COMPLÈTE) {
-					// Si la première lettre qui suit est une majuscule ou un point sur le chemin=> fin de phrase, sinon
-					// la phrase continue
-					// FIXME
-					int finPotentielle = getFinCitationComplèteQuiTerminePhrase(charArray, curPos + 1);
-					if (finPotentielle > curPos + 1) {
-						finPhrase(phrases, curPhrase, curChar, phraseBuffer, phraseBufferPos);
-						curPhrase = null;
-						phraseBufferPos = 0;
-					} else {
-						phraseBuffer[phraseBufferPos++] = curChar;
-					}
-					position = Position.DANS_PHRASE;
-
-				} else if (position == Position.DANS_GUILLEMET) {
-					// citation incomplète
-					phraseBuffer[phraseBufferPos++] = curChar;
-					position = Position.DANS_PHRASE;
-				} else if (position == Position.DANS_INCISE) {
-					phraseBuffer[phraseBufferPos++] = curChar;
-					position = Position.DANS_PHRASE;
-				}
-				break;
-			default:
-				phraseBuffer[phraseBufferPos++] = curChar;
-				break;
-			}
-
-		}
-		// Si pas de point final... (ou autre)
-		if (phraseBufferPos > 0) {
-			curPhrase.phrase = new String(Arrays.copyOfRange(phraseBuffer, 0, phraseBufferPos)).trim();
-			if (!curPhrase.phrase.isEmpty()) {
-				curPhrase.complète = false; // manque ponctuation finale
-				phrases.add(curPhrase);
-			}
-		}
-
-		return phrases;
 	}
 
 	/**
@@ -373,26 +257,35 @@ public class CorpusPhraseService implements PhraseService {
 	 */
 	private boolean isFinPhrase(char[] buffer, int posCandidatCarFinal) {
 
-		int pos = posCandidatCarFinal + 1;
 		char candidatCar = buffer[posCandidatCarFinal];
-		while (pos < buffer.length) {
-			char c = buffer[pos];
-			if (Character.isLetter(c)) {
-				if (Character.isUpperCase(c)) {
+
+		int posCarSuivant = posCandidatCarFinal + 1;
+
+		while (posCarSuivant < buffer.length) {
+			char carSuivant = buffer[posCarSuivant];
+			if (Character.isLetter(carSuivant)) {
+				if (candidatCar != '\n' && Character.isUpperCase(carSuivant)) {
 					return true;
 				} else {
 					return false;
 				}
 
-			} else if (c == '»') {
+			} else if (carSuivant == '»') {
 				return false;
-			} else if (c == '\n') {
-				// FIXME pour poésie
+			} else if (carSuivant == '\n') {
+				// poésie
 				return true;
-			} else if (c == '.' || c == '!') {
+			}
+			// else if (carSuivant == '-' && candidatCar == '\n') {
+			// // énumération
+			// return true;
+			// }
+			else if (carSuivant == '.' || carSuivant == '!') {
 				return false;
 			}
-			pos++;
+
+			posCarSuivant++;
+
 		}
 
 		return true;
@@ -480,14 +373,14 @@ public class CorpusPhraseService implements PhraseService {
 	@Override
 	public Contexte getContextePhraseComplète(Contexte c) {
 
-		Phrase phrase = getPhraseComplète(c).nettoie();
-
+		Phrase phrase = getPhraseComplète(c);
+		
 		if (phrase != null) {
 			// si mot n'est pas dans phrase: erreur!!!
 			String phraseComplète = phrase.phrase;
 			if (phraseComplète.indexOf(c.mot) < 0) {
 				System.out.println("ERREUR 1: [" + c.mot + "] ne se trouve pas dans [" + phraseComplète + "]");
-				return null;
+				return new Contexte("","", "");
 			}
 			// reconstruction d'un contexte à partir de la phrase (offset si
 			// plusieurs fois même mot dans la phrase, sinon tjrs première
@@ -505,12 +398,35 @@ public class CorpusPhraseService implements PhraseService {
 
 			int débutMot = phraseComplète.indexOf(c.mot, Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()));
 			int finMot = débutMot + c.mot.length();
+			
 			String texteAvant = phraseComplète.substring(0, débutMot);
 			String mot = phraseComplète.substring(débutMot, finMot);
 			String texteAprès = phraseComplète.substring(finMot);
+			
+			texteAvant = getTexteAvantNettoyé(texteAvant, texteAprès);
+			texteAprès = getTexteAprèsNettoyé(texteAprès, texteAvant);
+			
 			return new Contexte(texteAvant, mot, texteAprès);
 		}
-		return null;
+		
+		return new Contexte("","", "");
 	}
-
+	
+	private String getTexteAvantNettoyé(String texteAvant, String texteAprès) {
+		
+		texteAvant = texteAvant.replaceFirst("^—", "").replaceFirst("^–", "").replaceFirst("^-","").replaceAll("^\\s+", "");
+		
+		if(texteAvant.startsWith("«") && !texteAvant.contains("»") && !texteAprès.contains("»")){
+			texteAvant = texteAvant.replace("«","").replaceAll("^\\s+", "");
+		}
+		return texteAvant;
+	}
+    
+	private String getTexteAprèsNettoyé(String texteAprès, String texteAvant) {
+		
+		if(texteAprès.endsWith("»") && !texteAprès.contains("«") && !texteAvant.contains("«")){
+			texteAprès = texteAprès.replace("»", "").replaceAll("\\s+$", "");
+		}
+		return texteAprès;
+	}
 }

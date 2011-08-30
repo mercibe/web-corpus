@@ -4,6 +4,23 @@
 
 <zk>
 
+<style>
+
+.apiLettre {
+	margin-right:3px; 
+	padding:3px; 
+	font-size:15px; 
+}
+
+.apiLettre:hover {
+	border: solid 2px;
+	margin-right:1px; 
+	padding: 2px;
+	cursor:  pointer;
+}
+
+</style>
+
 <custom-attributes org.zkoss.zul.grid.rod="true" scope="page"/>
 
 <window id="listeWindow" border="none" apply="com.servicelibre.zk.controller.ListeCtrl">
@@ -31,8 +48,11 @@
 				<textbox id="cherche"></textbox>
 				
 				<button id="boutonRecherche" label="Recherche"/>
-
 			</hbox>
+			
+			<!-- L'alphabet phonétiqe est inséré ici dynamiquement -->
+			<div id="api" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
+			
 		</groupbox>
 
 		<hbox width="100%" style="margin-top:20px;">

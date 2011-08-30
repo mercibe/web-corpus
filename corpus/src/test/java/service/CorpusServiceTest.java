@@ -1,8 +1,7 @@
 package service;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.FormeService;
 import com.servicelibre.corpus.service.Phrase;
-import com.servicelibre.corpus.service.RegexpPhraseService;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -112,119 +110,80 @@ public class CorpusServiceTest {
 
 	}
 
-	@Ignore
-	@Test
-	public void contextesRegexpPhraseServiceTest() {
-
-		Corpus corpus = new Corpus("Corpus de test nouveau", "");
-
-		corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
-
-		CorpusService cs = new CorpusService(cm, corpus);
-
-		int nbPhrases = 1;
-		int nbMoyMotPhrase = 30;
-
-		int tailleVoisinnage = nbPhrases * nbMoyMotPhrase / 2;
-
-		cs.setTailleVoisinnage(tailleVoisinnage);
-
-		ContexteSet contexteSet = cs.getContextesMot("chien");
-
-		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
-		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
-
-		RegexpPhraseService phraseService = new RegexpPhraseService();
-
-		System.err.println("# contextes: " + contexteSet.size());
-		int cpt = 1;
-		for (Contexte c : contexteSet.getContextes()) {
-			System.out.println("------" + cpt++ + "------");
-
-			List<Phrase> phrases = phraseService.getPhrasesComplètes(c);
-
-			for (Phrase p : phrases) {
-				System.out.println(p.phrase);
-			}
-		}
-
-	}
-
+	
 	@Test
 	public void contextesCorpusPhraseServiceStaticTest() {
 
 		phraseService = new CorpusPhraseService();
 
 		List<String[]> phrasesÀTester = new ArrayList<String[]>();
-		
+
 		// Test règle de base: majuscule + point final
-		phrasesÀTester.add(new String[] {
-				"L’usage le plus courant consiste à placer un guillemet ouvrant au début du dialogue et un guillemet fermant à la fin du dialogue.",
-				"On ne sort pas des guillemets au moment des incises, sauf pour celle qui suit éventuellement a dernière réplique.",
-				"Les répliques, hormis la première, sont introduites par un tiret cadratin.",
-				"Ceci est une phrase exclamative!",
-				"Je me le demande, en fait...",
-				"En fait de quoi, mon cher Monsieur?",
-				"Juste comme cela, pour fin de test…",
-				"Freud a voulu bâtir une « science », et il n'y est pas parvenu ; il a voulu « prouver » que l'inconscient avait ses lois, sa logique intrinsèque, ses protocoles expérimentaux." }
-		);
-		
+		phrasesÀTester
+				.add(new String[] {
+						"L’usage le plus courant consiste à placer un guillemet ouvrant au début du dialogue et un guillemet fermant à la fin du dialogue.",
+						"On ne sort pas des guillemets au moment des incises, sauf pour celle qui suit éventuellement a dernière réplique.",
+						"Les répliques, hormis la première, sont introduites par un tiret cadratin.",
+						"Ceci est une phrase exclamative!",
+						"Je me le demande, en fait...",
+						"En fait de quoi, mon cher Monsieur?",
+						"Juste comme cela, pour fin de test…",
+						"Freud a voulu bâtir une « science », et il n'y est pas parvenu ; il a voulu « prouver » que l'inconscient avait ses lois, sa logique intrinsèque, ses protocoles expérimentaux." });
+
 		// Test discours direct formel
-		phrasesÀTester.add(new String[] { "L’ouvreuse m’a dit : « Donnez-moi votre ticket. » avec un grand sourire.",
-				"L’ouvreur m’a dit : « Donnez-moi votre billet. »", " Je le lui ai donné.", "La fille m’a dit : « Donnez-moi votre cachet. ».",
-				" Je le lui ai donné.", "Le gars m’a dit : « Donnez-moi votre permi de conduire » et me fixa des yeux.", "Jean a déclaré : « Je suis malade »." });
+		phrasesÀTester
+				.add(new String[] { "L’ouvreuse m’a dit : « Donnez-moi votre ticket. » avec un grand sourire.",
+						"L’ouvreur m’a dit : « Donnez-moi votre billet. »", " Je le lui ai donné.", "La fille m’a dit : « Donnez-moi votre cachet. ».",
+						" Je le lui ai donné.", "Le gars m’a dit : « Donnez-moi votre permi de conduire » et me fixa des yeux.",
+						"Jean a déclaré : « Je suis malade »." });
 
 		// Test incises diverses
-		phrasesÀTester.add(new String[] { 
-				"L’ouvreuse m’a dit : « Donnez-moi votre ticket. » avec un grand sourire.",
-				"Que faisiez-vous au temps chaud ? dit-elle à cette emprunteuse.",
-				"Encore une fois! s'écria-t-elle, visiblement déçue.",
-				"Encore une fois!, s'écria-t-elle, visiblement déçue.",
-						"Qu'as-tu fait hier soir, finalement? lui demanda-t-il.",
-						"Qu'as-tu fait hier soir, finalement?, lui demanda-t-il.",
-						"Qu'as-tu fait hier soir... lui demanda-t-il.",
-						"Qu'as-tu fait hier soir..., lui demanda-t-il.",
-						"Cette personne —  par ailleurs charmante — a toute mon estime.",
-						"Cette personne – charmante par ailleurs – a toute mon estime."
-		});
-		
+		phrasesÀTester.add(new String[] { "L’ouvreuse m’a dit : « Donnez-moi votre ticket. » avec un grand sourire.",
+				"Que faisiez-vous au temps chaud ? dit-elle à cette emprunteuse.", "Encore une fois! s'écria-t-elle, visiblement déçue.",
+				"Encore une fois!, s'écria-t-elle, visiblement déçue.", "Qu'as-tu fait hier soir, finalement? lui demanda-t-il.",
+				"Qu'as-tu fait hier soir, finalement?, lui demanda-t-il.", "Qu'as-tu fait hier soir... lui demanda-t-il.",
+				"Qu'as-tu fait hier soir..., lui demanda-t-il.", "Cette personne —  par ailleurs charmante — a toute mon estime.",
+				"Cette personne – charmante par ailleurs – a toute mon estime." });
+
 		// Test dialogues
-		phrasesÀTester.add(new String[] { 
-				"« Bonjour, Monsieur. ",
-				"— Bonjour, Madame. »",
-				"« Dis-moi Prince Rubis, qui es-tu? ",
-				"Si tu m'aimes vraiment, dis-moi la vérité. ",
-				"D'où viens-tu? »",
-				"« J’vais voir si c’est ainsi ! que je crie à Arthur, et me voici parti à m’engager, et au pas de course encore. ",
-				"— T’es rien Ferdinand ! » qu’il me crie, lui Arthur en retour, vexé sans doute par l’effet de mon héroïsme sur tout le monde qui nous regardait.",
-				"Quelqu'un est arrivé devant la tente, et j'ai demandé: « Qui est-ce? ",
-				"— C'est moi, Ned, Margaret. ",
-				"— Qu'est-ce que tu fais là, Mag? ",
-				"— J'ai la frousse. ",
-				"Tu entends ces coups de feu? ",
-				"Je peux rester avec toi? » ",
-				"Sans attendre réponse, elle a pris place dans mon lit de camp. ",
-				"Toute habillée."
-				
-		});
-		
+		phrasesÀTester
+				.add(new String[] {
+						"« Bonjour, Monsieur. ",
+						"— Bonjour, Madame. »",
+						"« Dis-moi Prince Rubis, qui es-tu? ",
+						"Si tu m'aimes vraiment, dis-moi la vérité. ",
+						"D'où viens-tu? »",
+						"« J’vais voir si c’est ainsi ! que je crie à Arthur, et me voici parti à m’engager, et au pas de course encore. ",
+						"— T’es rien Ferdinand ! » qu’il me crie, lui Arthur en retour, vexé sans doute par l’effet de mon héroïsme sur tout le monde qui nous regardait.",
+						"Quelqu'un est arrivé devant la tente, et j'ai demandé: « Qui est-ce? ", "— C'est moi, Ned, Margaret. ",
+						"— Qu'est-ce que tu fais là, Mag? ", "— J'ai la frousse. ", "Tu entends ces coups de feu? ", "Je peux rester avec toi? » ",
+						"Sans attendre réponse, elle a pris place dans mon lit de camp. ", "Toute habillée."
+
+				});
+
 		// Citation
-		phrasesÀTester.add(new String[] { 
+		phrasesÀTester.add(new String[] {
 				"L'énoncé « Les Parisiens se sont emparés de la Bastille le 14 juillet 1789. » est produit par la situation d'énonciation suivante.",
-				"La caissière du cinéma m’a recommandé un « film sensationnel » !",
-		});
-		
+				"La caissière du cinéma m’a recommandé un « film sensationnel » !", });
+
 		// Poésie
-//		phrasesÀTester.add(new String[] { 
-//				"La mère à Maillard\nNourrit trois canards\nQui sont pas les siens\nUn tien pour le mien\n\n",
-//				"Le papa d’Éloi\nÉlevait des oies\nC’est le vieux Perras\nQui les mangera\n",
-//		});
-		
-		
-		// Interjection (Ah! la vache...)
-		
+		phrasesÀTester.add(new String[] { "La mère à Maillard\nNourrit trois canards\nQui sont pas les siens\nUn tien pour le mien\n\n",
+				"Le papa d’Éloi\nÉlevait des oies\nC’est le vieux Perras\nQui les mangera\n", });
+
+		// Énumération (est-ce vraiment souhaité? Souvent phrase incomplète)
+		// phrasesÀTester.add(new String[] {
+		// "Voici ce que je préfère:\n",
+		// "-	mes galops avec papa dans la forêt des Appalaches\n",
+		// "-	la couleur des feuilles en automne\n",
+		// "-	le bruit des vagues à marée haute\n",
+		// "-	les après-midi à ramasser des palourdes dans les rochers du lac Champlain\n"
+		//
+		// });
+
+		// Interjection (Ex.: Ah! la vache...)
+
 		// Exécution des tests
-		for(String[] phrasesTest : phrasesÀTester) {
+		for (String[] phrasesTest : phrasesÀTester) {
 			String texte = getTexteFromPhrases(phrasesTest);
 			List<Phrase> phrases = phraseService.getPhrasesComplètes(texte);
 
@@ -232,7 +191,7 @@ public class CorpusServiceTest {
 			afficherPhrases(phrases, texte);
 			assertTrue("Les phrases n'ont pas été correctement identifiées", assertPhrases(phrasesTest, phrases));
 		}
-		
+
 		// assertFalse("La 4e phrase doit être incomplète",phrases.get(3).complète);
 
 		// texte =
@@ -364,7 +323,7 @@ public class CorpusServiceTest {
 		System.out.println("Trouvé " + phrases.size() + " phrases dans le texte [" + texte + "]");
 		int phraseCpt = 1;
 		for (Phrase p : phrases) {
-			System.out.println(phraseCpt++ + ": " + p.phrase + "[" + p.nettoyée()+"]");
+			System.out.println(phraseCpt++ + ": " + p.phrase + "[" + p.nettoyée() + "]");
 		}
 	}
 
@@ -392,7 +351,7 @@ public class CorpusServiceTest {
 
 		CorpusPhraseService phraseService = new CorpusPhraseService();
 
-		//TODO assertions!!!!
+		// TODO assertions!!!!
 		System.err.println("# contextes: " + contexteSet.size());
 		int cpt = 1;
 		for (Contexte c : contexteSet.getContextes()) {
@@ -404,7 +363,37 @@ public class CorpusServiceTest {
 			System.out.println(contexte);
 
 		}
+		
+	}
+	
+	@Test
+	public void contextesCorpusErreur1Test() {
+		
+		Corpus corpus = new Corpus("Corpus de test nouveau", "");
 
+		corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
+
+		CorpusService cs = new CorpusService(cm, corpus);
+		
+		ContexteSet contexteSet = cs.getContextesMot("E");
+		
+		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+
+		CorpusPhraseService phraseService = new CorpusPhraseService();
+
+		System.err.println("# contextes: " + contexteSet.size());
+		int cpt = 1;
+		for (Contexte c : contexteSet.getContextes()) {
+			System.out.println("------" + cpt++ + "------");
+
+			Phrase phrase = phraseService.getPhraseComplète(c);
+			System.out.println(phrase.phrase);
+			Contexte contexte = phraseService.getContextePhraseComplète(c);
+			System.out.println(contexte);
+
+		}
+		
 	}
 
 }

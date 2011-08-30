@@ -29,5 +29,4 @@ public class Contexte
     	return new Phrase(new StringBuilder(texteAvant).append(mot).append(texteAprès).toString().trim());
     }
     
-    
 }
