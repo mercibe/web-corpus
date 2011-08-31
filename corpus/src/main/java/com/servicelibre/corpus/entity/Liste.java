@@ -9,54 +9,54 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import com.servicelibre.corpus.liste.LigneSplitter;
 
-
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
-public class Liste implements Comparable<Liste>
-{
+public class Liste implements Comparable<Liste> {
 
-    @Id
-    @GeneratedValue
-    long id;
+	@Id
+	@SequenceGenerator(name = "liste_seq", sequenceName = "liste_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "liste_seq")
+	long id;
 
-    @Column
-    String nom;
+	@Column
+	String nom;
 
-    @Column
-    String description;
-    
-    @Column
-    Integer ordre;
+	@Column
+	String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "liste_id")
-    List<Mot> mots = new ArrayList<Mot>();
+	@Column
+	Integer ordre;
 
-    @ManyToOne(optional = false)
-    Corpus corpus;
-    
-    @Transient
-    File fichierSource;
-    
-    @Transient
-    LigneSplitter ligneSplitter;
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "liste_id")
+	List<Mot> mots = new ArrayList<Mot>();
 
-    public Liste()
-    {
-        super();
-    }
+	@ManyToOne(optional = false)
+	Corpus corpus;
 
-    public Liste(String nom, String description, Corpus corpus) {
+	@Transient
+	File fichierSource;
+
+	@Transient
+	LigneSplitter ligneSplitter;
+
+	public Liste() {
+		super();
+	}
+
+	public Liste(String nom, String description, Corpus corpus) {
 		super();
 		this.nom = nom;
 		this.description = description;
@@ -67,88 +67,75 @@ public class Liste implements Comparable<Liste>
 		this.id = id;
 	}
 
-	public long getId()
-    {
-        return id;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public void setId(int id)
-    {
-        this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String getNom()
-    {
-        return nom;
-    }
+	public String getNom() {
+		return nom;
+	}
 
-    public void setNom(String nom)
-    {
-        this.nom = nom;
-    }
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
 
-    public String getDescription()
-    {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
+	public void setMots(List<Mot> mots) {
+		this.mots = mots;
+	}
 
-    public void setMots(List<Mot> mots)
-    {
-        this.mots = mots;
-    }
+	public int size() {
+		return mots.size();
+	}
 
-    public int size()
-    {
-        return mots.size();
-    }
+	public Corpus getCorpus() {
+		return corpus;
+	}
 
-    public Corpus getCorpus()
-    {
-        return corpus;
-    }
+	public void setCorpus(Corpus corpus) {
+		this.corpus = corpus;
+	}
 
-    public void setCorpus(Corpus corpus)
-    {
-        this.corpus = corpus;
-    }
+	@Override
+	public String toString() {
+		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
+	}
 
-    @Override
-    public String toString()
-    {
-        return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
-    }
+	/*
+	 * Gestion relation bidirectionnelle liste/mot
+	 */
 
-    /*
-     * Gestion relation bidirectionnelle liste/mot
-     */
-    
-    public List<Mot> getMots()
-    {
-        return Collections.unmodifiableList(mots);
-    }
+	public List<Mot> getMots() {
+		return Collections.unmodifiableList(mots);
+	}
 
-    public void ajouteMot(Mot mot){
-    	mot.setListe(this);
-    }
-    
-    public void supprimeMot(Mot mot) {
-    	mot.setListe(null);
-    }
-    
-    public void internalAjouteMot(Mot mot) {
-    	mots.add(mot);
-    	
-    }
-    
+	public void ajouteMot(Mot mot) {
+		mot.setListe(this);
+	}
+
+	public void supprimeMot(Mot mot) {
+		mot.setListe(null);
+	}
+
+	public void internalAjouteMot(Mot mot) {
+		mots.add(mot);
+
+	}
+
 	public void internalSupprimeMot(Mot mot) {
 		mots.remove(mot);
-		
+
 	}
 
 	public File getFichierSource() {
@@ -183,8 +170,5 @@ public class Liste implements Comparable<Liste>
 	public int compareTo(Liste o) {
 		return this.getNom().compareTo(o.getNom());
 	}
-
-	
-	
 
 }

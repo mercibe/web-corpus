@@ -3,128 +3,109 @@ package com.servicelibre.corpus.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
-public class Corpus
-{
+public class Corpus {
 
-    @Id
-    @GeneratedValue
-    long id;
+	@Id
+	@SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "corpus_seq")
+	long id;
 
-    @Column
-    String nom;
+	@Column
+	String nom;
 
-    @Column
-    String description;
-    
-    /**
-     * Chemin filesystem qui pointe vers la racine du dossier des données de ce corpus (index Lucene, etc.)
-     */
-    @Column
-    String dossierData;
-    
-    @Column
-    String analyseurRechercheFQCN = "com.servicelibre.corpus.analysis.FrenchAnalyzer";
-    
-    @Column
-    String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";
-    
+	@Column
+	String description;
 
-    public Corpus()
-    {
-        super();
-    }
+	/**
+	 * Chemin filesystem qui pointe vers la racine du dossier des données de ce corpus (index Lucene, etc.)
+	 */
+	@Column
+	String dossierData;
 
-    public Corpus(String nom, String description)
-    {
-        super();
-        this.nom = nom;
-        this.description = description;
-    }
-    
+	@Column
+	String analyseurRechercheFQCN = "com.servicelibre.corpus.analysis.FrenchAnalyzer";
 
-    public Corpus(String nom, String description, String dossierData, String analyseurRechercheFQCN,
-            String analyseurLexicalFQCN)
-    {
-        super();
-        this.nom = nom;
-        this.description = description;
-        this.dossierData = dossierData;
-        this.analyseurRechercheFQCN = analyseurRechercheFQCN;
-        this.analyseurLexicalFQCN = analyseurLexicalFQCN;
-    }
+	@Column
+	String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 
-    public long getId()
-    {
-        return id;
-    }
+	public Corpus() {
+		super();
+	}
 
-    public void setId(long id)
-    {
-        this.id = id;
-    }
+	public Corpus(String nom, String description) {
+		super();
+		this.nom = nom;
+		this.description = description;
+	}
 
-    public String getNom()
-    {
-        return nom;
-    }
+	public Corpus(String nom, String description, String dossierData, String analyseurRechercheFQCN, String analyseurLexicalFQCN) {
+		super();
+		this.nom = nom;
+		this.description = description;
+		this.dossierData = dossierData;
+		this.analyseurRechercheFQCN = analyseurRechercheFQCN;
+		this.analyseurLexicalFQCN = analyseurLexicalFQCN;
+	}
 
-    public void setNom(String nom)
-    {
-        this.nom = nom;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public String getDescription()
-    {
-        return description;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+	public String getNom() {
+		return nom;
+	}
 
-    
-    
-    public String getDossierData()
-    {
-        return this.dossierData;
-    }
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
 
-    public void setDossierData(String dossierData)
-    {
-        this.dossierData = dossierData;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getAnalyseurRechercheFQCN()
-    {
-        return analyseurRechercheFQCN;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setAnalyseurRechercheFQCN(String analyseurRechercheFQCN)
-    {
-        this.analyseurRechercheFQCN = analyseurRechercheFQCN;
-    }
+	public String getDossierData() {
+		return this.dossierData;
+	}
 
-    public String getAnalyseurLexicalFQCN()
-    {
-        return analyseurLexicalFQCN;
-    }
+	public void setDossierData(String dossierData) {
+		this.dossierData = dossierData;
+	}
 
-    public void setAnalyseurLexicalFQCN(String analyseurLexicalFQCN)
-    {
-        this.analyseurLexicalFQCN = analyseurLexicalFQCN;
-    }
+	public String getAnalyseurRechercheFQCN() {
+		return analyseurRechercheFQCN;
+	}
 
-    @Override
-    public String toString()
-    {
-        return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + "]";
-    }
+	public void setAnalyseurRechercheFQCN(String analyseurRechercheFQCN) {
+		this.analyseurRechercheFQCN = analyseurRechercheFQCN;
+	}
+
+	public String getAnalyseurLexicalFQCN() {
+		return analyseurLexicalFQCN;
+	}
+
+	public void setAnalyseurLexicalFQCN(String analyseurLexicalFQCN) {
+		this.analyseurLexicalFQCN = analyseurLexicalFQCN;
+	}
+
+	@Override
+	public String toString() {
+		return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + "]";
+	}
 
 }

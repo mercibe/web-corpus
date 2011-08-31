@@ -3,29 +3,31 @@ package com.servicelibre.corpus.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class DocMetadata {
 
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(name = "docmetadata_seq", sequenceName = "docmetadata_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "docmetadata_seq")
 	long id;
-	
+
 	@Column
 	String nom;
-	
+
 	@Column
 	String champIndex;
-	
+
 	@Column
 	int ordre;
-	
-    @ManyToOne(optional = false)
-    Corpus corpus;
 
-    
+	@ManyToOne(optional = false)
+	Corpus corpus;
+
 	public DocMetadata() {
 		super();
 	}
@@ -77,8 +79,5 @@ public class DocMetadata {
 	public void setCorpus(Corpus corpus) {
 		this.corpus = corpus;
 	}
-	
-	
-    
-    
+
 }
