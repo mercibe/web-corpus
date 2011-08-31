@@ -46,9 +46,20 @@ public class JpaCorpusManager implements CorpusManager
 	}
 
 	@Override
-	public void flush() {
-		entityManager.flush();
+	public Corpus findByDefault() {
+		Corpus corpus = null;
 
+		try {
+			corpus = (Corpus) entityManager.createQuery("select c from Corpus c where c.parDéfaut = ?").setParameter(1, true).getSingleResult();
+		} catch (NoResultException e) {
+			logger.warn("Aucun Corpus par défaut trouvé dans la table des corpus. ({})", e.getMessage());
+		}
+		return corpus;
 	}
 
+	@Override
+	public void flush() {
+		entityManager.flush();
+		
+	}
 }

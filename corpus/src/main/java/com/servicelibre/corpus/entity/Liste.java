@@ -26,7 +26,7 @@ import com.servicelibre.corpus.liste.LigneSplitter;
 public class Liste implements Comparable<Liste> {
 
 	@Id
-	@SequenceGenerator(name = "liste_seq", sequenceName = "liste_seq")
+	@SequenceGenerator(name = "liste_seq", sequenceName = "liste_seq", allocationSize=100)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "liste_seq")
 	long id;
 

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 
 

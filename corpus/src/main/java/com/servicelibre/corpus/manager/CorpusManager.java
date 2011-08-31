@@ -12,6 +12,8 @@ public interface CorpusManager // extends JpaRepository<Corpus, Long>
 	Corpus findOne(long corpusId);
 
 	Corpus findByNom(String nom);
+	
+	Corpus findByDefault();
 
 	Corpus save(Corpus corpus);
 

@@ -44,14 +44,19 @@
 		zul.inp.Bandbox.prototype.slideDown_ = zul.inp.Combobox.prototype.slideDown_;
 	]]></script>
 
+	
 <window id="webCorpusWindow" border="none" width="100%" height="100%">
 
+	<zscript><![CDATA[
+		com.servicelibre.corpus.entity.Corpus corpus = com.servicelibre.controller.ServiceLocator.getCorpusService().getCorpus();
+	]]></zscript>
+	
 	<div align="center">
 		<label sclass="titre1" value="Gestion de corpus en ligne" />
 	</div>
 	
 	<div align="center">
-		<label sclass="titre2" value="MELS-cj: corpus de littérature jeunesse"/>
+		<label id="nomCorpus" sclass="titre2" value="${corpus.description}"/>
 	</div>
 
 

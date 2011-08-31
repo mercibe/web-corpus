@@ -25,7 +25,7 @@ public class Mot implements Comparable<Mot> {
 	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
 
 	@Id
-	@SequenceGenerator(name = "mot_seq", sequenceName = "mot_seq")
+	@SequenceGenerator(name = "mot_seq", sequenceName = "mot_seq", allocationSize=100)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mot_seq")
 	private long id;
 

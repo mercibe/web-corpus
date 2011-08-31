@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 public class Corpus {
 
 	@Id
-	@SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq")
+	@SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq", allocationSize=1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "corpus_seq")
 	long id;
 
@@ -35,6 +35,9 @@ public class Corpus {
 
 	@Column
 	String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";
+	
+	@Column
+	boolean parDéfaut;
 
 	public Corpus() {
 		super();
@@ -101,6 +104,14 @@ public class Corpus {
 
 	public void setAnalyseurLexicalFQCN(String analyseurLexicalFQCN) {
 		this.analyseurLexicalFQCN = analyseurLexicalFQCN;
+	}
+	
+	public boolean isParDéfaut() {
+		return parDéfaut;
+	}
+
+	public void setParDéfaut(boolean parDéfaut) {
+		this.parDéfaut = parDéfaut;
 	}
 
 	@Override

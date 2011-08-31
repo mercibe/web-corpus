@@ -46,6 +46,11 @@ public class CorpusService {
 		this.corpusManager = cm;
 		this.corpus = ouvreOuCréeCorpus(cm, corpus);
 	}
+	
+	public CorpusService(CorpusManager cm) {
+		this.corpusManager = cm;
+		this.corpus = ouvreCorpusParDéfaut(cm);
+	}
 
 	public Corpus getCorpus() {
 		return this.corpus;
@@ -76,6 +81,26 @@ public class CorpusService {
 			return corpusTrouvéOuCréé;
 		}
 	}
+	
+	private Corpus ouvreCorpusParDéfaut(CorpusManager cm) {
+		
+		Corpus corpusParDéfaut = cm.findByDefault();
+
+		if (corpusParDéfaut == null) {
+			// Création d'un corpus vide par défaut
+			String corpusIdString = "DÉMARRAGE";
+			String tmpDir = System.getProperty("java.tmpdir")+ File.separatorChar + "index-" + corpusIdString;
+			corpusParDéfaut = new Corpus(corpusIdString, "Corpus de démarrage", tmpDir,"com.servicelibre.corpus.analysis.FrenchAnalyzer", "org.apache.lucene.analysis.standard.StandardAnalyzer");
+			// FIXME s'assurer qu'un seul corpus par défaut existe!
+			corpusParDéfaut.setParDéfaut(true);
+			logger.info("Création du nouveau corpus " + corpusParDéfaut);
+			cm.save(corpusParDéfaut);
+			return corpusParDéfaut;
+		} else {
+			logger.info("Ouverture du corpus par défaut " + corpusParDéfaut);
+			return corpusParDéfaut;
+		}
+	}
 
 	public ContexteSet getContextesMot(String mot) {
 		return getContextesMot(mot, null);
@@ -92,6 +117,10 @@ public class CorpusService {
 
 		// connecter à l'index Lucene et faire la recherche
 		LuceneIndexManager manager = getLuceneIndexManager();
+		
+		if(manager == null){
+			return new ContexteSet();
+		}
 
 		RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, 1, tailleVoisinage, filtres);
 
@@ -110,7 +139,13 @@ public class CorpusService {
 	public ContexteSet getContextesLemme(String lemme, FiltreMot filtres) {
 
 		// rechercher toutes les formes du lemme
-		RésultatRecherche résultats = getLuceneIndexManager().getDocumentsWithContexts(formeService.getFormes(lemme), tailleVoisinage, filtres);
+		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
+		
+		if(luceneIndexManager == null){
+			return new ContexteSet();
+		}
+		
+		RésultatRecherche résultats = luceneIndexManager.getDocumentsWithContexts(formeService.getFormes(lemme), tailleVoisinage, filtres);
 
 		logger.debug("Trouvé " + résultats.scoreDocs.length + " documents (lemme) => " + résultats.spanCount);
 
@@ -144,7 +179,13 @@ public class CorpusService {
 	public List<DefaultKeyValue> getValeursChamp(String champIndex) {
 
 		// Récupérer les valeurs = topTerms Lucene , trié par ordre alpha fr_CA
-		List<InformationTerme> topTerms = getLuceneIndexManager().getTopTerms(champIndex, new InformationTermeTextComparator<InformationTerme>());
+		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
+		
+		if(luceneIndexManager == null){
+			return new ArrayList<DefaultKeyValue>();
+		}
+		
+		List<InformationTerme> topTerms = luceneIndexManager.getTopTerms(champIndex, new InformationTermeTextComparator<InformationTerme>());
 
 		List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(topTerms.size());
 

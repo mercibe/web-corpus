@@ -27,7 +27,6 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
 import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.corpus.prononciation.PrononciationImport;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
