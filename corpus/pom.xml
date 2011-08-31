@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.servicelibre</groupId>
 		<artifactId>servicelibre-parent</artifactId>
-		<version>5-SNAPSHOT</version>
+		<version>6-SNAPSHOT</version>
 	</parent>
 
 	<groupId>com.servicelibre</groupId>
@@ -255,6 +255,7 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
+			<version>1.4.4</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
