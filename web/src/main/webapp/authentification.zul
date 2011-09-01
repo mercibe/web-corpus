@@ -1,0 +1,38 @@
+<?page title="Authentification" contentType="text/html;charset=UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="/css/corpus.css"?>
+<zk>
+<window id="authentificationWin"  xmlns:h="native" border="none" width="100%" height="100%">
+
+	<include id="entete" src="/entete.zul"/>
+
+    <html style="color:red" if="${not empty param.erreur_authentification}">
+      <![CDATA[
+         Erreur lors de l'authentification, veuillez essayer à nouveau.<br/><br/>
+         Plus d'information: ${SPRING_SECURITY_LAST_EXCEPTION.message} 
+        ]]> 
+    </html>
+ 
+ <div align="center" width="500px" style="margin-left: auto; margin-right: auto; margin-top:40px;" >
+    <groupbox>
+    <caption>Authentification</caption>
+    
+    <h:form id="f" name="f" action="j_spring_security_check" method="POST" xmlns:h="native">
+        <grid>
+            <rows>
+                <row>Nom d'utilisateur: <textbox id="u" name="j_username" focus="true" /></row>
+                <row>Mot de passe: <textbox id="p" type="password" name="j_password"/></row>
+<!--                 <row><checkbox id="r" name="j_spring_security_remember_me"/>Ne plus me demander mon mot de passe pendant 2 semaines</row> -->
+                <row spans="2">
+                    <hbox>
+                        <h:input type="submit" value="OK"/>
+                        <h:input type="reset" value="Effacer"/>
+                    </hbox>
+                </row>
+            </rows>
+        </grid>
+    </h:form>
+    </groupbox>
+ </div>
+</window>
+</zk>
+

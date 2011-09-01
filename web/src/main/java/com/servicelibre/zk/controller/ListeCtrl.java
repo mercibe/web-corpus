@@ -202,6 +202,7 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 	public void chercheEtAfficheMot() {
 		ListModelList modelList = new ListModelList(getMotsRecherchés());
 		motsGrid.setModel(modelList);
+		motsGrid.getPaginal().setActivePage(0);
 		// les mots sont toujours retournés par ordre alphabétique => refléter
 		// dans la colonne (réinitialisation du marqueur de tri)
 

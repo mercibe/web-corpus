@@ -64,12 +64,12 @@
 
 			</groupbox>
 			
-			<vbox  height="660px" width="700px">
+			<vbox  height="645px" width="700px">
 			
 					<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
 					
-					<grid id="contextesGrid" mold="paging" pageSize="18"
-						 emptyMessage="Aucun contexte trouvé." height="640px" width="700px">
+					<grid id="contextesGrid" mold="paging" pageSize="15"
+						 emptyMessage="Aucun contexte trouvé." height="620px" width="700px">
 						<!-- 	pagingPosition="both" sizedByContent="true"> -->
 			
 						<columns sizable="true">

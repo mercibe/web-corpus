@@ -215,6 +215,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 		ContexteSet contexteSet = getContexteSet();
 		
 		contextesGrid.setModel(new ListModelList(contexteSet.getContextes()));
+		contextesGrid.getPaginal().setActivePage(0);
 
 		infoRésultats.setValue(getInfoRésultat(contexteSet));
 

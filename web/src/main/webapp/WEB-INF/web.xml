@@ -7,33 +7,32 @@
 		<welcome-file>index.zul</welcome-file>
 	</welcome-file-list>
 
-	<!-- Beans in these files will makeup the configuration of the root web 
-		application context -->
+	<!-- Les beans dans ces fichiers constituent la configuration du contexte d'application racine de Spring -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/system-context.xml</param-value>
 	</context-param>
+	
+	
 
-	<!-- Bootstraps the root web application context before servlet initialization -->
+	<!-- Permet de charger dynamiquement les beans Spring lors du chargement du contexte (avant l'initialisation de la servlet) -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<!-- Déploiement de la servlet DispatcherServlet de Spring MVC -->
-	<servlet>
-		<servlet-name>webcorpus</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/webcorpus-servlet-context.xml</param-value>
-		</init-param>
-	</servlet>
+		<!-- 	Configuration de la sécurité Spring -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
 
-	<!-- Mapping de la servlet Spring MVC avec une URL -->
-	<servlet-mapping>
-		<servlet-name>webcorpus</servlet-name>
-		<url-pattern>/corpus-srv/*</url-pattern>
-	</servlet-mapping>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<!-- 	Configuration ZK -->
 
 	<servlet>
 		<servlet-name>zkLoader</servlet-name>
@@ -65,5 +64,20 @@
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- Déploiement de la servlet DispatcherServlet de Spring MVC -->
+	<servlet>
+		<servlet-name>webcorpus</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/webcorpus-servlet-context.xml</param-value>
+		</init-param>
+	</servlet>
+
+	<!-- Mapping de la servlet Spring MVC avec une URL -->
+	<servlet-mapping>
+		<servlet-name>webcorpus</servlet-name>
+		<url-pattern>/corpus-srv/*</url-pattern>
+	</servlet-mapping>
 
 </web-app>

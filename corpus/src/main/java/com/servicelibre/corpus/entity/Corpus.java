@@ -37,7 +37,7 @@ public class Corpus {
 	String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 	
 	@Column
-	boolean parDéfaut;
+	Boolean parDéfaut;
 
 	public Corpus() {
 		super();
