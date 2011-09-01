@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- 
-		Parent commun (ancêtre). 
-		
-		Définition des paramètres communs à tous les projets de Service Libre 
-					       
-        Les versions des plugins sont définies ici également, mais peuvent être surchargées individuellement au besoin par chaque projet.
-        
-        https://svn.apache.org/viewvc/maven/pom/trunk/asf/pom.xml?view=markup
-	-->
+	<!-- Parent commun (ancêtre). Définition des paramètres communs à tous les 
+		projets de Service Libre Les versions des plugins sont définies ici également, 
+		mais peuvent être surchargées individuellement au besoin par chaque projet. 
+		https://svn.apache.org/viewvc/maven/pom/trunk/asf/pom.xml?view=markup -->
 
 	<groupId>com.servicelibre</groupId>
 	<artifactId>servicelibre-parent</artifactId>
@@ -175,6 +171,7 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<!-- Spring -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -206,6 +203,59 @@
 				<artifactId>spring-context</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<!-- Spring MVC -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<!-- Spring Security -->
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-ldap</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
@@ -266,7 +316,7 @@
 				<artifactId>commons-dbcp</artifactId>
 				<version>1.4</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>net.sf.saxon</groupId>
 				<artifactId>saxon</artifactId>
@@ -396,11 +446,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.1</version>
-					<!--			<configuration>
-						<useReleaseProfile>false</useReleaseProfile>
-						<goals>deploy</goals>
-						<arguments>-Papache-release</arguments>
-					</configuration>-->
+					<!-- <configuration> <useReleaseProfile>false</useReleaseProfile> <goals>deploy</goals> 
+						<arguments>-Papache-release</arguments> </configuration> -->
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

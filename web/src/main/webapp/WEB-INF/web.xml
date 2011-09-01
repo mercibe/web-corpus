@@ -7,20 +7,26 @@
 		<welcome-file>index.zul</welcome-file>
 	</welcome-file-list>
 
-	<!-- Les beans dans ces fichiers constituent la configuration du contexte d'application racine de Spring -->
+	<!-- Les beans dans ces fichiers constituent la configuration du contexte 
+		d'application racine de Spring -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/system-context.xml</param-value>
 	</context-param>
-	
-	
 
-	<!-- Permet de charger dynamiquement les beans Spring lors du chargement du contexte (avant l'initialisation de la servlet) -->
+
+
+	<!-- Permet de charger dynamiquement les beans Spring lors du chargement 
+		du contexte (avant l'initialisation de la servlet) -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-		<!-- 	Configuration de la sécurité Spring -->
+	<!-- Configuration de la sécurité Spring -->
+	<listener>
+		<listener-class>
+			org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -32,7 +38,7 @@
 	</filter-mapping>
 
 
-	<!-- 	Configuration ZK -->
+	<!-- Configuration ZK -->
 
 	<servlet>
 		<servlet-name>zkLoader</servlet-name>
@@ -53,7 +59,7 @@
 		<servlet-name>zkLoader</servlet-name>
 		<url-pattern>*.zul</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>zkLoader</servlet-name>
 		<url-pattern>/corpus/*</url-pattern>

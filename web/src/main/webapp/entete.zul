@@ -20,7 +20,7 @@
 				value="${corpus.description}" />
 		</div>
 
-		<div align="center" if="${sec:isAllGranted('utilisateur')}">
+		<div align="center" if="${sec:isAllGranted('ROLE_UTILISATEUR')}">
 			${authentication.principal.username} (
 			<a href="/quitter">Quitter</a>
 			)

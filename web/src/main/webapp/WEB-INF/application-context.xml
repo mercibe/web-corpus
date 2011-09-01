@@ -12,29 +12,30 @@
 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" />
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
-	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"/>
-	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />	
+	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager" />
+	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />
 
 	<!-- Définition managers objets ZK -->
 	<bean id="listeFiltreManager" class="com.servicelibre.zk.controller.ListeFiltreManager"
 		init-method="init">
-		<property name="corpusService" ref="corpusService"/>
-		<property name="listeManager" ref="listeManager"/>
+		<property name="corpusService" ref="corpusService" />
+		<property name="listeManager" ref="listeManager" />
 	</bean>
 
 	<bean id="contexteFiltreManager" class="com.servicelibre.zk.controller.ContexteFiltreManager"
-		init-method="init" >
-		<property name="docMetadataManager" ref="docMetadataManager"/>
+		init-method="init">
+		<property name="docMetadataManager" ref="docMetadataManager" />
 		<property name="corpusService" ref="corpusService"></property>
 	</bean>
 
 	<!-- Définition des services -->
 	<bean id="corpusService" class="com.servicelibre.corpus.service.CorpusService">
 		<constructor-arg ref="corpusManager" />
-		<property name="formeService" ref="formeService"/>
+		<property name="formeService" ref="formeService" />
 	</bean>
 
-	<bean id="formeService" class="com.servicelibre.corpus.service.FormeService" init-method="init"/>
+	<bean id="formeService" class="com.servicelibre.corpus.service.FormeService"
+		init-method="init" />
 
 	<!-- Création du bean responsable de la gestion des transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -55,4 +56,13 @@
 		interfaces qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
 	<!-- <jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
 
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>
+	</bean>
 </beans>
