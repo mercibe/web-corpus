@@ -282,7 +282,7 @@ public class CorpusPhraseService implements PhraseService {
 			// // énumération
 			// return true;
 			// }
-			else if (carSuivant == '.' || carSuivant == '!') {
+			else if (carSuivant == '.' || carSuivant == '!' || carSuivant == '?') {
 				return false;
 			}
 
@@ -362,35 +362,39 @@ public class CorpusPhraseService implements PhraseService {
 		for (Phrase phrase : phrasesComplètes) {
 			posCpt += phrase.phrase.length();
 			if (posCpt >= max) {
-				if (phrase.phrase.toLowerCase().indexOf(c.mot.toLowerCase()) < 0) {
+				if (phrase.phrase.indexOf(c.mot) < 0) {
+					if (phrasePrécédente == null) {
+						System.err.println("phrasePrécédente est NULL");
+					}
 					return phrasePrécédente;
 				}
 				return phrase;
 			}
-			phrasePrécédente = phrase;
+			phrasePrécédente = phrase == null ? phrasePrécédente : phrase;
 		}
-		return null;
+		return phrasePrécédente;
 	}
 
 	@Override
 	public Contexte getContextePhraseComplète(Contexte c) {
 
 		Phrase phrase = getPhraseComplète(c);
-		
+
 		if (phrase != null) {
 			// si mot n'est pas dans phrase: erreur!!!
 			String phraseComplète = phrase.phrase;
 			if (phraseComplète.indexOf(c.mot) < 0) {
 				System.out.println("ERREUR 1: [" + c.mot + "] ne se trouve pas dans [" + phraseComplète + "]");
-				return new Contexte("","", "");
+				return new Contexte("", "", "");
 			}
 			// reconstruction d'un contexte à partir de la phrase (offset si
 			// plusieurs fois même mot dans la phrase, sinon tjrs première
 			// occurence retournée)
 
-			int positionPhraseDansContexte = c.getPhrase().phrase.indexOf(phraseComplète);
+			// lastIndexOf pour cas où plusieurs fois la même phrase dans un même contexte
+			int positionPhraseDansContexte = c.getPhrase().phrase.lastIndexOf(phraseComplète);
 			if (positionPhraseDansContexte < 0) {
-				System.err.println("ERREUR 2: c.texteAvant.length() - c.getPhrase().phrase.indexOf(phrase.phrase) => " + c.texteAvant.length() + "-"
+				System.err.println("ERREUR 1: c.texteAvant.length() - c.getPhrase().phrase.indexOf(phrase.phrase) => " + c.texteAvant.length() + "-"
 						+ Math.max(0, positionPhraseDansContexte));
 				System.err.println("Cherche [" + phraseComplète + "] dans [" + c.getPhrase().phrase + "]");
 				return c;
@@ -400,42 +404,50 @@ public class CorpusPhraseService implements PhraseService {
 
 			int débutMot = phraseComplète.indexOf(c.mot, Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()));
 			int finMot = débutMot + c.mot.length();
-			
+
+			if (débutMot < 0) {
+				System.err.println("débutMot < 0, phraseComplète: " + phraseComplète);
+				System.err.println("Contexte=" + c.toString());
+				System.err.println("Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()) = "
+						+ Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()));
+				System.err.println("Math.min(" + nouveauTexteAvantLength + "- 1," + phraseComplète.length() + "-" + c.mot.length() + ")");
+				return new Contexte("erreur ", "erreur2", " erreur");
+			}
+
 			String texteAvant = phraseComplète.substring(0, débutMot);
 			String mot = phraseComplète.substring(débutMot, finMot);
 			String texteAprès = phraseComplète.substring(finMot);
-			
+
 			texteAvant = getTexteAvantNettoyé(texteAvant, texteAprès);
 			texteAprès = getTexteAprèsNettoyé(texteAprès, texteAvant);
 
-			if(texteAvant.startsWith("«") && texteAprès.endsWith("»")) {
+			if (texteAvant.startsWith("«") && texteAprès.endsWith("»")) {
 				texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replace("«", ""));
 				texteAprès = CharMatcher.WHITESPACE.trimTrailingFrom(texteAprès.replace("»", ""));
 			}
 
 			return new Contexte(texteAvant, mot, texteAprès);
 		}
-		
-		return new Contexte("","", "");
+		return new Contexte("erreur ", "erreur3", " erreur");
 	}
-	
+
 	private String getTexteAvantNettoyé(String texteAvant, String texteAprès) {
-		
-		texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replaceFirst("^—", "").replaceFirst("^–", "").replaceFirst("^-",""));
-		
-		if(texteAvant.startsWith("«") && !texteAvant.contains("»") && !texteAprès.contains("»")){
-			texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replace("«",""));
+
+		texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replaceFirst("^—", "").replaceFirst("^–", "").replaceFirst("^-", ""));
+
+		if (texteAvant.startsWith("«") && !texteAvant.contains("»") && !texteAprès.contains("»")) {
+			texteAvant = CharMatcher.WHITESPACE.trimLeadingFrom(texteAvant.replace("«", ""));
 		}
 		return texteAvant;
 	}
-    
+
 	private String getTexteAprèsNettoyé(String texteAprès, String texteAvant) {
-		
-		if(texteAprès.endsWith("»") && !texteAprès.contains("«") && !texteAvant.contains("«")){
+
+		if (texteAprès.endsWith("»") && !texteAprès.contains("«") && !texteAvant.contains("«")) {
 			texteAprès = CharMatcher.WHITESPACE.trimTrailingFrom(texteAprès.replace("»", ""));
 		}
-		
-		if(texteAprès.contains("«") && !texteAprès.contains("»")) {
+
+		if (texteAprès.contains("«") && !texteAprès.contains("»")) {
 			texteAprès += "\u00a0»";
 		}
 		return texteAprès;

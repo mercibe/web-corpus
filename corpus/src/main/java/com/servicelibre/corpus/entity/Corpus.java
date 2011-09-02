@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 public class Corpus {
 
 	@Id
-	@SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq", allocationSize=1)
+	@SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "corpus_seq")
 	long id;
 

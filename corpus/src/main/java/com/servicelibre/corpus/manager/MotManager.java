@@ -16,6 +16,7 @@ public interface MotManager {
     List<Mot> findAll();
 
     Mot findOne(long motId);
+    Mot findByMot(String lemme, String mot, String catgram, String genre);
 
     List<Mot> findByMot(String mot);
 
@@ -34,4 +35,5 @@ public interface MotManager {
     int ajoutePrononciation(String forme, String phonétique);
 
     List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreMot filtres);
+
 }

@@ -170,6 +170,20 @@ public class CorpusServiceTest {
 		phrasesÀTester.add(new String[] { "La mère à Maillard\nNourrit trois canards\nQui sont pas les siens\nUn tien pour le mien\n\n",
 				"Le papa d’Éloi\nÉlevait des oies\nC’est le vieux Perras\nQui les mangera\n", });
 
+		
+		// Plusieurs retour à la ligne
+		phrasesÀTester.add(new String[] {
+		"Et il s'endort souvent.", "Comme un enfant.", "La preuve...\n\n\n",
+		"Alors, Jüll glisse son épée entre les bras de son grand-père et lui chuchote à l'oreille :\n- Ne t'inquiète pas, quand je vais être grand, je serai ton grand-papa.\n",
+		"Ton grand-papa en or."
+		});
+		
+		// Plusieurs !!! ou ???
+		phrasesÀTester.add(new String[] {
+				"Quelle histoire!!!",
+				"Et tu veux que je viennent?????",
+				"Saperlipopette!?!?..."});
+		
 		// Énumération (est-ce vraiment souhaité? Souvent phrase incomplète)
 		// phrasesÀTester.add(new String[] {
 		// "Voici ce que je préfère:\n",
@@ -328,7 +342,7 @@ public class CorpusServiceTest {
 	}
 
 	@Test
-	@Ignore
+	
 	public void contextesCorpusPhraseServiceTest() {
 
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
@@ -344,8 +358,7 @@ public class CorpusServiceTest {
 
 		cs.setTailleVoisinnage(tailleVoisinnage);
 
-		// ContexteSet contexteSet = cs.getContextesMot("séduire");
-		ContexteSet contexteSet = cs.getContextesMot("chien");
+		ContexteSet contexteSet = cs.getContextesMot("papa");
 
 		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
@@ -359,12 +372,81 @@ public class CorpusServiceTest {
 			System.out.println("------" + cpt++ + "------");
 
 			Phrase phrase = phraseService.getPhraseComplète(c);
+			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
 			System.out.println(phrase.phrase);
 			Contexte contexte = phraseService.getContextePhraseComplète(c);
 			System.out.println(contexte);
 
 		}
 		
+		contexteSet = cs.getContextesMot("chien");
+
+		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+
+		
+		// TODO assertions!!!!
+		System.err.println("# contextes: " + contexteSet.size());
+		cpt = 1;
+		for (Contexte c : contexteSet.getContextes()) {
+			System.out.println("------" + cpt++ + "------");
+
+			Phrase phrase = phraseService.getPhraseComplète(c);
+			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
+			System.out.println(phrase.phrase);
+			Contexte contexte = phraseService.getContextePhraseComplète(c);
+			System.out.println(contexte);
+
+		}
+		
+		contexteSet = cs.getContextesMot("séduire");
+
+		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+
+		
+		// TODO assertions!!!!
+		System.err.println("# contextes: " + contexteSet.size());
+		cpt = 1;
+		for (Contexte c : contexteSet.getContextes()) {
+			System.out.println("------" + cpt++ + "------");
+
+			Phrase phrase = phraseService.getPhraseComplète(c);
+			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
+			System.out.println(phrase.phrase);
+			Contexte contexte = phraseService.getContextePhraseComplète(c);
+			System.out.println(contexte);
+
+		}
+		
+		contexteSet = cs.getContextesMot("maman");
+
+		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+
+		
+		// TODO assertions!!!!
+		System.err.println("# contextes: " + contexteSet.size());
+		cpt = 1;
+		for (Contexte c : contexteSet.getContextes()) {
+			System.out.println("------" + cpt++ + "------");
+
+			Phrase phrase = phraseService.getPhraseComplète(c);
+			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
+			System.out.println(phrase.phrase);
+			Contexte contexte = phraseService.getContextePhraseComplète(c);
+			System.out.println(contexte);
+
+		}
+		
+	}
+	
+	@Test
+	public void contextesPhrasesIdentiquesTest() {
+		CorpusPhraseService phraseService = new CorpusPhraseService();
+		Contexte contextePhraseComplète = phraseService.getContextePhraseComplète(new Contexte("Bizarre. Excepté papa et maman. Bizarre. Excepté ","papa"," et maman. Quitte à le répéter une troisième fois.  Excepté papa et maman."));
+		
+		assertNotNull(contextePhraseComplète);
 	}
 	
 	@Test
