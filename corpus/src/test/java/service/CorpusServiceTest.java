@@ -1,5 +1,6 @@
 package service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -112,6 +113,7 @@ public class CorpusServiceTest {
 
 	
 	@Test
+	@Ignore
 	public void contextesCorpusPhraseServiceStaticTest() {
 
 		phraseService = new CorpusPhraseService();
@@ -342,7 +344,6 @@ public class CorpusServiceTest {
 	}
 
 	@Test
-	
 	public void contextesCorpusPhraseServiceTest() {
 
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
@@ -369,7 +370,7 @@ public class CorpusServiceTest {
 		System.err.println("# contextes: " + contexteSet.size());
 		int cpt = 1;
 		for (Contexte c : contexteSet.getContextes()) {
-			System.out.println("------" + cpt++ + "------");
+			System.out.println("------" + cpt + "------");
 
 			Phrase phrase = phraseService.getPhraseComplète(c);
 			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
@@ -379,7 +380,67 @@ public class CorpusServiceTest {
 
 		}
 		
-		contexteSet = cs.getContextesMot("chien");
+//		contexteSet = cs.getContextesMot("chien");
+//
+//		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+//		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+//
+//		
+//		// TODO assertions!!!!
+//		System.err.println("# contextes: " + contexteSet.size());
+//		cpt = 1;
+//		for (Contexte c : contexteSet.getContextes()) {
+//			System.out.println("------" + cpt + "------");
+//
+//			Phrase phrase = phraseService.getPhraseComplète(c);
+//			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
+//			System.out.println(phrase.phrase);
+//			Contexte contexte = phraseService.getContextePhraseComplète(c);
+//			System.out.println(contexte);
+//
+//		}
+//		
+//		contexteSet = cs.getContextesMot("séduire");
+//
+//		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+//		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+//
+//		
+//		// TODO assertions!!!!
+//		System.err.println("# contextes: " + contexteSet.size());
+//		cpt = 1;
+//		for (Contexte c : contexteSet.getContextes()) {
+//			System.out.println("------" + cpt + "------");
+//
+//			Phrase phrase = phraseService.getPhraseComplète(c);
+//			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
+//			System.out.println(phrase.phrase);
+//			Contexte contexte = phraseService.getContextePhraseComplète(c);
+//			System.out.println(contexte);
+//
+//		}
+//		
+//		contexteSet = cs.getContextesMot("maman");
+//
+//		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+//		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+//
+//		
+//		// TODO assertions!!!!
+//		System.err.println("# contextes: " + contexteSet.size());
+//		cpt = 1;
+//		for (Contexte c : contexteSet.getContextes()) {
+//			System.out.println("------" + cpt + "------");
+//			Phrase phrase = phraseService.getPhraseComplète(c);
+//			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
+//			System.out.println(phrase.phrase);
+//			Contexte contexte = phraseService.getContextePhraseComplète(c);
+//			System.out.println(contexte);
+//
+//		}
+
+		
+		contexteSet = cs.getContextesMot("mange");
 
 		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
@@ -389,67 +450,42 @@ public class CorpusServiceTest {
 		System.err.println("# contextes: " + contexteSet.size());
 		cpt = 1;
 		for (Contexte c : contexteSet.getContextes()) {
-			System.out.println("------" + cpt++ + "------");
-
+			System.out.println("------" + cpt + "------");
+			System.out.println("["+c+"]");
 			Phrase phrase = phraseService.getPhraseComplète(c);
 			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
 			System.out.println(phrase.phrase);
 			Contexte contexte = phraseService.getContextePhraseComplète(c);
 			System.out.println(contexte);
-
-		}
-		
-		contexteSet = cs.getContextesMot("séduire");
-
-		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
-		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
-
-		
-		// TODO assertions!!!!
-		System.err.println("# contextes: " + contexteSet.size());
-		cpt = 1;
-		for (Contexte c : contexteSet.getContextes()) {
-			System.out.println("------" + cpt++ + "------");
-
-			Phrase phrase = phraseService.getPhraseComplète(c);
-			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
-			System.out.println(phrase.phrase);
-			Contexte contexte = phraseService.getContextePhraseComplète(c);
-			System.out.println(contexte);
-
-		}
-		
-		contexteSet = cs.getContextesMot("maman");
-
-		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
-		assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
-
-		
-		// TODO assertions!!!!
-		System.err.println("# contextes: " + contexteSet.size());
-		cpt = 1;
-		for (Contexte c : contexteSet.getContextes()) {
-			System.out.println("------" + cpt++ + "------");
-
-			Phrase phrase = phraseService.getPhraseComplète(c);
-			assertNotNull("La phrase est NULL pour le contexte #"+ cpt++ +" =>" + c,phrase);
-			System.out.println(phrase.phrase);
-			Contexte contexte = phraseService.getContextePhraseComplète(c);
-			System.out.println(contexte);
-
+if(cpt > 14) break;
 		}
 		
 	}
 	
 	@Test
-	public void contextesPhrasesIdentiquesTest() {
+	public void phrasesIdentiquesDansContextesTest() {
 		CorpusPhraseService phraseService = new CorpusPhraseService();
 		Contexte contextePhraseComplète = phraseService.getContextePhraseComplète(new Contexte("Bizarre. Excepté papa et maman. Bizarre. Excepté ","papa"," et maman. Quitte à le répéter une troisième fois.  Excepté papa et maman."));
 		
 		assertNotNull(contextePhraseComplète);
+		
+		contextePhraseComplète = phraseService.getContextePhraseComplète(new Contexte("Ça ne m'intéresse pas. Tais-toi et ","mange",". Vexé, l'Affreux mange en silence. "));
+		assertNotNull(contextePhraseComplète);
+		assertEquals("Texte avant invalide","Tais-toi et ",contextePhraseComplète.texteAvant);
+		
+		contextePhraseComplète = phraseService.getContextePhraseComplète(new Contexte("Ça ne m'intéresse pas. Tais-toi et mange. Vexé, l'Affreux ","mange", " en silence. "));
+		assertNotNull(contextePhraseComplète);
+		assertEquals("Texte avant invalide","Vexé, l'Affreux ",contextePhraseComplète.texteAvant);
+		
+		contextePhraseComplète = phraseService.getContextePhraseComplète(new Contexte("le saumon d'herbes sauvages, puis elle fait une délicieuse galette.\nL'Affreux revient au coucher du soleil.\n—	Huumm... Du poisson ?\n—	Du saumon, répond la petite.\n—	Du saumon ? Du SAUMON ?G-É-N-I-A-L... La dernière fois que j'ai mangé du saumon, c'était...\n—	Ça ne m'intéresse pas. Tais-toi et ",
+				"mange",
+				".\nVexé, l'Affreux mange en silence. Il avale le saumon, engloutit la galette, croque les arêtes, lèche les assiettes... Après le repas, il rote avec fracas.\n—	Je ne te mangerai pas ce soir, finalement. Le feu s'est éteint. Je n'ai plus de sel. Et puis j'ai trop mangé. J'ai mal au"));
+		assertNotNull(contextePhraseComplète);
+		assertEquals("Texte avant invalide","Tais-toi et ",contextePhraseComplète.texteAvant);
 	}
 	
 	@Test
+	@Ignore
 	public void contextesCorpusErreur1Test() {
 		
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
