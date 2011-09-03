@@ -167,7 +167,7 @@ public class CorpusPhraseService implements PhraseService {
 		// Reconstitution d'une string complète
 		StringBuilder sb = new StringBuilder(c.texteAvant).append(c.mot).append(c.texteAprès);
 
-		return getPhrasesComplètes(sb.toString());
+		return getPhrasesComplètes(sb.toString(), c.texteAvant.length());
 
 	}
 
@@ -176,6 +176,11 @@ public class CorpusPhraseService implements PhraseService {
 	 */
 	@Override
 	public List<Phrase> getPhrasesComplètes(String texte) {
+		return getPhrasesComplètes(texte, -1);
+	}
+
+	@Override
+	public List<Phrase> getPhrasesComplètes(String texte, int marquePhrasePos) {
 
 		List<Phrase> phrases = new ArrayList<Phrase>();
 
@@ -185,11 +190,18 @@ public class CorpusPhraseService implements PhraseService {
 		char curChar;
 		char[] phraseBuffer = new char[charArray.length];
 		int phraseBufferPos = 0;
+
+		boolean marqueCurPhrase = false;
+
 		Position position = Position.DANS_PHRASE;
 
 		for (int curPos = 0; curPos < charArray.length; curPos++) {
 
 			curChar = charArray[curPos];
+
+			if (curPos == marquePhrasePos) {
+				marqueCurPhrase = true;
+			}
 
 			if (curPhrase == null) {
 				curPhrase = new Phrase();
@@ -217,10 +229,11 @@ public class CorpusPhraseService implements PhraseService {
 
 				if (isFinPhrase(charArray, curPos)) {
 					// la phrase est terminée
-					finPhrase(phrases, curPhrase, curChar, phraseBuffer, phraseBufferPos);
+					finPhrase(phrases, curPhrase, curChar, phraseBuffer, phraseBufferPos, marqueCurPhrase);
 
 					curPhrase = null;
 					phraseBufferPos = 0;
+					marqueCurPhrase = false;
 					position = Position.DANS_PHRASE;
 				} else {
 					phraseBuffer[phraseBufferPos++] = curChar;
@@ -242,6 +255,7 @@ public class CorpusPhraseService implements PhraseService {
 			curPhrase.phrase = CharMatcher.WHITESPACE.trimFrom(new String(Arrays.copyOfRange(phraseBuffer, 0, phraseBufferPos)));
 			if (!curPhrase.phrase.isEmpty()) {
 				curPhrase.complète = false; // manque ponctuation finale
+				curPhrase.hasContexte = marqueCurPhrase;
 				phrases.add(curPhrase);
 			}
 		}
@@ -316,7 +330,7 @@ public class CorpusPhraseService implements PhraseService {
 		return start;
 	}
 
-	private void finPhrase(List<Phrase> phrases, Phrase curPhrase, char curChar, char[] buffer, int endBuffer) {
+	private void finPhrase(List<Phrase> phrases, Phrase curPhrase, char curChar, char[] buffer, int endBuffer, boolean hasContexte) {
 
 		buffer[endBuffer] = curChar;
 
@@ -334,7 +348,9 @@ public class CorpusPhraseService implements PhraseService {
 				curPhrase.complète = false;
 			}
 
+			curPhrase.hasContexte = hasContexte;
 			phrases.add(curPhrase);
+
 		}
 
 	}
@@ -354,25 +370,12 @@ public class CorpusPhraseService implements PhraseService {
 		// Reconstitution d'une string complète
 		List<Phrase> phrasesComplètes = getPhrasesComplètes(c);
 
-		int max = c.texteAvant.length();
-
-		Phrase phrasePrécédente = null;
-
-		int posCpt = 0;
 		for (Phrase phrase : phrasesComplètes) {
-			posCpt += phrase.phrase.length();
-			if (posCpt >= max) {
-				if (phrase.phrase.indexOf(c.mot) < 0) {
-					if (phrasePrécédente == null) {
-						System.err.println("phrasePrécédente est NULL");
-					}
-					return phrasePrécédente;
-				}
+			if (phrase.hasContexte)
 				return phrase;
-			}
-			phrasePrécédente = phrase == null ? phrasePrécédente : phrase;
 		}
-		return phrasePrécédente;
+
+		return null;
 	}
 
 	@Override
@@ -385,14 +388,15 @@ public class CorpusPhraseService implements PhraseService {
 			String phraseComplète = phrase.phrase;
 			if (phraseComplète.indexOf(c.mot) < 0) {
 				System.out.println("ERREUR 1: [" + c.mot + "] ne se trouve pas dans [" + phraseComplète + "]");
-				return new Contexte("", "", "");
+				return new Contexte("erreur", "erreur1", "erreur");
 			}
 			// reconstruction d'un contexte à partir de la phrase (offset si
 			// plusieurs fois même mot dans la phrase, sinon tjrs première
 			// occurence retournée)
 
-			// lastIndexOf pour cas où plusieurs fois la même phrase dans un même contexte
-			int positionPhraseDansContexte = c.getPhrase().phrase.lastIndexOf(phraseComplète);
+			// Au cas où plusieurs fois la même phrase dans un même contexte, c'est toujours la première que l'on
+			// retourne. Cela n'a pas d'importance...
+			int positionPhraseDansContexte = c.getPhrase().phrase.indexOf(phraseComplète);
 			if (positionPhraseDansContexte < 0) {
 				System.err.println("ERREUR 1: c.texteAvant.length() - c.getPhrase().phrase.indexOf(phrase.phrase) => " + c.texteAvant.length() + "-"
 						+ Math.max(0, positionPhraseDansContexte));
@@ -402,17 +406,18 @@ public class CorpusPhraseService implements PhraseService {
 
 			int nouveauTexteAvantLength = c.texteAvant.length() - Math.max(0, positionPhraseDansContexte);
 
+			// Gestion de plusieurs fois le même mot dans une même phrase. Il faut retrouver le bon!
 			int débutMot = phraseComplète.indexOf(c.mot, Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()));
-			int finMot = débutMot + c.mot.length();
 
 			if (débutMot < 0) {
-				System.err.println("débutMot < 0, phraseComplète: " + phraseComplète);
-				System.err.println("Contexte=" + c.toString());
-				System.err.println("Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()) = "
-						+ Math.min(nouveauTexteAvantLength - 1, phraseComplète.length() - c.mot.length()));
-				System.err.println("Math.min(" + nouveauTexteAvantLength + "- 1," + phraseComplète.length() + "-" + c.mot.length() + ")");
-				return new Contexte("erreur ", "erreur2", " erreur");
+				// Marche arrière en cas de problème... (un peu cochon, mais suis crevé...)
+				débutMot = phraseComplète.lastIndexOf(c.mot);
+				if (débutMot < 0) {
+					return new Contexte("erreur ", "erreur2", " erreur");
+				}
 			}
+
+			int finMot = débutMot + c.mot.length();
 
 			String texteAvant = phraseComplète.substring(0, débutMot);
 			String mot = phraseComplète.substring(débutMot, finMot);
@@ -452,4 +457,5 @@ public class CorpusPhraseService implements PhraseService {
 		}
 		return texteAprès;
 	}
+
 }

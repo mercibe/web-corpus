@@ -70,4 +70,10 @@ public class RegexpPhraseService implements PhraseService {
 		return null;
 	}
 
+	@Override
+	public List<Phrase> getPhrasesComplètes(String texte, int marquePhrasePos) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

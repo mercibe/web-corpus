@@ -8,4 +8,5 @@ public interface PhraseService {
 	Contexte getContextePhraseComplète(Contexte c);
 	List<Phrase> getPhrasesComplètes(Contexte c);
 	List<Phrase> getPhrasesComplètes(String texte);
+	List<Phrase> getPhrasesComplètes(String texte, int marquePhrasePos);
 }

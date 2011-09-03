@@ -4,6 +4,7 @@ public class Phrase {
 
 	public String phrase = "";
 	public boolean complète;
+	public boolean hasContexte;
 
 	public Phrase() {
 		super();
