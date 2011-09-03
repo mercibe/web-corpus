@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
+import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
@@ -23,6 +25,8 @@ import com.servicelibre.corpus.lucene.LuceneIndexManager;
 import com.servicelibre.corpus.lucene.RésultatRecherche;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.metadata.Metadata;
+import com.servicelibre.corpus.metadata.StringMetadata;
 
 public class CorpusService {
 
@@ -157,15 +161,23 @@ public class CorpusService {
 
 	private ContexteSet getContextes(RésultatRecherche résultats) {
 
+	
+		
 		ContexteSet contexteSet = new ContexteSet();
-
 		List<Contexte> contextes = new ArrayList<Contexte>(résultats.spanCount);
 
+		// Pour chaque document du résultat de recherche...
 		for (int i = 0; i < résultats.scoreDocs.length; i++) {
+			// récupérer les métadonnées du document d'où sont extraits les contextes
+			List<Metadata> docMétadonnées = getMétadonnéesDocument(résultats.scoreDocs[i].doc);
+			
 			List<String[]> ctx = résultats.documentContexts.get(résultats.scoreDocs[i].doc);
 			if (ctx != null && ctx.size() > 0) {
+				//... extraire les contextes trouvés pour ce document
 				for (String[] contextParts : ctx) {
-					contextes.add(new Contexte(contextParts[1], contextParts[2], contextParts[3]));
+					Contexte contexte = new Contexte(contextParts[1], contextParts[2], contextParts[3]);
+					contexte.setDocMétadonnées(docMétadonnées);
+					contextes.add(contexte);
 				}
 			}
 		}
@@ -174,6 +186,28 @@ public class CorpusService {
 		contexteSet.setDocumentCount(résultats.scoreDocs.length);
 
 		return contexteSet;
+	}
+
+	
+	private List<Metadata> getMétadonnéesDocument(int docId) {
+		
+		List<Metadata> métadonnées = new ArrayList<Metadata>();
+		
+		// FIXME passé en paramètre: dépend du corpus!
+		List<String> champs = this.corpus.getNomMétadonnéesList();
+		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
+		
+		if(luceneIndexManager == null){
+			return métadonnées;
+		}
+		for(Fieldable f : luceneIndexManager.getDocument(docId).getFields())
+		{
+			if(!f.isBinary() && champs.contains(f.name())) {
+				métadonnées.add(new StringMetadata(f.name(), f.stringValue()));
+			}
+		}
+		
+		return métadonnées;
 	}
 
 	public List<DefaultKeyValue> getValeursChamp(String champIndex) {

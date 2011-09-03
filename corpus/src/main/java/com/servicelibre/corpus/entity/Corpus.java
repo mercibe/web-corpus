@@ -1,5 +1,8 @@
 package com.servicelibre.corpus.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,6 +41,10 @@ public class Corpus {
 	
 	@Column
 	Boolean parDéfaut;
+
+	//Énumération séparée par des virgules (ex.: biblio, categorie, titre, cycle, edition)
+	@Column
+	String nomMétadonnées = "";
 
 	public Corpus() {
 		super();
@@ -118,5 +125,23 @@ public class Corpus {
 	public String toString() {
 		return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + "]";
 	}
+
+	public List<String> getNomMétadonnéesList() {
+		List<String> noms = new ArrayList<String>();
+		String[] strings = this.nomMétadonnées.split(",");
+		for(String s : strings) {
+			noms.add(s.trim());
+		}
+		return noms;
+	}
+
+	public String getNomMétadonnées() {
+		return nomMétadonnées;
+	}
+
+	public void setNomMétadonnées(String nomMétadonnées) {
+		this.nomMétadonnées = nomMétadonnées;
+	}
+	
 
 }

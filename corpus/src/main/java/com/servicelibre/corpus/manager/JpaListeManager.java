@@ -58,6 +58,9 @@ public class JpaListeManager implements ListeManager
 
     @SuppressWarnings("unchecked")
     @Override
+    /**
+     * Retourne toutes les listes de mots associées au corpus dont l'id est passé en paramètre
+     */
     public List<Liste> findByCorpusId(long corpusId)
     {
         List<Liste> listes = new ArrayList<Liste>();
@@ -73,5 +76,14 @@ public class JpaListeManager implements ListeManager
         
         return listes;
     }
+
+	@Override
+	public int findMaxOrdre() {
+		Number n = (Number)entityManager.createQuery("select MAX(l.ordre) from Liste l").getSingleResult();
+		if(n == null){
+			return 0;
+		}
+		return n.intValue();
+	}
 
 }

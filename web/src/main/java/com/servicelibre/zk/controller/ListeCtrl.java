@@ -435,7 +435,6 @@ public class ListeCtrl extends GenericForwardComposer implements VariableResolve
 
 			}
 		});
-
 		valeurFiltre.setItemRenderer(new ListitemRenderer() {
 
 			@Override

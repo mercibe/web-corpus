@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.manager.CorpusManager;
+import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusPhraseService;
@@ -204,75 +205,7 @@ public class CorpusServiceTest {
 			assertTrue("Les phrases n'ont pas été correctement identifiées", assertPhrases(phrasesTest, phrases));
 		}
 
-		// assertFalse("La 4e phrase doit être incomplète",phrases.get(3).complète);
-
-		// texte =
-		// "Tais-toi, idiot! Pourquoi ne viens-tu pas me voir plus souvent ? On ne sort pas si facilement de prison..."
-		// +
-		// "Les répliques, hormis la première, sont introduites par un tiret cadratin…";
-		// phrases = phraseService.getPhrasesComplètes(texte);
-		// assertNotNull("phrases ne peut être null", phrases);
-		// assertEquals("Mauvais nombre de phrases identifiées.", 4, phrases.size());
-		// afficherPhrases(phrases, texte);
-		//
-		//
-		// texte =
-		// "C'est alors qu'il me dit: « Je n'en ai que faire. »  Quel toupet! La caissière du cinéma m’a recommandé un « film sensationnel ». "
-		// +
-		// "Il évoquait la « culture allemande ». Il a un peu (beaucoup?) menti.";
-		// phrases = phraseService.getPhrasesComplètes(texte);
-		// assertNotNull("phrases ne peut être null", phrases);
-		// afficherPhrases(phrases, texte);
-		//
-		//
-		// texte="Parfois, même, il se surprenait à songer : « C’est peut-être une fée! » Le soir, au lieu de ruminer de sombres pensées, Vieux Thomas "
-		// +
-		// "écoutait le chant des vagues et contemplait sa petite fée sautillant sous les étoiles.   un phrase avec oubli de majuscule. Étonnement, encore une autre..."
-		// +
-		// "Julia chuchote à l'oreille du chien Chien en lui mordillant nerveusement l'oreille : — Tu vois bien qu'ils attendaient l'obscurité. "
-		// +
-		// "Ils attendaient seulement qu'il fasse noir. Ils craignaient sûrement de se faire voir... L'un à la suite de l'autre, en file bien rangée, "
-		// +
-		// "de petits fantômes continuent à entrer par la fenêtre. — Que fais-tu ici? lui lance mon ami mort de rire.  Je l'ignore, me dit-il.";
-		// phrases = phraseService.getPhrasesComplètes(texte);
-		// assertNotNull("phrases ne peut être null", phrases);
-		// afficherPhrases(phrases, texte);
-		//
-		//
-		// texte=" Frédéric à Ti-Mine, quarante-quatre ans, divorcé, la voix éraillée par les Export \"A\", avait confié à son père, "
-		// +
-		// "au-dessus d'un verre de gin : «Vois-tu, mon André, une femme, aujourd'hui, il faut pas la séduire une fois, comme avant! "
-		// +
-		// "Il faut la séduire tous les jours!... J'veux dire, au moins une fois par semaine, godême!...» Les amoureux firent glisser "
-		// +
-		// "la porte et pénétrèrent dans la timonerie. ";
-		// phrases = phraseService.getPhrasesComplètes(texte);
-		// assertNotNull("phrases ne peut être null", phrases);
-		// afficherPhrases(phrases, texte);
-		//
-		//
-		//
-		// texte="nos portes ! » Robert, reconnaissant, leva ses pauvres yeux de chien battu vers la princesse. Elle lui sourit. Aussitôt, il en devint amoureux "
-		// +
-		// " baver de bonheur et à frétiller de la queue pour elle jusqu'à la fin des temps.* Qui mange du chien.De ce jour, Robert ne quitta "
-		// +
-		// "plus la princesse. Il la suivait partout et, bien vite, l'entourage du roi s'habitua à sa présence. Sauf le sénéchal Enguerrand "
-		// +
-		// "de La Trémouille, un teigneux, un patte-pelue*, doublé d'un porc qui lorgnait la main de la princesse... ainsi que bien d'autres parties";
-		// phrases = phraseService.getPhrasesComplètes(texte);
-		// assertNotNull("phrases ne peut être null", phrases);
-		// afficherPhrases(phrases, texte);
-		//
-		// texte="« Eh bien, merci ! dit le chien-saucisse. Marchons ensemble pour voir si nous pouvons atteindre le bout de l’un d’entre nous. » Ils marchèrent "
-		// +
-		// "pendant des heures et des heures… … et quand ils s’arrêtèrent enfin, l’éléphant se tourna vers le serpent "
-		// +
-		// "et dit : « Je me demande où est passé le chien-saucisse. On dirait qu’on voit son autre bout, mais lui, où est-il ? » « Je crois que je l’ai mangé"
-		// +
-		// " tout à l’heure, répondit le serpent. Un peu long à avaler, mais vous savez… j’aime bien les chiens-saucisses. » ";
-		// phrases = phraseService.getPhrasesComplètes(texte);
-		// assertNotNull("phrases ne peut être null", phrases);
-		// afficherPhrases(phrases, texte);
+	
 	}
 
 	/**
@@ -340,6 +273,7 @@ public class CorpusServiceTest {
 	}
 
 	@Test
+	@Ignore
 	public void contextesCorpusPhraseServiceTest() {
 
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
@@ -419,22 +353,6 @@ public class CorpusServiceTest {
 
 		ContexteSet contexteSet = cs.getContextesMot("E");
 
-		// assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
-		// assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
-		//
-		//
-		// System.err.println("# contextes: " + contexteSet.size());
-		// int cpt = 1;
-		// for (Contexte c : contexteSet.getContextes()) {
-		// System.out.println("------" + cpt + "------");
-		//
-		// Phrase phrase = phraseService.getPhraseComplète(c);
-		// System.out.println(phrase.phrase);
-		// Contexte contexte = phraseService.getContextePhraseComplète(c);
-		// System.out.println(contexte);
-		//
-		// }
-
 		cs.setTailleVoisinnage(50);
 		contexteSet = cs.getContextesMot("Raphaël");
 
@@ -450,6 +368,11 @@ public class CorpusServiceTest {
 			System.out.println(phrase.phrase);
 			Contexte contexte = phraseService.getContextePhraseComplète(c);
 			System.out.println(contexte);
+			
+			System.out.println("Métadonnées du document dont est issu le contexte");
+			for(Metadata md : contexte.getDocMétadonnées()){
+				System.out.println(md.getName() + ": " + md.toSimpleString());
+			}
 
 		}
 

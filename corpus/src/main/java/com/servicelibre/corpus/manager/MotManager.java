@@ -24,7 +24,7 @@ public interface MotManager {
 
     Mot save(Mot mot);
 
-    int deleteFromListe(Liste liste);
+    //int removeAllFrom(Liste liste);
 
     List<Mot> findByGraphie(String value, Condition valueOf, FiltreMot filtres);
 

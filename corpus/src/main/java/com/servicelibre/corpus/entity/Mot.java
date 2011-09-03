@@ -13,13 +13,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id", "lemme", "mot", "catgram", "genre" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id",
+		"lemme", "mot", "catgram", "genre" }))
 public class Mot implements Comparable<Mot> {
 
 	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
@@ -29,8 +32,20 @@ public class Mot implements Comparable<Mot> {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mot_seq")
 	private long id;
 
-	@ManyToOne(optional = false)
+	// @ManyToOne(optional = false)
+	// private Liste liste;
+	// Liste primaire
+	@OneToOne
 	private Liste liste;
+
+	/*
+	 * Mot est maître de la relation ManyToMany (il n'a pas le « mappedBy») Il
+	 * est donc responsable de la gestion bi-directionnelle de la relation
+	 * (insert/update)
+	 */
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "mot_liste")
+	Collection<Liste> listes = new ArrayList<Liste>();
 
 	@Column(nullable = false)
 	String mot;
@@ -42,8 +57,9 @@ public class Mot implements Comparable<Mot> {
 	public boolean isLemme;
 
 	/*
-	 * Mot est maître de la relation ManyToMany (il n'a pas le « mappedBy»)
-	 * Il est donc responsable de la gestion bi-directionnelle de la relation (insert/update)
+	 * Mot est maître de la relation ManyToMany (il n'a pas le « mappedBy») Il
+	 * est donc responsable de la gestion bi-directionnelle de la relation
+	 * (insert/update)
 	 */
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "mot_prononciation")
@@ -75,14 +91,17 @@ public class Mot implements Comparable<Mot> {
 		this(mot, lemme, isLemme, catgram, null, null);
 	}
 
-	public Mot(String mot, String lemme, boolean isLemme, String catgram, String note, Liste liste) {
+	public Mot(String mot, String lemme, boolean isLemme, String catgram,
+			String note, Liste liste) {
 		this(liste, mot, lemme, isLemme, catgram, "", "", "", false, note);
 	}
 
-	public Mot(Liste liste, String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro,
-			String note) {
+	public Mot(Liste liste, String mot, String lemme, boolean isLemme,
+			String catgram, String genre, String nombre,
+			String catgramPrécision, boolean ro, String note) {
 		super();
 		this.liste = liste;
+		this.listes.add(liste);
 		this.mot = mot;
 		this.lemme = lemme;
 		this.isLemme = isLemme;
@@ -96,9 +115,12 @@ public class Mot implements Comparable<Mot> {
 
 	@Override
 	public String toString() {
-		return "Mot [id=" + id + ", liste=" + liste + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", prononciations=" + prononciations
-				+ ", catgram=" + catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro + ", note="
-				+ note + "]";
+		return "Mot [id=" + id + ", liste=" + liste + ", mot=" + mot
+				+ ", lemme=" + lemme + ", isLemme=" + isLemme
+				+ ", prononciations=" + prononciations + ", catgram=" + catgram
+				+ ", genre=" + genre + ", nombre=" + nombre
+				+ ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro
+				+ ", note=" + note + "]";
 	}
 
 	public Liste getListe() {
@@ -187,13 +209,22 @@ public class Mot implements Comparable<Mot> {
 		this.prononciations = prononciations;
 	}
 
+	public Collection<Liste> getListes() {
+		return listes;
+	}
+
+	public void setListes(Collection<Liste> listes) {
+		this.listes = listes;
+	}
+
 	@Override
 	public int compareTo(Mot autreMot) {
 		return collator.compare(this.lemme, autreMot.lemme);
 	}
 
 	/**
-	 * Gestion de l'ajout de couple mot/prononciation dans la relation ManyToMany qui unit Mot et Prononciation
+	 * Gestion de l'ajout de couple mot/prononciation dans la relation
+	 * ManyToMany qui unit Mot et Prononciation
 	 * 
 	 * @param prononc
 	 * @return
@@ -205,6 +236,25 @@ public class Mot implements Comparable<Mot> {
 
 		if (!prononc.getMots().contains(this)) {
 			prononc.getMots().add(this);
+		}
+
+		return this;
+	}
+
+	/**
+	 * Gestion de l'ajout de couple mot/liste (étiquette) dans la relation
+	 * ManyToMany qui unit Mot et Liste
+	 * 
+	 * @param liste
+	 * @return
+	 */
+	public Mot ajouteListe(Liste liste) {
+		if (!getListes().contains(liste)) {
+			getListes().add(liste);
+		}
+
+		if (!liste.getMots().contains(this)) {
+			liste.getMots().add(this);
 		}
 
 		return this;

@@ -11,9 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -39,9 +38,12 @@ public class Liste implements Comparable<Liste> {
 	@Column
 	Integer ordre;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "liste_id")
-	List<Mot> mots = new ArrayList<Mot>();
+	// @OneToMany(cascade = CascadeType.ALL)
+	// @JoinColumn(name = "liste_id")
+	// List<Mot> mots = new ArrayList<Mot>();
+
+	@ManyToMany(mappedBy = "listes", cascade = CascadeType.ALL)
+	private List<Mot> mots = new ArrayList<Mot>();
 
 	@ManyToOne(optional = false)
 	Corpus corpus;
@@ -109,7 +111,8 @@ public class Liste implements Comparable<Liste> {
 
 	@Override
 	public String toString() {
-		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
+		return "Liste [id=" + id + ", nom=" + nom + ", description="
+				+ description + ", corpus=" + corpus + "]";
 	}
 
 	/*
@@ -117,7 +120,7 @@ public class Liste implements Comparable<Liste> {
 	 */
 
 	public List<Mot> getMots() {
-		return Collections.unmodifiableList(mots);
+		return mots;
 	}
 
 	public void ajouteMot(Mot mot) {
@@ -126,6 +129,14 @@ public class Liste implements Comparable<Liste> {
 
 	public void supprimeMot(Mot mot) {
 		mot.setListe(null);
+	}
+
+	public int supprimeTousLesMots() {
+		int cptSupprimé = 0;
+		for (Mot mot : mots) {
+			mot.setListe(null);
+		}
+		return cptSupprimé;
 	}
 
 	public void internalAjouteMot(Mot mot) {

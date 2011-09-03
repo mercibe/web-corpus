@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -50,12 +51,20 @@ public class JpaMotManager implements MotManager {
 
 	@Override
 	public Mot findByMot(String lemme, String mot, String catgram, String genre) {
-		return (Mot) entityManager.createQuery("select m from Mot m where m.lemme = ? and m.mot = ? and m.catgram = ? and m.genre = ?")
-		.setParameter(1, lemme)
-		.setParameter(2, mot)
-		.setParameter(3, catgram)
-		.setParameter(4, genre)
-		.getSingleResult();
+		Mot motTrouvé = null;
+		
+		try {
+			motTrouvé =(Mot) entityManager.createQuery("select m from Mot m where m.lemme = ? and m.mot = ? and m.catgram = ? and m.genre = ?")
+			.setParameter(1, lemme)
+			.setParameter(2, mot)
+			.setParameter(3, catgram)
+			.setParameter(4, genre)
+			.getSingleResult();
+		} catch (javax.persistence.NoResultException e) {
+			// retourner NULL
+		}
+		
+		return motTrouvé;
 	}
 	
 	/**
@@ -76,12 +85,12 @@ public class JpaMotManager implements MotManager {
 		return mot;
 	}
 
-	@Override
-	@Transactional(readOnly = false)
-	public int deleteFromListe(Liste liste) {
-		logger.info("Suppression de tous les mots de la liste [{}].", liste);
-		return entityManager.createQuery("delete from Mot m where m.liste = ?").setParameter(1, liste).executeUpdate();
-	}
+//	@Override
+//	@Transactional(readOnly = false)
+//	public int removeAllFrom(Liste liste) {
+//		logger.info("Suppression de tous les mots de la liste [{}].", liste);
+//		return entityManager.createQuery("delete from Mot m where ? MEMBRE OF m.listes").setParameter(1, liste).executeUpdate();
+//	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -229,13 +238,25 @@ public class JpaMotManager implements MotManager {
 
 			if (path != null) {
 
-				In<Object> in = cb.in(path);
+				In<Object> in = null;
 
 				if (filtre.nom.equals("liste")) {
+
+					// Il faut ajouter un critère sur l'objet « listes », variable
+					// d'instance de la classe Mot (collection des listes auxquelles
+					// appartiennent le mot = étiquettes associées au mot)
+					Join<Object, Object> join = motRacine.join("listes");
+
+					in = cb.in(join);
+
+					// Construction de la clause « IN » avec les Ids des listes
+					// présents dans le filtre
 					for (DefaultKeyValue kv : filtre.keyValues) {
-						in.value(new Liste(Long.parseLong(kv.getKey().toString())));
+						in.value(Long.parseLong(kv.getKey().toString()));
 					}
+
 				} else {
+					in = cb.in(path);
 					for (DefaultKeyValue kv : filtre.keyValues) {
 						in.value(kv.getKey());
 					}

@@ -49,6 +49,11 @@ public class LigneMtlSplitter implements LigneSplitter {
 		List<Mot> mots = new ArrayList<Mot>(1);
 
 		String[] cols = ligne.split(SÉPARATEUR);
+		
+		if(cols.length< 3) {
+			System.err.println(ligne);
+			return mots;
+		}
 
 		nettoie(cols);
 

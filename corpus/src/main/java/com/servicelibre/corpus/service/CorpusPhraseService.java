@@ -431,7 +431,7 @@ public class CorpusPhraseService implements PhraseService {
 				texteAprès = CharMatcher.WHITESPACE.trimTrailingFrom(texteAprès.replace("»", ""));
 			}
 
-			return new Contexte(texteAvant, mot, texteAprès);
+			return new Contexte(texteAvant, mot, texteAprès, c.getDocMétadonnées());
 		}
 		return new Contexte("erreur ", "erreur3", " erreur");
 	}

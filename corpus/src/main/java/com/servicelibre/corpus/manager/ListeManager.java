@@ -18,4 +18,6 @@ public interface ListeManager // extends JpaRepository<Liste, Long>
 	
 	Liste save(Liste liste);
 
+	int findMaxOrdre();
+
 }

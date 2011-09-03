@@ -2,6 +2,7 @@ package com.servicelibre.corpus.liste;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -64,25 +65,46 @@ public class ListeImport
             MotManager mm = (MotManager) ctx.getBean("motManager");
 
             // Suppression des mots qui existeraient déjà pour cette liste
-            int deleteCount = mm.deleteFromListe(currentListe);
-            logger.info("{} mots ont été supprimés de la liste {}.", deleteCount, currentListe);
+            //int deleteCount = mm.removeAllFrom(currentListe);
+//            logger.info("Suppression des mots de la liste {}.", currentListe);
+//            currentListe.supprimeTousLesMots();
 
             try
             {
                 List<String> lignes = FileUtils.readLines(fichierSource);
 
-                int cptMot = 0;
+                int cptMotAjouté = 0;
+                int cptNouvelleÉtiquette = 0;
                 for (String ligne : lignes)
                 {
+                	// Ignore les lignes vides
+                	if(ligne.isEmpty()){
+                		continue;
+                	}
+                	
                     List<Mot> mots = splitter.splitLigne(ligne, currentListe);
                     for (Mot mot : mots)
                     {
-                        mm.save(mot);
-                        cptMot++;
+                    	
+                    	System.err.println("recherche " + mot.lemme);
+                    	
+                    	// le mot existe-t-il déjà?
+                    	Mot motCourant = mm.findByMot(mot.lemme, mot.getMot(), mot.getCatgram(), mot.getGenre());
+                    	//Si oui, lui associer simplement sa liste
+                    	if(motCourant == null) {
+                    		logger.info("Ajout du mot [{}]", mot.lemme);
+                    		cptMotAjouté++;
+                    		mm.save(mot);
+                    	}
+                    	else {
+                    		logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]",currentListe.getNom(), mot.lemme);
+                    		motCourant.ajouteListe(currentListe);
+                    		cptNouvelleÉtiquette++;
+                    	}
                     }
                 }
 
-                logger.info("{} mots ont été ajoutés à la liste {}.", cptMot, currentListe);
+                logger.info("{} mots ont été ajoutés à la liste {}. {} nouvelles étiquettes.", new Object[]{cptMotAjouté, currentListe, cptNouvelleÉtiquette});
 
             }
             catch (IOException e)
@@ -116,6 +138,11 @@ public class ListeImport
         if (dbListe == null)
         {
             logger.info("Création de la liste {} dans la base de données.", currentListe);
+            
+            // récupération de l'ordre le plus élevé
+            int maxOrdre = lm.findMaxOrdre();
+            currentListe.setOrdre(maxOrdre + 10);
+            
             lm.save(currentListe);
             return currentListe;
         }

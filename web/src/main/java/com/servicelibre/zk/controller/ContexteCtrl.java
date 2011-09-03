@@ -430,17 +430,31 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 			@Override
 			public void render(Row row, Object model) throws Exception {
-				Contexte contexte = (Contexte) model;
+				Contexte contexteInitial = (Contexte) model;
 				
 				if(phraseComplète) {
-					contexte = phraseService.getContextePhraseComplète(contexte);
+					contexteInitial = phraseService.getContextePhraseComplète(contexteInitial);
 				}
-
+				
+				final Contexte contexte = contexteInitial;
+				
 				Span ctxSpan = new Span();
 				ctxSpan.appendChild(new Label(contexte.texteAvant));
 
 				Label mot = new Label(contexte.mot);
 				mot.setStyle("font-weight: bold;");
+				
+				
+				mot.addEventListener(Events.ON_CLICK, new EventListener() {
+					
+					@Override
+					public void onEvent(Event arg0) throws Exception {
+						Label l = (Label) arg0.getTarget();
+						System.out.println(contexte.getDocMétadonnées());
+						
+					}
+				});
+				
 				// mot.setHeight("20px");
 				ctxSpan.appendChild(mot);
 
