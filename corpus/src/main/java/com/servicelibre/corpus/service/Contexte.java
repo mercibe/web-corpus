@@ -7,23 +7,12 @@ import com.servicelibre.corpus.metadata.Metadata;
 
 public class Contexte {
 
-	// TODO ajouter metadonnées du document source (pour affichage/traitement
-	// ultérieur éventuel)
-	// Toutes les métas ou seulement une seulement une liste finie passée en
-	// argument lors de la construction? (Map<String, String>)
-
 	public String texteAvant;
 	public String mot;
 	public String texteAprès;
 	private List<Metadata> docMétadonnées = new ArrayList<Metadata>();
-
-	public Contexte(String texteAvant, String mot, String texteAprès, List<Metadata> docMétadonnées) {
-		super();
-		this.texteAvant = texteAvant;
-		this.mot = mot;
-		this.texteAprès = texteAprès;
-		this.docMétadonnées = docMétadonnées;
-	}
+	private String id;
+	private Contexte contexteSource;
 
 	public Contexte(String texteAvant, String mot, String texteAprès) {
 		super();
@@ -49,6 +38,22 @@ public class Contexte {
 
 	public List<Metadata> getDocMétadonnées() {
 		return docMétadonnées;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setContexteSource(Contexte contexteSource) {
+		this.contexteSource = contexteSource;
+	}
+
+	public Contexte getContexteSource() {
+		return contexteSource;
 	}
 
 }

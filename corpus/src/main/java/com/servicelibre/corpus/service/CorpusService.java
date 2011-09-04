@@ -12,6 +12,8 @@ import java.util.Map;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -174,9 +176,12 @@ public class CorpusService {
 			List<String[]> ctx = résultats.documentContexts.get(résultats.scoreDocs[i].doc);
 			if (ctx != null && ctx.size() > 0) {
 				//... extraire les contextes trouvés pour ce document
+				int cptContext = 1;
 				for (String[] contextParts : ctx) {
 					Contexte contexte = new Contexte(contextParts[1], contextParts[2], contextParts[3]);
 					contexte.setDocMétadonnées(docMétadonnées);
+					contexte.setId(new StringBuilder().append(contexte.mot).append("_").append(résultats.scoreDocs[i].doc).append("_").append(cptContext).toString());
+					cptContext++;
 					contextes.add(contexte);
 				}
 			}
@@ -194,18 +199,23 @@ public class CorpusService {
 		List<Metadata> métadonnées = new ArrayList<Metadata>();
 		
 		// FIXME passé en paramètre: dépend du corpus!
-		List<String> champs = this.corpus.getNomMétadonnéesList();
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
 		
 		if(luceneIndexManager == null){
 			return métadonnées;
 		}
-		for(Fieldable f : luceneIndexManager.getDocument(docId).getFields())
-		{
-			if(!f.isBinary() && champs.contains(f.name())) {
-				métadonnées.add(new StringMetadata(f.name(), f.stringValue()));
+		
+		Document document = luceneIndexManager.getDocument(docId);
+		
+		// Récupère tous les champs à associer au contexte jugés pertinents
+		// L'ordre des champs de la liste est respecté
+		for(String nomChamp : this.corpus.getNomMétadonnéesList()) {
+			Field champ = document.getField(nomChamp);
+			if(champ != null && !champ.isBinary()) {
+				métadonnées.add(new StringMetadata(nomChamp, champ.stringValue()));
 			}
 		}
+		
 		
 		return métadonnées;
 	}

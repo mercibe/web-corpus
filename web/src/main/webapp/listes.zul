@@ -46,7 +46,7 @@
 							value="ENTIER" />
 					</combobox>
 					
-				<textbox id="cherche"></textbox>
+				<textbox id="cherche" focus="true"></textbox>
 				
 				<button id="boutonRecherche" label="Recherche"/>
 			</hbox>

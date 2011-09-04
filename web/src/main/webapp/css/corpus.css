@@ -23,30 +23,45 @@ body {
 	overflow-x: auto;
 	overflow-y: auto;
 	width: 1030px;
-	height: 830px
+	height: 830px;
+	font-size: 10px;
 }
 
  tr.z-row td.z-row-inner { 
       padding: 2px 5px; 
     } 
 
-    .z-column-cnt {
-      text-align: center; 
-    } 
+ .z-column-cnt {
+   text-align: center; 
+ } 
+
+ .category-center .z-auxheader-cnt { 
+   text-align: center; 
+ }
+
+ .footer_right .z-footer-cnt {
+       text-align: right;
+       font-weight: bold; 
+ }
+     
+ .titre1 {
+ 	font-size:20px;
+ }
  
-    .category-center .z-auxheader-cnt { 
-      text-align: center; 
-    }
+ .titre2 {
+ 	font-size:15px;
+ }
  
-    .footer_right .z-footer-cnt {
-          text-align: right;
-          font-weight: bold; 
-    }
-        
-    .titre1 {
-    	font-size:20px;
-    }
-    
-    .titre2 {
-    	font-size:15px;
-    }
+  .titre3 {
+ 	font-size:14px;
+ 	font-weight: bold; 
+ }
+ 
+  .titre4 {
+ 	font-size:12px;
+ 	font-weight: bold;
+ }
+ 
+ .terme {
+   font-weight: bold;
+ }

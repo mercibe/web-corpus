@@ -12,7 +12,7 @@
 					value="TOUTES_LES_FORMES_DU_MOT" />
 			</combobox>
 			
-			<textbox id="cherche"></textbox>
+			<textbox id="cherche" focus="true"></textbox>
 			
 			<combobox id="voisinage" readonly="true" width="185px">
 				<comboitem label="dans une phrase complète" value="0"/>

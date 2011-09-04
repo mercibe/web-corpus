@@ -1,37 +1,30 @@
 package com.servicelibre.zk.controller;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.collections.keyvalue.DefaultKeyValue;
-import org.zkoss.xel.VariableResolver;
-import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Group;
+import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
-import org.zkoss.zul.SimpleGroupsModel;
-import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Span;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
@@ -45,7 +38,7 @@ import com.servicelibre.corpus.service.PhraseService;
  * @author benoitm
  * 
  */
-public class ContexteCtrl extends GenericForwardComposer implements VariableResolver {
+public class ContexteCtrl extends CorpusCtrl {
 
 	// private static final int CORPUS_ID_PAR_DÉFAUT = 1;
 
@@ -59,63 +52,40 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 	Grid contextesGrid; // autowire car même type/ID que le composant dans la
 	// page ZUL
 
-	Listbox nomFiltre; // autowire car même type/ID que le composant dans la
-	// page ZUL
-	Listbox valeurFiltre;// autowire car même type/ID que le composant dans la
-	// page ZUL
-
-	Button boutonAjoutFiltre;// autowire car même type/ID que le composant dans
-	// la page ZUL
-	Grid gridFiltreActif;// autowire car même type/ID que le composant dans la
-	// page ZUL
-
 	Window contexteWindow;
 
 	Label infoRésultats;
-	
+
 	PhraseService phraseService = new CorpusPhraseService();
-
-	/**
-	 * Permet de remplir les choix de filtres/valeurs possibles
-	 */
-	ContexteFiltreManager filtreManager = ServiceLocator.getContexteFiltreManager();
-
-	/**
-	 * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
-	 * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
-	 * le filtre en construction par l'utilisateur.
-	 */
-	FiltreMot filtreActifModel = new FiltreMot();
 
 	CorpusService corpusService = ServiceLocator.getCorpusService();
 
 	private static final long serialVersionUID = 779679285074159073L;
 
-	private Window webCorpusWindow;
 	private boolean phraseComplète;
 
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
 	public void onOK$cherche(Event event) {
-		chercheEtAfficheContextes();
+		chercheEtAffiche();
 	}
 
 	public void onClick$boutonRecherche(Event event) {
 
-		chercheEtAfficheContextes();
+		chercheEtAffiche();
 
 	}
 
 	public void onOK$liste(Event event) {
-		chercheEtAfficheContextes();
+		chercheEtAffiche();
 	}
 
 	public void onOK$condition(Event event) {
-		chercheEtAfficheContextes();
+		chercheEtAffiche();
 	}
 
 	public void onOK$gp(Event event) {
-		chercheEtAfficheContextes();
+		chercheEtAffiche();
 	}
 
 	public void onAfficheContexte$contexteWindow(Event event) {
@@ -137,98 +107,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 		contexteTab.setSelected(true);
 
 		// Lancer la recherche
-		chercheEtAfficheContextes();
-
-	}
-
-	// public void onSelect$liste(Event event) {
-	// chercheEtAfficheMot();
-	// }
-	// public void onSelect$condition(Event event) {
-	// chercheEtAfficheMot();
-	// }
-
-	public void onClick$boutonAjoutFiltre(Event event) {
-
-		if (valeurFiltre.getItemCount() > 0) {
-
-			Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
-			String nom = filtreNomActuel.getValue().toString();
-			String description = filtreNomActuel.getLabel();
-
-			Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
-			List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(1);
-			valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
-
-			filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
-			gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
-
-			// suppression de la valeur active de la liste de choix
-			filtreManager.setFiltreActif(filtreActifModel);
-			rafraichiValeurFiltreCourant();
-
-			chercheEtAfficheContextes();
-		}
-
-	}
-
-	public void onSelect$nomFiltre(Event event) {
-		rafraichiValeurFiltreCourant();
-
-	}
-
-	public void onAfterRender$nomFiltre() {
-		rafraichiValeurFiltreCourant();
-	}
-
-	private void rafraichiValeurFiltreCourant() {
-		Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
-
-		if (currentItem != null && currentItem.getValue() != null) {
-			List<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
-			valeurFiltre.setModel(new SimpleListModel(filtreValeurs.toArray()));
-			if (filtreValeurs.size() > 0) {
-				valeurFiltre.setSelectedIndex(0);
-			}
-		}
-	}
-
-	/**
-	 * Permet d'associer dynamiquement le contenu d'un composant via variable
-	 * resolver et EL expression (read-only seulement)
-	 */
-	@Override
-	public Object resolveVariable(String variableName) throws XelException {
-		// if (variableName.equals("listes"))
-		// {
-		// List<Liste> listes = new ArrayList<Liste>(1);
-		// listes.add(new Liste("Toutes les listes", "Toutes les listes",
-		// null));
-		// listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
-		// return listes;
-		// }
-		return null;
-	}
-
-	public void chercheEtAfficheContextes() {
-
-		ContexteSet contexteSet = getContexteSet();
-		
-		contextesGrid.setModel(new ListModelList(contexteSet.getContextes()));
-		contextesGrid.getPaginal().setActivePage(0);
-
-		infoRésultats.setValue(getInfoRésultat(contexteSet));
-
-		// mettre à jour les informations sur les résultats
-
-		// les contextes sont toujours retournés par ordre de documents =>
-		// refléter dans la colonne (réinitialisation du marqueur de tri)
-		// tri ZK
-		// TODO conserver le tri de l'utilisateur avant de lancer la recherche
-		// et le réappliquer après
-		// Column motColumn = (Column)
-		// contextesGrid.getColumns().getFellow("mot");
-		// motColumn.sort(true);
+		chercheEtAffiche();
 
 	}
 
@@ -248,7 +127,7 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 	private ContexteSet getContexteSet() {
 
 		phraseComplète = false;
-		
+
 		ContexteSet contexteSet = new ContexteSet();
 
 		String aChercher = cherche.getText();
@@ -261,44 +140,24 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 		int voisinnage = Integer.parseInt(voisinage.getSelectedItem().getValue().toString());
 		// Recherche phrase complète
-		if (voisinnage == 0)
-		{
+		if (voisinnage == 0) {
 			phraseComplète = true;
 		}
-		
-		corpusService.setTailleVoisinnage(phraseComplète?50:voisinnage);
+
+		corpusService.setTailleVoisinnage(phraseComplète ? 50 : voisinnage);
 
 		FiltreMot filtres = getFiltres();
-		
+
 		// Chercher toutes les formes en fonction de condition.getValue()
 		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
 			// FIXME quid si le mot n'est pas un lemme? Rechercher son lemme et
 			// lancer la recherche?
 			contexteSet = corpusService.getContextesLemme(aChercher, filtres);
 		} else {
-			contexteSet =  corpusService.getContextesMot(aChercher, filtres);
+			contexteSet = corpusService.getContextesMot(aChercher, filtres);
 		}
-		
-		
+
 		return contexteSet;
-	}
-
-	/**
-	 * Retourne le filtre à appliquer pour la recherche des mots
-	 * 
-	 * @return
-	 */
-	private FiltreMot getFiltres() {
-		
-		FiltreMot filtres = new FiltreMot();
-
-		// Ajout des autres filtres
-		for (Filtre filtre : filtreActifModel.getFiltres()) {
-			System.err.println("Ajout du filtre utilisateur " + filtre);
-			filtres.addFiltre(filtre);
-		}
-
-		return filtres;
 	}
 
 	/**
@@ -326,99 +185,13 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 		initialiseChamps();
 
-		initialiseRecherche();
-
 		initialiseContexteGrid();
-
-		initialiseFiltre();
 
 	}
 
 	private void initialiseChamps() {
 		Page webCorpusPage = desktop.getPage("webCorpusPage");
 		webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
-
-	}
-
-	private void initialiseFiltre() {
-
-		// Initialisation des filtres (noms)
-		nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
-
-		nomFiltre.setItemRenderer(new ListitemRenderer() {
-
-			@Override
-			public void render(Listitem item, Object keyValue) throws Exception {
-				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
-				item.setValue(kv.getKey());
-				item.setLabel(kv.getValue().toString());
-
-			}
-		});
-
-		valeurFiltre.setItemRenderer(new ListitemRenderer() {
-
-			@Override
-			public void render(Listitem item, Object keyValue) throws Exception {
-				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
-				item.setValue(kv.getKey());
-				item.setLabel(kv.getValue().toString());
-
-			}
-		});
-
-		if (nomFiltre.getItemCount() > 0) {
-			nomFiltre.setSelectedIndex(0);
-		}
-
-		// DefaultKeyValue
-		Object[][] data = new Object[][] {};
-		Object[] heads = new Object[] {};
-
-		gridFiltreActif.setModel(new SimpleGroupsModel(data, heads));
-
-		gridFiltreActif.setRowRenderer(new RowRenderer() {
-
-			@Override
-			public void render(Row row, Object model) throws Exception {
-
-				DefaultKeyValue cv = (DefaultKeyValue) model;
-
-				final Row currentRow = row;
-
-				Label label = new Label(cv.getValue().toString());
-				label.setAttribute("key", cv.getKey());
-				label.setParent(row);
-
-				// Ajouter bouton « supprimer » si pas un groupe
-				if (!(row instanceof Group)) {
-
-					final Button supprimeBtn = new Button("Supprimer");
-					supprimeBtn.setMold("os");
-					supprimeBtn.setParent(row);
-					supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener() {
-
-						@Override
-						public void onEvent(Event arg0) throws Exception {
-
-							if (currentRow != null) {
-
-								Label labelValeur = (Label) currentRow.getFirstChild();
-								Label labelGroupe = (Label) currentRow.getGroup().getFirstChild();
-								filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key").toString());
-								gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
-
-								filtreManager.setFiltreActif(filtreActifModel);
-								rafraichiValeurFiltreCourant();
-
-								chercheEtAfficheContextes();
-							}
-						}
-					});
-				}
-
-			}
-		});
 
 	}
 
@@ -431,30 +204,31 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 			@Override
 			public void render(Row row, Object model) throws Exception {
 				Contexte contexteInitial = (Contexte) model;
-				
-				if(phraseComplète) {
+
+				if (phraseComplète) {
 					contexteInitial = phraseService.getContextePhraseComplète(contexteInitial);
 				}
-				
+
 				final Contexte contexte = contexteInitial;
-				
+
 				Span ctxSpan = new Span();
 				ctxSpan.appendChild(new Label(contexte.texteAvant));
 
-				Label mot = new Label(contexte.mot);
-				mot.setStyle("font-weight: bold;");
-				
-				
+				Label mot = new Label(contexte.mot);mot.setTooltiptext(contexte.getId());
+				mot.setStyle("font-weight: bold; cursor:hand;cursor:pointer;");
+
 				mot.addEventListener(Events.ON_CLICK, new EventListener() {
-					
+
 					@Override
 					public void onEvent(Event arg0) throws Exception {
 						Label l = (Label) arg0.getTarget();
-						System.out.println(contexte.getDocMétadonnées());
-						
+
+						créeEtAfficheOngletInfoContexte(contexte);
+
 					}
+
 				});
-				
+
 				// mot.setHeight("20px");
 				ctxSpan.appendChild(mot);
 
@@ -470,9 +244,120 @@ public class ContexteCtrl extends GenericForwardComposer implements VariableReso
 
 	}
 
-	private void initialiseRecherche() {
+	private void créeEtAfficheOngletInfoContexte(Contexte contexte) {
+		System.out.println(contexte.getDocMétadonnées());
+
+		// Vérifier si contexte déjà ouvert
+
+		Tab infoContexteTab = getTabContexteDéjàOuvert(contexte);
+
+		if (infoContexteTab == null) {
+			infoContexteTab = new Tab(contexte.getId());
+			infoContexteTab.setId(contexte.getId());
+			infoContexteTab.setClosable(true);
+			infoContexteTab.setTooltiptext(contexte.getId());
+			infoContexteTab.setParent(corpusTabs);
+			
+			// Ajouter panel
+			Tabpanel tabpanel = new Tabpanel();
+			
+			// TODO pour améliorer vue des contextes
+			/*
+			 * - s'asurer que tous les contextes aient des métadonnées
+			 * - naviguer au contexte suivant/précédent (cf. grid de l'onglet contexte.  Via Model?) => changer id du tab aussi!
+			 * - afficher numéro de ligne/contexte
+			 * - mapping DB entre nom champ index Lucene et nom logique
+			 * - phrases du voisinnage non nettoyées (conserver retours à la ligne, etc.)
+			 * - afficher document binaire source (téléchargement) si rôle admin
+			 */
+			
+			
+			Map<String,Object> args = new HashMap<String,Object>();
+			args.put("mot", contexte.mot);
+			args.put("métadonnées", contexte.getDocMétadonnées());
+			
+			Contexte contexteSource = contexte.getContexteSource();
+			if(contexteSource != null) {
+				// La phrase complète a déjà été extraite.  Il s'agit du contexte lui-même
+				args.put("phrase_g", contexte.texteAvant);
+				args.put("phrase_m", contexte.mot);
+				args.put("phrase_d", contexte.texteAprès);
+				
+				// Le voisinnage plus complet = contexteSource
+				args.put("voisinnage_g",contexteSource.texteAvant);
+				args.put("voisinnage_m",contexteSource.mot);
+				args.put("voisinnage_d",contexteSource.texteAprès);
+			}
+			else {
+				
+				Contexte contextePhraseComplète = phraseService.getContextePhraseComplète(contexte);
+				args.put("phrase_g",contextePhraseComplète.texteAvant);
+				args.put("phrase_m",contextePhraseComplète.mot);
+				args.put("phrase_d",contextePhraseComplète.texteAprès);
+				
+				args.put("voisinnage_g",contexte.texteAvant);
+				args.put("voisinnage_m",contexte.mot);
+				args.put("voisinnage_d",contexte.texteAprès);
+			}
+			
+			Executions.createComponents("/infoContexte.zul", tabpanel, args);
+			
+			
+			tabpanel.setParent(corpusTabpanels);
+		}
+		else {
+			System.out.println("Onglet info contexte déjà ouvert: " + contexte.getId());
+			// Donner le focus
+		}
+		
+		infoContexteTab.setSelected(true);
+		
+		
+
+	}
+
+	private Tab getTabContexteDéjàOuvert(Contexte contexte) {
+		@SuppressWarnings("unchecked")
+		List<Tab> children = corpusTabs.getChildren();
+		for (Tab tab : children) {
+			if (tab.getId().equals(contexte.getId())) {
+				return tab;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void chercheEtAffiche() {
+		ContexteSet contexteSet = getContexteSet();
+
+		contextesGrid.setModel(new ListModelList(contexteSet.getContextes()));
+		contextesGrid.getPaginal().setActivePage(0);
+
+		infoRésultats.setValue(getInfoRésultat(contexteSet));
+
+		// mettre à jour les informations sur les résultats
+
+		// les contextes sont toujours retournés par ordre de documents =>
+		// refléter dans la colonne (réinitialisation du marqueur de tri)
+		// tri ZK
+		// TODO conserver le tri de l'utilisateur avant de lancer la recherche
+		// et le réappliquer après
+		// Column motColumn = (Column)
+		// contextesGrid.getColumns().getFellow("mot");
+		// motColumn.sort(true);
+
+	}
+
+	@Override
+	public void initialiseRecherche() {
 		condition.setSelectedIndex(0);
 		voisinage.setSelectedIndex(0);
+	}
+
+	@Override
+	public void initFiltreManager() {
+		this.filtreManager = ServiceLocator.getContexteFiltreManager();
 
 	}
 

@@ -371,7 +371,7 @@ public class CorpusServiceTest {
 			
 			System.out.println("Métadonnées du document dont est issu le contexte");
 			for(Metadata md : contexte.getDocMétadonnées()){
-				System.out.println(md.getName() + ": " + md.toSimpleString());
+				System.out.println(md.getName() + ": " + md.getSimpleString());
 			}
 
 		}

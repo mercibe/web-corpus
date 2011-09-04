@@ -59,7 +59,7 @@ public class IntMetadata implements Metadata {
 	}
 	
 	@Override
-	public String toSimpleString() {
+	public String getSimpleString() {
 		return ""+value;
 	}
 	

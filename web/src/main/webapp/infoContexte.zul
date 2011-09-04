@@ -1,0 +1,44 @@
+
+<zk>
+<div align="center" style="margin:10px;">
+	<label sclass="titre3" value="Contexte d'utilisation du mot «&#xA0;${arg.mot}&#xA0;»" />
+</div>
+
+<div align="center" style="margin:15px;">
+	<label sclass="titre4" value="Phrase complète" />
+		<div align="center" style="margin:15px;">
+			<label value="${arg.phrase_g}"/>
+			<label value="${arg.phrase_m}" sclass="terme"/>
+			<label value="${arg.phrase_d}"/>
+		</div>	
+	
+</div>
+
+<div align="center" style="margin:15px;">
+	<label sclass="titre4" value="Voisinnage" />
+		<div align="left" style="margin:15px;">
+			<label value="${arg.voisinnage_g}"/>
+			<label value="${arg.voisinnage_m}" sclass="terme"/>
+			<label value="${arg.voisinnage_d}"/>
+		</div>	
+</div>
+
+<div align="center" style="margin:15px;">
+	<label sclass="titre4" value="Métadonnées du document source" />
+	<grid width="50%" style="margin:15px;">
+		<columns>
+			<column hflex="1" label="Métadonnée"/>
+			<column hflex="4" label="Valeur"/>
+		</columns>
+		<rows>
+		<zk forEach="${arg.métadonnées}">
+			<row>
+				<label value="${each.name}">
+				</label><label value="${each.simpleString}"></label>
+			</row>
+		</zk>
+		</rows>
+	</grid>
+</div>
+
+</zk>

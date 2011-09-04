@@ -107,10 +107,10 @@ public class ListeManagerTest implements ApplicationContextAware
     public void testContenuDB()
     {
         Liste liste_test_1 = lm.findByNom(listeTest1.getNom());
-        assertEquals(2299, liste_test_1.getMots().size());
+        assertEquals(50, liste_test_1.getMots().size());
 
         liste_test_1 = lm.findOne(listeTest1.getId());
-        assertEquals(2299, liste_test_1.getMots().size());
+        assertEquals(50, liste_test_1.getMots().size());
     }
 
     @Override

@@ -27,5 +27,5 @@ public interface Metadata {
 	public void setName(String name);
 
 	public abstract String toString();
-	public abstract String toSimpleString();
+	public abstract String getSimpleString();
 }
