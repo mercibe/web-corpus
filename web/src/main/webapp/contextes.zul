@@ -16,6 +16,10 @@
 			
 			<combobox id="voisinage" readonly="true" width="185px">
 				<comboitem label="dans une phrase complète" value="0"/>
+				<comboitem label="entouré de 1 mots" value="1"/>
+				<comboitem label="entouré de 2 mots" value="2"/>
+				<comboitem label="entouré de 3 mots" value="3"/>
+				<comboitem label="entouré de 4 mots" value="4"/>
 				<comboitem label="entouré de 5 mots" value="5"/>
 				<comboitem label="entouré de 6 mots" value="6"/>
 				<comboitem label="entouré de 7 mots" value="7"/>
@@ -65,9 +69,11 @@
 			</groupbox>
 			
 			<vbox  height="645px" width="700px">
-			
-					<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
-					
+					<div>
+							<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
+							<a id="cooccurrentLien">cooccurrents</a>
+					</div>
+							
 					<grid id="contextesGrid" mold="paging" pageSize="15"
 						 emptyMessage="Aucun contexte trouvé." height="620px" width="700px">
 						<!-- 	pagingPosition="both" sizedByContent="true"> -->

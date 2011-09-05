@@ -10,10 +10,10 @@ import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Row;
@@ -28,8 +28,10 @@ import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
+import com.servicelibre.corpus.service.ContexteSet.Position;
 import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.corpus.service.InfoCooccurrent;
 import com.servicelibre.corpus.service.PhraseService;
 
 /**
@@ -42,6 +44,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	// private static final int CORPUS_ID_PAR_DÉFAUT = 1;
 
+	private static final int MAX_COOCCURRENTS = 100;
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
 	Textbox cherche; // autowire car même type/ID que le composant dans la page
@@ -56,6 +59,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	Label infoRésultats;
 
+	A cooccurrentLien;
+
 	PhraseService phraseService = new CorpusPhraseService();
 
 	CorpusService corpusService = ServiceLocator.getCorpusService();
@@ -63,6 +68,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private boolean phraseComplète;
+	private ContexteSet contexteSetCourant;
 
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
@@ -78,6 +84,10 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	public void onOK$liste(Event event) {
 		chercheEtAffiche();
+	}
+
+	public void onClick$cooccurrentLien(Event event) {
+		afficheCooccurrents();
 	}
 
 	public void onOK$condition(Event event) {
@@ -117,9 +127,15 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		// TODO rendre plus « intelligent » (cf. listes)
 		String terminaison = contexteSet.size() > 1 ? "s" : "";
-		sb.append(contexteSet.size()).append(" occurrence").append(terminaison).append(contexteSet.isFormesDuLemme() ? " des formes du mot « " : " du mot « ")
-				.append(contexteSet.getMotCherché()).append(" » trouvée").append(terminaison).append(" dans ").append(contexteSet.getDocumentCount())
-				.append(" document").append(contexteSet.getDocumentCount() > 1 ? "s" : "").append(".");
+		sb.append(contexteSet.size())
+				.append(" occurrence")
+				.append(terminaison)
+				.append(contexteSet.isFormesDuLemme() ? " des formes du mot « "
+						: " du mot « ").append(contexteSet.getMotCherché())
+				.append(" » trouvée").append(terminaison).append(" dans ")
+				.append(contexteSet.getDocumentCount()).append(" document")
+				.append(contexteSet.getDocumentCount() > 1 ? "s" : "")
+				.append(".");
 
 		return sb.toString();
 	}
@@ -138,7 +154,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		System.out.println(getDescriptionRecherche());
 
-		int voisinnage = Integer.parseInt(voisinage.getSelectedItem().getValue().toString());
+		int voisinnage = Integer.parseInt(voisinage.getSelectedItem()
+				.getValue().toString());
 		// Recherche phrase complète
 		if (voisinnage == 0) {
 			phraseComplète = true;
@@ -149,7 +166,8 @@ public class ContexteCtrl extends CorpusCtrl {
 		FiltreMot filtres = getFiltres();
 
 		// Chercher toutes les formes en fonction de condition.getValue()
-		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
+		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue()
+				.equals("TOUTES_LES_FORMES_DU_MOT")) {
 			// FIXME quid si le mot n'est pas un lemme? Rechercher son lemme et
 			// lancer la recherche?
 			contexteSet = corpusService.getContextesLemme(aChercher, filtres);
@@ -171,7 +189,8 @@ public class ContexteCtrl extends CorpusCtrl {
 		String aChercher = cherche.getValue().trim();
 
 		if (!aChercher.isEmpty()) {
-			desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
+			desc.append("Rechercher les contextes pour ").append(
+					condition.getValue().toLowerCase());
 
 			desc.append(" « ").append(aChercher).append(" »");
 		}
@@ -197,7 +216,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	private void initialiseContexteGrid() {
 
-		contextesGrid.setModel(new ListModelList(getContexteSet().getContextes()));
+		contextesGrid.setModel(new ListModelList(getContexteSet()
+				.getContextes()));
 
 		contextesGrid.setRowRenderer(new RowRenderer() {
 
@@ -206,7 +226,8 @@ public class ContexteCtrl extends CorpusCtrl {
 				Contexte contexteInitial = (Contexte) model;
 
 				if (phraseComplète) {
-					contexteInitial = phraseService.getContextePhraseComplète(contexteInitial);
+					contexteInitial = phraseService
+							.getContextePhraseComplète(contexteInitial);
 				}
 
 				final Contexte contexte = contexteInitial;
@@ -214,7 +235,8 @@ public class ContexteCtrl extends CorpusCtrl {
 				Span ctxSpan = new Span();
 				ctxSpan.appendChild(new Label(contexte.texteAvant));
 
-				Label mot = new Label(contexte.mot);mot.setTooltiptext(contexte.getId());
+				Label mot = new Label(contexte.mot);
+				mot.setTooltiptext(contexte.getId());
 				mot.setStyle("font-weight: bold; cursor:hand;cursor:pointer;");
 
 				mot.addEventListener(Events.ON_CLICK, new EventListener() {
@@ -244,12 +266,70 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	}
 
+	private void afficheCooccurrents() {
+
+		// TODO prévenir/possibilité annuler si voisinage trop grand et beaucoup de contexte: 5
+		// minutes au moins!
+		// conseil: réduire le voisinage à moins de 5 mots... (phrase complète)
+		
+		if(contexteSetCourant.getContextesSize() > 200 || contexteSetCourant.getTailleVoisinage() > 10)
+		{
+			System.err.println("Cela va être long...");
+		}
+		
+		if (contexteSetCourant == null) {
+			return;
+		}
+		
+		String id = contexteSetCourant.getMotCherché() + "_" + contexteSetCourant.getTailleVoisinage();
+
+		// TODO pour améliorer vue des cooccurrents
+					/*
+					 * - lemmatiser les tokens + comptage sur lemme et plus sur mot
+					 * - afficher catgram du lemme + filtre sur catgram
+					 * - cliquer sur un cooccurrent recherche les contextes du terme et du cooccurrent (SpanNear query custom) 
+					 */
+		
+		Tab infoCooccurrentTab = getTabDéjàOuvert(id);
+
+		if (infoCooccurrentTab == null) {
+			infoCooccurrentTab = new Tab(id);
+			infoCooccurrentTab.setId(id);
+			infoCooccurrentTab.setClosable(true);
+			infoCooccurrentTab.setTooltiptext(id);
+			infoCooccurrentTab.setParent(corpusTabs);
+
+			// Ajouter panel
+			Tabpanel tabpanel = new Tabpanel();
+
+			Map<String, Object> args = new HashMap<String, Object>();
+			args.put("terme", contexteSetCourant.getMotCherché());
+			contexteSetCourant.setMaxCooccurrent(MAX_COOCCURRENTS);
+			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCourant.getInfoCooccurrents();
+			args.put("infoG", infoCooccurrents.get(Position.AVANT));
+			args.put("infoM", infoCooccurrents.get(Position.AVANT_APRÈS));
+			args.put("infoD", infoCooccurrents.get(Position.APRÈS));
+
+			Executions.createComponents("/infoCooccurrents.zul", tabpanel, args);
+
+			tabpanel.setParent(corpusTabpanels);
+		} else {
+			System.out.println("Onglet info cooccurrent déjà ouvert: "
+					+ id);
+		}
+
+		infoCooccurrentTab.setSelected(true);
+
+		
+
+	}
+
 	private void créeEtAfficheOngletInfoContexte(Contexte contexte) {
 		System.out.println(contexte.getDocMétadonnées());
 
 		// Vérifier si contexte déjà ouvert
 
-		Tab infoContexteTab = getTabContexteDéjàOuvert(contexte);
+		Tab infoContexteTab = getTabDéjàOuvert(contexte.getId());
 
 		if (infoContexteTab == null) {
 			infoContexteTab = new Tab(contexte.getId());
@@ -257,70 +337,68 @@ public class ContexteCtrl extends CorpusCtrl {
 			infoContexteTab.setClosable(true);
 			infoContexteTab.setTooltiptext(contexte.getId());
 			infoContexteTab.setParent(corpusTabs);
-			
+
 			// Ajouter panel
 			Tabpanel tabpanel = new Tabpanel();
-			
+
 			// TODO pour améliorer vue des contextes
 			/*
-			 * - s'asurer que tous les contextes aient des métadonnées
-			 * - naviguer au contexte suivant/précédent (cf. grid de l'onglet contexte.  Via Model?) => changer id du tab aussi!
-			 * - afficher numéro de ligne/contexte
-			 * - mapping DB entre nom champ index Lucene et nom logique
-			 * - phrases du voisinnage non nettoyées (conserver retours à la ligne, etc.)
-			 * - afficher document binaire source (téléchargement) si rôle admin
+			 * - s'asurer que tous les contextes aient des métadonnées -
+			 * naviguer au contexte suivant/précédent (cf. grid de l'onglet
+			 * contexte. Via Model?) => changer id du tab aussi! - afficher
+			 * numéro de ligne/contexte - mapping DB entre nom champ index
+			 * Lucene et nom logique - phrases du voisinnage non nettoyées
+			 * (conserver retours à la ligne, etc.) - afficher document binaire
+			 * source (téléchargement) si rôle admin
 			 */
-			
-			
-			Map<String,Object> args = new HashMap<String,Object>();
+
+			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("mot", contexte.mot);
 			args.put("métadonnées", contexte.getDocMétadonnées());
-			
+
 			Contexte contexteSource = contexte.getContexteSource();
-			if(contexteSource != null) {
-				// La phrase complète a déjà été extraite.  Il s'agit du contexte lui-même
+			if (contexteSource != null) {
+				// La phrase complète a déjà été extraite. Il s'agit du contexte
+				// lui-même
 				args.put("phrase_g", contexte.texteAvant);
 				args.put("phrase_m", contexte.mot);
 				args.put("phrase_d", contexte.texteAprès);
-				
+
 				// Le voisinnage plus complet = contexteSource
-				args.put("voisinnage_g",contexteSource.texteAvant);
-				args.put("voisinnage_m",contexteSource.mot);
-				args.put("voisinnage_d",contexteSource.texteAprès);
+				args.put("voisinnage_g", contexteSource.texteAvant);
+				args.put("voisinnage_m", contexteSource.mot);
+				args.put("voisinnage_d", contexteSource.texteAprès);
+			} else {
+
+				Contexte contextePhraseComplète = phraseService
+						.getContextePhraseComplète(contexte);
+				args.put("phrase_g", contextePhraseComplète.texteAvant);
+				args.put("phrase_m", contextePhraseComplète.mot);
+				args.put("phrase_d", contextePhraseComplète.texteAprès);
+
+				args.put("voisinnage_g", contexte.texteAvant);
+				args.put("voisinnage_m", contexte.mot);
+				args.put("voisinnage_d", contexte.texteAprès);
 			}
-			else {
-				
-				Contexte contextePhraseComplète = phraseService.getContextePhraseComplète(contexte);
-				args.put("phrase_g",contextePhraseComplète.texteAvant);
-				args.put("phrase_m",contextePhraseComplète.mot);
-				args.put("phrase_d",contextePhraseComplète.texteAprès);
-				
-				args.put("voisinnage_g",contexte.texteAvant);
-				args.put("voisinnage_m",contexte.mot);
-				args.put("voisinnage_d",contexte.texteAprès);
-			}
-			
+
 			Executions.createComponents("/infoContexte.zul", tabpanel, args);
-			
-			
+
 			tabpanel.setParent(corpusTabpanels);
-		}
-		else {
-			System.out.println("Onglet info contexte déjà ouvert: " + contexte.getId());
+		} else {
+			System.out.println("Onglet info contexte déjà ouvert: "
+					+ contexte.getId());
 			// Donner le focus
 		}
-		
+
 		infoContexteTab.setSelected(true);
-		
-		
 
 	}
 
-	private Tab getTabContexteDéjàOuvert(Contexte contexte) {
+	private Tab getTabDéjàOuvert(String id) {
 		@SuppressWarnings("unchecked")
 		List<Tab> children = corpusTabs.getChildren();
 		for (Tab tab : children) {
-			if (tab.getId().equals(contexte.getId())) {
+			if (tab.getId().equals(id)) {
 				return tab;
 			}
 		}
@@ -329,12 +407,13 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	@Override
 	public void chercheEtAffiche() {
-		ContexteSet contexteSet = getContexteSet();
+		contexteSetCourant = getContexteSet();
 
-		contextesGrid.setModel(new ListModelList(contexteSet.getContextes()));
+		contextesGrid.setModel(new ListModelList(contexteSetCourant
+				.getContextes()));
 		contextesGrid.getPaginal().setActivePage(0);
 
-		infoRésultats.setValue(getInfoRésultat(contexteSet));
+		infoRésultats.setValue(getInfoRésultat(contexteSetCourant));
 
 		// mettre à jour les informations sur les résultats
 

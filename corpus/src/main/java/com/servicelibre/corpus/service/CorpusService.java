@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
@@ -52,7 +50,7 @@ public class CorpusService {
 		this.corpusManager = cm;
 		this.corpus = ouvreOuCréeCorpus(cm, corpus);
 	}
-	
+
 	public CorpusService(CorpusManager cm) {
 		this.corpusManager = cm;
 		this.corpus = ouvreCorpusParDéfaut(cm);
@@ -87,16 +85,19 @@ public class CorpusService {
 			return corpusTrouvéOuCréé;
 		}
 	}
-	
+
 	private Corpus ouvreCorpusParDéfaut(CorpusManager cm) {
-		
+
 		Corpus corpusParDéfaut = cm.findByDefault();
 
 		if (corpusParDéfaut == null) {
 			// Création d'un corpus vide par défaut
 			String corpusIdString = "DÉMARRAGE";
-			String tmpDir = System.getProperty("java.io.tmpdir")+ File.separatorChar + "index-" + corpusIdString;
-			corpusParDéfaut = new Corpus(corpusIdString, "Corpus de démarrage", tmpDir,"com.servicelibre.corpus.analysis.FrenchAnalyzer", "org.apache.lucene.analysis.standard.StandardAnalyzer");
+			String tmpDir = System.getProperty("java.io.tmpdir")
+					+ File.separatorChar + "index-" + corpusIdString;
+			corpusParDéfaut = new Corpus(corpusIdString, "Corpus de démarrage",
+					tmpDir, "com.servicelibre.corpus.analysis.FrenchAnalyzer",
+					"org.apache.lucene.analysis.standard.StandardAnalyzer");
 			// FIXME s'assurer qu'un seul corpus par défaut existe!
 			corpusParDéfaut.setParDéfaut(true);
 			logger.info("Création du nouveau corpus " + corpusParDéfaut);
@@ -111,76 +112,88 @@ public class CorpusService {
 	public ContexteSet getContextesMot(String mot) {
 		return getContextesMot(mot, null);
 	}
-	
+
 	/**
 	 * Recherche les contextes du mot donné
 	 * 
 	 * @param mot
-	 * @param filtres 
+	 * @param filtres
 	 * @return
 	 */
 	public ContexteSet getContextesMot(String mot, FiltreMot filtres) {
 
 		// connecter à l'index Lucene et faire la recherche
 		LuceneIndexManager manager = getLuceneIndexManager();
-		
-		if(manager == null){
+
+		if (manager == null) {
 			return new ContexteSet();
 		}
 
-		RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, 1, tailleVoisinage, filtres);
+		RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, 1,
+				tailleVoisinage, filtres);
 
-		logger.debug("Trouvé " + résultats.scoreDocs.length + " documents (mot) => " + résultats.spanCount);
+		logger.debug("Trouvé " + résultats.scoreDocs.length
+				+ " documents (mot) => " + résultats.spanCount);
 
 		ContexteSet contexteSet = getContextes(résultats);
 		contexteSet.setMotCherché(mot);
 		contexteSet.setFormesDuLemme(false);
+		contexteSet.tailleVoisinage = tailleVoisinage;
 		return contexteSet;
 	}
 
 	public ContexteSet getContextesLemme(String lemme) {
 		return getContextesLemme(lemme, null);
 	}
-	
+
 	public ContexteSet getContextesLemme(String lemme, FiltreMot filtres) {
 
 		// rechercher toutes les formes du lemme
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
-		
-		if(luceneIndexManager == null){
+
+		if (luceneIndexManager == null || formeService == null) {
 			return new ContexteSet();
 		}
-		
-		RésultatRecherche résultats = luceneIndexManager.getDocumentsWithContexts(formeService.getFormes(lemme), tailleVoisinage, filtres);
 
-		logger.debug("Trouvé " + résultats.scoreDocs.length + " documents (lemme) => " + résultats.spanCount);
+		RésultatRecherche résultats = luceneIndexManager
+				.getDocumentsWithContexts(
+						formeService.getFormes(lemme),
+						tailleVoisinage, filtres);
+
+		logger.debug("Trouvé " + résultats.scoreDocs.length
+				+ " documents (lemme) => " + résultats.spanCount);
 
 		ContexteSet contexteSet = getContextes(résultats);
 		contexteSet.setMotCherché(lemme);
 		contexteSet.setFormesDuLemme(true);
+		contexteSet.setTailleVoisinage(tailleVoisinage);
+
 		return contexteSet;
 	}
 
 	private ContexteSet getContextes(RésultatRecherche résultats) {
 
-	
-		
 		ContexteSet contexteSet = new ContexteSet();
 		List<Contexte> contextes = new ArrayList<Contexte>(résultats.spanCount);
 
 		// Pour chaque document du résultat de recherche...
 		for (int i = 0; i < résultats.scoreDocs.length; i++) {
-			// récupérer les métadonnées du document d'où sont extraits les contextes
+			// récupérer les métadonnées du document d'où sont extraits les
+			// contextes
 			List<Metadata> docMétadonnées = getMétadonnéesDocument(résultats.scoreDocs[i].doc);
-			
-			List<String[]> ctx = résultats.documentContexts.get(résultats.scoreDocs[i].doc);
+
+			List<String[]> ctx = résultats.documentContexts
+					.get(résultats.scoreDocs[i].doc);
 			if (ctx != null && ctx.size() > 0) {
-				//... extraire les contextes trouvés pour ce document
+				// ... extraire les contextes trouvés pour ce document
 				int cptContext = 1;
 				for (String[] contextParts : ctx) {
-					Contexte contexte = new Contexte(contextParts[1], contextParts[2], contextParts[3]);
+					Contexte contexte = new Contexte(contextParts[1],
+							contextParts[2], contextParts[3]);
 					contexte.setDocMétadonnées(docMétadonnées);
-					contexte.setId(new StringBuilder().append(contexte.mot).append("_").append(résultats.scoreDocs[i].doc).append("_").append(cptContext).toString());
+					contexte.setId(new StringBuilder().append(contexte.mot)
+							.append("_").append(résultats.scoreDocs[i].doc)
+							.append("_").append(cptContext).toString());
 					cptContext++;
 					contextes.add(contexte);
 				}
@@ -193,30 +206,29 @@ public class CorpusService {
 		return contexteSet;
 	}
 
-	
 	private List<Metadata> getMétadonnéesDocument(int docId) {
-		
+
 		List<Metadata> métadonnées = new ArrayList<Metadata>();
-		
+
 		// FIXME passé en paramètre: dépend du corpus!
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
-		
-		if(luceneIndexManager == null){
+
+		if (luceneIndexManager == null) {
 			return métadonnées;
 		}
-		
+
 		Document document = luceneIndexManager.getDocument(docId);
-		
+
 		// Récupère tous les champs à associer au contexte jugés pertinents
 		// L'ordre des champs de la liste est respecté
-		for(String nomChamp : this.corpus.getNomMétadonnéesList()) {
+		for (String nomChamp : this.corpus.getNomMétadonnéesList()) {
 			Field champ = document.getField(nomChamp);
-			if(champ != null && !champ.isBinary()) {
-				métadonnées.add(new StringMetadata(nomChamp, champ.stringValue()));
+			if (champ != null && !champ.isBinary()) {
+				métadonnées.add(new StringMetadata(nomChamp, champ
+						.stringValue()));
 			}
 		}
-		
-		
+
 		return métadonnées;
 	}
 
@@ -224,17 +236,21 @@ public class CorpusService {
 
 		// Récupérer les valeurs = topTerms Lucene , trié par ordre alpha fr_CA
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
-		
-		if(luceneIndexManager == null){
+
+		if (luceneIndexManager == null) {
 			return new ArrayList<DefaultKeyValue>();
 		}
-		
-		List<InformationTerme> topTerms = luceneIndexManager.getTopTerms(champIndex, new InformationTermeTextComparator<InformationTerme>());
 
-		List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(topTerms.size());
+		List<InformationTerme> topTerms = luceneIndexManager.getTopTerms(
+				champIndex,
+				new InformationTermeTextComparator<InformationTerme>());
+
+		List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(
+				topTerms.size());
 
 		for (InformationTerme topTerm : topTerms) {
-			valeurs.add(new DefaultKeyValue(topTerm.term.text(), topTerm.docFreq));
+			valeurs.add(new DefaultKeyValue(topTerm.term.text(),
+					topTerm.docFreq));
 		}
 
 		return valeurs;
@@ -246,12 +262,15 @@ public class CorpusService {
 
 			final Map<String, Analyzer> fieldAnalyzers = new HashMap<String, Analyzer>();
 
-			Analyzer searchAnalyzer = getInstanceAnalyseur(corpus.getAnalyseurRechercheFQCN());
+			Analyzer searchAnalyzer = getInstanceAnalyseur(corpus
+					.getAnalyseurRechercheFQCN());
 
 			fieldAnalyzers.put(TXT_FIELDNAME, searchAnalyzer);
-			fieldAnalyzers.put(TXTLEX_FIELDNAME, getInstanceAnalyseur(corpus.getAnalyseurLexicalFQCN()));
+			fieldAnalyzers.put(TXTLEX_FIELDNAME,
+					getInstanceAnalyseur(corpus.getAnalyseurLexicalFQCN()));
 
-			final PerFieldAnalyzerWrapper perFieldAnalyzerWrapper = new PerFieldAnalyzerWrapper(searchAnalyzer, fieldAnalyzers);
+			final PerFieldAnalyzerWrapper perFieldAnalyzerWrapper = new PerFieldAnalyzerWrapper(
+					searchAnalyzer, fieldAnalyzers);
 
 			FSDirectory fsDirectory = null;
 			LuceneIndexManager manager = null;
@@ -266,16 +285,22 @@ public class CorpusService {
 
 					if (dossierLuceneIndex.exists()) {
 						fsDirectory = FSDirectory.open(dossierLuceneIndex);
-						manager = new LuceneIndexManager(fsDirectory, perFieldAnalyzerWrapper);
+						manager = new LuceneIndexManager(fsDirectory,
+								perFieldAnalyzerWrapper);
 					} else {
-						logger.error("Le dossier qui contient l'index Lucene pour le corpus {} est introuvable: {}", corpus, dossierLuceneIndex);
+						logger.error(
+								"Le dossier qui contient l'index Lucene pour le corpus {} est introuvable: {}",
+								corpus, dossierLuceneIndex);
 					}
-				}
-				else {
-					logger.error("Le dossier qui contient l'index Lucene pour le corpus {} est NULL.", corpus);
+				} else {
+					logger.error(
+							"Le dossier qui contient l'index Lucene pour le corpus {} est NULL.",
+							corpus);
 				}
 			} catch (IOException e) {
-				logger.error("Erreur lors de l'ouverture du dossier de l'index Lucene [{}]", corpus.getDossierData(), e);
+				logger.error(
+						"Erreur lors de l'ouverture du dossier de l'index Lucene [{}]",
+						corpus.getDossierData(), e);
 			}
 			this.indexManager = manager;
 		}
@@ -287,8 +312,10 @@ public class CorpusService {
 		try {
 			Class<?> cl = Class.forName(analyseurFQCN);
 			@SuppressWarnings("rawtypes")
-			java.lang.reflect.Constructor co = cl.getConstructor(new Class[] { Version.class });
-			return (Analyzer) co.newInstance(new Object[] { Version.LUCENE_30 });
+			java.lang.reflect.Constructor co = cl
+					.getConstructor(new Class[] { Version.class });
+			return (Analyzer) co
+					.newInstance(new Object[] { Version.LUCENE_30 });
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

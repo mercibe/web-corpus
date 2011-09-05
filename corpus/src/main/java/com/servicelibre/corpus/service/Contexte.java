@@ -11,7 +11,7 @@ public class Contexte {
 	public String mot;
 	public String texteAprès;
 	private List<Metadata> docMétadonnées = new ArrayList<Metadata>();
-	private String id;
+	public String id;
 	private Contexte contexteSource;
 
 	public Contexte(String texteAvant, String mot, String texteAprès) {
