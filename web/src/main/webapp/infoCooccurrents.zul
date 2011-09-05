@@ -1,0 +1,61 @@
+
+<zk>
+<div align="center" style="margin:10px;">
+	<label sclass="titre3" value="Cooccurrents du terme «&#xA0;${arg.terme}&#xA0;»" />
+</div>
+
+
+
+<div align="center" style="margin:15px;">
+<hbox>
+
+	<grid width="300px;" style="margin:15px;" mold="paging">
+		<columns>
+			<column hflex="4" label="Cooccurrent (avant)"/>
+			<column hflex="1" label="#"/>
+		</columns>
+		<rows>
+		<zk forEach="${arg.infoG}" >
+			<row>
+				<label value="${each.cooccurrent}">
+				</label><label value="${each.freqAvant}"></label>
+			</row>
+		</zk>
+		</rows>
+	</grid>
+
+
+
+	<grid width="300px;" style="margin:15px;" mold="paging">
+		<columns>
+			<column hflex="4" label="Cooccurrent"/>
+			<column hflex="1" label="#"/>
+		</columns>
+		<rows>
+		<zk forEach="${arg.infoM}" >
+			<row>
+				<label value="${each.cooccurrent}">
+				</label><label value="${each.freq}"></label>
+			</row>
+		</zk>
+		</rows>
+	</grid>
+	
+	<grid  width="300px;" style="margin:15px;" mold="paging">
+		<columns>
+			<column hflex="4" label="Cooccurrent (après)"/>
+			<column hflex="1" label="#"/>
+		</columns>
+		<rows>
+		<zk forEach="${arg.infoD}" >
+			<row>
+				<label value="${each.cooccurrent}">
+				</label><label value="${each.freqAprès}"></label>
+			</row>
+		</zk>
+		</rows>
+	</grid>
+</hbox>
+</div>
+
+</zk>
