@@ -140,7 +140,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		return sb.toString();
 	}
 
-	private ContexteSet getContexteSet() {
+	private ContexteSet getContexteSet(int voisinage) {
 
 		phraseComplète = false;
 
@@ -154,14 +154,12 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		System.out.println(getDescriptionRecherche());
 
-		int voisinnage = Integer.parseInt(voisinage.getSelectedItem()
-				.getValue().toString());
 		// Recherche phrase complète
-		if (voisinnage == 0) {
+		if (voisinage == 0) {
 			phraseComplète = true;
 		}
 
-		corpusService.setTailleVoisinnage(phraseComplète ? 50 : voisinnage);
+		corpusService.setTailleVoisinage(phraseComplète ? 50 : voisinage);
 
 		FiltreMot filtres = getFiltres();
 
@@ -176,6 +174,11 @@ public class ContexteCtrl extends CorpusCtrl {
 		}
 
 		return contexteSet;
+	}
+
+	private int getVoisinageUtilisateur() {
+		return Integer.parseInt(voisinage.getSelectedItem()
+				.getValue().toString());
 	}
 
 	/**
@@ -215,8 +218,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private void initialiseContexteGrid() {
-
-		contextesGrid.setModel(new ListModelList(getContexteSet()
+		contextesGrid.setModel(new ListModelList(getContexteSet(getVoisinageUtilisateur())
 				.getContextes()));
 
 		contextesGrid.setRowRenderer(new RowRenderer() {
@@ -272,16 +274,24 @@ public class ContexteCtrl extends CorpusCtrl {
 		// minutes au moins!
 		// conseil: réduire le voisinage à moins de 5 mots... (phrase complète)
 		
+		ContexteSet contexteSetCooccurrent;
 		if(contexteSetCourant.getContextesSize() > 200 || contexteSetCourant.getTailleVoisinage() > 10)
 		{
-			System.err.println("Cela va être long...");
+			System.err.println("Cela pourrait être long... Réduction des contextes");
+			// Relancer la recherche avec voisinage = 4
+			contexteSetCooccurrent = getContexteSet(4);
+		}
+		else {
+			contexteSetCooccurrent = contexteSetCourant;
 		}
 		
-		if (contexteSetCourant == null) {
+		
+		
+		if (contexteSetCooccurrent == null) {
 			return;
 		}
 		
-		String id = contexteSetCourant.getMotCherché() + "_" + contexteSetCourant.getTailleVoisinage();
+		String id = contexteSetCooccurrent.getMotCherché() + "_" + contexteSetCooccurrent.getTailleVoisinage();
 
 		// TODO pour améliorer vue des cooccurrents
 					/*
@@ -303,9 +313,9 @@ public class ContexteCtrl extends CorpusCtrl {
 			Tabpanel tabpanel = new Tabpanel();
 
 			Map<String, Object> args = new HashMap<String, Object>();
-			args.put("terme", contexteSetCourant.getMotCherché());
-			contexteSetCourant.setMaxCooccurrent(MAX_COOCCURRENTS);
-			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCourant.getInfoCooccurrents();
+			args.put("terme", contexteSetCooccurrent.getMotCherché());
+			contexteSetCooccurrent.setMaxCooccurrent(MAX_COOCCURRENTS);
+			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCooccurrent.getInfoCooccurrents();
 			args.put("infoG", infoCooccurrents.get(Position.AVANT));
 			args.put("infoM", infoCooccurrents.get(Position.AVANT_APRÈS));
 			args.put("infoD", infoCooccurrents.get(Position.APRÈS));
@@ -347,7 +357,7 @@ public class ContexteCtrl extends CorpusCtrl {
 			 * naviguer au contexte suivant/précédent (cf. grid de l'onglet
 			 * contexte. Via Model?) => changer id du tab aussi! - afficher
 			 * numéro de ligne/contexte - mapping DB entre nom champ index
-			 * Lucene et nom logique - phrases du voisinnage non nettoyées
+			 * Lucene et nom logique - phrases du voisinage non nettoyées
 			 * (conserver retours à la ligne, etc.) - afficher document binaire
 			 * source (téléchargement) si rôle admin
 			 */
@@ -364,10 +374,10 @@ public class ContexteCtrl extends CorpusCtrl {
 				args.put("phrase_m", contexte.mot);
 				args.put("phrase_d", contexte.texteAprès);
 
-				// Le voisinnage plus complet = contexteSource
-				args.put("voisinnage_g", contexteSource.texteAvant);
-				args.put("voisinnage_m", contexteSource.mot);
-				args.put("voisinnage_d", contexteSource.texteAprès);
+				// Le voisinage plus complet = contexteSource
+				args.put("voisinage_g", contexteSource.texteAvant);
+				args.put("voisinage_m", contexteSource.mot);
+				args.put("voisinage_d", contexteSource.texteAprès);
 			} else {
 
 				Contexte contextePhraseComplète = phraseService
@@ -376,9 +386,9 @@ public class ContexteCtrl extends CorpusCtrl {
 				args.put("phrase_m", contextePhraseComplète.mot);
 				args.put("phrase_d", contextePhraseComplète.texteAprès);
 
-				args.put("voisinnage_g", contexte.texteAvant);
-				args.put("voisinnage_m", contexte.mot);
-				args.put("voisinnage_d", contexte.texteAprès);
+				args.put("voisinage_g", contexte.texteAvant);
+				args.put("voisinage_m", contexte.mot);
+				args.put("voisinage_d", contexte.texteAprès);
 			}
 
 			Executions.createComponents("/infoContexte.zul", tabpanel, args);
@@ -407,7 +417,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	@Override
 	public void chercheEtAffiche() {
-		contexteSetCourant = getContexteSet();
+		contexteSetCourant = getContexteSet(getVoisinageUtilisateur());
 
 		contextesGrid.setModel(new ListModelList(contexteSetCourant
 				.getContextes()));

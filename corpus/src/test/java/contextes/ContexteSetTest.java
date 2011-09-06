@@ -39,7 +39,7 @@ public class ContexteSetTest {
 		CorpusService cs = new CorpusService(cm, corpus);
 		cs.setFormeService(formeService);
 		
-		cs.setTailleVoisinnage(2);
+		cs.setTailleVoisinage(2);
 		
 		ContexteSet contextesSet = cs.getContextesMot("pommes");
 		contextesSet.setMaxCooccurrent(15);

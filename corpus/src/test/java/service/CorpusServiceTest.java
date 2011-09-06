@@ -287,7 +287,7 @@ public class CorpusServiceTest {
 
 		int tailleVoisinnage = nbPhrases * nbMoyMotPhrase;
 
-		cs.setTailleVoisinnage(tailleVoisinnage);
+		cs.setTailleVoisinage(tailleVoisinnage);
 		
 		String[] mots = {"papa", "chien", "séduire", "maman", "mange"};
 		CorpusPhraseService phraseService = new CorpusPhraseService();
@@ -353,7 +353,7 @@ public class CorpusServiceTest {
 
 		ContexteSet contexteSet = cs.getContextesMot("E");
 
-		cs.setTailleVoisinnage(50);
+		cs.setTailleVoisinage(50);
 		contexteSet = cs.getContextesMot("Raphaël");
 
 		assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());

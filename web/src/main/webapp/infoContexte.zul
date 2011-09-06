@@ -15,11 +15,11 @@
 </div>
 
 <div align="center" style="margin:15px;">
-	<label sclass="titre4" value="Voisinnage" />
+	<label sclass="titre4" value="Voisinage" />
 		<div align="left" style="margin:15px;">
-			<label value="${arg.voisinnage_g}"/>
-			<label value="${arg.voisinnage_m}" sclass="terme"/>
-			<label value="${arg.voisinnage_d}"/>
+			<label value="${arg.voisinage_g}"/>
+			<label value="${arg.voisinage_m}" sclass="terme"/>
+			<label value="${arg.voisinage_d}"/>
 		</div>	
 </div>
 

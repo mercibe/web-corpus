@@ -345,7 +345,7 @@ public class CorpusService {
 		return tailleVoisinage;
 	}
 
-	public void setTailleVoisinnage(int tailleVoisinnage) {
+	public void setTailleVoisinage(int tailleVoisinnage) {
 		this.tailleVoisinage = tailleVoisinnage;
 	}
 
