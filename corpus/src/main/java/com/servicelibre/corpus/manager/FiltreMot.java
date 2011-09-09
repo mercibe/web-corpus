@@ -54,6 +54,10 @@ public class FiltreMot
         }
     }
     
+    public void removeAll() {
+    	filtres.clear();
+    }
+    
     @Override
     public String toString()
     {

@@ -35,6 +35,9 @@ public class ContexteFiltreManager extends FiltreManager {
 
 		List<DefaultKeyValue> valeursChamp = corpusService.getValeursChamp(champIndex);
 		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(valeursChamp.size());
+		
+		clésValeurs.add(keyValueVide);
+		
 		for (DefaultKeyValue cléValeur : valeursChamp) {
 			StringBuilder sb = new StringBuilder(cléValeur.getKey().toString());
 

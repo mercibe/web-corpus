@@ -12,6 +12,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Cell;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
 import org.zkoss.zul.Label;
@@ -46,13 +47,16 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	Button boutonAjoutFiltre;// autowire car même type/ID que le composant dans
 	// la page ZUL
+
+	Button boutonEffacerFiltre;
+
 	Grid gridFiltreActif;// autowire car même type/ID que le composant dans la
 	// page ZUL
 
 	Label infoRésultats;
 
 	protected Window webCorpusWindow;
-	
+
 	/**
 	 * Permet de remplir les choix de filtres/valeurs possibles
 	 */
@@ -75,13 +79,17 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		if (valeurFiltre.getItemCount() > 0) {
 
+			Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
+			if (filtreValeurActuel.getValue().toString().equals("-1")) {
+				return;
+			}
+
+			List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(1);
+			valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
+
 			Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
 			String nom = filtreNomActuel.getValue().toString();
 			String description = filtreNomActuel.getLabel();
-
-			Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
-			List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(1);
-			valeurs.add(new DefaultKeyValue(filtreValeurActuel.getValue().toString(), filtreValeurActuel.getLabel()));
 
 			filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
 			gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
@@ -95,10 +103,34 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	}
 
+	public void onClick$boutonEffacerFiltre(Event event) {
+		if (filtreActifModel.getFiltres().size() > 0) {
+			filtreActifModel.removeAll();
+			gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
+			rafraichiValeurFiltreCourant();
+			chercheEtAffiche();
+		}
+	}
+
 	public void onSelect$nomFiltre(Event event) {
 		rafraichiValeurFiltreCourant();
-
 	}
+
+	// public void onSelect$valeurFiltre(Event event) {
+	// //Désactive bouton ajouter si aucune valeur sélectionnée
+	// Listitem currentItem = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
+	//
+	// if (currentItem != null && currentItem.getValue() != null && !currentItem.getValue().toString().equals("-1")) {
+	// // activer le bouton ajouter
+	// boutonAjoutFiltre.setDisabled(false);
+	// System.err.println("activer le bouton ajouter");
+	// }
+	// else {
+	// //désactiver le bouton ajouter
+	// boutonAjoutFiltre.setDisabled(true);
+	// System.err.println("désactiver le bouton ajouter");
+	// }
+	// }
 
 	public void onAfterRender$nomFiltre() {
 		rafraichiValeurFiltreCourant();
@@ -197,16 +229,20 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 				final Row currentRow = row;
 
+				Cell cell = new Cell();
+				cell.setParent(row);
+
 				Label label = new Label(cv.getValue().toString());
 				label.setAttribute("key", cv.getKey());
-				label.setParent(row);
+				label.setParent(cell);
 
 				// Ajouter bouton « supprimer » si pas un groupe
 				if (!(row instanceof Group)) {
 
-					final Button supprimeBtn = new Button("Supprimer");
+					final Button supprimeBtn = new Button();
 					supprimeBtn.setMold("os");
 					supprimeBtn.setParent(row);
+					supprimeBtn.setImage("/images/enlever-10x10.png");
 					supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener() {
 
 						@Override
@@ -214,8 +250,10 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 							if (currentRow != null) {
 
-								Label labelValeur = (Label) currentRow.getFirstChild();
-								Label labelGroupe = (Label) currentRow.getGroup().getFirstChild();
+								Cell cell = (Cell) currentRow.getFirstChild();
+								Label labelValeur = (Label) cell.getFirstChild();
+								Label labelGroupe = (Label) currentRow.getGroup().getFirstChild().getFirstChild();
+
 								filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key").toString());
 								gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
 
@@ -226,6 +264,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 							}
 						}
 					});
+				} else {
+					cell.setColspan(2);
+					((Label) cell.getFirstChild()).setSclass("groupe");
 				}
 
 			}
@@ -237,10 +278,11 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	abstract protected void initialiseRecherche();
 
-	
 	/**
-	 * Contient généralement qqchose du genre<br /><br />
+	 * Contient généralement qqchose du genre<br />
+	 * <br />
 	 * <code>this.filtreManager = ServiceLocator.getContexteFiltreManager();</code>
+	 * 
 	 * @param filtreManager
 	 */
 	abstract public void initFiltreManager();
@@ -248,18 +290,16 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
+
 		initFiltreManager();
 
 		initialiseRecherche();
-		
+
 		initialiseFiltre();
-		
+
 		Tabbox tabbox = (Tabbox) webCorpusWindow.getFellow("corpusTabbox");
 		corpusTabs = tabbox.getTabs();
 		corpusTabpanels = tabbox.getTabpanels();
-	} 
+	}
 
-	
-	
 }

@@ -13,6 +13,11 @@ import com.servicelibre.corpus.service.CorpusService;
 public abstract class FiltreManager
 {
 
+	public static final String VIDE = "     ";
+	
+	// Définition valeur vide
+	protected DefaultKeyValue keyValueVide = new DefaultKeyValue("-1", VIDE);
+	
     protected List<Filtre> filtres = new ArrayList<Filtre>(3);
 
     protected CorpusService corpusService;
@@ -20,6 +25,7 @@ public abstract class FiltreManager
     protected ListeManager listeManager;
 
     private FiltreMot filtreActifModel;
+    
 
     public FiltreManager()
     {
