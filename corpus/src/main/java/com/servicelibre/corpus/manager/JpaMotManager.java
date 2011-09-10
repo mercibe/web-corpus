@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.entity.Prononciation;
 
@@ -97,8 +96,8 @@ public class JpaMotManager implements MotManager {
 	public List<Mot> findAll() {
 		List<Mot> mots = new ArrayList<Mot>();
 
-		mots = entityManager.createQuery("from Mot").getResultList();
-
+		mots = entityManager.createQuery("from Mot m JOIN FETCH m.prononciations ").getResultList();
+		
 		// FIXME bug Hibernate et sérialisation Jackson => passer à OpenJPA ou
 		// EclipseLink
 		// List<Mot> mots2 = new ArrayList<Mot>(mots.size());
@@ -108,6 +107,7 @@ public class JpaMotManager implements MotManager {
 		// }
 		//
 		// return mots2;
+		
 		return mots;
 	}
 
@@ -125,12 +125,15 @@ public class JpaMotManager implements MotManager {
 
 	@Override
 	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreMot filtres) {
-		CriteriaBuilder cb = getBuilder();
-		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
+		final CriteriaBuilder cb = getBuilder();
+		final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
-		Root<Mot> motRacine = criteria.from(Mot.class);
-		criteria.select(motRacine);
+		final Root<Mot> mot = criteria.from(Mot.class);
+		criteria.select(mot);
 
+		// chargement EAGER des prononciations 
+		mot.fetch("prononciations");
+		
 		// Tous les mots sont en minuscules
 		graphie = graphie.toLowerCase();
 
@@ -138,7 +141,7 @@ public class JpaMotManager implements MotManager {
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Predicate p;
 		if (condition == Condition.ENTIER) {
-			p = cb.equal(motRacine.get("lemme"), graphie);
+			p = cb.equal(mot.get("lemme"), graphie);
 		} else {
 			String likeCondition = "";
 			switch (condition) {
@@ -153,12 +156,12 @@ public class JpaMotManager implements MotManager {
 				break;
 
 			}
-			p = cb.like(motRacine.get("lemme").as(String.class), likeCondition);
+			p = cb.like(mot.get("lemme").as(String.class), likeCondition);
 
 		}
 
 		if (filtres != null) {
-			p = addFiltresToPrédicat(cb, motRacine, p, filtres);
+			p = addFiltresToPrédicat(cb, mot, p, filtres);
 		}
 
 		criteria.where(p);
@@ -178,11 +181,14 @@ public class JpaMotManager implements MotManager {
 		CriteriaBuilder cb = getBuilder();
 		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
-		Root<Mot> motRacine = criteria.from(Mot.class);
-		criteria.select(motRacine);
+		Root<Mot> mot = criteria.from(Mot.class);
+		criteria.select(mot);
+		
+		// chargement EAGER des prononciations 
+		mot.fetch("prononciations");
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
-		Path<Object> prononciationPath = motRacine.join("prononciations").get("prononciation");
+		Path<Object> prononciationPath = mot.join("prononciations").get("prononciation");
 
 		Predicate p;
 		if (condition == Condition.ENTIER) {
@@ -209,7 +215,7 @@ public class JpaMotManager implements MotManager {
 		}
 
 		if (filtres != null) {
-			p = addFiltresToPrédicat(cb, motRacine, p, filtres);
+			p = addFiltresToPrédicat(cb, mot, p, filtres);
 		}
 
 		criteria.where(p);

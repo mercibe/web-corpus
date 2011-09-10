@@ -11,7 +11,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.A;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
@@ -21,7 +20,6 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Span;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
@@ -47,17 +45,13 @@ public class ContexteCtrl extends CorpusCtrl {
 	private static final int MAX_COOCCURRENTS = 100;
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
-	Textbox cherche; // autowire car même type/ID que le composant dans la page
-	// ZUL
-	Button boutonRecherche;
+
 	Combobox voisinage;
 
 	Grid contextesGrid; // autowire car même type/ID que le composant dans la
 	// page ZUL
 
 	Window contexteWindow;
-
-	Label infoRésultats;
 
 	A cooccurrentLien;
 
@@ -69,18 +63,6 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	private boolean phraseComplète;
 	private ContexteSet contexteSetCourant;
-
-	// Enregistrement des événements onOK (la touche ENTER) sur tous les
-	// composants de la recherche
-	public void onOK$cherche(Event event) {
-		chercheEtAffiche();
-	}
-
-	public void onClick$boutonRecherche(Event event) {
-
-		chercheEtAffiche();
-
-	}
 
 	public void onOK$liste(Event event) {
 		chercheEtAffiche();
@@ -177,8 +159,8 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private int getVoisinageUtilisateur() {
-		return Integer.parseInt(voisinage.getSelectedItem()
-				.getValue().toString());
+		return Integer.parseInt(voisinage.getSelectedItem().getValue()
+				.toString());
 	}
 
 	/**
@@ -218,8 +200,8 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private void initialiseContexteGrid() {
-		contextesGrid.setModel(new ListModelList(getContexteSet(getVoisinageUtilisateur())
-				.getContextes()));
+		contextesGrid.setModel(new ListModelList(getContexteSet(
+				getVoisinageUtilisateur()).getContextes()));
 
 		contextesGrid.setRowRenderer(new RowRenderer() {
 
@@ -245,10 +227,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 					@Override
 					public void onEvent(Event arg0) throws Exception {
-						Label l = (Label) arg0.getTarget();
-
+						//Label l = (Label) arg0.getTarget();
 						créeEtAfficheOngletInfoContexte(contexte);
-
 					}
 
 				});
@@ -270,36 +250,37 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	private void afficheCooccurrents() {
 
-		// TODO prévenir/possibilité annuler si voisinage trop grand et beaucoup de contexte: 5
+		// TODO prévenir/possibilité annuler si voisinage trop grand et beaucoup
+		// de contexte: 5
 		// minutes au moins!
 		// conseil: réduire le voisinage à moins de 5 mots... (phrase complète)
-		
+
 		ContexteSet contexteSetCooccurrent;
-		if(contexteSetCourant.getContextesSize() > 200 || contexteSetCourant.getTailleVoisinage() > 10)
-		{
-			System.err.println("Cela pourrait être long... Réduction des contextes");
+		if (contexteSetCourant.getContextesSize() > 200
+				|| contexteSetCourant.getTailleVoisinage() > 10) {
+			System.err
+					.println("Cela pourrait être long... Réduction des contextes");
 			// Relancer la recherche avec voisinage = 4
 			contexteSetCooccurrent = getContexteSet(4);
-		}
-		else {
+		} else {
 			contexteSetCooccurrent = contexteSetCourant;
 		}
-		
-		
-		
+
 		if (contexteSetCooccurrent == null) {
 			return;
 		}
-		
-		String id = contexteSetCooccurrent.getMotCherché() + "_" + contexteSetCooccurrent.getTailleVoisinage();
+
+		String id = contexteSetCooccurrent.getMotCherché() + "_"
+				+ contexteSetCooccurrent.getTailleVoisinage();
 
 		// TODO pour améliorer vue des cooccurrents
-					/*
-					 * - lemmatiser les tokens + comptage sur lemme et plus sur mot
-					 * - afficher catgram du lemme + filtre sur catgram
-					 * - cliquer sur un cooccurrent recherche les contextes du terme et du cooccurrent (SpanNear query custom) 
-					 */
-		
+		/*
+		 * - lemmatiser les tokens + comptage sur lemme et plus sur mot -
+		 * afficher catgram du lemme + filtre sur catgram - cliquer sur un
+		 * cooccurrent recherche les contextes du terme et du cooccurrent
+		 * (SpanNear query custom)
+		 */
+
 		Tab infoCooccurrentTab = getTabDéjàOuvert(id);
 
 		if (infoCooccurrentTab == null) {
@@ -315,22 +296,21 @@ public class ContexteCtrl extends CorpusCtrl {
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("terme", contexteSetCooccurrent.getMotCherché());
 			contexteSetCooccurrent.setMaxCooccurrent(MAX_COOCCURRENTS);
-			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCooccurrent.getInfoCooccurrents();
+			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCooccurrent
+					.getInfoCooccurrents();
 			args.put("infoG", infoCooccurrents.get(Position.AVANT));
 			args.put("infoM", infoCooccurrents.get(Position.AVANT_APRÈS));
 			args.put("infoD", infoCooccurrents.get(Position.APRÈS));
 
-			Executions.createComponents("/infoCooccurrents.zul", tabpanel, args);
+			Executions
+					.createComponents("/infoCooccurrents.zul", tabpanel, args);
 
 			tabpanel.setParent(corpusTabpanels);
 		} else {
-			System.out.println("Onglet info cooccurrent déjà ouvert: "
-					+ id);
+			System.out.println("Onglet info cooccurrent déjà ouvert: " + id);
 		}
 
 		infoCooccurrentTab.setSelected(true);
-
-		
 
 	}
 
@@ -442,6 +422,10 @@ public class ContexteCtrl extends CorpusCtrl {
 	public void initialiseRecherche() {
 		condition.setSelectedIndex(0);
 		voisinage.setSelectedIndex(0);
+		cherche.setText("");
+		
+		infoRésultats.setValue("");
+		initialiseContexteGrid();
 	}
 
 	@Override

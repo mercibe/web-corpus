@@ -1,0 +1,17 @@
+<zk>
+
+	<!-- Référence: http://books.zkoss.org/wiki/ZK%20Configuration%20Reference/zk.xml -->
+
+	<session-config>
+		<!-- Utiliser la valeur dans web.xml -->
+		<session-timeout>0</session-timeout>
+
+		<!-- Cette configuration permet de recharger automatiquement la page actuelle 
+			si la session expire (pas de message) -->
+		<!-- Références: http://books.zkoss.org/wiki/ZK_Developer's_Reference/UI_Patterns/Session_Timeout_Management -->
+		<device-type>ajax</device-type>
+		<automatic-timeout />
+		<timeout-uri></timeout-uri>
+	</session-config>
+
+</zk>

@@ -11,7 +11,6 @@ import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
@@ -21,11 +20,11 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.corpus.entity.Prononciation;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
@@ -45,38 +44,21 @@ public class ListeCtrl extends CorpusCtrl {
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
 
-	Textbox cherche; // autowire car même type/ID que le composant dans la page
-	// ZUL
 	Grid motsGrid; // autowire car même type/ID que le composant dans la page
 	// ZUL
 	Column mot;
-
-	Button boutonRecherche;
-
-	Label infoRésultats;
 
 	Div api;
 
 	ListeManager listeManager = ServiceLocator.getListeManager();
 
 	MotManager motManager = ServiceLocator.getMotManager();
-	PrononciationManager prononciationManager = ServiceLocator.getPrononciationManager();
+	PrononciationManager prononciationManager = ServiceLocator
+			.getPrononciationManager();
 
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private Column motColumn;
-
-	// Enregistrement des événements onOK (la touche ENTER) sur tous les
-	// composants de la recherche
-	public void onOK$cherche(Event event) {
-		chercheEtAffiche();
-	}
-
-	public void onClick$boutonRecherche(Event event) {
-
-		chercheEtAffiche();
-
-	}
 
 	public void onOK$liste(Event event) {
 		chercheEtAffiche();
@@ -107,7 +89,8 @@ public class ListeCtrl extends CorpusCtrl {
 	public Object resolveVariable(String variableName) throws XelException {
 		// if (variableName.equals("listes")) {
 		// List<Liste> listes = new ArrayList<Liste>(1);
-		// listes.add(new Liste("Toutes les listes", "Toutes les listes", null));
+		// listes.add(new Liste("Toutes les listes", "Toutes les listes",
+		// null));
 		// listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
 		// return listes;
 		// }
@@ -118,7 +101,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 		StringBuilder sb = new StringBuilder();
 
-		String conditionActive = condition.getItemAtIndex(condition.getSelectedIndex()).getLabel();
+		String conditionActive = condition.getItemAtIndex(
+				condition.getSelectedIndex()).getLabel();
 
 		String prononc = getGpActif().equals("p") ? " la prononciation" : "";
 
@@ -126,15 +110,24 @@ public class ListeCtrl extends CorpusCtrl {
 
 		if (motCherché != null && motCherché.isEmpty()) {
 			String terminaison = modelList.size() > 1 ? "s" : "";
-			sb.append(modelList.size()).append(" mot").append(terminaison).append(" trouvé").append(terminaison).append(".");
+			sb.append(modelList.size()).append(" mot").append(terminaison)
+					.append(" trouvé").append(terminaison).append(".");
 		} else {
 			if (modelList.size() == 0) {
-				sb.append(" Aucun mot ne ").append(conditionActive.replace("ent ", "e ")).append(prononc).append(" « ").append(motCherché).append(" ».");
+				sb.append(" Aucun mot ne ")
+						.append(conditionActive.replace("ent ", "e "))
+						.append(prononc).append(" « ").append(motCherché)
+						.append(" ».");
 			} else if (modelList.size() == 1) {
-				sb.append(" Un seul mot ").append(conditionActive.replace("nnent ", "nt ").replace("dent ", "d ").replace("ent ", "e ")).append(prononc)
-						.append(" « ").append(motCherché).append(" ».");
+				sb.append(" Un seul mot ")
+						.append(conditionActive.replace("nnent ", "nt ")
+								.replace("dent ", "d ").replace("ent ", "e "))
+						.append(prononc).append(" « ").append(motCherché)
+						.append(" ».");
 			} else {
-				sb.append(modelList.size()).append(" mots").append(" ").append(conditionActive).append(prononc).append(" « ").append(motCherché).append(" ».");
+				sb.append(modelList.size()).append(" mots").append(" ")
+						.append(conditionActive).append(prononc).append(" « ")
+						.append(motCherché).append(" ».");
 			}
 		}
 
@@ -156,9 +149,11 @@ public class ListeCtrl extends CorpusCtrl {
 		FiltreMot filtres = getFiltres();
 
 		if (gpActif.equals("g")) {
-			mots = motManager.findByGraphie(getMotCherché(), MotManager.Condition.valueOf(conditionActive), filtres);
+			mots = motManager.findByGraphie(getMotCherché(),
+					MotManager.Condition.valueOf(conditionActive), filtres);
 		} else {
-			mots = motManager.findByPrononciation(getMotCherché(), MotManager.Condition.valueOf(conditionActive), filtres);
+			mots = motManager.findByPrononciation(getMotCherché(),
+					MotManager.Condition.valueOf(conditionActive), filtres);
 
 			// try
 			// {
@@ -181,7 +176,8 @@ public class ListeCtrl extends CorpusCtrl {
 	}
 
 	private String getConditionActive() {
-		return (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
+		return (String) condition.getItemAtIndex(condition.getSelectedIndex())
+				.getValue();
 	}
 
 	private String getMotCherché() {
@@ -201,7 +197,8 @@ public class ListeCtrl extends CorpusCtrl {
 		String aChercher = getMotCherché();
 
 		if (!aChercher.isEmpty()) {
-			desc.append(" qui ").append(condition.getValue()).append(" « ").append(aChercher).append(" »");
+			desc.append(" qui ").append(condition.getValue()).append(" « ")
+					.append(aChercher).append(" »");
 		}
 
 		return desc.toString();
@@ -221,23 +218,52 @@ public class ListeCtrl extends CorpusCtrl {
 
 	private void initialiseClavierPhonétique() {
 
-		String[][] apiLettres = { { "i", "épi, île, lys, outil" }, { "i:", "jean, tweed" }, { "y", "hutte, bulle, fût" }, { "u", "ours, toundra, pouls" },
-				{ "u:", "slow food, pool" }, { "e", "(e fermé) érable, pécher, chez, hockey" }, { "ø", "(eu fermé)jeu, heureux, bleuet" },
-				{ "o", "(o fermé) auto, côté, beau, sirop" }, { "ɛ", "(e ouvert) aimer, épinette, accès" },
-				{ "ɛ:", "blême, caisse, gène, mètre, paraître, presse" }, { "œ", "(eu ouvert) neuf, oeuf, bonheur, golden, joker" },
-				{ "ɔ", "(o ouvert) obéir, autochtone, port" }, { "ə", "(e caduc, ou muet)mener, crénelage" }, { "ə̠", "fenouil, cafetière, justement" },
-				{ "a", "(a antérieur) à, clavardage, patte" }, { "ɑ", "(a postérieur) là-bas, pâte, cipaille, pyjama" },
-				{ "ɛ̃", "brin, impair, indien, certain, frein" }, { "œ̃", "un, lundi, brun, parfum" }, { "ɔ̃", "montagnais, omble, pont" },
+		String[][] apiLettres = {
+				{ "i", "épi, île, lys, outil" },
+				{ "i:", "jean, tweed" },
+				{ "y", "hutte, bulle, fût" },
+				{ "u", "ours, toundra, pouls" },
+				{ "u:", "slow food, pool" },
+				{ "e", "(e fermé) érable, pécher, chez, hockey" },
+				{ "ø", "(eu fermé)jeu, heureux, bleuet" },
+				{ "o", "(o fermé) auto, côté, beau, sirop" },
+				{ "ɛ", "(e ouvert) aimer, épinette, accès" },
+				{ "ɛ:", "blême, caisse, gène, mètre, paraître, presse" },
+				{ "œ", "(eu ouvert) neuf, oeuf, bonheur, golden, joker" },
+				{ "ɔ", "(o ouvert) obéir, autochtone, port" },
+				{ "ə", "(e caduc, ou muet)mener, crénelage" },
+				{ "ə̠", "fenouil, cafetière, justement" },
+				{ "a", "(a antérieur) à, clavardage, patte" },
+				{ "ɑ", "(a postérieur) là-bas, pâte, cipaille, pyjama" },
+				{ "ɛ̃", "brin, impair, indien, certain, frein" },
+				{ "œ̃", "un, lundi, brun, parfum" },
+				{ "ɔ̃", "montagnais, omble, pont" },
 				{ "ɑ̃", "an, en, jambon, sang, temps" },
 
-				{ "p", "paix, sapin, cégep" }, { "t", "toit, thé, patin, attaché, fourchette" }, { "k", "coq, chrome, bec, disque, kayak" },
-				{ "b", "boréal, tablée, snob" }, { "d", "danse, cheddar, balade, bled" }, { "g", "gag, algue, guide" },
-				{ "f", "fleuve, alphabet, effort, boeuf" }, { "s", "sourcil, cinq, force, mocassin, glaçon" }, { "ʃ", "chalet, schéma, échelle, brunch" },
-				{ "v", "ville, cavité, drave" }, { "z", "maison, zénith, dixième, brise" }, { "ʒ", "jeudi, giboulée, neige" }, { "l", "laine, alcool, pelle" },
-				{ "ʀ", "rang, courriel, finir" }, { "m", "mitaine, femme, aluminium" }, { "n", "nordet, antenne, cabane" }, { "ɲ", "beigne, campagne" },
-				{ "ŋ", "big bang, camping, flamenco, bingo, ping pong" }, { "'", "les haches, un huit, la ouananiche, les unes (sans élision ni liaison)" },
+				{ "p", "paix, sapin, cégep" },
+				{ "t", "toit, thé, patin, attaché, fourchette" },
+				{ "k", "coq, chrome, bec, disque, kayak" },
+				{ "b", "boréal, tablée, snob" },
+				{ "d", "danse, cheddar, balade, bled" },
+				{ "g", "gag, algue, guide" },
+				{ "f", "fleuve, alphabet, effort, boeuf" },
+				{ "s", "sourcil, cinq, force, mocassin, glaçon" },
+				{ "ʃ", "chalet, schéma, échelle, brunch" },
+				{ "v", "ville, cavité, drave" },
+				{ "z", "maison, zénith, dixième, brise" },
+				{ "ʒ", "jeudi, giboulée, neige" },
+				{ "l", "laine, alcool, pelle" },
+				{ "ʀ", "rang, courriel, finir" },
+				{ "m", "mitaine, femme, aluminium" },
+				{ "n", "nordet, antenne, cabane" },
+				{ "ɲ", "beigne, campagne" },
+				{ "ŋ", "big bang, camping, flamenco, bingo, ping pong" },
+				{ "'",
+						"les haches, un huit, la ouananiche, les unes (sans élision ni liaison)" },
 
-				{ "j", "rien, payer, écureuil, fille, yogourt" }, { "ɥ", "lui, huissier, tuile" }, { "w", "louer, ouate, watt, bois" }, };
+				{ "j", "rien, payer, écureuil, fille, yogourt" },
+				{ "ɥ", "lui, huissier, tuile" },
+				{ "w", "louer, ouate, watt, bois" }, };
 
 		for (String[] apiLettreInfo : apiLettres) {
 
@@ -287,7 +313,18 @@ public class ListeCtrl extends CorpusCtrl {
 					}
 				});
 
+				StringBuilder prononcs = new StringBuilder();
+				String sep = "";
+				for (Prononciation p : mot.getPrononciations()) {
+					prononcs.append(sep).append("[").append(p.prononciation).append("]");
+					sep = ", ";
+				}
+				Label prononcLabel = new Label(prononcs.toString());
+				prononcLabel.setSclass("apiCrochet");
+
 				row.appendChild(motLabel);
+				row.appendChild(prononcLabel);
+				row.appendChild(new Label(mot.isRo() ? "*" : ""));
 				row.appendChild(new Label(mot.getCatgram()));
 				row.appendChild(new Label(mot.getGenre()));
 				row.appendChild(new Label(mot.getNombre()));
@@ -306,8 +343,10 @@ public class ListeCtrl extends CorpusCtrl {
 
 		logger.debug("Afficher les contextes de « {} »", lemme);
 
-		Include contexteInclude = (Include) webCorpusWindow.getFellow("contexteInclude");
-		Window contexteWindow = (Window) contexteInclude.getFellow("contexteWindow");
+		Include contexteInclude = (Include) webCorpusWindow
+				.getFellow("contexteInclude");
+		Window contexteWindow = (Window) contexteInclude
+				.getFellow("contexteWindow");
 
 		contexteWindow.setAttribute("lemme", lemme);
 		Events.sendEvent("onAfficheContexte", contexteWindow, lemme);
@@ -319,9 +358,11 @@ public class ListeCtrl extends CorpusCtrl {
 		@SuppressWarnings("unchecked")
 		List<Component> children = comp.getChildren();
 
-		System.out.println("Children of " + comp.getUuid() + "(" + comp.getId() + ")");
+		System.out.println("Children of " + comp.getUuid() + "(" + comp.getId()
+				+ ")");
 		for (Component component : children) {
-			System.out.println(component.getUuid() + "(" + component.getId() + ")");
+			System.out.println(component.getUuid() + "(" + component.getId()
+					+ ")");
 			displayChildren(component, sep + "\t");
 		}
 
@@ -330,27 +371,34 @@ public class ListeCtrl extends CorpusCtrl {
 	@Override
 	public void chercheEtAffiche() {
 		ListModelList modelList = new ListModelList(getMotsRecherchés());
-		motsGrid.setModel(modelList);
-		motsGrid.getPaginal().setActivePage(0);
-		// les mots sont toujours retournés par ordre alphabétique => refléter
-		// dans la colonne (réinitialisation du marqueur de tri)
 
-		motColumn.sort(true);
+			motsGrid.setModel(modelList);
+			motsGrid.getPaginal().setActivePage(0);
+			// les mots sont toujours retournés par ordre alphabétique =>
+			// refléter
+			// dans la colonne (réinitialisation du marqueur de tri)
 
-		infoRésultats.setValue(getInfoRésultat(modelList));
+			motColumn.sort(true);
+
+			infoRésultats.setValue(getInfoRésultat(modelList));
 	}
 
 	@Override
 	protected void initialiseRecherche() {
 		gp.setSelectedIndex(0);
 		condition.setSelectedIndex(0);
+		cherche.setText("");
+		api.setVisible(false);
+		
+		infoRésultats.setValue("");
+		initialiseMotsGrid();
 
 	}
 
 	@Override
 	public void initFiltreManager() {
 		this.filtreManager = ServiceLocator.getListeFiltreManager();
-		
+
 	}
 
 }
