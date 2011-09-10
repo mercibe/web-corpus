@@ -40,10 +40,13 @@
                     width="32px" orient="horizontal" tooltiptext="réinitialiser la recherche"/>  
 			
 		</hbox>
+		
+		<div id="caractèresSpéciaux" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
+		
 	</groupbox>
 	
 	
-		<hbox width="100%" style="margin-top:20px;">
+		<hbox width="100%" height="100%" style="margin-top:20px;">
 		
 		<!-- FIXME utiliser include  -->
 			<groupbox width="286px">
@@ -52,7 +55,6 @@
 				<listbox id="valeurFiltre" style="width:140px" mold="select"/>
 				
 				<div align="center" style="margin-top:10px;">
-<!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->
 					 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
                     hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter le filtre et la valeur sélectionnés aux filtres actifs"/>
 					 <button  id="boutonEffacerFiltre" image="/images/effacer-16x16.png"
@@ -74,21 +76,16 @@
 			<vbox  height="645px" width="700px">
 					<div>
 							<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
-							<a id="cooccurrentLien">cooccurrents</a>
+							<a id="cooccurrentLien" visible="false">cooccurrents</a>
 					</div>
 							
 					<grid id="contextesGrid" mold="paging" pageSize="15"
-						 emptyMessage="Aucun contexte trouvé." height="620px" width="700px">
-						<!-- 	pagingPosition="both" sizedByContent="true"> -->
+						 height="550px" width="700px" emptyMessage="Aucun contexte trouvé.">
 			
 						<columns sizable="true">
 		
 							<column hflex="3" id="contexte" label="Contexte" />
-		<!-- 					<column hflex="1" label="Catégorie"  sort="auto(catgram,lemme)"/>  -->
-		<!-- 					<column hflex="1" label="Genre" sort="auto(genre, lemme)"/> -->
-		<!-- 					<column hflex="1" label="Nombre"  sort="auto(catgram, lemme)"/> -->
-		<!-- 					<column hflex="1" label="Précision" sort="auto(catgramPrésicion, lemme)"/> -->
-		<!-- 					<column hflex="2" label="Liste" sort="auto(liste, lemme)"/> -->
+	
 						</columns>
 						<rows />
 					</grid>

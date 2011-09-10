@@ -37,6 +37,7 @@
 			
 			<!-- L'alphabet phonétiqe est inséré ici dynamiquement -->
 			<div id="api" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
+			<div id="caractèresSpéciaux" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
 			
 		</groupbox>
 
@@ -71,15 +72,16 @@
 			<vbox  height="645px" width="700px">
 			
 				<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
-				
+				  <menupopup id="editPopup">       
+               		<menuitem id="menuitemPrononciation" autocheck="true" label="afficher la colonne « Prononciations »"  onClick="colonnePrononciation.setVisible(!colonnePrononciation.isVisible())" checked="false"/>
+    			</menupopup>
 				<grid id="motsGrid" mold="paging" pageSize="20"
-					height="620px" width="700px"
+					height="550px" width="700px"
 					emptyMessage="Aucun mot trouvé.">
-					<!-- 	emptyMessage="Aucun mot trouvé."		pagingPosition="both" sizedByContent="true"> -->
-		
-					<columns sizable="true">
-						<column width="100px" id="mot" label="Mot" sortDirection="ascending" sort="auto" />
-						<column width="100px" label="Prononciations"  sort="auto(prononciations,lemme)" visible="true"/> 
+							
+					<columns sizable="true" menupopup="editPopup">
+						<column width="130px" id="mot" label="Mot" sortDirection="ascending" sort="auto" onGroup="alert(self.label)"/>
+						<column width="100px" id="colonnePrononciation" label="Prononciations"  sort="auto(prononciations,lemme)" visible="false" /> 
 						<column width="40px" label="RO"  sort="auto(ro,lemme)"/> 
 						<column width="80px" label="Catégorie"  sort="auto(catgram,lemme)"/> 
 						<column width="50px" label="Genre" sort="auto(genre, lemme)"/>

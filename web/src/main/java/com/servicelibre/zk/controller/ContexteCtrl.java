@@ -221,7 +221,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 				Label mot = new Label(contexte.mot);
 				mot.setTooltiptext(contexte.getId());
-				mot.setStyle("font-weight: bold; cursor:hand;cursor:pointer;");
+				mot.setSclass("mot");
 
 				mot.addEventListener(Events.ON_CLICK, new EventListener() {
 
@@ -404,6 +404,13 @@ public class ContexteCtrl extends CorpusCtrl {
 		contextesGrid.getPaginal().setActivePage(0);
 
 		infoRésultats.setValue(getInfoRésultat(contexteSetCourant));
+		
+		if(contexteSetCourant.getContextes().size() > 0) {
+			cooccurrentLien.setVisible(true);
+		}
+		else {
+			cooccurrentLien.setVisible(false);
+		}
 
 		// mettre à jour les informations sur les résultats
 

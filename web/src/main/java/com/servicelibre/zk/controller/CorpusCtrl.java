@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Cell;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
 import org.zkoss.zul.Label;
@@ -67,6 +68,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements
 	Label infoRésultats;
 
 	protected Window webCorpusWindow;
+	
+	Div caractèresSpéciaux;
 	
 	
 	
@@ -363,6 +366,53 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements
 		Tabbox tabbox = (Tabbox) webCorpusWindow.getFellow("corpusTabbox");
 		corpusTabs = tabbox.getTabs();
 		corpusTabpanels = tabbox.getTabpanels();
+		
+		initialiseClavierCaractèresSpéciaux();
+		
+		caractèresSpéciaux.setVisible(true);
+		
 	}
 
+	protected void initialiseClavierCaractèresSpéciaux() {
+		String[][] caractères = {
+				{ "à", "à" },
+				{ "â", "â" },
+				{ "é", "é" },
+				{ "è", "è" },
+				{ "ê", "ê" },
+				{ "ë", "ë" },
+				{ "ï", "ï" },
+				{ "î", "î" },
+				{ "ô", "ô" },
+				{ "ù", "ù" },
+				{ "û", "û" },
+				{ "ç", "ç" },
+				{ "œ", "œ" },
+				{ "æ", "æ" }
+		};
+		
+		for (String[] caractère : caractères) {
+
+			Label label = new Label(caractère[0]);
+			label.setTooltiptext(caractère[1]);
+			label.setParent(caractèresSpéciaux);
+			label.setSclass("caractèreSpécial");
+			label.addEventListener(Events.ON_CLICK, new EventListener() {
+
+				@Override
+				public void onEvent(Event arg0) throws Exception {
+					Label l = (Label) arg0.getTarget();
+					cherche.setText(getMotCherché() + l.getValue());
+
+				}
+			});
+
+		}
+		
+	}
+	
+	protected String getMotCherché() {
+		return cherche.getText().trim();
+	}
+	
 }

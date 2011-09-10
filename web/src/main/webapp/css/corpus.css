@@ -66,6 +66,12 @@ body {
    font-weight: bold;
  }
  
+ .mot {
+ 	cursor:hand;
+ 	cursor:pointer;
+ 	font-weight: bold;
+ }
+ 
  .groupe {
   font-weight: bold;
  }
@@ -77,11 +83,17 @@ body {
 	font-family: 'Doulos SIL', 'Gentium', 'DejaVu Sans', 'Lucida Grande', 'Segoe UI', 'Arial Unicode MS', 'Adobe Pi Std', 'Lucida Sans Unicode', 'Chrysanthi Unicode', Code2000, Gentium, GentiumAlt, 'TITUS Cyberbit Basic', 'Bitstream Vera Sans', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', 'Charis SIL' ,sans-serif;
 }
 
+ .caractèreSpécial {
+	margin-right:3px; 
+	padding:3px; 
+	font-size:15px; 
+}
+
 .apiCrochet {
 	font-family: 'Doulos SIL', 'Gentium', 'DejaVu Sans', 'Lucida Grande', 'Segoe UI', 'Arial Unicode MS', 'Adobe Pi Std', 'Lucida Sans Unicode', 'Chrysanthi Unicode', Code2000, Gentium, GentiumAlt, 'TITUS Cyberbit Basic', 'Bitstream Vera Sans', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', 'Charis SIL' ,sans-serif;
 }
 
-.apiLettre:hover {
+.apiLettre:hover,  .caractèreSpécial:hover {
 	border: solid 2px;
 	margin-right:1px; 
 	padding: 2px;

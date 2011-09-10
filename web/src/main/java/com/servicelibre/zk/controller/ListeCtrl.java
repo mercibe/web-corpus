@@ -18,6 +18,7 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
@@ -50,6 +51,9 @@ public class ListeCtrl extends CorpusCtrl {
 
 	Div api;
 
+	Column colonnePrononciation;
+	Menuitem menuitemPrononciation;
+	
 	ListeManager listeManager = ServiceLocator.getListeManager();
 
 	MotManager motManager = ServiceLocator.getMotManager();
@@ -76,8 +80,14 @@ public class ListeCtrl extends CorpusCtrl {
 		//
 		if (getGpActif().equals("p")) {
 			api.setVisible(true);
+			caractèresSpéciaux.setVisible(false);
+			colonnePrononciation.setVisible(true);
+			menuitemPrononciation.setChecked(true);
 		} else {
 			api.setVisible(false);
+			caractèresSpéciaux.setVisible(true);
+			colonnePrononciation.setVisible(false);
+			menuitemPrononciation.setChecked(false);
 		}
 	}
 
@@ -180,10 +190,6 @@ public class ListeCtrl extends CorpusCtrl {
 				.getValue();
 	}
 
-	private String getMotCherché() {
-		return cherche.getText().trim();
-	}
-
 	/**
 	 * Retourne une phrase qui décrit les critères de recherche courant
 	 * 
@@ -213,7 +219,7 @@ public class ListeCtrl extends CorpusCtrl {
 		initialiseMotsGrid();
 
 		initialiseClavierPhonétique();
-
+		
 	}
 
 	private void initialiseClavierPhonétique() {
@@ -270,7 +276,7 @@ public class ListeCtrl extends CorpusCtrl {
 			Label label = new Label(apiLettreInfo[0]);
 			label.setTooltiptext(apiLettreInfo[1]);
 			label.setParent(api);
-			label.setClass("apiLettre");
+			label.setSclass("apiLettre");
 			label.addEventListener(Events.ON_CLICK, new EventListener() {
 
 				@Override
@@ -302,8 +308,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 				Label motLabel = new Label(mot.getMot());
 
-				motLabel.setStyle("cursor:hand;cursor:pointer");
-
+				motLabel.setSclass("mot");
+				
 				motLabel.addEventListener(Events.ON_CLICK, new EventListener() {
 
 					@Override
@@ -401,4 +407,6 @@ public class ListeCtrl extends CorpusCtrl {
 
 	}
 
+	
+	
 }
