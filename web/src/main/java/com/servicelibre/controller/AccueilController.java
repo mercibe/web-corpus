@@ -24,7 +24,7 @@ public class AccueilController
     {
 
         //TODO corpus par défaut => configuration, via nom au lieu de ID
-        List<Liste> listes = listeManager.findByCorpusId(1);
+        List<Liste> listes = listeManager.findAllByCorpusId(1);
 
         model.addAttribute("listes", listes);
 

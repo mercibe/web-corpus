@@ -283,7 +283,7 @@ public class ListeCtrl extends CorpusCtrl {
 				public void onEvent(Event arg0) throws Exception {
 					Label l = (Label) arg0.getTarget();
 					cherche.setText(getMotCherché() + l.getValue());
-
+					cherche.setFocus(true);
 				}
 			});
 

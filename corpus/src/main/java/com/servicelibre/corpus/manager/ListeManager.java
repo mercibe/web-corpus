@@ -14,7 +14,11 @@ public interface ListeManager // extends JpaRepository<Liste, Long>
 
 	Liste findByNom(String nom);
 	
-	List<Liste> findByCorpusId(long corpusId);
+	List<Liste> findAllByCorpusId(long corpusId);
+	
+	List<Liste> findPrimaireByCorpusId(long corpusId);
+	
+	List<Liste> findSecondaireByCorpusId(long corpusId);
 	
 	Liste save(Liste liste);
 

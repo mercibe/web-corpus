@@ -82,6 +82,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements
 	public void onClick$boutonRecherche(Event event) {
 
 		chercheEtAffiche();
+		
+		cherche.setFocus(true);
 
 	}
 	
@@ -403,7 +405,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements
 				public void onEvent(Event arg0) throws Exception {
 					Label l = (Label) arg0.getTarget();
 					cherche.setText(getMotCherché() + l.getValue());
-
+					cherche.setFocus(true);
 				}
 			});
 

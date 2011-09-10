@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class JpaListeManager implements ListeManager
     /**
      * Retourne toutes les listes de mots associées au corpus dont l'id est passé en paramètre
      */
-    public List<Liste> findByCorpusId(long corpusId)
+    public List<Liste> findAllByCorpusId(long corpusId)
     {
         List<Liste> listes = new ArrayList<Liste>();
         
@@ -76,6 +77,45 @@ public class JpaListeManager implements ListeManager
         
         return listes;
     }
+    
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Liste> findPrimaireByCorpusId(long corpusId) {
+		  List<Liste> listes = new ArrayList<Liste>();
+	        
+	        try
+	        {
+	        	Query nativeQuery = entityManager.createNativeQuery("select DISTINCT l.*  from liste l join  mot m on (l.id = m.liste_id)  order by l.ordre, l.nom", Liste.class);
+	        	listes = nativeQuery.getResultList();
+	            //listes = (List<Liste>) entityManager.createQuery("SELECT DISTINCT m.liste, m.liste.ordre FROM Mot m JOIN m.liste l WHERE l.corpus.id = ? ORDER BY l.ordre, l.nom").setParameter(1, corpusId).getResultList();
+	        }
+	        catch (NoResultException e)
+	        {
+	            logger.warn("Aucune liste primaire pour le corpus [{}]. ({})", corpusId, e.getMessage());
+	        }        
+	        
+	        return listes;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Liste> findSecondaireByCorpusId(long corpusId) {
+		  List<Liste> listes = new ArrayList<Liste>();
+	        
+	        try
+	        {
+	        	
+	        	Query nativeQuery = entityManager.createNativeQuery("select distinct l.*  from liste l left outer join  mot m on (l.id = m.liste_id)  where m.liste_id is null  order by l.ordre, l.nom", Liste.class);
+	        	listes = nativeQuery.getResultList();
+	            //listes = (List<Liste>) entityManager.createQuery("SELECT DISTINCT m.liste FROM  Mot m OUTER JOIN m.liste WHERE l.corpus.id = ? and m.liste IS NULL ORDER BY l.ordre, l.nom").setParameter(1, corpusId).getResultList();
+	        }
+	        catch (NoResultException e)
+	        {
+	            logger.warn("Aucune liste pour le corpus [{}]. ({})", corpusId, e.getMessage());
+	        }        
+	        
+	        return listes;
+	}
 
 	@Override
 	public int findMaxOrdre() {
@@ -85,5 +125,7 @@ public class JpaListeManager implements ListeManager
 		}
 		return n.intValue();
 	}
+
+
 
 }

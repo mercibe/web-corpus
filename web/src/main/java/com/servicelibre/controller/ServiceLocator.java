@@ -62,7 +62,7 @@ public class ServiceLocator
     }
 
     public static PrononciationManager getPrononciationManager() {
-	return (PrononciationManager) ctx.getBean("prononciationManager");
+    	return (PrononciationManager) ctx.getBean("prononciationManager");
     }
     
     

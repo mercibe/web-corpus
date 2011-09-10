@@ -240,20 +240,23 @@ public class JpaMotManager implements MotManager {
 			// exactement au nom de la colonne dans la DB / modèle
 			// Sinon, NPE!
 
-			Path<Object> path = motRacine.get(filtre.nom);
+			// Tour de passe passe rapide pour liste / particularités...
+			String nomFiltre = filtre.nom.replaceAll("_secondaire", "");
+			
+			Path<Object> path = motRacine.get(nomFiltre);
 
 			if (path != null) {
 
 				In<Object> in = null;
 
-				if (filtre.nom.equals("liste")) {
+				if (nomFiltre.equals("liste")) {
 
 					// Il faut ajouter un critère sur l'objet « listes », variable
 					// d'instance de la classe Mot (collection des listes auxquelles
 					// appartiennent le mot = étiquettes associées au mot)
-					Join<Object, Object> join = motRacine.join("listes");
+					Join<Object, Object> joinListe = motRacine.join("listes");
 
-					in = cb.in(join);
+					in = cb.in(joinListe);
 
 					// Construction de la clause « IN » avec les Ids des listes
 					// présents dans le filtre
@@ -270,7 +273,7 @@ public class JpaMotManager implements MotManager {
 
 				p = cb.and(p, in);
 			} else {
-				logger.error("{} ne correspond à aucune colonne dans la DB/modèle.", filtre.nom);
+				logger.error("{} ne correspond à aucune colonne dans la DB/modèle.", nomFiltre);
 			}
 		}
 

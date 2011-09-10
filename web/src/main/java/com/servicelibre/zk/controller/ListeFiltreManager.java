@@ -23,17 +23,31 @@ public class ListeFiltreManager extends FiltreManager {
 	public void init() {
 		
 		// ajout du filtre des listes
-		List<Liste> listes = listeManager.findByCorpusId(corpusService.getCorpus().getId());
+		List<Liste> listesPrimaires = listeManager.findPrimaireByCorpusId(corpusService.getCorpus().getId());
 		
-		List<DefaultKeyValue> listesClésValeurs = new ArrayList<DefaultKeyValue>(listes.size() + 1);
+		List<DefaultKeyValue> listesClésValeurs = new ArrayList<DefaultKeyValue>(listesPrimaires.size() + 1);
 		
 		listesClésValeurs.add(keyValueVide);
 		
-		for (Liste liste : listes) {
+		for (Liste liste : listesPrimaires) {
 			listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 		}
 		
 		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste", listesClésValeurs));
+		
+		// ajout du filtre des listes secondaires
+		List<Liste> listesSecondaires = listeManager.findSecondaireByCorpusId(corpusService.getCorpus().getId());
+		
+		List<DefaultKeyValue> listesSecondairesClésValeurs = new ArrayList<DefaultKeyValue>(listesSecondaires.size() + 1);
+		
+		listesSecondairesClésValeurs.add(keyValueVide);
+		
+		for (Liste liste : listesSecondaires) {
+			listesSecondairesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
+		}
+		
+		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_secondaire", "Particularités", listesSecondairesClésValeurs));		
+		
 		
 
 		// Ajout de la liste des catgram
