@@ -1,5 +1,6 @@
 package com.servicelibre.zk.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,10 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.entity.DocMetadata;
+import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
@@ -58,12 +62,14 @@ public class ContexteCtrl extends CorpusCtrl {
 	PhraseService phraseService = new CorpusPhraseService();
 
 	CorpusService corpusService = ServiceLocator.getCorpusService();
+	DocMetadataManager corpusMétadonnéesManager = ServiceLocator.getDocMetataManager();
 
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private boolean phraseComplète;
 	private ContexteSet contexteSetCourant;
-
+	private Map<String, DocMetadata> métadonnéesTraductions;
+	
 	public void onOK$liste(Event event) {
 		chercheEtAffiche();
 	}
@@ -333,17 +339,23 @@ public class ContexteCtrl extends CorpusCtrl {
 
 			// TODO pour améliorer vue des contextes
 			/*
-			 * - s'asurer que tous les contextes aient des métadonnées -
-			 * naviguer au contexte suivant/précédent (cf. grid de l'onglet
-			 * contexte. Via Model?) => changer id du tab aussi! - afficher
-			 * numéro de ligne/contexte - mapping DB entre nom champ index
-			 * Lucene et nom logique - phrases du voisinage non nettoyées
-			 * (conserver retours à la ligne, etc.) - afficher document binaire
-			 * source (téléchargement) si rôle admin
+			 * - s'asurer que tous les contextes aient des métadonnées 
+			 * 
+			 * - naviguer au contexte suivant/précédent (cf. grid de l'onglet
+			 * contexte. Via Model?) => changer id du tab aussi!
+			 *  
+			 * - afficher numéro de ligne/contexte - mapping DB entre nom champ index
+			 * Lucene et nom logique 
+			 * 
+			 * - phrases du voisinage non nettoyées (conserver retours à la ligne, etc.) 
+			 * - afficher document binaire source (téléchargement) si rôle admin
 			 */
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("mot", contexte.mot);
+			
+			// TODO appeler un service traducteurmetadata
+			
 			args.put("métadonnées", contexte.getDocMétadonnées());
 
 			Contexte contexteSource = contexte.getContexteSource();
@@ -383,6 +395,32 @@ public class ContexteCtrl extends CorpusCtrl {
 		infoContexteTab.setSelected(true);
 
 	}
+
+//	private List<Metadata> traduitMétadonnées(List<Metadata> docMétadonnées) {
+//
+//		
+//		// Chargement des définitions des métadonnées du corpus si ce n'est déjà fait
+//		if(métadonnéesTraductions.size() == 0)
+//		{
+//			List<DocMetadata> métadonnéesCorpus = corpusMétadonnéesManager.findByCorpusId(corpusService.getCorpus().getId());
+//			for(DocMetadata md : métadonnéesCorpus) {
+//				métadonnéesTraductions.put(md.getChampIndex(), md);
+//			}
+//		}
+//		
+//		
+//		// Traduction nom champ index => libellé écran
+//		for(Metadata md : docMétadonnées) {
+//			DocMetadata indexMetadata = métadonnéesTraductions.get(md.getName());
+//			//if(indexMetadata != null)
+//			
+//		}
+//		
+//		
+//		
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	private Tab getTabDéjàOuvert(String id) {
 		@SuppressWarnings("unchecked")

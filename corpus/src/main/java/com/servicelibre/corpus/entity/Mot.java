@@ -16,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -30,8 +31,6 @@ public class Mot implements Comparable<Mot> {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mot_seq")
 	private long id;
 
-	// @ManyToOne(optional = false)
-	// private Liste liste;
 	// Liste primaire
 	@OneToOne
 	private Liste liste;
@@ -205,6 +204,18 @@ public class Mot implements Comparable<Mot> {
 
 	public void setPrononciations(Collection<Prononciation> prononciations) {
 		this.prononciations = prononciations;
+	}
+
+	
+	
+	public String getPrononciationsString() {
+		StringBuilder prononcs = new StringBuilder();
+		String sep = "";
+		for (Prononciation p : prononciations) {
+			prononcs.append(sep).append("[").append(p.prononciation).append("]");
+			sep = ", ";
+		}
+		return prononcs.toString();
 	}
 
 	public Collection<Liste> getListes() {

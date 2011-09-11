@@ -1,5 +1,7 @@
 package com.servicelibre.controller;
 
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.zkoss.spring.SpringUtil;
 
@@ -7,6 +9,7 @@ import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.manager.PrononciationManager;
+import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
@@ -64,6 +67,5 @@ public class ServiceLocator
     public static PrononciationManager getPrononciationManager() {
     	return (PrononciationManager) ctx.getBean("prononciationManager");
     }
-    
     
 }

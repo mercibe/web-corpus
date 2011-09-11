@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
@@ -20,21 +21,31 @@ public class DocMetadata {
 	String nom;
 
 	@Column
+	String description;
+
+	@Column
 	String champIndex;
 
 	@Column
 	int ordre;
 
-	@ManyToOne(optional = false)
+	/*
+	 * DocMetadata est maître de la relation OneToMany (il n'a pas le « mappedBy») Il
+	 * est donc responsable de la gestion bi-directionnelle de la relation
+	 * (insert/update) avec Corpus
+	 */
+	@ManyToOne
+	@JoinColumn(name = "corpus_id", nullable = true)
 	Corpus corpus;
 
 	public DocMetadata() {
 		super();
 	}
 
-	public DocMetadata(String nom, String champIndex, int ordre, Corpus corpus) {
+	public DocMetadata(String nom, String description, String champIndex, int ordre, Corpus corpus) {
 		super();
 		this.nom = nom;
+		this.description = description;
 		this.champIndex = champIndex;
 		this.ordre = ordre;
 		this.corpus = corpus;
@@ -77,7 +88,29 @@ public class DocMetadata {
 	}
 
 	public void setCorpus(Corpus corpus) {
-		this.corpus = corpus;
+		if (this.corpus != corpus) {
+			if (this.corpus != null) {
+				this.corpus.enleverDocMetadata(this);
+			}
+			this.corpus = corpus;
+			if (corpus != null) {
+				corpus.ajouterDocMetadata(this);
+			}
+		}
+
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String toString() {
+		return "DocMetadata [id=" + id + ", nom=" + nom + ", description=" + description + ", champIndex=" + champIndex + ", ordre=" + ordre + "]";
 	}
 
 }

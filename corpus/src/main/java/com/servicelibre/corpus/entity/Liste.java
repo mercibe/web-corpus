@@ -38,10 +38,6 @@ public class Liste implements Comparable<Liste> {
 	@Column
 	Integer ordre;
 
-	// @OneToMany(cascade = CascadeType.ALL)
-	// @JoinColumn(name = "liste_id")
-	// List<Mot> mots = new ArrayList<Mot>();
-
 	@ManyToMany(mappedBy = "listes", cascade = CascadeType.ALL)
 	private List<Mot> mots = new ArrayList<Mot>();
 

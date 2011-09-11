@@ -35,6 +35,19 @@ body {
    text-align: center; 
  } 
 
+/* 
+   Pour aérer bouton toolbar (padding à 0px au lieu de 2px)
+*/
+.z-toolbarbutton-cnt {
+	padding: 0px;
+	position: relative;
+	zoom: 1;
+	font-family: arial,sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+}
+
+
  .category-center .z-auxheader-cnt { 
    text-align: center; 
  }

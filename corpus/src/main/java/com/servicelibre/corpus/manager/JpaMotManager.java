@@ -84,13 +84,6 @@ public class JpaMotManager implements MotManager {
 		return mot;
 	}
 
-//	@Override
-//	@Transactional(readOnly = false)
-//	public int removeAllFrom(Liste liste) {
-//		logger.info("Suppression de tous les mots de la liste [{}].", liste);
-//		return entityManager.createQuery("delete from Mot m where ? MEMBRE OF m.listes").setParameter(1, liste).executeUpdate();
-//	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Mot> findAll() {
@@ -167,7 +160,7 @@ public class JpaMotManager implements MotManager {
 		criteria.where(p);
 
 		// Order by
-		// criteria.orderBy(cb.asc(motRacine.get("lemme")));
+		criteria.orderBy(cb.asc(mot.get("mot")));
 
 		TypedQuery<Mot> q = entityManager.createQuery(criteria);
 
@@ -221,7 +214,8 @@ public class JpaMotManager implements MotManager {
 		criteria.where(p);
 
 		// Order by
-		// criteria.orderBy(cb.asc(motRacine.get("lemme")));
+		criteria.orderBy(cb.asc(mot.get("mot")));
+
 
 		TypedQuery<Mot> q = entityManager.createQuery(criteria);
 

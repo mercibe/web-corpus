@@ -12,7 +12,7 @@
 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" />
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
-	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager" />
+	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"/>
 	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />
 
 	<!-- Définition managers objets ZK -->

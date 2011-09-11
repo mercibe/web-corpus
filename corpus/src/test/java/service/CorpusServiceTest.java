@@ -15,9 +15,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Corpus;
+import com.servicelibre.corpus.entity.DocMetadata;
 import com.servicelibre.corpus.manager.CorpusManager;
+import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
@@ -33,12 +36,15 @@ public class CorpusServiceTest {
 	@Autowired
 	CorpusManager cm;
 
+	
+	@Autowired
+	DocMetadataManager dmm;
+	
 	@Autowired
 	FormeService formeService;
 
 	private CorpusPhraseService phraseService;
 
-	@Ignore
 	@Test
 	public void créeTest() {
 		Corpus corpus = new Corpus("Corpus de test", "Un nouveau corpus de test");
@@ -90,13 +96,20 @@ public class CorpusServiceTest {
 
 	}
 
+	@Transactional
 	@Test
 	public void contextesLemmeTest() {
 
 		Corpus corpus = new Corpus("Corpus de test nouveau", "");
 
 		corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
-
+		
+		//DocMetadata docMetadata = new DocMetadata("Catégorie", "La catégorie du document", "categorie", 40, corpus);
+		
+		//docMetadata.setCorpus(corpus);
+		
+		//corpus.ajouterDocMetadata(docMetadata);
+		
 		CorpusService cs = new CorpusService(cm, corpus);
 		cs.setFormeService(formeService);
 

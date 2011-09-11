@@ -18,6 +18,7 @@ import com.servicelibre.corpus.entity.DocMetadata;
 // Essentiellement pour traduction des exceptions « vendor-neutral »
 @Transactional
 public class JpaDocMetadataManager implements DocMetadataManager {
+	
 	private static Logger logger = LoggerFactory.getLogger(JpaDocMetadataManager.class);
 
 	@PersistenceContext
@@ -53,7 +54,7 @@ public class JpaDocMetadataManager implements DocMetadataManager {
 		List<DocMetadata> docMetadatas = new ArrayList<DocMetadata>();
 
 		try {
-			docMetadatas = (List<DocMetadata>) entityManager.createQuery("select l from DocMetadata l where l.corpus.id = ? order by l.ordre, l.nom")
+			docMetadatas = (List<DocMetadata>) entityManager.createQuery("SELECT l FROM DocMetadata l WHERE l.corpus.id = ? ORDER BY l.ordre, l.nom")
 			.setParameter(1, corpusId).getResultList();
 		} catch (NoResultException e) {
 			logger.warn("Aucune métadonnée de document pour le corpus [{}]. ({})", corpusId, e.getMessage());

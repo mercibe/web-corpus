@@ -3,11 +3,13 @@ package com.servicelibre.corpus.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -42,9 +44,8 @@ public class Corpus {
 	@Column
 	Boolean parDéfaut;
 
-	//Énumération séparée par des virgules (ex.: biblio, categorie, titre, cycle, edition)
-	@Column
-	String nomMétadonnées = "";
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="corpus")
+	List<DocMetadata> métadonnéesDoc = new ArrayList<DocMetadata>();
 
 	public Corpus() {
 		super();
@@ -121,27 +122,34 @@ public class Corpus {
 		this.parDéfaut = parDéfaut;
 	}
 
+	
+
+	public List<DocMetadata> getMétadonnéesDoc() {
+		return métadonnéesDoc;
+	}
+
 	@Override
 	public String toString() {
-		return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + "]";
+		return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + ", dossierData=" + dossierData + ", parDéfaut=" + parDéfaut + "]";
 	}
 
-	public List<String> getNomMétadonnéesList() {
-		List<String> noms = new ArrayList<String>();
-		String[] strings = this.nomMétadonnées.split(",");
-		for(String s : strings) {
-			noms.add(s.trim());
-		}
-		return noms;
+	public void setMétadonnéesDoc(List<DocMetadata> métadonnéesDoc) {
+		this.métadonnéesDoc = métadonnéesDoc;
 	}
 
-	public String getNomMétadonnées() {
-		return nomMétadonnées;
+	public void enleverDocMetadata(DocMetadata docMetadata) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	public void setNomMétadonnées(String nomMétadonnées) {
-		this.nomMétadonnées = nomMétadonnées;
+	public void ajouterDocMetadata(DocMetadata docMetadata) {
+		 if(!this.métadonnéesDoc.contains(docMetadata)) {
+			    this.métadonnéesDoc.add(docMetadata);
+			    docMetadata.setCorpus(this);
+			  }
+
 	}
+	
 	
 
 }

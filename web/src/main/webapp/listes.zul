@@ -80,10 +80,10 @@
 					emptyMessage="Aucun mot trouvé.">
 							
 					<columns sizable="true" menupopup="editPopup">
-						<column width="130px" id="mot" label="Mot" sortDirection="ascending" sort="auto" onGroup="alert(self.label)"/>
-						<column width="100px" id="colonnePrononciation" label="Prononciations"  sort="auto(prononciations,lemme)" visible="false" /> 
+						<column width="130px" id="mot" label="Mot" sortDirection="ascending" sort="auto"/>
+						<column width="100px" id="colonnePrononciation" label="Prononciations"  sort="auto(prononciationsString,lemme)" visible="false" /> 
 						<column width="40px" label="RO"  sort="auto(ro,lemme)"/> 
-						<column width="80px" label="Catégorie"  sort="auto(catgram,lemme)"/> 
+						<column width="80px" label="Catégorie"  sort="auto(catgram,genre,lemme)"/> 
 						<column width="50px" label="Genre" sort="auto(genre, lemme)"/>
 						<column width="60px" label="Nombre"  sort="auto(nombre, lemme)"/>
 						<column width="70px" label="Précision" sort="auto(catgramPrésicion, lemme)"/>

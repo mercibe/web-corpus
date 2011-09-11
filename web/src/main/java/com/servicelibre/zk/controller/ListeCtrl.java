@@ -151,7 +151,6 @@ public class ListeCtrl extends CorpusCtrl {
 
 		String conditionActive = getConditionActive();
 
-		// TODO sort sur colonnes
 		// TODO historique des recherches
 
 		String gpActif = getGpActif();
@@ -319,13 +318,7 @@ public class ListeCtrl extends CorpusCtrl {
 					}
 				});
 
-				StringBuilder prononcs = new StringBuilder();
-				String sep = "";
-				for (Prononciation p : mot.getPrononciations()) {
-					prononcs.append(sep).append("[").append(p.prononciation).append("]");
-					sep = ", ";
-				}
-				Label prononcLabel = new Label(prononcs.toString());
+				Label prononcLabel = new Label(mot.getPrononciationsString());
 				prononcLabel.setSclass("apiCrochet");
 
 				row.appendChild(motLabel);
@@ -384,6 +377,7 @@ public class ListeCtrl extends CorpusCtrl {
 			// refléter
 			// dans la colonne (réinitialisation du marqueur de tri)
 
+			motColumn.setSortDirection("natural");
 			motColumn.sort(true);
 
 			infoRésultats.setValue(getInfoRésultat(modelList));

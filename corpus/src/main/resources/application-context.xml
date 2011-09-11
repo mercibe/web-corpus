@@ -13,6 +13,7 @@
 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
 	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />	
+	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"></bean>
 
 
 	

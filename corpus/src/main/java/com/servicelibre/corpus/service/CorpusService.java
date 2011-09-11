@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.servicelibre.corpus.entity.Corpus;
+import com.servicelibre.corpus.entity.DocMetadata;
 import com.servicelibre.corpus.lucene.InformationTerme;
 import com.servicelibre.corpus.lucene.InformationTermeTextComparator;
 import com.servicelibre.corpus.lucene.LuceneIndexManager;
@@ -78,7 +79,12 @@ public class CorpusService {
 
 		if (corpusTrouvéOuCréé == null) {
 			logger.info("Création du nouveau corpus " + corpus);
-			cm.save(corpus);
+			try {
+				cm.save(corpus);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return corpus;
 		} else {
 			logger.info("Ouverture du corpus " + corpus);
@@ -221,11 +227,12 @@ public class CorpusService {
 
 		// Récupère tous les champs à associer au contexte jugés pertinents
 		// L'ordre des champs de la liste est respecté
-		for (String nomChamp : this.corpus.getNomMétadonnéesList()) {
-			Field champ = document.getField(nomChamp);
+		for (DocMetadata docMetadata : this.corpus.getMétadonnéesDoc()) {
+			String nomChamp = docMetadata.getChampIndex();
+			Field champ = (Field)document.getFieldable(nomChamp);
 			if (champ != null && !champ.isBinary()) {
-				métadonnées.add(new StringMetadata(nomChamp, champ
-						.stringValue()));
+				// Utilisation du nom au lieu du champ (pour la présentation à l'écran)
+				métadonnées.add(new StringMetadata(docMetadata.getNom(), champ.stringValue()));
 			}
 		}
 
