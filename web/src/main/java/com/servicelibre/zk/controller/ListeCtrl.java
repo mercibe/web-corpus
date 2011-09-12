@@ -374,11 +374,8 @@ public class ListeCtrl extends CorpusCtrl {
 			motsGrid.setModel(modelList);
 			motsGrid.getPaginal().setActivePage(0);
 			// les mots sont toujours retournés par ordre alphabétique =>
-			// refléter
-			// dans la colonne (réinitialisation du marqueur de tri)
-
-			motColumn.setSortDirection("natural");
-			motColumn.sort(true);
+			// refléter dans la colonne (réinitialisation du marqueur de tri)
+			motColumn.setSortDirection("ascending");
 
 			infoRésultats.setValue(getInfoRésultat(modelList));
 	}
