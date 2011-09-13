@@ -1,6 +1,5 @@
 package com.servicelibre.zk.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.entity.DocMetadata;
 import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.FiltreMot;
-import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;

@@ -24,7 +24,7 @@ public class JpaCorpusManager implements CorpusManager
 
 	@Override
 	public Corpus findOne(long corpusId) {
-		return (Corpus) entityManager.createQuery("SELECT c FROM Corpus c JOIN FETCH c.métadonnéesDoc WHERE c.id = ?").setParameter(1, corpusId).getSingleResult();
+		return (Corpus) entityManager.createQuery("SELECT c FROM Corpus c JOIN FETCH c.métadonnéesDoc md WHERE c.id = ? ORDER BY md.ordre").setParameter(1, corpusId).getSingleResult();
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class JpaCorpusManager implements CorpusManager
 		Corpus corpus = null;
 
 		try {
-			corpus = (Corpus) entityManager.createQuery("SELECT c FROM Corpus c JOIN FETCH c.métadonnéesDoc WHERE c.nom = ?").setParameter(1, nom).getSingleResult();
+			corpus = (Corpus) entityManager.createQuery("SELECT c FROM Corpus c JOIN FETCH c.métadonnéesDoc md WHERE c.nom = ? ORDER BY md.ordre").setParameter(1, nom).getSingleResult();
 		} catch (NoResultException e) {
 			logger.warn("Le corpus du nom [{}] est introuvable dans la table des corpus. ({})", nom, e.getMessage());
 		}
@@ -50,7 +50,7 @@ public class JpaCorpusManager implements CorpusManager
 		Corpus corpus = null;
 
 		try {
-			corpus = (Corpus) entityManager.createQuery("SELECT c FROM Corpus c JOIN FETCH c.métadonnéesDoc WHERE c.parDéfaut = ?").setParameter(1, true).getSingleResult();
+			corpus = (Corpus) entityManager.createQuery("SELECT c FROM Corpus c JOIN FETCH c.métadonnéesDoc md WHERE c.parDéfaut = ? ORDER BY md.ordre").setParameter(1, true).getSingleResult();
 		} catch (NoResultException e) {
 			logger.warn("Aucun Corpus par défaut trouvé dans la table des corpus. ({})", e.getMessage());
 		}
