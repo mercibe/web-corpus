@@ -51,11 +51,17 @@ public class ListeFiltreManager extends FiltreManager {
 		
 
 		// Ajout de la liste des catgram
+		// TODO select distinct catgram from mot; et rechercher description dans service catgram
 		List<DefaultKeyValue> catgramClésValeurs = new ArrayList<DefaultKeyValue>(4);
 		catgramClésValeurs.add(keyValueVide);
 		catgramClésValeurs.add(new DefaultKeyValue("adj.", "adjectif"));
 		catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
+		catgramClésValeurs.add(new DefaultKeyValue("conj.", "conjonction"));
+		catgramClésValeurs.add(new DefaultKeyValue("dét.", "déterminant"));
+		catgramClésValeurs.add(new DefaultKeyValue("interj.", "interjection"));
 		catgramClésValeurs.add(new DefaultKeyValue("n.", "nom"));
+		catgramClésValeurs.add(new DefaultKeyValue("prép.", "préposition"));
+		catgramClésValeurs.add(new DefaultKeyValue("pron.", "pronom"));
 		catgramClésValeurs.add(new DefaultKeyValue("v.", "verbe"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs));
 

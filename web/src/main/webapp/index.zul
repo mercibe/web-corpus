@@ -29,7 +29,7 @@
 		</tabs>
 		
 		<toolbar>
-	        <toolbarbutton id="boutonFermerTousLesOnglets" image="/images/fermerOnglet.png"/>
+	        <toolbarbutton id="boutonFermerTousLesOnglets" image="/images/fermerOnglet.png" tooltiptext="fermer tous les onglets"/>
     	</toolbar>
 		
 		

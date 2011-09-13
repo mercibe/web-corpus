@@ -125,7 +125,6 @@ public class CorpusServiceTest {
 	}
 
 	@Test
-	@Ignore
 	public void contextesCorpusPhraseServiceStaticTest() {
 
 		phraseService = new CorpusPhraseService();

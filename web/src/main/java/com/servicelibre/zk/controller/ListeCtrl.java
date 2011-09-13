@@ -323,7 +323,18 @@ public class ListeCtrl extends CorpusCtrl {
 
 				row.appendChild(motLabel);
 				row.appendChild(prononcLabel);
-				row.appendChild(new Label(mot.isRo() ? "*" : ""));
+				
+				
+				Label or = new Label("");
+				if(mot.isRo()) {
+					or.setValue("*");
+					or.setStyle("text-align:center");
+					or.setTooltiptext("orthographe rectifiée");
+				}
+				
+				row.appendChild(or);
+				
+				
 				row.appendChild(new Label(mot.getCatgram()));
 				row.appendChild(new Label(mot.getGenre()));
 				row.appendChild(new Label(mot.getNombre()));

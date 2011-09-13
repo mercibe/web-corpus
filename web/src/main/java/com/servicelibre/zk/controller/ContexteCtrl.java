@@ -257,24 +257,27 @@ public class ContexteCtrl extends CorpusCtrl {
 	private void afficheCooccurrents() {
 
 		// TODO prévenir/possibilité annuler si voisinage trop grand et beaucoup
-		// de contexte: 5
-		// minutes au moins!
+		// de contexte: 5 minutes au moins!
 		// conseil: réduire le voisinage à moins de 5 mots... (phrase complète)
 
-		ContexteSet contexteSetCooccurrent;
-		if (contexteSetCourant.getContextesSize() > 200
-				|| contexteSetCourant.getTailleVoisinage() > 10) {
-			System.err
-					.println("Cela pourrait être long... Réduction des contextes");
-			// Relancer la recherche avec voisinage = 4
-			contexteSetCooccurrent = getContexteSet(4);
-		} else {
-			contexteSetCooccurrent = contexteSetCourant;
-		}
+//		ContexteSet contexteSetCooccurrent;
+//		if (contexteSetCourant.getContextesSize() > 200
+//				|| contexteSetCourant.getTailleVoisinage() > 10) {
+//			System.err
+//					.println("Cela pourrait être long... Réduction des contextes");
+//			// Relancer la recherche avec voisinage = 3
+//			contexteSetCooccurrent = getContexteSet(3);
+//		} else {
+//			contexteSetCooccurrent = contexteSetCourant;
+//		}
+		
+		// Relancer la recherche avec voisinage = 3 par défaut
+		ContexteSet contexteSetCooccurrent = getContexteSet(3);
 
 		if (contexteSetCooccurrent == null) {
 			return;
 		}
+		
 
 		String id = contexteSetCooccurrent.getMotCherché() + "_"
 				+ contexteSetCooccurrent.getTailleVoisinage();

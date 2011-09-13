@@ -122,9 +122,10 @@ public class JpaMotManager implements MotManager {
 		final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
 		final Root<Mot> mot = criteria.from(Mot.class);
+		criteria.distinct(true);
 		criteria.select(mot);
 
-		// chargement EAGER des prononciations 
+		// chargement EAGER des prononciations => DISTINCT dans le critère
 		mot.fetch("prononciations");
 		
 		// Tous les mots sont en minuscules
@@ -175,9 +176,10 @@ public class JpaMotManager implements MotManager {
 		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
 		Root<Mot> mot = criteria.from(Mot.class);
+		criteria.distinct(true);
 		criteria.select(mot);
 		
-		// chargement EAGER des prononciations 
+		// chargement EAGER des prononciations => DISTINCT dans le critère
 		mot.fetch("prononciations");
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant

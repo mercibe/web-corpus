@@ -344,6 +344,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements
 	
 	protected void effacerRecherche() {
 		initialiseRecherche();
+		cherche.setFocus(true);
 	}
 
 	/**
