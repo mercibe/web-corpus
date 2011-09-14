@@ -20,12 +20,24 @@
 
 package com.servicelibre.corpus.metadata;
 
-public interface Metadata {
+public abstract class Metadata {
+	
+	boolean primaire;
+	String nom;
 
-	public String getName();
-
-	public void setName(String name);
-
+	public boolean isPrimaire() {
+		return primaire;
+	}
+	
+	public void setPrimaire(boolean primaire) {
+		this.primaire = primaire;
+	}
+	public String getNom() {
+		return nom;
+	}
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
 	public abstract String toString();
 	public abstract String getSimpleString();
 }

@@ -232,7 +232,7 @@ public class CorpusService {
 			Field champ = (Field)document.getFieldable(nomChamp);
 			if (champ != null && !champ.isBinary()) {
 				// Utilisation du nom au lieu du champ (pour la présentation à l'écran)
-				métadonnées.add(new StringMetadata(docMetadata.getNom(), champ.stringValue()));
+				métadonnées.add(new StringMetadata(docMetadata.getNom(), champ.stringValue(), docMetadata.isPrimaire()));
 			}
 		}
 

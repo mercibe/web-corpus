@@ -322,8 +322,6 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private void créeEtAfficheOngletInfoContexte(Contexte contexte) {
-		System.out.println(contexte.getDocMétadonnées());
-
 		// Vérifier si contexte déjà ouvert
 
 		Tab infoContexteTab = getTabDéjàOuvert(contexte.getId());
@@ -357,7 +355,7 @@ public class ContexteCtrl extends CorpusCtrl {
 			
 			// TODO appeler un service traducteurmetadata
 			
-			args.put("métadonnées", contexte.getDocMétadonnées());
+			args.put("métadonnées", contexte.getDocMétadonnéesPrimaires());
 
 			Contexte contexteSource = contexte.getContexteSource();
 			if (contexteSource != null) {

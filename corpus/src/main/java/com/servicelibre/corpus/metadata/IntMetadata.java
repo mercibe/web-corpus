@@ -20,47 +20,40 @@
 
 package com.servicelibre.corpus.metadata;
 
-public class IntMetadata implements Metadata {
+public class IntMetadata extends Metadata {
 
-	int value;
+	int valeur;
 
-
-	String name;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public IntMetadata(String name) {
-		super();
-		this.name = name;
+	public IntMetadata(String nom) {
+		this(nom, 0, false);
 	}
 	
-	public IntMetadata(String name, int value) {
-		this(name);
-		this.value = value;
+	public IntMetadata(String nom, int valeur) {
+		this(nom, valeur, false);
+	}
+	
+	public IntMetadata(String nom, int valeur, boolean primaire) {
+		this.nom = nom;
+		this.valeur = valeur;
+		this.primaire = primaire;
 	}
 
 	public int getValue() {
-		return value;
+		return valeur;
 	}
 
 	public void setValue(int value) {
-		this.value = value;
+		this.valeur = value;
 	}
 	
 	@Override
 	public String toString() {
-		return name + "=" + value;
+		return this.nom + "=" + valeur;
 	}
 	
 	@Override
 	public String getSimpleString() {
-		return ""+value;
+		return ""+valeur;
 	}
-	
+
 }

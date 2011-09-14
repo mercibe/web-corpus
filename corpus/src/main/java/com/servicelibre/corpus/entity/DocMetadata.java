@@ -28,6 +28,12 @@ public class DocMetadata {
 
 	@Column
 	int ordre;
+	
+	@Column(nullable=false)
+	Boolean primaire = false;
+	
+	@Column(nullable=false)
+	Boolean filtre = false;
 
 	/*
 	 * DocMetadata est maître de la relation OneToMany (il n'a pas le « mappedBy») Il
@@ -107,10 +113,30 @@ public class DocMetadata {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public Boolean isPrimaire() {
+		return this.primaire;
+	}
+
+	public void setPrimaire(Boolean primaire) {
+		this.primaire = primaire;
+	}
+	
+	public Boolean isFiltre() {
+		return filtre;
+	}
+
+	public void setFiltre(Boolean filtre) {
+		this.filtre = filtre;
+	}
 
 	@Override
 	public String toString() {
-		return "DocMetadata [id=" + id + ", nom=" + nom + ", description=" + description + ", champIndex=" + champIndex + ", ordre=" + ordre + "]";
+		return "DocMetadata [id=" + id + ", nom=" + nom + ", description="
+				+ description + ", champIndex=" + champIndex + ", ordre="
+				+ ordre + ", primaire=" + primaire + "]";
 	}
+
+
 
 }

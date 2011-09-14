@@ -127,11 +127,11 @@ public abstract class JDBCPersitenceManager {
 
 			for (Metadata docMeta : doc.getMetadatas()) {
 				// Si meta dans colonnes, ajouter à la Map
-				if (Arrays.binarySearch(colonnes, docMeta.getName()) >= 0) {
+				if (Arrays.binarySearch(colonnes, docMeta.getNom()) >= 0) {
 					if (docMeta instanceof StringMetadata) {
-						metaCols.put(docMeta.getName(), ((StringMetadata) docMeta).getValue());
+						metaCols.put(docMeta.getNom(), ((StringMetadata) docMeta).getValue());
 					} else if (docMeta instanceof IntMetadata) {
-						metaCols.put(docMeta.getName(), Integer.valueOf(((IntMetadata) docMeta).getValue()));
+						metaCols.put(docMeta.getNom(), Integer.valueOf(((IntMetadata) docMeta).getValue()));
 					}
 				}
 

@@ -39,6 +39,17 @@ public class Contexte {
 	public List<Metadata> getDocMétadonnées() {
 		return docMétadonnées;
 	}
+	
+	public List<Metadata> getDocMétadonnéesPrimaires() {
+		List<Metadata> mdPrimaires = new ArrayList<Metadata>(docMétadonnées.size());
+		for(Metadata md : docMétadonnées) {
+			if(md.isPrimaire())
+			{
+				mdPrimaires.add(md);
+			}
+		}
+		return mdPrimaires;
+	}
 
 	public void setId(String id) {
 		this.id = id;

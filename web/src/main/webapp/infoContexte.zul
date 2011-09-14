@@ -30,7 +30,7 @@
 		<rows>
 		<zk forEach="${arg.métadonnées}">
 			<row>
-				<label value="${each.name}">
+				<label value="${each.nom}">
 				</label><label value="${each.simpleString}"></label>
 			</row>
 		</zk>

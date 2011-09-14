@@ -18,32 +18,40 @@ public class ContexteFiltreManager extends FiltreManager {
 	@Override
 	public void init() {
 
-		List<DocMetadata> metadatas = docMetadataManager.findByCorpusId(corpusService.getCorpus().getId());
+		List<DocMetadata> metadatas = docMetadataManager
+				.findByCorpusId(corpusService.getCorpus().getId());
 
 		// Ajout d'un filtre pour chaque champ d'index
 		filtres.clear();
 		for (DocMetadata meta : metadatas) {
 
-			String champIndex = meta.getChampIndex();
+			if (meta.isFiltre()) {
 
-			filtres.add(new Filtre(champIndex, meta.getNom(), getChampValeurs(champIndex)));
+				String champIndex = meta.getChampIndex();
+
+				filtres.add(new Filtre(champIndex, meta.getNom(),
+						getChampValeurs(champIndex)));
+			}
 		}
 
 	}
 
 	private List<DefaultKeyValue> getChampValeurs(String champIndex) {
 
-		List<DefaultKeyValue> valeursChamp = corpusService.getValeursChamp(champIndex);
-		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(valeursChamp.size());
-		
+		List<DefaultKeyValue> valeursChamp = corpusService
+				.getValeursChamp(champIndex);
+		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(
+				valeursChamp.size());
+
 		clésValeurs.add(keyValueVide);
-		
+
 		for (DefaultKeyValue cléValeur : valeursChamp) {
 			StringBuilder sb = new StringBuilder(cléValeur.getKey().toString());
 
 			sb.append(" (").append(cléValeur.getValue()).append(")");
 
-			clésValeurs.add(new DefaultKeyValue(cléValeur.getKey(), sb.toString()));
+			clésValeurs.add(new DefaultKeyValue(cléValeur.getKey(), sb
+					.toString()));
 		}
 
 		return clésValeurs;
