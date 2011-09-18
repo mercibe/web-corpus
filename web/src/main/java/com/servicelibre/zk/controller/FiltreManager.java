@@ -10,116 +10,93 @@ import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.service.CorpusService;
 
-public abstract class FiltreManager
-{
+public abstract class FiltreManager {
 
 	public static final String VIDE = "     ";
-	
+
 	// Définition valeur vide
 	protected DefaultKeyValue keyValueVide = new DefaultKeyValue("-1", VIDE);
-	
-    protected List<Filtre> filtres = new ArrayList<Filtre>(3);
 
-    protected CorpusService corpusService;
+	protected List<Filtre> filtres = new ArrayList<Filtre>(3);
 
-    protected ListeManager listeManager;
+	protected CorpusService corpusService;
 
-    private FiltreMot filtreActifModel;
-    
+	protected ListeManager listeManager;
 
-    public FiltreManager()
-    {
-        super();
-    }
+	private FiltreMot filtreActifModel;
 
-    public List<DefaultKeyValue> getFiltreNoms()
-    {
+	public FiltreManager() {
+		super();
+	}
 
-        List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
-        for (Filtre filtre : filtres)
-        {
-            noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
-        }
+	public List<DefaultKeyValue> getFiltreNoms() {
 
-        return noms;
-    }
+		List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
+		for (Filtre filtre : filtres) {
+			noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
+		}
 
-    public List<DefaultKeyValue> getFiltreValeurs(String nom)
-    {
-        List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
+		return noms;
+	}
 
-        // recherche du filtre
-        Filtre f = null;
-        for (Filtre filtre : filtres)
-        {
-            if (filtre.nom.equalsIgnoreCase(nom))
-            {
-                f = filtre;
-                break;
-            }
-        }
+	public List<DefaultKeyValue> getFiltreValeurs(String nom) {
+		List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
 
-        if (f != null)
-        {
+		// recherche du filtre
+		Filtre f = null;
+		for (Filtre filtre : filtres) {
+			if (filtre.nom.equalsIgnoreCase(nom)) {
+				f = filtre;
+				break;
+			}
+		}
 
-            values = getValeursActives(nom, f.keyValues);
+		// Si le filtre est trouvé, récupérer ses valeurs
+		if (f != null) {
+			values = getValeursActives(nom, f.keyValues);
+		}
 
-        }
+		return values;
+	}
 
-        return values;
-    }
+	private List<DefaultKeyValue> getValeursActives(String nom, List<DefaultKeyValue> keyValues) {
+		List<DefaultKeyValue> valeursActives = new ArrayList<DefaultKeyValue>(keyValues.size());
 
-    private List<DefaultKeyValue> getValeursActives(String nom, List<DefaultKeyValue> keyValues)
-    {
+		if (filtreActifModel != null) {
 
-        List<DefaultKeyValue> valeursActives = new ArrayList<DefaultKeyValue>(keyValues.size());
+			for (DefaultKeyValue keyValue : keyValues) {
+				if (!filtreActifModel.isActif(nom, keyValue.getKey())) {
+					valeursActives.add(keyValue);
+				}
+			}
+		} else {
+			return keyValues;
+		}
 
-        if (filtreActifModel != null)
-        {
+		return valeursActives;
+	}
 
-            for (DefaultKeyValue keyValue : keyValues)
-            {
-                String valeur = keyValue.getKey().toString();
-                if (!filtreActifModel.isActif(nom, valeur))
-                {
-                    valeursActives.add(keyValue);
-                }
-            }
-        }
-        else
-        {
-            return keyValues;
-        }
+	public CorpusService getCorpusService() {
+		return corpusService;
+	}
 
-        return valeursActives;
-    }
+	public void setCorpusService(CorpusService corpusService) {
+		this.corpusService = corpusService;
+	}
 
-    public CorpusService getCorpusService()
-    {
-        return corpusService;
-    }
+	public ListeManager getListeManager() {
+		return listeManager;
+	}
 
-    public void setCorpusService(CorpusService corpusService)
-    {
-        this.corpusService = corpusService;
-    }
+	public void setListeManager(ListeManager listeManager) {
+		this.listeManager = listeManager;
+	}
 
-    public ListeManager getListeManager()
-    {
-        return listeManager;
-    }
+	abstract public void init();
 
-    public void setListeManager(ListeManager listeManager)
-    {
-        this.listeManager = listeManager;
-    }
+	public void setFiltreActif(FiltreMot filtreActifModel) {
+		this.filtreActifModel = filtreActifModel;
 
-    abstract public void init();
-
-    public void setFiltreActif(FiltreMot filtreActifModel)
-    {
-        this.filtreActifModel = filtreActifModel;
-
-    }
+	}
 
 }

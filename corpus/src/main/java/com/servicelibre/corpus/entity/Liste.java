@@ -2,7 +2,6 @@ package com.servicelibre.corpus.entity;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -27,7 +26,7 @@ public class Liste implements Comparable<Liste> {
 	@Id
 	@SequenceGenerator(name = "liste_seq", sequenceName = "liste_seq")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "liste_seq")
-	long id;
+	Long id;
 
 	@Column
 	String nom;
@@ -65,12 +64,8 @@ public class Liste implements Comparable<Liste> {
 		this.id = id;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getNom() {

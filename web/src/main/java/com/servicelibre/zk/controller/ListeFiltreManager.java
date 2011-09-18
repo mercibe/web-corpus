@@ -79,6 +79,13 @@ public class ListeFiltreManager extends FiltreManager {
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "pluriel"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
 
+		// Ajout de la liste RO
+		List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
+		roClésValeurs.add(keyValueVide);
+		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "graphies rectifiées"));
+		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "graphies traditionnelles"));
+		filtres.add(new Filtre(FiltreMot.CléFiltre.ro.name(), "Orthographe", roClésValeurs));
+		
 	}
 
 }

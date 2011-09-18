@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -89,7 +90,7 @@ public class JpaMotManager implements MotManager {
 	public List<Mot> findAll() {
 		List<Mot> mots = new ArrayList<Mot>();
 
-		mots = entityManager.createQuery("from Mot m JOIN FETCH m.prononciations ").getResultList();
+		mots = entityManager.createQuery("from Mot m LEFT OUTER JOIN FETCH m.prononciations ").getResultList();
 		
 		// FIXME bug Hibernate et sérialisation Jackson => passer à OpenJPA ou
 		// EclipseLink
@@ -118,6 +119,7 @@ public class JpaMotManager implements MotManager {
 
 	@Override
 	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreMot filtres) {
+		
 		final CriteriaBuilder cb = getBuilder();
 		final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
 
@@ -126,7 +128,8 @@ public class JpaMotManager implements MotManager {
 		criteria.select(mot);
 
 		// chargement EAGER des prononciations => DISTINCT dans le critère
-		mot.fetch("prononciations");
+		mot.fetch("prononciations", JoinType.LEFT);
+		
 		
 		// Tous les mots sont en minuscules
 		graphie = graphie.toLowerCase();

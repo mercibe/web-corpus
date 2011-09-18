@@ -16,7 +16,7 @@ public class FiltreMot
 	 */
     public enum CléFiltre
     {
-        corpus, liste, catgram, genre, nombre
+        corpus, liste, catgram, genre, nombre, ro
     };
     
     LinkedHashSet<Filtre> filtres = new LinkedHashSet<Filtre>();
@@ -34,18 +34,19 @@ public class FiltreMot
         }
     }
 
-    public void removeFiltre(String nom, String value) {
+    public void removeFiltre(String nom, Object valeur) {
         
         // Recherche le filtre
         for (Filtre f : filtres)
         {
             if(f.nom.equals(nom)) {
                 for(DefaultKeyValue cléVal : f.keyValues) {
-                    if(cléVal.getKey().equals(value)) {
+                    if(cléVal.getKey().equals(valeur)) {
                         f.keyValues.remove(cléVal);
                         break;
                     }
                 }
+                // Si plus de valeurs pour ce filtre, supprimer le filtre également
                 if(f.keyValues.size() == 0) {
                     filtres.remove(f);
                     break;
@@ -113,7 +114,7 @@ public class FiltreMot
 		return valeurs;
 	}
 
-    public boolean isActif(String nom, String valeur)
+    public boolean isActif(String nom, Object valeur)
     {
         // Recherche le filtre
         for (Filtre f : filtres)

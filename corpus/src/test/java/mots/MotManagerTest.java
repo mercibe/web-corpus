@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -56,7 +55,7 @@ public class MotManagerTest implements ApplicationContextAware {
 
 	@Test
 	@Transactional
-	@Ignore
+	@Rollback(value = false)
 	public void motManagerSimpleTest() {
 
 		Mot mot = motManager.findOne((long) 1);
@@ -68,19 +67,18 @@ public class MotManagerTest implements ApplicationContextAware {
 		assertNotNull(mots);
 		assertTrue(mots.size() > 0);
 		System.out.println(mots);
+
 	}
 
 	@Test
 	@Transactional
-	@Ignore
 	public void motManagerGraphieTest() {
-
-		List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);
-		assertEquals("pomme", mots.get(0).lemme);
+		List<Mot> mots = motManager.findByGraphie("acheminement", MotManager.Condition.ENTIER);
+		assertEquals("acheminement", mots.get(0).lemme);
 		System.out.println(mots);
 
 		// FIXME ajouter assertions
-		mots = motManager.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
+		mots = motManager.findByGraphie("ache", MotManager.Condition.COMMENCE_PAR);
 		System.out.println(mots);
 
 		mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
@@ -93,7 +91,7 @@ public class MotManagerTest implements ApplicationContextAware {
 
 	@Test
 	@Transactional
-	// @Ignore
+	@Rollback(value = false)
 	public void motManagerPrononciationTest() {
 
 		List<Mot> mots = motManager.findByPrononciation("vɛʀ", MotManager.Condition.ENTIER, null);
@@ -116,7 +114,8 @@ public class MotManagerTest implements ApplicationContextAware {
 	}
 
 	@Test
-	@Ignore
+	@Transactional
+	@Rollback(value = false)
 	public void motManagerFilterTest() {
 
 		FiltreMot f = new FiltreMot();
@@ -129,14 +128,34 @@ public class MotManagerTest implements ApplicationContextAware {
 
 		// Syntaxe allégée
 		f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[] { "n.", "adv." }));
-
-		f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "f." }));
+		f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "m." }));
+		f.addFiltre(new Filtre(CléFiltre.ro.name(), "Rectification ortographique", new Boolean[] { Boolean.TRUE }));
 
 		String graphie = "a";
 
 		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
 		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
-		assertEquals(152, mots.size());
+		assertEquals(1, mots.size());
+
+		f.removeFiltre(CléFiltre.ro.name(), Boolean.TRUE);
+		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		assertEquals(21, mots.size());
+
+		f.removeFiltre(CléFiltre.genre.name(), "m.");
+		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		assertEquals(36, mots.size());
+
+		f.removeFiltre(CléFiltre.catgram.name(), "adv.");
+		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		assertEquals(35, mots.size());
+
+		f.removeFiltre(CléFiltre.catgram.name(), "n.");
+		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		assertEquals(46, mots.size());
 
 	}
 

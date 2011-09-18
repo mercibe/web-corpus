@@ -51,7 +51,7 @@ public class LigneMtlSplitter implements LigneSplitter {
 		String[] cols = ligne.split(SÉPARATEUR);
 		
 		if(cols.length< 3) {
-			System.err.println(ligne);
+			System.err.println("Colonnes insuffisantes (minimum 3 - trouvé "+cols.length+"): " + ligne);
 			return mots;
 		}
 
