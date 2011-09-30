@@ -67,4 +67,12 @@ public class Filtre {
 		return "Filtre [nom=" + nom + ", description=" + description + ", keyValues=" + keyValues + "]";
 	}
 
+	public List<DefaultKeyValue> getKeyValues() {
+		return keyValues;
+	}
+
+	public void setKeyValues(List<DefaultKeyValue> keyValues) {
+		this.keyValues = keyValues;
+	}
+	
 }

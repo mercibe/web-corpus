@@ -46,9 +46,10 @@
 		<!-- FIXME utiliser include  -->
 			<groupbox width="286px">
 				<caption>Filtre</caption>
-				<listbox id="nomFiltre"  style="width:140px" mold="select"/>
-				<listbox id="valeurFiltre" style="width:140px" mold="select"/>
-				
+				<hbox align="center">
+				<listbox id="nomFiltre"  style="width:140px;" mold="select"/>
+				<listbox id="valeurFiltre" style="width:135px;height:80px;" mold="select" multiple="true" rows="1" />
+				</hbox>
 				<div align="center" style="margin-top:10px;">
 <!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->
 					 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"

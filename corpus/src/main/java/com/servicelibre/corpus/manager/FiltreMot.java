@@ -34,6 +34,18 @@ public class FiltreMot
         }
     }
 
+    public Filtre getFiltre(String nom) {
+    	Filtre filtre = null;
+        // Recherche le filtre
+        for (Filtre f : filtres)
+        {
+            if(f.nom.equals(nom)) {
+            	filtre = f;
+            }
+        }
+        return filtre;
+    }
+    
     public void removeFiltre(String nom, Object valeur) {
         
         // Recherche le filtre
@@ -114,6 +126,12 @@ public class FiltreMot
 		return valeurs;
 	}
 
+	/**
+	 * Détermine si la <i>valeur</i> du filtre <i>nom</i> est dans les filtres actifs 
+	 * @param nom
+	 * @param valeur
+	 * @return
+	 */
     public boolean isActif(String nom, Object valeur)
     {
         // Recherche le filtre
@@ -121,7 +139,12 @@ public class FiltreMot
         {
             if(f.nom.equals(nom)) {
                 for(DefaultKeyValue cléVal : f.keyValues) {
-                    if(cléVal.getKey().equals(valeur)) {
+                	/* 
+                	 * Il faut convertir en string car nous avons des booléen, long, string, etc.
+                	 * Par contre, c'est important de conserver les objets car la couche JPA Criteria
+                	 * en a besoin pour générer des requêtes correctes.
+                	*/
+                    if(cléVal.getKey().toString().equals(valeur.toString())) {
                         return true;
                     }
                 }

@@ -39,17 +39,16 @@ public abstract class FiltreManager {
 		return noms;
 	}
 
+	/**
+	 * Pour un filtre donné, retourne les valeurs sélectionnables du filtre (« que l'on peut encore ajouter », 
+	 * « qui ne font pas partie du filtre actif »)
+	 * @param nom
+	 * @return
+	 */
 	public List<DefaultKeyValue> getFiltreValeurs(String nom) {
 		List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
 
-		// recherche du filtre
-		Filtre f = null;
-		for (Filtre filtre : filtres) {
-			if (filtre.nom.equalsIgnoreCase(nom)) {
-				f = filtre;
-				break;
-			}
-		}
+		Filtre f = getFiltre(nom);
 
 		// Si le filtre est trouvé, récupérer ses valeurs
 		if (f != null) {
@@ -59,9 +58,28 @@ public abstract class FiltreManager {
 		return values;
 	}
 
+	public Filtre getFiltre(String nom) {
+		// recherche du filtre
+		Filtre f = null;
+		for (Filtre filtre : filtres) {
+			if (filtre.nom.equalsIgnoreCase(nom)) {
+				f = filtre;
+				break;
+			}
+		}
+		return f;
+	}
+
+	/**
+	 * Retourne toutes les valeurs possibles du filtre <i>nom</i> qui ne font pas partie du filtre actif
+	 * @param nom
+	 * @param keyValues
+	 * @return
+	 */
 	private List<DefaultKeyValue> getValeursActives(String nom, List<DefaultKeyValue> keyValues) {
 		List<DefaultKeyValue> valeursActives = new ArrayList<DefaultKeyValue>(keyValues.size());
 
+		// Construire la liste des valeurs disponibles (non actives)
 		if (filtreActifModel != null) {
 
 			for (DefaultKeyValue keyValue : keyValues) {

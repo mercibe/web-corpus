@@ -1,6 +1,7 @@
 package com.servicelibre.zk.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
@@ -104,42 +105,71 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	protected Tabpanels corpusTabpanels;
 
+	/**
+	 * Ajout d'une nouvelle valeur (condition) au filtre courant
+	 * @param event
+	 */
 	public void onClick$boutonAjoutFiltre(Event event) {
+		
+		// Y a-t-il encore des valeurs disponibles pour le filtre courant ?
+		if (valeurFiltre.getItemCount() > 0 && valeurFiltre.getSelectedCount() > 0) {
 
-		if (valeurFiltre.getItemCount() > 0) {
-
-			Listitem filtreValeurActuel = valeurFiltre.getItemAtIndex(valeurFiltre.getSelectedIndex());
-			String valeurString = filtreValeurActuel.getValue().toString();
-			if (valeurString.equals("-1")) {
-				return;
-			}
-
-			List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(1);
-
-			// Il faut comparer des pommes avec des pommes...  s'asurer que de la String HTML on passe bien vers le bon format Java
-			if (valeurString.equalsIgnoreCase("true") || valeurString.equalsIgnoreCase("false")) {
-				valeurs.add(new DefaultKeyValue(new Boolean(valeurString), filtreValeurActuel.getLabel()));
-			} 
-			//.matches("-?\\d+(.\\d+)?");
-			else if (valeurString.matches("\\d+")) {
-				valeurs.add(new DefaultKeyValue(Long.parseLong(valeurString), filtreValeurActuel.getLabel()));
-			}
-			else {
-				valeurs.add(new DefaultKeyValue(valeurString, filtreValeurActuel.getLabel()));
-			}
-
+			// Récupérer le nom du filtre auquel est associée cette valeur 
 			Listitem filtreNomActuel = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
 			String nom = filtreNomActuel.getValue().toString();
 			String description = filtreNomActuel.getLabel();
-
-			filtreActifModel.addFiltre(new Filtre(nom, description, valeurs));
+			
+			Filtre filtre = new Filtre(nom, description, new ArrayList<DefaultKeyValue>(1)); //filtreActifModel.getFiltre(nom);
+			
+			// Quelles sont les valeurs à ajouter?
+			for (@SuppressWarnings("unchecked")
+			Iterator<Listitem> it = (Iterator<Listitem>)valeurFiltre.getSelectedItems().iterator(); it.hasNext();) {
+				ajouteValeurAuFiltre( it.next(), filtre);
+			}
+			
+			filtreActifModel.addFiltre(filtre);
+			
 			gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
 
-			// suppression de la valeur active de la liste de choix
+			// Mettre à jour (modèle) les valeurs du filtre courant (sans la valeur qui vient d'être ajoutée au filtre)
 			filtreManager.setFiltreActif(filtreActifModel);
-			rafraichiValeurFiltreCourant();
+			
+			// Actualiser l'affichage (vue) des valeurs du filtre courant
+			actualiseValeursFiltreCourant();
 
+			// Relancer la recherche
 			chercheEtAffiche();
+		}
+
+	}
+
+	public void ajouteValeurAuFiltre(Listitem filtreValeurActuel, Filtre filtre) {
+		
+		String valeurString = filtreValeurActuel.getValue().toString();
+		// Si la valeur == -1 cela signifie, par convention, qu'il s'agit d'une valeur « vide » à ignorer
+		if (valeurString.equals("-1")) {
+			return;
+		}
+		
+		// Ajout du filtre au modèle ( => « de l'interface vers le modèle »)
+		List<DefaultKeyValue> valeurs = filtre.getKeyValues();
+
+		// Il faut comparer des pommes avec des pommes...  s'asurer que de la String HTML on passe bien vers le bon format Java
+		//booléen?
+		if (valeurString.equalsIgnoreCase("true") || valeurString.equalsIgnoreCase("false")) {
+			valeurs.add(new DefaultKeyValue(new Boolean(valeurString), filtreValeurActuel.getLabel()));
+			System.err.println("booléen");
+		} 
+		// Tous les nombres sont convertis en Long.  La couche JPA Criterai fera automatiquement les cast nécessaires.
+		// nombre ?
+		else if (valeurString.matches("\\d+")) {
+			valeurs.add(new DefaultKeyValue(Long.parseLong(valeurString), filtreValeurActuel.getLabel()));
+			System.err.println("long");
+		}
+		// String par défaut
+		else {
+			valeurs.add(new DefaultKeyValue(valeurString, filtreValeurActuel.getLabel()));
+			System.err.println("string");
 		}
 
 	}
@@ -152,13 +182,13 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		if (filtreActifModel.getFiltres().size() > 0) {
 			filtreActifModel.removeAll();
 			gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
-			rafraichiValeurFiltreCourant();
+			actualiseValeursFiltreCourant();
 			chercheEtAffiche();
 		}
 	}
 
 	public void onSelect$nomFiltre(Event event) {
-		rafraichiValeurFiltreCourant();
+		actualiseValeursFiltreCourant();
 	}
 
 	// public void onSelect$valeurFiltre(Event event) {
@@ -180,10 +210,11 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	// }
 
 	public void onAfterRender$nomFiltre() {
-		rafraichiValeurFiltreCourant();
+		actualiseValeursFiltreCourant();
 	}
 
-	private void rafraichiValeurFiltreCourant() {
+	private void actualiseValeursFiltreCourant() {
+		
 		Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
 
 		if (currentItem != null && currentItem.getValue() != null) {
@@ -306,7 +337,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 								gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
 
 								filtreManager.setFiltreActif(filtreActifModel);
-								rafraichiValeurFiltreCourant();
+								actualiseValeursFiltreCourant();
 
 								chercheEtAffiche();
 							}

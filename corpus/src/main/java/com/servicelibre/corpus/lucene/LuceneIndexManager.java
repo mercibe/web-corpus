@@ -212,7 +212,7 @@ public class LuceneIndexManager
 			BooleanQuery champBooleanQuery = new BooleanQuery();
 
 			for (DefaultKeyValue kv : filtre.keyValues) {
-				champBooleanQuery.add(new TermQuery(new Term(filtre.nom, (String) kv.getKey())), BooleanClause.Occur.SHOULD);
+				champBooleanQuery.add(new TermQuery(new Term(filtre.nom,  kv.getKey() + "")), BooleanClause.Occur.SHOULD);
 			}
 
 			if (champBooleanQuery.getClauses().length > 0) {
