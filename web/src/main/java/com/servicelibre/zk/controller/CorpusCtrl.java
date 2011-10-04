@@ -220,9 +220,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		if (currentItem != null && currentItem.getValue() != null) {
 			List<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
 			valeurFiltre.setModel(new SimpleListModel(filtreValeurs.toArray()));
-			if (filtreValeurs.size() > 0) {
-				valeurFiltre.setSelectedIndex(0);
-			}
+//			if (filtreValeurs.size() > 0) {
+//				valeurFiltre.setSelectedIndex(0);
+//			}
 		}
 	}
 

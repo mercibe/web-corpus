@@ -34,6 +34,18 @@ body {
  .z-column-cnt {
    text-align: center; 
  } 
+ 
+ .z-bandbox .z-bandbox-btn {
+ background: transparent url('/corpus/images/combobtn.gif')}) no-repeat 0 0;
+ }
+ 
+ .z-bandbox .z-bandbox-btn-over {
+   background-position:-19px 0;
+   border-bottom:1px solid #8FB9D0;
+   border-left:1px solid #8FB9D0;
+   margin-left:-1px;
+}
+ 
 
 /* 
    Pour aérer bouton toolbar (padding à 0px au lieu de 2px)

@@ -44,11 +44,21 @@
 		<hbox width="100%" style="margin-top:20px;">
 		
 		<!-- FIXME utiliser include  -->
-			<groupbox width="286px">
+			<groupbox width="286px" height="500px">
 				<caption>Filtre</caption>
-				<hbox align="center">
+				<hbox >
 				<listbox id="nomFiltre"  style="width:140px;" mold="select"/>
-				<listbox id="valeurFiltre" style="width:135px;height:80px;" mold="select" multiple="true" rows="1" />
+	
+				<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
+					<bandpopup height="205px" width="205px">
+						<vbox height="205px" style="margin:0px;" >
+								<listbox width="200px" checkmark="true" id="valeurFiltre" multiple="true">
+									<listhead><listheader>Tout sélectionner</listheader></listhead>
+								</listbox>
+						</vbox>
+					</bandpopup>
+				</bandbox>
+				
 				</hbox>
 				<div align="center" style="margin-top:10px;">
 <!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->

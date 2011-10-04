@@ -27,7 +27,7 @@ public class ListeFiltreManager extends FiltreManager {
 		
 		List<DefaultKeyValue> listesClésValeurs = new ArrayList<DefaultKeyValue>(listesPrimaires.size() + 1);
 		
-		listesClésValeurs.add(keyValueVide);
+		//listesClésValeurs.add(keyValueVide);
 		
 		for (Liste liste : listesPrimaires) {
 			listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
@@ -40,7 +40,7 @@ public class ListeFiltreManager extends FiltreManager {
 		
 		List<DefaultKeyValue> listesSecondairesClésValeurs = new ArrayList<DefaultKeyValue>(listesSecondaires.size() + 1);
 		
-		listesSecondairesClésValeurs.add(keyValueVide);
+		//listesSecondairesClésValeurs.add(keyValueVide);
 		
 		for (Liste liste : listesSecondaires) {
 			listesSecondairesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
@@ -53,7 +53,7 @@ public class ListeFiltreManager extends FiltreManager {
 		// Ajout de la liste des catgram
 		// TODO select distinct catgram from mot; et rechercher description dans service catgram
 		List<DefaultKeyValue> catgramClésValeurs = new ArrayList<DefaultKeyValue>(4);
-		catgramClésValeurs.add(keyValueVide);
+		//catgramClésValeurs.add(keyValueVide);
 		catgramClésValeurs.add(new DefaultKeyValue("adj.", "adjectif"));
 		catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
 		catgramClésValeurs.add(new DefaultKeyValue("conj.", "conjonction"));
@@ -67,21 +67,21 @@ public class ListeFiltreManager extends FiltreManager {
 
 		// Ajout de la liste des genres
 		List<DefaultKeyValue> genreClésValeurs = new ArrayList<DefaultKeyValue>(2);
-		genreClésValeurs.add(keyValueVide);
+		//genreClésValeurs.add(keyValueVide);
 		genreClésValeurs.add(new DefaultKeyValue("f.", "féminin"));
 		genreClésValeurs.add(new DefaultKeyValue("m.", "masculin"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.genre.name(), "Genre", genreClésValeurs));
 
 		// Ajout de la liste des nombres
 		List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
-		nombreClésValeurs.add(keyValueVide);
+		//nombreClésValeurs.add(keyValueVide);
 		nombreClésValeurs.add(new DefaultKeyValue("inv.", "invariable"));
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "pluriel"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
 
 		// Ajout de la liste RO
 		List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
-		roClésValeurs.add(keyValueVide);
+		//roClésValeurs.add(keyValueVide);
 		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "graphies rectifiées"));
 		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "graphies traditionnelles"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.ro.name(), "Orthographe", roClésValeurs));
