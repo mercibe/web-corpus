@@ -15,7 +15,7 @@
 				<combobox id="gp" readonly="true" width="120px">
 						<comboitem label="mots" value="g" />
 						<comboitem label="prononciations" value="p" />
-					</combobox>
+				</combobox>
 	
 				<combobox id="condition" readonly="true"
 						width="185px">
@@ -28,7 +28,7 @@
 							value="ENTIER" />
 					</combobox>
 					
-				<textbox id="cherche" focus="true"></textbox>
+				<textbox id="cherche" focus="true" style="font-family: 'Doulos SIL', 'Gentium', 'DejaVu Sans', 'Lucida Grande', 'Segoe UI', 'Arial Unicode MS', 'Adobe Pi Std', 'Lucida Sans Unicode', 'Chrysanthi Unicode', Code2000, Gentium, GentiumAlt, 'TITUS Cyberbit Basic', 'Bitstream Vera Sans', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', 'Charis SIL' ,sans-serif;"></textbox>
 				
 				<button id="boutonRecherche" label="Recherche"/>
 				<button  id="effacerRecherche" image="/images/effacer-2-16x16.png"
@@ -98,6 +98,10 @@
                		<menuitem id="menuitemPrononciation" autocheck="true" label="afficher la colonne « Phonétique »"  onClick="colonnePrononciation.setVisible(!colonnePrononciation.isVisible())" checked="false"/>
     		</menupopup>
 			
+			<!-- ******************** -->
+			<!--   Colonne résultats  -->
+			<!-- ******************** -->
+			
 			<vbox  height="645px" width="700px">
 
 				<hbox>
@@ -105,7 +109,7 @@
 						<label id="infoRésultats" value="Tous les mots"  style="font-style:italic;"/>
 					</div>
 					<div align="right">
-						<image src="/images/csv.png"></image>
+						<image id="exportationCsv"	src="/images/csv.png" class="clicable"/>
 					</div>
 				</hbox>			
 				 

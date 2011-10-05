@@ -1,8 +1,19 @@
 package com.servicelibre.zk.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.xel.XelException;
@@ -12,8 +23,10 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Column;
+import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Include;
@@ -375,8 +388,9 @@ public class ListeCtrl extends CorpusCtrl {
 		cherche.setText("");
 		api.setVisible(false);
 
-		infoRésultats.setValue("Tous les mots");
 		initialiseMotsGrid();
+		
+		infoRésultats.setValue("Tous les mots (" + motsGrid.getModel().getSize()+ ")");
 
 	}
 
@@ -384,6 +398,121 @@ public class ListeCtrl extends CorpusCtrl {
 	public void initFiltreManager() {
 		this.filtreManager = ServiceLocator.getListeFiltreManager();
 
+	}
+
+	@Override
+	protected void exporterRésultatsCsv() {
+		exporterRésultatsXls();
+		
+//		StringBuilder csv = new StringBuilder();
+//		
+//		String séparateur = ";";
+//		
+//		csv.append(getEntête(motsGrid, séparateur));
+//		
+//		// Récupération des données
+//		@SuppressWarnings("unchecked")
+//		List<Mot> mots = (List<Mot>) motsGrid.getModel();
+//		for(Mot mot : mots) {
+//			csv.append(ajouteGuillemets(mot.getMot())).append(séparateur);
+//			csv.append(ajouteGuillemets(mot.getPrononciationsString())).append(séparateur);
+//			csv.append("\"").append(mot.isRo()?"*":"").append("\"").append(séparateur);
+//			csv.append(ajouteGuillemets(mot.getCatgram())).append(séparateur);
+//			csv.append(ajouteGuillemets(mot.getGenre())).append(séparateur);
+//			csv.append(ajouteGuillemets(mot.getNombre())).append(séparateur);
+//			csv.append(ajouteGuillemets(mot.getCatgramPrésicion())).append(séparateur);
+//			csv.append(ajouteGuillemets(mot.getListe().getNom())).append("\n");
+//			
+//		}
+//		Filedownload.save(csv.toString().getBytes(),"text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
+	}
+
+	// TODO générer un nom de fichier qui représente la recherche
+	private String getNomFichier() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+		return sdf.format(new Date()) + "-mots";
+	}
+	
+	protected void exporterRésultatsXls() {
+		
+		 Workbook wb = new HSSFWorkbook();
+		 CreationHelper createHelper = wb.getCreationHelper();
+		 // Création d'une nouvelle feuille de calcul
+		 Sheet sheet = wb.createSheet("mots");
+		 
+		 // Création de la ligne d'entête
+		 int colCpt = 0;
+		 int rowCpt = 0;
+		 
+		 // Les rows sont « 0 based » 
+		 Font entêteFont = wb.createFont();
+		 Font cellsFont = wb.createFont();
+//		 font.setFontHeightInPoints((short)12);
+		 cellsFont.setFontName("Arial Unicode MS");
+		 
+		 entêteFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		 
+		 CellStyle entêteCellStyle = wb.createCellStyle();
+		 entêteCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		 entêteCellStyle.setFont(entêteFont);
+		 
+		 CellStyle cellsStyle = wb.createCellStyle();
+		 cellsStyle.setFont(cellsFont);
+		 
+		 
+		 org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
+ 		 for(Object column : motsGrid.getColumns().getChildren()) {
+			String label = ((Column) column).getLabel();
+			 Cell cell = row.createCell(colCpt++);
+			 cell.setCellStyle(entêteCellStyle);
+			 cell.setCellValue(createHelper.createRichTextString(label));
+		 }
+		
+ 		 // Récupération des données
+ 		List<Mot> mots = (List<Mot>) motsGrid.getModel();
+ 		
+		for(Mot mot : mots) {
+			
+			row = sheet.createRow(rowCpt++);
+			
+			Cell cell = row.createCell(0);
+			cell.setCellValue(createHelper.createRichTextString(mot.getMot()));
+			
+			cell = row.createCell(1);
+			cell.setCellStyle(cellsStyle);
+			cell.setCellValue(createHelper.createRichTextString(mot.getPrononciationsString()));
+			
+			cell = row.createCell(2);
+			cell.setCellValue(createHelper.createRichTextString(mot.isRo()?"*":""));
+
+			cell = row.createCell(3);
+			cell.setCellValue(createHelper.createRichTextString(mot.getCatgram()));
+			
+			cell = row.createCell(4);
+			cell.setCellValue(createHelper.createRichTextString(mot.getGenre()));
+			
+			cell = row.createCell(5);
+			cell.setCellValue(createHelper.createRichTextString(mot.getNombre()));
+
+			cell = row.createCell(6);
+			cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrésicion()));
+			
+			cell = row.createCell(7);
+			cell.setCellValue(createHelper.createRichTextString(mot.getListe().getNom()));
+			
+		}
+ 		 
+ 		 ByteArrayOutputStream baos  = new ByteArrayOutputStream();
+ 		 try {
+			wb.write(baos);
+			Filedownload.save(baos.toByteArray(),"application/vnd.ms-excel", getNomFichier() + ".xls");
+			baos.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

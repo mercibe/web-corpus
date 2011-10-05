@@ -98,11 +98,20 @@
 				</groupbox>
 			</vbox>
 			
+			<!-- ******************** -->
+			<!--   Colonne résultats  -->
+			<!-- ******************** -->
+			
 			<vbox  height="645px" width="700px">
-					<div>
-							<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
-							<a id="cooccurrentLien" visible="false">cooccurrents</a>
-					</div>
+					<hbox>
+						<div align="left" width="680px">
+								<label id="infoRésultats" style="font-style:italic;text-align:center;"/>
+								<a id="cooccurrentLien" visible="false">cooccurrents</a>
+						</div>
+						<div align="right">
+							<image id="exportationCsv"	src="/images/csv.png" class="clicable"/>
+						</div>
+					</hbox>
 							
 					<grid id="contextesGrid" mold="paging" pageSize="15"
 						 height="550px" width="700px" emptyMessage="Aucun contexte trouvé.">

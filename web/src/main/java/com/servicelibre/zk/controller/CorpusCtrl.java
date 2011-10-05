@@ -14,9 +14,11 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Cell;
+import org.zkoss.zul.Column;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listitem;
@@ -68,6 +70,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	protected Window webCorpusWindow;
 
 	Div caractèresSpéciaux;
+	
+	Image exportationCsv;
 
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
@@ -86,6 +90,11 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	public void onClick$effacerRecherche(Event event) {
 		effacerRecherche();
 	}
+
+	public void onClick$exportationCsv(Event event) {
+		exporterRésultatsCsv();
+	}
+	
 
 	/**
 	 * Permet de remplir les choix de filtres/valeurs possibles
@@ -351,6 +360,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	abstract public void chercheEtAffiche();
 
 	abstract protected void initialiseRecherche();
+	
+	abstract protected void exporterRésultatsCsv();
 
 	protected void effacerRecherche() {
 		initialiseRecherche();
@@ -414,4 +425,29 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		return cherche.getText().trim();
 	}
 
+	protected String getEntête(Grid grid, String séparateur) {
+		
+		StringBuilder entete = new StringBuilder();
+		
+		String sép = "";
+		
+		// Récupération des entêtes
+		for(Object column : grid.getColumns().getChildren()) {
+			String label = ((Column) column).getLabel();
+			label = ajouteGuillemets(label);
+			entete.append(sép).append(label);
+			sép = séparateur;
+		}
+		entete.append("\n");
+		
+		return entete.toString();
+	}
+
+	
+	// Entourer de guillemets et doubler les éventuels guillemets contenus dans le nom de l'entête
+	protected String ajouteGuillemets(String label) {
+		String guillemetsOK = "\"" + label.replaceAll("\"", "\"\"") + "\"";
+		return guillemetsOK.replaceAll("\n", "\u2028");
+	}
+	
 }

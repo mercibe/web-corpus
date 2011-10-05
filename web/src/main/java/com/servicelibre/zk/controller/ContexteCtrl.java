@@ -1,5 +1,7 @@
 package com.servicelibre.zk.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.A;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
@@ -24,6 +27,7 @@ import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.entity.DocMetadata;
+import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.service.Contexte;
@@ -211,14 +215,9 @@ public class ContexteCtrl extends CorpusCtrl {
 
 			@Override
 			public void render(Row row, Object model) throws Exception {
-				Contexte contexteInitial = (Contexte) model;
+				
 
-				if (phraseComplète) {
-					contexteInitial = phraseService
-							.getContextePhraseComplète(contexteInitial);
-				}
-
-				final Contexte contexte = contexteInitial;
+				final Contexte contexte = getContexteInitial((Contexte)model);
 
 				Span ctxSpan = new Span();
 				ctxSpan.appendChild(new Label(contexte.texteAvant));
@@ -248,10 +247,21 @@ public class ContexteCtrl extends CorpusCtrl {
 				// + contexte.texteAprès));
 
 			}
+
+			
 		});
 
 	}
 
+	private Contexte getContexteInitial(Contexte contexte) {
+
+		if (phraseComplète) {
+			contexte = phraseService
+					.getContextePhraseComplète(contexte);
+		}
+		return contexte;
+	}
+	
 	private void afficheCooccurrents() {
 
 		// TODO prévenir/possibilité annuler si voisinage trop grand et beaucoup
@@ -476,6 +486,36 @@ public class ContexteCtrl extends CorpusCtrl {
 	public void initFiltreManager() {
 		this.filtreManager = ServiceLocator.getContexteFiltreManager();
 
+	}
+
+	@Override
+	protected void exporterRésultatsCsv() {
+		//http://poi.apache.org/spreadsheet/quick-guide.html#CreateCells
+		StringBuilder csv = new StringBuilder();
+		
+		String séparateur = ";";
+		
+		csv.append("\"Contexte complet\";\"Texte avant mot\";\"Mot\";\"Texte après\"\n");
+		
+		
+		// Récupération des données
+		@SuppressWarnings("unchecked")
+		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
+		for(Contexte contexte : contextes) {
+			Contexte contextePhraseComplète = getContexteInitial(contexte);
+			csv.append(ajouteGuillemets(contextePhraseComplète.texteAvant + contextePhraseComplète.mot + contextePhraseComplète.texteAprès)).append(séparateur);
+			csv.append(ajouteGuillemets(contextePhraseComplète.texteAvant)).append(séparateur);
+			csv.append(ajouteGuillemets(contextePhraseComplète.mot)).append(séparateur);
+			csv.append(ajouteGuillemets(contextePhraseComplète.texteAprès)).append("\n");
+			
+		}
+		Filedownload.save(csv.toString().getBytes(),"text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
+	}
+
+	// TODO générer un nom de fichier qui représente la recherche
+	private String getNomFichier() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+		return sdf.format(new Date()) + "-contextes";
 	}
 
 }

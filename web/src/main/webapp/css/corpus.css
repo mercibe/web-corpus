@@ -92,9 +92,13 @@ body {
  }
  
  .mot {
- 	cursor:hand;
+ 	/*cursor:hand;*/
  	cursor:pointer;
  	font-weight: bold;
+ }
+ 
+ .clicable {
+ 	cursor:pointer;
  }
  
  .groupe {

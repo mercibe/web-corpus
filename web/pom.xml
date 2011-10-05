@@ -419,6 +419,13 @@
 		<!-- <scope>compile</scope> -->
 		<!-- </dependency> -->
 
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.5-FINAL</version>
+			<type>pom</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<!-- sudo keytool -import -trustcacerts -alias maven-zk-ee-certificate -file 
