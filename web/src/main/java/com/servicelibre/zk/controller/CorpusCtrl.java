@@ -158,18 +158,15 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		//booléen?
 		if (valeurString.equalsIgnoreCase("true") || valeurString.equalsIgnoreCase("false")) {
 			valeurs.add(new DefaultKeyValue(new Boolean(valeurString), filtreValeurActuel.getLabel()));
-			System.err.println("booléen");
 		} 
 		// Tous les nombres sont convertis en Long.  La couche JPA Criterai fera automatiquement les cast nécessaires.
 		// nombre ?
 		else if (valeurString.matches("\\d+")) {
 			valeurs.add(new DefaultKeyValue(Long.parseLong(valeurString), filtreValeurActuel.getLabel()));
-			System.err.println("long");
 		}
 		// String par défaut
 		else {
 			valeurs.add(new DefaultKeyValue(valeurString, filtreValeurActuel.getLabel()));
-			System.err.println("string");
 		}
 
 	}
@@ -254,7 +251,6 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		// Ajout des autres filtres
 		for (Filtre filtre : filtreActifModel.getFiltres()) {
-			System.err.println("Ajout du filtre utilisateur " + filtre);
 			filtres.addFiltre(filtre);
 		}
 
@@ -284,7 +280,6 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
 				item.setValue(kv.getKey());
 				item.setLabel(kv.getValue().toString());
-
 			}
 		});
 

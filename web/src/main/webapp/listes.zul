@@ -44,48 +44,71 @@
 		<hbox width="100%" style="margin-top:20px;">
 		
 		<!-- FIXME utiliser include  -->
-			<groupbox width="286px" height="500px">
-				<caption>Filtre</caption>
-				<hbox >
-				<listbox id="nomFiltre"  style="width:140px;" mold="select"/>
+		<vbox>
+			<groupbox width="286px" height="340px">
+					<caption>Filtre</caption>
+					<hbox >
+						<listbox id="nomFiltre"  style="width:140px;" mold="select"/>
+			
+						<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
+							<bandpopup height="205px" width="205px">
+								<vbox height="205px" style="margin:0px;" >
+								
+<!-- 								
+	mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
+	Documenter et envoyer à ZK 
+	Pas possible de reproduire dans sandbox avec création statique de listitem.  
+	Essayer d'isoler cas avec ajout des listitems via Java
+-->								
+								
+										<listbox width="200px" checkmark="true" id="valeurFiltre" multiple="true" mold="paging" pageSize="999">
+											<listhead><listheader>Tout sélectionner</listheader></listhead>
+										</listbox>
+								</vbox>
+							</bandpopup>
+						</bandbox>
+					</hbox>
+					
+					<div align="center" style="margin-top:10px;">
+	<!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->
+						 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
+	                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter le filtre et la valeur sélectionnés aux filtres actifs"/>
+						 <button  id="boutonEffacerFiltre" image="/images/effacer-2-16x16.png"
+	                    width="32px" orient="horizontal" tooltiptext="supprimer tous les filtres actifs"/>                    
+					</div>
+					
+					<grid id="gridFiltreActif" fixedLayout="true"
+						 style="margin-top:10px;" emptyMessage="Aucun filtre actif." height="255px">
+						<auxhead sclass="category-center">
+							<auxheader label="Filtres actifs" colspan="2"
+								rowspan="1" />
+						</auxhead>
+						<columns/>
+						<rows/>
+					</grid>
 	
-				<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
-					<bandpopup height="205px" width="205px">
-						<vbox height="205px" style="margin:0px;" >
-								<listbox width="200px" checkmark="true" id="valeurFiltre" multiple="true">
-									<listhead><listheader>Tout sélectionner</listheader></listhead>
-								</listbox>
-						</vbox>
-					</bandpopup>
-				</bandbox>
+				</groupbox>
 				
-				</hbox>
-				<div align="center" style="margin-top:10px;">
-<!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->
-					 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
-                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter le filtre et la valeur sélectionnés aux filtres actifs"/>
-					 <button  id="boutonEffacerFiltre" image="/images/effacer-2-16x16.png"
-                    width="32px" orient="horizontal" tooltiptext="supprimer tous les filtres actifs"/>                    
-				</div>
-				
-				<grid id="gridFiltreActif" fixedLayout="true"
-					 style="margin-top:10px;" emptyMessage="Aucun filtre actif.">
-					<auxhead sclass="category-center">
-						<auxheader label="Filtres actifs" colspan="2"
-							rowspan="1" />
-					</auxhead>
-					<columns/>
-					<rows/>
-				</grid>
-
-			</groupbox>
+				<groupbox  width="286px" height="204px">
+					<caption>Historique des recherches</caption>
+				</groupbox>
+			</vbox>
+			
+			<menupopup id="editPopup">       
+               		<menuitem id="menuitemPrononciation" autocheck="true" label="afficher la colonne « Phonétique »"  onClick="colonnePrononciation.setVisible(!colonnePrononciation.isVisible())" checked="false"/>
+    		</menupopup>
 			
 			<vbox  height="645px" width="700px">
-			
-				<label id="infoRésultats"  value=""  style="font-style:italic;text-align:center;"/>
-				  <menupopup id="editPopup">       
-               		<menuitem id="menuitemPrononciation" autocheck="true" label="afficher la colonne « Phonétique »"  onClick="colonnePrononciation.setVisible(!colonnePrononciation.isVisible())" checked="false"/>
-    			</menupopup>
+
+				<hbox>
+					<div align="left" width="680px">
+						<label id="infoRésultats" value="Tous les mots"  style="font-style:italic;"/>
+					</div>
+					<div align="right">
+						<image src="/images/csv.png"></image>
+					</div>
+				</hbox>			
+				 
 				<grid id="motsGrid" mold="paging" pageSize="20"
 					height="550px" width="700px"
 					emptyMessage="Aucun mot trouvé.">

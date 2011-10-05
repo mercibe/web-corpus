@@ -81,7 +81,6 @@ public abstract class FiltreManager {
 
 		// Construire la liste des valeurs disponibles (non actives)
 		if (filtreActifModel != null) {
-
 			for (DefaultKeyValue keyValue : keyValues) {
 				if (!filtreActifModel.isActif(nom, keyValue.getKey())) {
 					valeursActives.add(keyValue);

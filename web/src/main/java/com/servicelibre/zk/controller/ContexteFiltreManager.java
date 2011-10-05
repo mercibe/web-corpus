@@ -42,13 +42,13 @@ public class ContexteFiltreManager extends FiltreManager {
 		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(
 				valeursChamp.size());
 
-		clésValeurs.add(keyValueVide);
+		//clésValeurs.add(keyValueVide);
 
 		for (DefaultKeyValue cléValeur : valeursChamp) {
 			StringBuilder sb = new StringBuilder(cléValeur.getKey().toString());
 
 			sb.append(" (").append(cléValeur.getValue()).append(")");
-
+			
 			clésValeurs.add(new DefaultKeyValue(cléValeur.getKey(), sb
 					.toString()));
 		}

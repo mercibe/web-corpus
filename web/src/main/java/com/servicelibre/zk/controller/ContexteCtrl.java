@@ -468,7 +468,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		voisinage.setSelectedIndex(0);
 		cherche.setText("");
 		
-		infoRésultats.setValue("");
+		infoRésultats.setValue("Aucun contexte trouvé");
 		initialiseContexteGrid();
 	}
 

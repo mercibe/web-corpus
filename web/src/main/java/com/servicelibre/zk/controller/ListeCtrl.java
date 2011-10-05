@@ -375,7 +375,7 @@ public class ListeCtrl extends CorpusCtrl {
 		cherche.setText("");
 		api.setVisible(false);
 
-		infoRésultats.setValue("");
+		infoRésultats.setValue("Tous les mots");
 		initialiseMotsGrid();
 
 	}

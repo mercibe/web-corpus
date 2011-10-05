@@ -336,17 +336,17 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zk</artifactId>
-			<version>5.0.7.1</version>
+			<version>5.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>
-			<version>5.0.7.1</version>
+			<version>5.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.theme</groupId>
 			<artifactId>breeze</artifactId>
-			<version>5.0.7</version>
+			<version>5.0.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
@@ -357,9 +357,15 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkex</artifactId>
-			<version>5.0.7.1</version>
+			<version>5.0.8</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>5.0.8</version>
 		</dependency>
 
 		<!-- Logging -->
