@@ -47,9 +47,20 @@ public class Mot implements Comparable<Mot> {
 	@Column(nullable = false)
 	String mot;
 
+	
+	@Column
+	String mot_autre_graphie;
+	
 	@Column
 	public String lemme;
 
+	
+	@Column
+	public String lemme_autre_graphie;
+	
+	@Column
+	boolean ro;
+	
 	@Column
 	public boolean isLemme;
 
@@ -74,8 +85,6 @@ public class Mot implements Comparable<Mot> {
 	@Column(name = "catgram_precision")
 	String catgramPrésicion;
 
-	@Column
-	boolean ro;
 
 	@Column
 	String note;
@@ -188,6 +197,24 @@ public class Mot implements Comparable<Mot> {
 
 	public void setRo(boolean ro) {
 		this.ro = ro;
+	}
+
+	
+	
+	public String getMot_autre_graphie() {
+		return mot_autre_graphie;
+	}
+
+	public void setMot_autre_graphie(String mot_autre_graphie) {
+		this.mot_autre_graphie = mot_autre_graphie;
+	}
+
+	public String getLemme_autre_graphie() {
+		return lemme_autre_graphie;
+	}
+
+	public void setLemme_autre_graphie(String lemme_autre_graphie) {
+		this.lemme_autre_graphie = lemme_autre_graphie;
 	}
 
 	public String getNote() {

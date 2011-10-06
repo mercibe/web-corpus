@@ -23,7 +23,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Column;
-import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Filedownload;
@@ -300,7 +299,22 @@ public class ListeCtrl extends CorpusCtrl {
 			public void render(Row row, Object model) throws Exception {
 				Mot mot = (Mot) model;
 
-				Label motLabel = new Label(mot.getMot());
+				StringBuilder motPlus = new StringBuilder(mot.getMot());
+				
+				Label or = new Label("");
+				if (mot.isRo()) {
+					or.setValue("*");
+					or.setStyle("text-align:center");
+					or.setTooltiptext("orthographe rectifiée");
+					motPlus.append(" (OR) ⇔ ").append(mot.getMot_autre_graphie()).append(" (OT)");
+				}
+				else if (mot.getMot_autre_graphie() != null && !mot.getMot_autre_graphie().isEmpty()) {
+					motPlus.append(" (OT) ⇔ ").append(mot.getMot_autre_graphie()).append(" (OR)");
+				}
+				
+				
+				Label motLabel = new Label(motPlus.toString());
+				motLabel.setAttribute("mot", mot.getMot());
 
 				motLabel.setSclass("mot");
 
@@ -309,7 +323,7 @@ public class ListeCtrl extends CorpusCtrl {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						Label label = (Label) event.getTarget();
-						afficheContexte(label.getValue());
+						afficheContexte(label.getAttribute("mot").toString());
 					}
 				});
 
@@ -319,12 +333,6 @@ public class ListeCtrl extends CorpusCtrl {
 				row.appendChild(motLabel);
 				row.appendChild(prononcLabel);
 
-				Label or = new Label("");
-				if (mot.isRo()) {
-					or.setValue("*");
-					or.setStyle("text-align:center");
-					or.setTooltiptext("orthographe rectifiée");
-				}
 
 				row.appendChild(or);
 
@@ -402,29 +410,28 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@Override
 	protected void exporterRésultatsCsv() {
-		exporterRésultatsXls();
 		
-//		StringBuilder csv = new StringBuilder();
-//		
-//		String séparateur = ";";
-//		
-//		csv.append(getEntête(motsGrid, séparateur));
-//		
-//		// Récupération des données
-//		@SuppressWarnings("unchecked")
-//		List<Mot> mots = (List<Mot>) motsGrid.getModel();
-//		for(Mot mot : mots) {
-//			csv.append(ajouteGuillemets(mot.getMot())).append(séparateur);
-//			csv.append(ajouteGuillemets(mot.getPrononciationsString())).append(séparateur);
-//			csv.append("\"").append(mot.isRo()?"*":"").append("\"").append(séparateur);
-//			csv.append(ajouteGuillemets(mot.getCatgram())).append(séparateur);
-//			csv.append(ajouteGuillemets(mot.getGenre())).append(séparateur);
-//			csv.append(ajouteGuillemets(mot.getNombre())).append(séparateur);
-//			csv.append(ajouteGuillemets(mot.getCatgramPrésicion())).append(séparateur);
-//			csv.append(ajouteGuillemets(mot.getListe().getNom())).append("\n");
-//			
-//		}
-//		Filedownload.save(csv.toString().getBytes(),"text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
+		StringBuilder csv = new StringBuilder();
+		
+		String séparateur = ";";
+		
+		csv.append(getEntêteCsv(motsGrid, séparateur));
+		
+		// Récupération des données
+		@SuppressWarnings("unchecked")
+		List<Mot> mots = (List<Mot>) motsGrid.getModel();
+		for(Mot mot : mots) {
+			csv.append(ajouteGuillemetsCsv(mot.getMot())).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getPrononciationsString())).append(séparateur);
+			csv.append("\"").append(mot.isRo()?"*":"").append("\"").append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getCatgram())).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getGenre())).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getNombre())).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrésicion())).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
+			
+		}
+		Filedownload.save(csv.toString().getBytes(),"text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
 	}
 
 	// TODO générer un nom de fichier qui représente la recherche
@@ -433,32 +440,28 @@ public class ListeCtrl extends CorpusCtrl {
 		return sdf.format(new Date()) + "-mots";
 	}
 	
+	@Override
 	protected void exporterRésultatsXls() {
-		
 		 Workbook wb = new HSSFWorkbook();
 		 CreationHelper createHelper = wb.getCreationHelper();
 		 // Création d'une nouvelle feuille de calcul
 		 Sheet sheet = wb.createSheet("mots");
-		 
-		 // Création de la ligne d'entête
-		 int colCpt = 0;
-		 int rowCpt = 0;
-		 
-		 // Les rows sont « 0 based » 
+
+		 // Création des styles, font, etc. pour les cellules de la feuille de calcul
 		 Font entêteFont = wb.createFont();
-		 Font cellsFont = wb.createFont();
-//		 font.setFontHeightInPoints((short)12);
-		 cellsFont.setFontName("Arial Unicode MS");
-		 
 		 entêteFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-		 
 		 CellStyle entêteCellStyle = wb.createCellStyle();
 		 entêteCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 		 entêteCellStyle.setFont(entêteFont);
 		 
-		 CellStyle cellsStyle = wb.createCellStyle();
-		 cellsStyle.setFont(cellsFont);
+		 Font apiCellsFont = wb.createFont();
+		 apiCellsFont.setFontName("Arial Unicode MS");
+		 CellStyle apiCellsStyle = wb.createCellStyle();
+		 apiCellsStyle.setFont(apiCellsFont);
 		 
+		 // Création de la ligne d'entête
+		 int colCpt = 0;
+		 int rowCpt = 0;
 		 
 		 org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
  		 for(Object column : motsGrid.getColumns().getChildren()) {
@@ -468,8 +471,9 @@ public class ListeCtrl extends CorpusCtrl {
 			 cell.setCellValue(createHelper.createRichTextString(label));
 		 }
 		
- 		 // Récupération des données
- 		List<Mot> mots = (List<Mot>) motsGrid.getModel();
+ 		 // Récupération des données / lignes
+ 		@SuppressWarnings("unchecked")
+		List<Mot> mots = (List<Mot>) motsGrid.getModel();
  		
 		for(Mot mot : mots) {
 			
@@ -479,7 +483,7 @@ public class ListeCtrl extends CorpusCtrl {
 			cell.setCellValue(createHelper.createRichTextString(mot.getMot()));
 			
 			cell = row.createCell(1);
-			cell.setCellStyle(cellsStyle);
+			cell.setCellStyle(apiCellsStyle);
 			cell.setCellValue(createHelper.createRichTextString(mot.getPrononciationsString()));
 			
 			cell = row.createCell(2);
@@ -501,6 +505,11 @@ public class ListeCtrl extends CorpusCtrl {
 			cell.setCellValue(createHelper.createRichTextString(mot.getListe().getNom()));
 			
 		}
+		
+		for(int i = 0; i < 8; i++) {
+			sheet.autoSizeColumn(i);
+		}
+
  		 
  		 ByteArrayOutputStream baos  = new ByteArrayOutputStream();
  		 try {

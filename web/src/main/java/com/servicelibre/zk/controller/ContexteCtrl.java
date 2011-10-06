@@ -1,11 +1,20 @@
 package com.servicelibre.zk.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
@@ -26,8 +35,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.service.Contexte;
@@ -70,8 +77,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	private boolean phraseComplète;
 	private ContexteSet contexteSetCourant;
-	private Map<String, DocMetadata> métadonnéesTraductions;
-	
+
 	public void onOK$liste(Event event) {
 		chercheEtAffiche();
 	}
@@ -117,15 +123,9 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		// TODO rendre plus « intelligent » (cf. listes)
 		String terminaison = contexteSet.size() > 1 ? "s" : "";
-		sb.append(contexteSet.size())
-				.append(" occurrence")
-				.append(terminaison)
-				.append(contexteSet.isFormesDuLemme() ? " des formes du mot « "
-						: " du mot « ").append(contexteSet.getMotCherché())
-				.append(" » trouvée").append(terminaison).append(" dans ")
-				.append(contexteSet.getDocumentCount()).append(" document")
-				.append(contexteSet.getDocumentCount() > 1 ? "s" : "")
-				.append(".");
+		sb.append(contexteSet.size()).append(" occurrence").append(terminaison).append(contexteSet.isFormesDuLemme() ? " des formes du mot « " : " du mot « ")
+				.append(contexteSet.getMotCherché()).append(" » trouvée").append(terminaison).append(" dans ").append(contexteSet.getDocumentCount())
+				.append(" document").append(contexteSet.getDocumentCount() > 1 ? "s" : "").append(".");
 
 		return sb.toString();
 	}
@@ -154,8 +154,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		FiltreMot filtres = getFiltres();
 
 		// Chercher toutes les formes en fonction de condition.getValue()
-		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue()
-				.equals("TOUTES_LES_FORMES_DU_MOT")) {
+		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
 			// FIXME quid si le mot n'est pas un lemme? Rechercher son lemme et
 			// lancer la recherche?
 			contexteSet = corpusService.getContextesLemme(aChercher, filtres);
@@ -167,8 +166,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private int getVoisinageUtilisateur() {
-		return Integer.parseInt(voisinage.getSelectedItem().getValue()
-				.toString());
+		return Integer.parseInt(voisinage.getSelectedItem().getValue().toString());
 	}
 
 	/**
@@ -182,8 +180,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		String aChercher = cherche.getValue().trim();
 
 		if (!aChercher.isEmpty()) {
-			desc.append("Rechercher les contextes pour ").append(
-					condition.getValue().toLowerCase());
+			desc.append("Rechercher les contextes pour ").append(condition.getValue().toLowerCase());
 
 			desc.append(" « ").append(aChercher).append(" »");
 		}
@@ -208,16 +205,14 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private void initialiseContexteGrid() {
-		contextesGrid.setModel(new ListModelList(getContexteSet(
-				getVoisinageUtilisateur()).getContextes()));
+		contextesGrid.setModel(new ListModelList(getContexteSet(getVoisinageUtilisateur()).getContextes()));
 
 		contextesGrid.setRowRenderer(new RowRenderer() {
 
 			@Override
 			public void render(Row row, Object model) throws Exception {
-				
 
-				final Contexte contexte = getContexteInitial((Contexte)model);
+				final Contexte contexte = getContexteInitial((Contexte) model);
 
 				Span ctxSpan = new Span();
 				ctxSpan.appendChild(new Label(contexte.texteAvant));
@@ -230,7 +225,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 					@Override
 					public void onEvent(Event arg0) throws Exception {
-						//Label l = (Label) arg0.getTarget();
+						// Label l = (Label) arg0.getTarget();
 						créeEtAfficheOngletInfoContexte(contexte);
 					}
 
@@ -248,7 +243,6 @@ public class ContexteCtrl extends CorpusCtrl {
 
 			}
 
-			
 		});
 
 	}
@@ -256,39 +250,36 @@ public class ContexteCtrl extends CorpusCtrl {
 	private Contexte getContexteInitial(Contexte contexte) {
 
 		if (phraseComplète) {
-			contexte = phraseService
-					.getContextePhraseComplète(contexte);
+			contexte = phraseService.getContextePhraseComplète(contexte);
 		}
 		return contexte;
 	}
-	
+
 	private void afficheCooccurrents() {
 
 		// TODO prévenir/possibilité annuler si voisinage trop grand et beaucoup
 		// de contexte: 5 minutes au moins!
 		// conseil: réduire le voisinage à moins de 5 mots... (phrase complète)
 
-//		ContexteSet contexteSetCooccurrent;
-//		if (contexteSetCourant.getContextesSize() > 200
-//				|| contexteSetCourant.getTailleVoisinage() > 10) {
-//			System.err
-//					.println("Cela pourrait être long... Réduction des contextes");
-//			// Relancer la recherche avec voisinage = 3
-//			contexteSetCooccurrent = getContexteSet(3);
-//		} else {
-//			contexteSetCooccurrent = contexteSetCourant;
-//		}
-		
+		// ContexteSet contexteSetCooccurrent;
+		// if (contexteSetCourant.getContextesSize() > 200
+		// || contexteSetCourant.getTailleVoisinage() > 10) {
+		// System.err
+		// .println("Cela pourrait être long... Réduction des contextes");
+		// // Relancer la recherche avec voisinage = 3
+		// contexteSetCooccurrent = getContexteSet(3);
+		// } else {
+		// contexteSetCooccurrent = contexteSetCourant;
+		// }
+
 		// Relancer la recherche avec voisinage = 3 par défaut
 		ContexteSet contexteSetCooccurrent = getContexteSet(3);
 
 		if (contexteSetCooccurrent == null) {
 			return;
 		}
-		
 
-		String id = contexteSetCooccurrent.getMotCherché() + "_"
-				+ contexteSetCooccurrent.getTailleVoisinage();
+		String id = contexteSetCooccurrent.getMotCherché() + "_" + contexteSetCooccurrent.getTailleVoisinage();
 
 		// TODO pour améliorer vue des cooccurrents
 		/*
@@ -313,14 +304,12 @@ public class ContexteCtrl extends CorpusCtrl {
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("terme", contexteSetCooccurrent.getMotCherché());
 			contexteSetCooccurrent.setMaxCooccurrent(MAX_COOCCURRENTS);
-			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCooccurrent
-					.getInfoCooccurrents();
+			Map<Position, List<InfoCooccurrent>> infoCooccurrents = contexteSetCooccurrent.getInfoCooccurrents();
 			args.put("infoG", infoCooccurrents.get(Position.AVANT));
 			args.put("infoM", infoCooccurrents.get(Position.AVANT_APRÈS));
 			args.put("infoD", infoCooccurrents.get(Position.APRÈS));
 
-			Executions
-					.createComponents("/infoCooccurrents.zul", tabpanel, args);
+			Executions.createComponents("/infoCooccurrents.zul", tabpanel, args);
 
 			tabpanel.setParent(corpusTabpanels);
 		} else {
@@ -348,23 +337,23 @@ public class ContexteCtrl extends CorpusCtrl {
 
 			// TODO pour améliorer vue des contextes
 			/*
-			 * - s'asurer que tous les contextes aient des métadonnées 
+			 * - s'asurer que tous les contextes aient des métadonnées
 			 * 
 			 * - naviguer au contexte suivant/précédent (cf. grid de l'onglet
 			 * contexte. Via Model?) => changer id du tab aussi!
-			 *  
-			 * - afficher numéro de ligne/contexte - mapping DB entre nom champ index
-			 * Lucene et nom logique 
 			 * 
-			 * - phrases du voisinage non nettoyées (conserver retours à la ligne, etc.) 
+			 * - afficher numéro de ligne/contexte - mapping DB entre nom champ index
+			 * Lucene et nom logique
+			 * 
+			 * - phrases du voisinage non nettoyées (conserver retours à la ligne, etc.)
 			 * - afficher document binaire source (téléchargement) si rôle admin
 			 */
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("mot", contexte.mot);
-			
+
 			// TODO appeler un service traducteurmetadata
-			
+
 			args.put("métadonnées", contexte.getDocMétadonnéesPrimaires());
 
 			Contexte contexteSource = contexte.getContexteSource();
@@ -381,8 +370,7 @@ public class ContexteCtrl extends CorpusCtrl {
 				args.put("voisinage_d", contexteSource.texteAprès);
 			} else {
 
-				Contexte contextePhraseComplète = phraseService
-						.getContextePhraseComplète(contexte);
+				Contexte contextePhraseComplète = phraseService.getContextePhraseComplète(contexte);
 				args.put("phrase_g", contextePhraseComplète.texteAvant);
 				args.put("phrase_m", contextePhraseComplète.mot);
 				args.put("phrase_d", contextePhraseComplète.texteAprès);
@@ -396,8 +384,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 			tabpanel.setParent(corpusTabpanels);
 		} else {
-			System.out.println("Onglet info contexte déjà ouvert: "
-					+ contexte.getId());
+			System.out.println("Onglet info contexte déjà ouvert: " + contexte.getId());
 			// Donner le focus
 		}
 
@@ -405,31 +392,31 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	}
 
-//	private List<Metadata> traduitMétadonnées(List<Metadata> docMétadonnées) {
-//
-//		
-//		// Chargement des définitions des métadonnées du corpus si ce n'est déjà fait
-//		if(métadonnéesTraductions.size() == 0)
-//		{
-//			List<DocMetadata> métadonnéesCorpus = corpusMétadonnéesManager.findByCorpusId(corpusService.getCorpus().getId());
-//			for(DocMetadata md : métadonnéesCorpus) {
-//				métadonnéesTraductions.put(md.getChampIndex(), md);
-//			}
-//		}
-//		
-//		
-//		// Traduction nom champ index => libellé écran
-//		for(Metadata md : docMétadonnées) {
-//			DocMetadata indexMetadata = métadonnéesTraductions.get(md.getName());
-//			//if(indexMetadata != null)
-//			
-//		}
-//		
-//		
-//		
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	// private List<Metadata> traduitMétadonnées(List<Metadata> docMétadonnées) {
+	//
+	//
+	// // Chargement des définitions des métadonnées du corpus si ce n'est déjà fait
+	// if(métadonnéesTraductions.size() == 0)
+	// {
+	// List<DocMetadata> métadonnéesCorpus = corpusMétadonnéesManager.findByCorpusId(corpusService.getCorpus().getId());
+	// for(DocMetadata md : métadonnéesCorpus) {
+	// métadonnéesTraductions.put(md.getChampIndex(), md);
+	// }
+	// }
+	//
+	//
+	// // Traduction nom champ index => libellé écran
+	// for(Metadata md : docMétadonnées) {
+	// DocMetadata indexMetadata = métadonnéesTraductions.get(md.getName());
+	// //if(indexMetadata != null)
+	//
+	// }
+	//
+	//
+	//
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 	private Tab getTabDéjàOuvert(String id) {
 		@SuppressWarnings("unchecked")
@@ -446,16 +433,14 @@ public class ContexteCtrl extends CorpusCtrl {
 	public void chercheEtAffiche() {
 		contexteSetCourant = getContexteSet(getVoisinageUtilisateur());
 
-		contextesGrid.setModel(new ListModelList(contexteSetCourant
-				.getContextes()));
+		contextesGrid.setModel(new ListModelList(contexteSetCourant.getContextes()));
 		contextesGrid.getPaginal().setActivePage(0);
 
 		infoRésultats.setValue(getInfoRésultat(contexteSetCourant));
-		
-		if(contexteSetCourant.getContextes().size() > 0) {
+
+		if (contexteSetCourant.getContextes().size() > 0) {
 			cooccurrentLien.setVisible(true);
-		}
-		else {
+		} else {
 			cooccurrentLien.setVisible(false);
 		}
 
@@ -477,7 +462,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		condition.setSelectedIndex(0);
 		voisinage.setSelectedIndex(0);
 		cherche.setText("");
-		
+
 		infoRésultats.setValue("Aucun contexte trouvé");
 		initialiseContexteGrid();
 	}
@@ -490,26 +475,104 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	@Override
 	protected void exporterRésultatsCsv() {
-		//http://poi.apache.org/spreadsheet/quick-guide.html#CreateCells
 		StringBuilder csv = new StringBuilder();
-		
+
 		String séparateur = ";";
-		
+
 		csv.append("\"Contexte complet\";\"Texte avant mot\";\"Mot\";\"Texte après\"\n");
-		
-		
+
 		// Récupération des données
 		@SuppressWarnings("unchecked")
 		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
-		for(Contexte contexte : contextes) {
+		for (Contexte contexte : contextes) {
 			Contexte contextePhraseComplète = getContexteInitial(contexte);
-			csv.append(ajouteGuillemets(contextePhraseComplète.texteAvant + contextePhraseComplète.mot + contextePhraseComplète.texteAprès)).append(séparateur);
-			csv.append(ajouteGuillemets(contextePhraseComplète.texteAvant)).append(séparateur);
-			csv.append(ajouteGuillemets(contextePhraseComplète.mot)).append(séparateur);
-			csv.append(ajouteGuillemets(contextePhraseComplète.texteAprès)).append("\n");
-			
+			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.getPhrase().phrase)).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAvant)).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.mot)).append(séparateur);
+			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAprès)).append("\n");
+
 		}
-		Filedownload.save(csv.toString().getBytes(),"text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
+		Filedownload.save(csv.toString().getBytes(), "text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
+	}
+
+	@Override
+	protected void exporterRésultatsXls() {
+		Workbook wb = new HSSFWorkbook();
+		CreationHelper createHelper = wb.getCreationHelper();
+		// Création d'une nouvelle feuille de calcul
+		Sheet sheet = wb.createSheet("contextes");
+
+		// Création des styles, font, etc. pour les cellules de la feuille de calcul
+		Font entêteFont = wb.createFont();
+		entêteFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		CellStyle entêteCellStyle = wb.createCellStyle();
+		entêteCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		entêteCellStyle.setFont(entêteFont);
+		
+		CellStyle ligneCellStyle = wb.createCellStyle();
+		ligneCellStyle.setWrapText(true);
+
+		// Création de la ligne d'entête
+		int colCpt = 0;
+		int rowCpt = 0;
+
+		org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
+		Cell entêteCell = row.createCell(colCpt++);
+		entêteCell.setCellStyle(entêteCellStyle);
+		entêteCell.setCellValue(createHelper.createRichTextString("Contexte complet"));
+
+		entêteCell = row.createCell(colCpt++);
+		entêteCell.setCellStyle(entêteCellStyle);
+		entêteCell.setCellValue(createHelper.createRichTextString("Texte avant"));
+
+		entêteCell = row.createCell(colCpt++);
+		entêteCell.setCellStyle(entêteCellStyle);
+		entêteCell.setCellValue(createHelper.createRichTextString("Mot"));
+
+		entêteCell = row.createCell(colCpt++);
+		entêteCell.setCellStyle(entêteCellStyle);
+		entêteCell.setCellValue(createHelper.createRichTextString("Texte après"));
+
+		// Récupération des données
+		@SuppressWarnings("unchecked")
+		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
+		for (Contexte contexte : contextes) {
+
+			Contexte contextePhraseComplète = getContexteInitial(contexte);
+
+			row = sheet.createRow(rowCpt++);
+
+			Cell cell = row.createCell(0);
+			cell.setCellStyle(ligneCellStyle);
+			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.getPhrase().phrase));
+
+			cell = row.createCell(1);
+			cell.setCellStyle(ligneCellStyle);
+			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAvant));
+
+			cell = row.createCell(2);
+			cell.setCellStyle(ligneCellStyle);
+			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.mot));
+
+			cell = row.createCell(3);
+			cell.setCellStyle(ligneCellStyle);
+			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAprès));
+		}
+
+		for(int i = 0; i < 4; i++) {
+			sheet.autoSizeColumn(i);
+		}
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			wb.write(baos);
+			Filedownload.save(baos.toByteArray(), "application/vnd.ms-excel", getNomFichier() + ".xls");
+			baos.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// TODO générer un nom de fichier qui représente la recherche

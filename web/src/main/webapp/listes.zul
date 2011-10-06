@@ -109,7 +109,8 @@
 						<label id="infoRésultats" value="Tous les mots"  style="font-style:italic;"/>
 					</div>
 					<div align="right">
-						<image id="exportationCsv"	src="/images/csv.png" class="clicable"/>
+<!-- 						<image id="exportationCsv"	src="/images/csv.png" class="clicable"/> -->
+						<image id="exportationXls"	src="/images/xls.png" class="clicable"/>
 					</div>
 				</hbox>			
 				 
@@ -118,9 +119,9 @@
 					emptyMessage="Aucun mot trouvé.">
 							
 					<columns sizable="true" menupopup="editPopup">
-						<column width="130px" id="mot" label="Mot" sortDirection="ascending" sort="auto"/>
+						<column width="290px" id="mot" label="Mot" sortDirection="ascending" sort="auto"/>
 						<column width="100px" id="colonnePrononciation" label="Phonétique"  sort="auto(prononciationsString,lemme)" tooltiptext="transcription phonétique"  visible="false" /> 
-						<column width="40px" label="OR"  sort="auto(ro,lemme)" tooltiptext="orthographe rectifiée"/> 
+						<column width="40px" label="OR"  sort="auto(ro,lemme)" tooltiptext="orthographe rectifiée" visible="false"/> 
 						<column width="100px" label="Classe de mot"  sort="auto(catgram,genre,lemme)"/> 
 						<column width="50px" label="Genre" sort="auto(genre, lemme)"/>
 						<column width="60px" label="Nombre"  sort="auto(nombre, lemme)"/>

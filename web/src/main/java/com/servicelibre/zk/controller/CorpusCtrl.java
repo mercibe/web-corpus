@@ -72,6 +72,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Div caractèresSpéciaux;
 	
 	Image exportationCsv;
+	Image exportationXls;
 
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
@@ -94,7 +95,10 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	public void onClick$exportationCsv(Event event) {
 		exporterRésultatsCsv();
 	}
-	
+
+	public void onClick$exportationXls(Event event) {
+		exporterRésultatsXls();
+	}
 
 	/**
 	 * Permet de remplir les choix de filtres/valeurs possibles
@@ -362,6 +366,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	abstract protected void initialiseRecherche();
 	
 	abstract protected void exporterRésultatsCsv();
+	
+	abstract protected void exporterRésultatsXls();
 
 	protected void effacerRecherche() {
 		initialiseRecherche();
@@ -425,7 +431,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		return cherche.getText().trim();
 	}
 
-	protected String getEntête(Grid grid, String séparateur) {
+	protected String getEntêteCsv(Grid grid, String séparateur) {
 		
 		StringBuilder entete = new StringBuilder();
 		
@@ -434,7 +440,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		// Récupération des entêtes
 		for(Object column : grid.getColumns().getChildren()) {
 			String label = ((Column) column).getLabel();
-			label = ajouteGuillemets(label);
+			label = ajouteGuillemetsCsv(label);
 			entete.append(sép).append(label);
 			sép = séparateur;
 		}
@@ -445,7 +451,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	
 	// Entourer de guillemets et doubler les éventuels guillemets contenus dans le nom de l'entête
-	protected String ajouteGuillemets(String label) {
+	protected String ajouteGuillemetsCsv(String label) {
 		String guillemetsOK = "\"" + label.replaceAll("\"", "\"\"") + "\"";
 		return guillemetsOK.replaceAll("\n", "\u2028");
 	}
