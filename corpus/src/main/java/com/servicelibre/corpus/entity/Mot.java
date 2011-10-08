@@ -16,12 +16,17 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id",
 		"lemme", "mot", "catgram", "genre" }))
+/**
+ * Cette classe représente un conteneur d'information pour un mot donné de la langue française.
+ * 
+ * @author mercibe
+ *
+ */
 public class Mot implements Comparable<Mot> {
 
 	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
@@ -48,16 +53,16 @@ public class Mot implements Comparable<Mot> {
 	String mot;
 
 	
+	/**
+	 * Graphie alternative.  Si la graphie du mot est rectifiée (ro = true), ce champ contient la graphie traditionnelle.
+	 * Si la graphie du mot est traditionnelle, ce champ contient la graphie rectifiée.
+	 */
 	@Column
-	String mot_autre_graphie;
+	String autreGraphie;
 	
 	@Column
 	public String lemme;
 
-	
-	@Column
-	public String lemme_autre_graphie;
-	
 	@Column
 	boolean ro;
 	
@@ -76,15 +81,25 @@ public class Mot implements Comparable<Mot> {
 	@Column(nullable = false)
 	String catgram;
 
+	/**
+	 * Genre du mot: m., f., épicène
+	 */
 	@Column
 	String genre;
 
+	/**
+	 * Nombre du mot: sing., pl., inv.
+	 */
 	@Column
 	String nombre;
 
+	/**
+	 * Information additionnelles sur la classe du mot (et donc du lemme également)
+	 * Transitivité du verbe (tr. dir., tr. indir. ou  intr.)
+	 * Mais aussi: pron., impers., etc.
+	 */
 	@Column(name = "catgram_precision")
 	String catgramPrésicion;
-
 
 	@Column
 	String note;
@@ -201,20 +216,12 @@ public class Mot implements Comparable<Mot> {
 
 	
 	
-	public String getMot_autre_graphie() {
-		return mot_autre_graphie;
+	public String getMot_autreGraphie() {
+		return autreGraphie;
 	}
 
-	public void setMot_autre_graphie(String mot_autre_graphie) {
-		this.mot_autre_graphie = mot_autre_graphie;
-	}
-
-	public String getLemme_autre_graphie() {
-		return lemme_autre_graphie;
-	}
-
-	public void setLemme_autre_graphie(String lemme_autre_graphie) {
-		this.lemme_autre_graphie = lemme_autre_graphie;
+	public void setAutreGraphie(String autreGraphie) {
+		this.autreGraphie = autreGraphie;
 	}
 
 	public String getNote() {
@@ -251,6 +258,20 @@ public class Mot implements Comparable<Mot> {
 
 	public void setListes(Collection<Liste> listes) {
 		this.listes = listes;
+	}
+
+	
+	
+	public String getLemme() {
+		return lemme;
+	}
+
+	public void setLemme(String lemme) {
+		this.lemme = lemme;
+	}
+
+	public String getAutreGraphie() {
+		return autreGraphie;
 	}
 
 	@Override

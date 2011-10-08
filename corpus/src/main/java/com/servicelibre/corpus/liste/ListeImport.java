@@ -30,9 +30,11 @@ public class ListeImport
 {
 	
     private static Logger logger = LoggerFactory.getLogger(ListeImport.class);
-
+    
+    public enum Action {REMPLACER, AJOUTER};
+    
     private List<Liste> listes;
-
+    
     private ApplicationContext ctx;
 
     @Transactional
@@ -65,9 +67,8 @@ public class ListeImport
             MotManager mm = (MotManager) ctx.getBean("motManager");
 
             // Suppression des mots qui existeraient déjà pour cette liste
+            //logger.info("Suppression des mots de la liste {}.", currentListe);
             //int deleteCount = mm.removeAllFrom(currentListe);
-//            logger.info("Suppression des mots de la liste {}.", currentListe);
-//            currentListe.supprimeTousLesMots();
 
             try
             {
@@ -85,22 +86,21 @@ public class ListeImport
                     List<Mot> mots = splitter.splitLigne(ligne, currentListe);
                     for (Mot mot : mots)
                     {
-                    	
                     	System.err.println("recherche " + mot.lemme);
-                    	
                     	// le mot existe-t-il déjà?
                     	Mot motCourant = mm.findByMot(mot.lemme, mot.getMot(), mot.getCatgram(), mot.getGenre());
                     	//Si oui, lui associer simplement sa liste
                     	if(motCourant == null) {
                     		logger.info("Ajout du mot [{}]", mot.lemme);
                     		cptMotAjouté++;
+                    		mot.setListe(currentListe);
                     		mm.save(mot);
+                    		motCourant = mot;
                     	}
-                    	else {
-                    		logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]",currentListe.getNom(), mot.lemme);
-                    		motCourant.ajouteListe(currentListe);
-                    		cptNouvelleÉtiquette++;
-                    	}
+
+                    	logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]",currentListe.getNom(), mot.lemme);
+                   		motCourant.ajouteListe(currentListe);
+                   		cptNouvelleÉtiquette++;
                     }
                 }
 
@@ -148,11 +148,11 @@ public class ListeImport
         }
         else
         {
-
             // récupération des champs transient éventuels
             dbListe.setFichierSource(currentListe.getFichierSource());
             dbListe.setLigneSplitter(currentListe.getLigneSplitter());
-            logger.info("La liste {} a été trouvé dans la base de données.", currentListe);
+            dbListe.setFichierEncoding(currentListe.getFichierEncoding());
+            logger.info("La liste {} a été trouvé dans la base de données.", dbListe);
             return dbListe;
         }
 

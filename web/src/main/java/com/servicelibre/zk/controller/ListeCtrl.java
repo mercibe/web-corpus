@@ -306,10 +306,10 @@ public class ListeCtrl extends CorpusCtrl {
 					or.setValue("*");
 					or.setStyle("text-align:center");
 					or.setTooltiptext("orthographe rectifiée");
-					motPlus.append(" (OR) ⇔ ").append(mot.getMot_autre_graphie()).append(" (OT)");
+					motPlus.append(" (OR) ⇔ ").append(mot.getMot_autreGraphie()).append(" (OT)");
 				}
-				else if (mot.getMot_autre_graphie() != null && !mot.getMot_autre_graphie().isEmpty()) {
-					motPlus.append(" (OT) ⇔ ").append(mot.getMot_autre_graphie()).append(" (OR)");
+				else if (mot.getMot_autreGraphie() != null && !mot.getMot_autreGraphie().isEmpty()) {
+					motPlus.append(" (OT) ⇔ ").append(mot.getMot_autreGraphie()).append(" (OR)");
 				}
 				
 				
@@ -506,7 +506,7 @@ public class ListeCtrl extends CorpusCtrl {
 			
 		}
 		
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i <= colCpt; i++) {
 			sheet.autoSizeColumn(i);
 		}
 

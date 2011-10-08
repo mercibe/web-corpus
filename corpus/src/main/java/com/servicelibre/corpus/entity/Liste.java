@@ -45,6 +45,9 @@ public class Liste implements Comparable<Liste> {
 
 	@Transient
 	File fichierSource;
+	
+	@Transient
+	String fichierEncoding = "UTF-8";
 
 	@Transient
 	LigneSplitter ligneSplitter;
@@ -122,14 +125,6 @@ public class Liste implements Comparable<Liste> {
 		mot.setListe(null);
 	}
 
-	public int supprimeTousLesMots() {
-		int cptSupprimé = 0;
-		for (Mot mot : mots) {
-			mot.setListe(null);
-		}
-		return cptSupprimé;
-	}
-
 	public void internalAjouteMot(Mot mot) {
 		mots.add(mot);
 
@@ -166,6 +161,16 @@ public class Liste implements Comparable<Liste> {
 
 	public void setOrdre(Integer ordre) {
 		this.ordre = ordre;
+	}
+	
+	
+
+	public String getFichierEncoding() {
+		return fichierEncoding;
+	}
+
+	public void setFichierEncoding(String fichierEncoding) {
+		this.fichierEncoding = fichierEncoding;
 	}
 
 	@Override

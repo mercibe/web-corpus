@@ -519,19 +519,19 @@ public class ContexteCtrl extends CorpusCtrl {
 		org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
 		Cell entêteCell = row.createCell(colCpt++);
 		entêteCell.setCellStyle(entêteCellStyle);
-		entêteCell.setCellValue(createHelper.createRichTextString("Contexte complet"));
+		entêteCell.setCellValue(createHelper.createRichTextString("Contexte"));
 
-		entêteCell = row.createCell(colCpt++);
-		entêteCell.setCellStyle(entêteCellStyle);
-		entêteCell.setCellValue(createHelper.createRichTextString("Texte avant"));
-
-		entêteCell = row.createCell(colCpt++);
-		entêteCell.setCellStyle(entêteCellStyle);
-		entêteCell.setCellValue(createHelper.createRichTextString("Mot"));
-
-		entêteCell = row.createCell(colCpt++);
-		entêteCell.setCellStyle(entêteCellStyle);
-		entêteCell.setCellValue(createHelper.createRichTextString("Texte après"));
+//		entêteCell = row.createCell(colCpt++);
+//		entêteCell.setCellStyle(entêteCellStyle);
+//		entêteCell.setCellValue(createHelper.createRichTextString("Texte avant"));
+//
+//		entêteCell = row.createCell(colCpt++);
+//		entêteCell.setCellStyle(entêteCellStyle);
+//		entêteCell.setCellValue(createHelper.createRichTextString("Mot"));
+//
+//		entêteCell = row.createCell(colCpt++);
+//		entêteCell.setCellStyle(entêteCellStyle);
+//		entêteCell.setCellValue(createHelper.createRichTextString("Texte après"));
 
 		// Récupération des données
 		@SuppressWarnings("unchecked")
@@ -546,20 +546,20 @@ public class ContexteCtrl extends CorpusCtrl {
 			cell.setCellStyle(ligneCellStyle);
 			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.getPhrase().phrase));
 
-			cell = row.createCell(1);
-			cell.setCellStyle(ligneCellStyle);
-			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAvant));
-
-			cell = row.createCell(2);
-			cell.setCellStyle(ligneCellStyle);
-			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.mot));
-
-			cell = row.createCell(3);
-			cell.setCellStyle(ligneCellStyle);
-			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAprès));
+//			cell = row.createCell(1);
+//			cell.setCellStyle(ligneCellStyle);
+//			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAvant));
+//
+//			cell = row.createCell(2);
+//			cell.setCellStyle(ligneCellStyle);
+//			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.mot));
+//
+//			cell = row.createCell(3);
+//			cell.setCellStyle(ligneCellStyle);
+//			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAprès));
 		}
 
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i <= colCpt; i++) {
 			sheet.autoSizeColumn(i);
 		}
 		

@@ -124,8 +124,8 @@
 						<column width="40px" label="OR"  sort="auto(ro,lemme)" tooltiptext="orthographe rectifiée" visible="false"/> 
 						<column width="100px" label="Classe de mot"  sort="auto(catgram,genre,lemme)"/> 
 						<column width="50px" label="Genre" sort="auto(genre, lemme)"/>
-						<column width="60px" label="Nombre"  sort="auto(nombre, lemme)"/>
-						<column width="70px" label="Précision" sort="auto(catgramPrésicion, lemme)"/>
+						<column width="60px" label="Nombre"  sort="auto(nombre, lemme)" visible="false"/>
+						<column width="70px" label="Précision" sort="auto(catgramPrésicion, lemme)" visible="false"/>
 						<column  label="Liste" sort="auto(liste, lemme)"/>
 					</columns>
 					<rows />

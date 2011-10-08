@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.entity.Prononciation;
 
@@ -130,6 +131,8 @@ public class JpaMotManager implements MotManager {
 		// chargement EAGER des prononciations => DISTINCT dans le critère
 		mot.fetch("prononciations", JoinType.LEFT);
 		
+		// chargement EAGER de la liste primaire du mot
+		mot.fetch("liste", JoinType.LEFT);
 		
 		// Tous les mots sont en minuscules
 		graphie = graphie.toLowerCase();
@@ -184,6 +187,9 @@ public class JpaMotManager implements MotManager {
 		
 		// chargement EAGER des prononciations => DISTINCT dans le critère
 		mot.fetch("prononciations");
+		
+		// chargement EAGER de la liste primaire du mot
+		mot.fetch("liste", JoinType.LEFT);
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Path<Object> prononciationPath = mot.join("prononciations").get("prononciation");
@@ -318,7 +324,5 @@ public class JpaMotManager implements MotManager {
 
 		return liaisonCpt;
 	}
-
-
 
 }

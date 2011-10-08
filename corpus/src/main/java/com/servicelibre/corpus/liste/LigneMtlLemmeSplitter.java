@@ -40,7 +40,7 @@ import com.servicelibre.corpus.entity.Mot;
  * @author benoitm
  * 
  */
-public class LigneMtlSplitter implements LigneSplitter {
+public class LigneMtlLemmeSplitter implements LigneSplitter {
 	private static final String SÉPARATEUR = "\\t";
 
 	@Override
@@ -178,7 +178,7 @@ public class LigneMtlSplitter implements LigneSplitter {
 
 		cols[1] = "";
 
-		if (!(cols[2].endsWith(", s'") || cols[2].endsWith(", se"))) {
+		if (!(cols[0].endsWith(", s'") || cols[0].endsWith(", se"))) {
 			cols[2] = cols[2].split(",")[0].trim();
 		}
 	}
