@@ -19,8 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id",
-		"lemme", "mot", "catgram", "genre" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"lemme", "mot", "catgram", "genre" }))
 /**
  * Cette classe représente un conteneur d'information pour un mot donné de la langue française.
  * 
@@ -149,13 +148,7 @@ public class Mot implements Comparable<Mot> {
 	}
 
 	public void setListe(Liste liste) {
-		if (this.liste != null) {
-			this.liste.internalSupprimeMot(this);
-		}
 		this.liste = liste;
-		if (liste != null) {
-			liste.internalAjouteMot(this);
-		}
 	}
 
 	public long getId() {

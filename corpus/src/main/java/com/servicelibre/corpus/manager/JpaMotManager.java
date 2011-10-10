@@ -64,6 +64,9 @@ public class JpaMotManager implements MotManager {
 		} catch (javax.persistence.NoResultException e) {
 			// retourner NULL
 		}
+		catch (javax.persistence.NonUniqueResultException e) {
+			System.err.println("ZUT: lemme=" + lemme + " - mot=" + mot + " - catgram="+ catgram + " - genre="+ genre);
+		}
 		
 		return motTrouvé;
 	}

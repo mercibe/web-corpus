@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -40,7 +41,8 @@ public class Liste implements Comparable<Liste> {
 	@ManyToMany(mappedBy = "listes", cascade = CascadeType.ALL)
 	private List<Mot> mots = new ArrayList<Mot>();
 
-	@ManyToOne(optional = false)
+	@ManyToOne
+	@JoinColumn(name = "corpus_id")
 	Corpus corpus;
 
 	@Transient
@@ -50,12 +52,16 @@ public class Liste implements Comparable<Liste> {
 	String fichierEncoding = "UTF-8";
 
 	@Transient
-	LigneSplitter ligneSplitter;
-
+	boolean listesPrimaire = true;
+	
 	public Liste() {
 		super();
 	}
 
+	public Liste(String nom, String description) {
+		this(nom, description, null);
+	}
+	
 	public Liste(String nom, String description, Corpus corpus) {
 		super();
 		this.nom = nom;
@@ -100,7 +106,16 @@ public class Liste implements Comparable<Liste> {
 	}
 
 	public void setCorpus(Corpus corpus) {
-		this.corpus = corpus;
+		if (this.corpus != corpus) {
+			if (this.corpus != null) {
+				this.corpus.enleverListe(this);
+			}
+			this.corpus = corpus;
+			if (corpus != null) {
+				corpus.ajouterListe(this);
+			}
+		}
+
 	}
 
 	@Override
@@ -143,14 +158,6 @@ public class Liste implements Comparable<Liste> {
 		this.fichierSource = fichierSource;
 	}
 
-	public LigneSplitter getLigneSplitter() {
-		return ligneSplitter;
-	}
-
-	public void setLigneSplitter(LigneSplitter ligneSplitter) {
-		this.ligneSplitter = ligneSplitter;
-	}
-
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -177,5 +184,13 @@ public class Liste implements Comparable<Liste> {
 	public int compareTo(Liste o) {
 		return this.getNom().compareTo(o.getNom());
 	}
+	
+	public boolean isListesPrimaire() {
+		return listesPrimaire;
+	}
+
+	public void setListesPrimaire(boolean listesPrimaire) {
+		this.listesPrimaire = listesPrimaire;
+	}	
 
 }

@@ -44,7 +44,7 @@ public class LigneMtlLemmeSplitter implements LigneSplitter {
 	private static final String SÉPARATEUR = "\\t";
 
 	@Override
-	public List<Mot> splitLigne(String ligne, Liste liste) {
+	public List<Mot> splitLigne(String ligne) {
 
 		List<Mot> mots = new ArrayList<Mot>(1);
 
@@ -95,22 +95,22 @@ public class LigneMtlLemmeSplitter implements LigneSplitter {
 			lemme = graphie;
 
 			if (genres.isEmpty()) {
-				mots.add(new Mot(liste, graphie2, lemme2, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
-				mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, false, note));
+				mots.add(new Mot(new Liste(), graphie2, lemme2, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
+				mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, false, note));
 
 			} else {
 				for (String genre : genres) {
-					mots.add(new Mot(liste, graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
-					mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, false, note));
+					mots.add(new Mot(new Liste(), graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+					mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, false, note));
 				}
 			}
 
 		} else {
 			if (genres.isEmpty()) {
-				mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
+				mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
 			} else {
 				for (String genre : genres) {
-					mots.add(new Mot(liste, graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+					mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
 				}
 			}
 		}
@@ -182,10 +182,4 @@ public class LigneMtlLemmeSplitter implements LigneSplitter {
 			cols[2] = cols[2].split(",")[0].trim();
 		}
 	}
-
-    @Override
-    public List<Mot> splitLigne(String ligne)
-    {
-        return splitLigne(ligne, new Liste());
-    }
 }

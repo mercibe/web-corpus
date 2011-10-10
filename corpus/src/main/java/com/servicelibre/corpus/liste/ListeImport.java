@@ -2,8 +2,9 @@ package com.servicelibre.corpus.liste;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -19,185 +20,262 @@ import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
 
-
 /**
  * Outil d'importation de listes
  * 
  * @author benoitm
  * 
  */
-public class ListeImport
-{
+public class ListeImport {
+
+	private static Logger logger = LoggerFactory.getLogger(ListeImport.class);
+
+	public enum Action {
+		REMPLACER, AJOUTER
+	};
+
+	private List<Liste> listes;
+
+	private ApplicationContext ctx;
 	
-    private static Logger logger = LoggerFactory.getLogger(ListeImport.class);
-    
-    public enum Action {REMPLACER, AJOUTER};
-    
-    private List<Liste> listes;
-    
-    private ApplicationContext ctx;
+	private LigneSplitter ligneSplitter;
+	
+	private Corpus corpus;
+	
+	private boolean simulation = true;
+	
+	private Map<String, Liste> listesCache = new HashMap<String, Liste>();
 
-    @Transactional
-    public int execute(Liste currentListe)
-    {
+	@Transactional
+	public int execute(Liste infoListe) {
 
-        logger.info("Exécution de l'importation de la liste {}", currentListe);
+		logger.info("Exécution de l'importation de la liste {}", infoListe);
 
-        getOrCreateCorpus(currentListe);
+		File fichierSource = infoListe.getFichierSource();
+		// Chargement du fichier en liste
+		if (fichierSource != null && fichierSource.exists()) {
 
-        if (currentListe.getCorpus() == null)
-        {
-            return -1;
-        }
+			MotManager mm = (MotManager) ctx.getBean("motManager");
 
-        currentListe = getOrCreateListe(currentListe);
+			// Suppression des mots qui existeraient déjà pour cette liste
+			// logger.info("Suppression des mots de la liste {}.",
+			// currentListe);
+			// int deleteCount = mm.removeAllFrom(currentListe);
 
-        if (currentListe == null)
-        {
-            return -1;
-        }
+			try {
+				List<String> lignes = FileUtils.readLines(fichierSource);
 
-        LigneSplitter splitter = currentListe.getLigneSplitter();
+				int cptMotAjouté = 0;
+				int cptNouvelleÉtiquette = 0;
+				for (String ligne : lignes) {
+					// Ignore les lignes vides
+					if (ligne.isEmpty()) {
+						continue;
+					}
 
-        File fichierSource = currentListe.getFichierSource();
-        // Chargement du fichier en liste
-        if (fichierSource != null && fichierSource.exists())
-        {
+					List<Mot> mots = ligneSplitter.splitLigne(ligne);
+					
+					Liste liste = mots.get(0).getListe();
+					if(liste == null || liste.getNom() == null) {
+						liste = getOrCreateListe(infoListe);
+					}
+					else {
+						liste = getOrCreateListe(liste);
+					}
+					
+					if (liste == null) {
+						return -1;
+					}
+					
+					for (Mot mot : mots) {
+						logger.info("Traitement du mot [{}]", mot.getMot());
+						Mot motCourant = mm.findByMot(mot.lemme, mot.getMot(),
+								mot.getCatgram(), mot.getGenre());
+						
+						// Le mot existe-t-il déjà?
+						if (motCourant == null) {
+							// Ajouter un nouveau mot
+							cptMotAjouté++;
 
-            MotManager mm = (MotManager) ctx.getBean("motManager");
+							if (!simulation) {
+								logger.info("Ajout du mot [{}]", mot.lemme);
+								// Définition de la liste primaire du mot, si la liste est primaire
+								if(liste.isListesPrimaire()) {
+									mot.setListe(liste);
+								}
+								else {
+									mot.setListe(null);
+								}
+								
+								mm.save(mot);
+							}
+							else {
+								logger.info("Simulation de l'ajout du mot [{}]", mot.lemme);
+							}
 
-            // Suppression des mots qui existeraient déjà pour cette liste
-            //logger.info("Suppression des mots de la liste {}.", currentListe);
-            //int deleteCount = mm.removeAllFrom(currentListe);
+							motCourant = mot;
+						}
 
-            try
-            {
-                List<String> lignes = FileUtils.readLines(fichierSource);
+						if (!simulation) {
+							// Le mot est présent dans la base, lui associer sa liste
+							logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]", liste.getNom(), mot.lemme);
+							motCourant.ajouteListe(liste);
+						}
+						else {
+							logger.info("Simulation de l'ajout de l'étiquette (liste) [{}] au mot [{}]", liste.getNom(), mot.lemme);
+						}
+						
+						cptNouvelleÉtiquette++;
+					}
+				}
 
-                int cptMotAjouté = 0;
-                int cptNouvelleÉtiquette = 0;
-                for (String ligne : lignes)
-                {
-                	// Ignore les lignes vides
-                	if(ligne.isEmpty()){
-                		continue;
-                	}
-                	
-                    List<Mot> mots = splitter.splitLigne(ligne, currentListe);
-                    for (Mot mot : mots)
-                    {
-                    	System.err.println("recherche " + mot.lemme);
-                    	// le mot existe-t-il déjà?
-                    	Mot motCourant = mm.findByMot(mot.lemme, mot.getMot(), mot.getCatgram(), mot.getGenre());
-                    	//Si oui, lui associer simplement sa liste
-                    	if(motCourant == null) {
-                    		logger.info("Ajout du mot [{}]", mot.lemme);
-                    		cptMotAjouté++;
-                    		mot.setListe(currentListe);
-                    		mm.save(mot);
-                    		motCourant = mot;
-                    	}
+				logger.info(
+						"{} mots ont été ajoutés à la liste {}. {} nouvelles étiquettes.",
+						new Object[] { cptMotAjouté, infoListe,
+								cptNouvelleÉtiquette });
 
-                    	logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]",currentListe.getNom(), mot.lemme);
-                   		motCourant.ajouteListe(currentListe);
-                   		cptNouvelleÉtiquette++;
-                    }
-                }
+			} catch (IOException e) {
+				logger.error(
+						"Erreur lors de la lecture de la liste des mots {}",
+						fichierSource, e);
+			}
 
-                logger.info("{} mots ont été ajoutés à la liste {}. {} nouvelles étiquettes.", new Object[]{cptMotAjouté, currentListe, cptNouvelleÉtiquette});
+		} else {
+			logger.error("Fichier null ou inexistant: {}", fichierSource);
+		}
 
-            }
-            catch (IOException e)
-            {
-                logger.error("Erreur lors de la lecture de la liste des mots {}", fichierSource, e);
-            }
+		return 0;
+	}
 
-        }
-        else
-        {
-            logger.error("Fichier null ou inexistant: {}", fichierSource);
-        }
+	public Liste getOrCreateListe(Liste liste) {
 
-        return 0;
-    }
+		ListeManager lm = (ListeManager) ctx.getBean("listeManager");
 
-    private Liste getOrCreateListe(Liste currentListe)
-    {
+		if (liste == null) {
+			logger.error("Pour importer une liste, il faut préciser cette liste!");
+			return null;
+		}
 
-        ListeManager lm = (ListeManager) ctx.getBean("listeManager");
+		// Est-ce que la liste existe déjà?
+		Liste dbListe = null;
+		
+		// En cache?
+		dbListe = listesCache.get(liste.getNom());
+		
+		if (dbListe == null) {
+			// Dans la DB ?
+			dbListe = lm.findByNom(liste.getNom());
+			if (dbListe != null) {
+				logger.info("La liste {} a été trouvé dans la base de données.",dbListe);
+				System.err.println("Chargement de la liste en cache: " + dbListe.getNom());
+				listesCache.put(dbListe.getNom(), dbListe);
+			}
+		}
 
-        if (currentListe == null)
-        {
-            logger.error("Pour importer une liste, il faut préciser cette liste!");
-            return null;
-        }
+		if (dbListe == null) {
+			
+			logger.info("Création de la liste {} dans la base de données.",
+					liste);
+			
+			liste.setCorpus(getOrCreateCorpus(this.corpus));
 
-        // Est-ce que la liste existe déjà?
-        Liste dbListe = lm.findByNom(currentListe.getNom());
+			// récupération de l'ordre le plus élevé
+			int maxOrdre = lm.findMaxOrdre();
+			liste.setOrdre(maxOrdre + 10);
 
-        if (dbListe == null)
-        {
-            logger.info("Création de la liste {} dans la base de données.", currentListe);
-            
-            // récupération de l'ordre le plus élevé
-            int maxOrdre = lm.findMaxOrdre();
-            currentListe.setOrdre(maxOrdre + 10);
-            
-            lm.save(currentListe);
-            return currentListe;
-        }
-        else
-        {
-            // récupération des champs transient éventuels
-            dbListe.setFichierSource(currentListe.getFichierSource());
-            dbListe.setLigneSplitter(currentListe.getLigneSplitter());
-            dbListe.setFichierEncoding(currentListe.getFichierEncoding());
-            logger.info("La liste {} a été trouvé dans la base de données.", dbListe);
-            return dbListe;
-        }
+			
+			if(simulation) {
+				logger.info("Simulation de la sauvegarde de la liste {} dans la base de données.", liste);
+			}
+			else {
+				logger.info("Création de la liste {} dans la base de données.",
+						liste);
+				lm.save(liste);
+			}
+			
+			liste.setListesPrimaire(liste.isListesPrimaire());
 
-    }
+			listesCache.put(liste.getNom(), dbListe);
+			
+			return liste;
+			
+		} else {
+			// récupération des champs transient éventuels
+			dbListe.setFichierSource(liste.getFichierSource());
+			dbListe.setFichierEncoding(liste.getFichierEncoding());
+			dbListe.setListesPrimaire(liste.isListesPrimaire());
+			return dbListe;
+		}
 
-    private void getOrCreateCorpus(Liste currentListe)
-    {
-        CorpusManager cm = (CorpusManager) ctx.getBean("corpusManager");
+	}
 
-        if (currentListe.getCorpus() == null)
-        {
-            logger.error("Pour importer une liste, il faut préciser son corpus!");
-            return;
-        }
+	private Corpus getOrCreateCorpus(Corpus corpus) {
+		CorpusManager cm = (CorpusManager) ctx.getBean("corpusManager");
 
-        // Est-ce que le corpus existe-déjà?
-        Corpus dbCorpus = cm.findByNom(currentListe.getCorpus().getNom());
+		if (corpus == null || corpus.getNom().isEmpty()) {
+			logger.error("Il faut préciser un corpus!");
+			return null;
+		}
 
-        if (dbCorpus == null)
-        {
-            cm.save(currentListe.getCorpus());
-            logger.info("Création du corpus {} dans la base de données.", currentListe.getCorpus());
-        }
-        else
-        {
-            currentListe.setCorpus(dbCorpus);
-            logger.info("Le corpus {} a été trouvé dans la base de données.", currentListe.getCorpus());
-        }
+		// Est-ce que le corpus existe-déjà?
+		Corpus dbCorpus = cm.findByNom(corpus.getNom());
 
-    }
+		if (dbCorpus == null) {
+			if(simulation) {
+				logger.info("Simulation de la création du corpus {} dans la base de données.",
+						corpus);
+			}
+			else {
+				cm.save(corpus);
+				logger.info("Création du corpus {} dans la base de données.",
+						corpus);
+			}
+			return corpus;
+		} else {
+			logger.info("Le corpus {} a été trouvé dans la base de données.",
+					corpus);
+			return dbCorpus;
+		}
 
-    public List<Liste> getListes()
-    {
-        return listes;
-    }
+	}
 
-    public void setListes(List<Liste> listes)
-    {
-        this.listes = listes;
-    }
+	public List<Liste> getListes() {
+		return listes;
+	}
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
-    {
-        this.ctx = applicationContext;
+	public void setListes(List<Liste> listes) {
+		this.listes = listes;
+	}
 
-    }
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.ctx = applicationContext;
 
+	}
+
+	public Corpus getCorpus() {
+		return corpus;
+	}
+
+	public void setCorpus(Corpus corpus) {
+		this.corpus = corpus;
+	}
+
+	public LigneSplitter getLigneSplitter() {
+		return ligneSplitter;
+	}
+
+	public void setLigneSplitter(LigneSplitter ligneSplitter) {
+		this.ligneSplitter = ligneSplitter;
+	}
+
+	public boolean isSimulation() {
+		return simulation;
+	}
+
+	public void setSimulation(boolean simulation) {
+		this.simulation = simulation;
+	}
+
+	
 }

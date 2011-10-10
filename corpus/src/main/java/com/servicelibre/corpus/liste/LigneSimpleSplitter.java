@@ -21,7 +21,7 @@ public class LigneSimpleSplitter implements LigneSplitter
     private static final String SÉPARATEUR = "\\t";
 
     @Override
-    public List<Mot> splitLigne(String ligne, Liste liste)
+    public List<Mot> splitLigne(String ligne)
     {
     	 List<Mot> mots = new ArrayList<Mot>(1);
     	 
@@ -29,7 +29,7 @@ public class LigneSimpleSplitter implements LigneSplitter
 
         nettoie(cols);
         
-        mots.add(new Mot(liste, cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), ""));
+        mots.add(new Mot(new Liste(), cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), ""));
         
         return mots;
     }
@@ -41,11 +41,5 @@ public class LigneSimpleSplitter implements LigneSplitter
         {
             cols[i] = cols[i].trim();
         }
-    }
-    
-    @Override
-    public List<Mot> splitLigne(String ligne)
-    {
-        return splitLigne(ligne, new Liste());
     }
 }

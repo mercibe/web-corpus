@@ -49,19 +49,28 @@ import com.servicelibre.corpus.entity.Mot;
  * 
  */
 public class LigneMtlMotSplitter implements LigneSplitter {
+	
 	private static final String SÉPARATEUR = "\\t";
+	
+	Liste liste  = new Liste();
 
 	@Override
-	public List<Mot> splitLigne(String ligne, Liste liste) {
+	public List<Mot> splitLigne(String ligne) {
 
 		List<Mot> mots = new ArrayList<Mot>(1);
+		
 
 		String[] cols = ligne.split(SÉPARATEUR);
 
-		if (cols.length < 3) {
-			System.err.println("Colonnes insuffisantes (minimum 3 - trouvé "
+		if (cols.length != 3 && cols.length != 5) {
+			System.err.println("Mauvais nomnre de colonnes dans le fichier source: il faut 3 ou 5 colonnes - trouvé "
 					+ cols.length + "): " + ligne);
 			return mots;
+		}
+		
+		// Information sur la liste dans la ligne (fichier source multiliste)
+		if(cols.length == 5) {
+			liste = new Liste(cols[3].trim(), cols[4].trim(), null);
 		}
 
 		// Récupération des catgrams
@@ -177,6 +186,7 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 				}
 
 				Mot modeleMot = new Mot();
+				modeleMot.setListe(liste);
 				modeleMot.setNombre("");
 				modeleMot.setCatgramPrésicion("");
 				modeleMot.setNote("");
@@ -231,6 +241,7 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 
 			Mot modeleMot = new Mot();
 
+			modeleMot.setListe(liste);
 			modeleMot.setNombre("");
 			modeleMot.setCatgramPrésicion("");
 			modeleMot.setNote("");
@@ -296,10 +307,5 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 	 */
 	private String getClasse(String catgram) {
 		return catgram.substring(0, catgram.indexOf(".") + 1);
-	}
-
-	@Override
-	public List<Mot> splitLigne(String ligne) {
-		return splitLigne(ligne, new Liste());
 	}
 }

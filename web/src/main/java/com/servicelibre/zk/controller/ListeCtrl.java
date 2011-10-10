@@ -38,6 +38,7 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.FiltreMot;
 import com.servicelibre.corpus.manager.ListeManager;
@@ -340,7 +341,8 @@ public class ListeCtrl extends CorpusCtrl {
 				row.appendChild(new Label(mot.getGenre()));
 				row.appendChild(new Label(mot.getNombre()));
 				row.appendChild(new Label(mot.getCatgramPrésicion()));
-				row.appendChild(new Label(mot.getListe().getNom()));
+				Liste liste = mot.getListe();
+				row.appendChild(new Label(liste != null ? liste.getNom() : ""));
 
 			}
 		});
@@ -502,7 +504,8 @@ public class ListeCtrl extends CorpusCtrl {
 			cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrésicion()));
 			
 			cell = row.createCell(7);
-			cell.setCellValue(createHelper.createRichTextString(mot.getListe().getNom()));
+			Liste liste = mot.getListe();
+			cell.setCellValue(createHelper.createRichTextString(liste != null ? liste.getNom():""));
 			
 		}
 		

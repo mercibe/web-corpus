@@ -9,7 +9,7 @@ import com.servicelibre.corpus.entity.Mot;
 public interface LigneSplitter
 {
 
-	List<Mot> splitLigne(String ligne, Liste liste);
+	//List<Mot> splitLigne(String ligne, Liste liste);
 	
 	List<Mot> splitLigne(String ligne);
     

@@ -46,6 +46,9 @@ public class Corpus {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="corpus")
 	List<DocMetadata> métadonnéesDoc = new ArrayList<DocMetadata>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="corpus")
+	List<Liste> listes = new ArrayList<Liste>();
 
 	public Corpus() {
 		super();
@@ -141,11 +144,24 @@ public class Corpus {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void enleverListe(Liste liste) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public void ajouterDocMetadata(DocMetadata docMetadata) {
 		 if(!this.métadonnéesDoc.contains(docMetadata)) {
 			    this.métadonnéesDoc.add(docMetadata);
 			    docMetadata.setCorpus(this);
+			  }
+
+	}
+	
+	public void ajouterListe(Liste liste) {
+		 if(!this.listes.contains(liste)) {
+			    this.listes.add(liste);
+			    liste.setCorpus(this);
 			  }
 
 	}

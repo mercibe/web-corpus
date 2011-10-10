@@ -9,6 +9,9 @@
 
 	<bean id="listeImport" class="com.servicelibre.corpus.liste.ListeImport">
 		<property name="listes" ref="listes" />
+		<property name="corpus" ref="corpus" />
+		<property name="ligneSplitter" ref="splitter" />
+		<property name="simulation" value="false"></property>
 	</bean>
 
 	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
@@ -26,17 +29,13 @@
 	<bean id="listeTest1" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="liste-test-1" />
 		<constructor-arg value="Liste de test 1" />
-		<constructor-arg ref="corpus" />
 		<property name="fichierSource" ref="fichierMots1" />
-		<property name="ligneSplitter" ref="splitter" />
 	</bean>
 
 	<bean id="listeTest2" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="liste-test-2" />
 		<constructor-arg value="Liste de test 2" />
-		<constructor-arg ref="corpus" />
 		<property name="fichierSource" ref="fichierMots2" />
-		<property name="ligneSplitter" ref="splitter" />
 	</bean>
 
 	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneSimpleSplitter" />
