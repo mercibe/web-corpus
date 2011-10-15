@@ -18,10 +18,13 @@ public interface ListeManager // extends JpaRepository<Liste, Long>
 	
 	List<Liste> findPrimaireByCorpusId(long corpusId);
 	
-	List<Liste> findSecondaireByCorpusId(long corpusId);
+	List<Liste> findParticularitésByCorpusId(long corpusId);
+	
+	List<Liste> findThématiquesByCorpusId(long corpusId);
 	
 	Liste save(Liste liste);
 
 	int findMaxOrdre();
+
 
 }

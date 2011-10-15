@@ -10,14 +10,27 @@
 
 	<bean id="listeImport" class="com.servicelibre.corpus.liste.ListeImport">
 		<property name="listes" ref="listes"/>
+		<property name="ligneSplitter" ref="splitter" />
+		<property name="corpus" ref="corpus" />
+		<property name="simulation" value="false"></property>
 	</bean>
 
 	<util:list id="listes" list-class="java.util.ArrayList"
 		value-type="com.servicelibre.corpus.entity.Liste">
-		<ref bean="listecMuet" />
-<!-- 		<ref bean="listeCyclePrimaire2" /> -->
-<!-- 		<ref bean="listeCyclePrimaire3" /> -->
-<!-- 		<ref bean="listeSecondaire" /> -->
+<!-- 		<ref bean="listePrimaire-1" /> -->
+<!-- 		<ref bean="listePrimaire-2" /> -->
+<!-- 		<ref bean="listePrimaire-3" /> -->
+<!-- 		<ref bean="listePrimaire-4" /> -->
+<!-- 		<ref bean="listePrimaire-5" /> -->
+<!-- 		<ref bean="listePrimaire-6" /> -->
+<!-- 		<ref bean="listeSecondaire-01" /> -->
+
+<!-- 		<ref bean="listesThématiques" /> -->
+<!-- 		<ref bean="listeLettreMuette"/> -->
+		<ref bean="listeMotsComposés"/>
+
+
+<!-- 		<ref bean="listeTest" /> -->
 	</util:list>
 
 	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
@@ -26,66 +39,118 @@
 	</bean>
 
 	<!-- Listes -->
-		<bean id="listecMuet" class="com.servicelibre.corpus.entity.Liste">
-		<constructor-arg value="c muet" />
-		<constructor-arg value="Liste des mots qui contiennent un c muet" />
-		<constructor-arg ref="corpus" />
+	
+	<bean id="listeTest" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="cas de figure" />
+		<constructor-arg value="liste test" />
 		<property name="fichierSource">
 			<bean class="java.io.File">
-				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/liste_filtre_cMuet.csv" />
+				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/formatMtl-cas.csv" />
 			</bean>
 		</property>
-		<property name="ligneSplitter" ref="splitter" />
+	</bean>	
+
+	<bean id="listePrimaire-1" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="1re année primaire" />
+		<constructor-arg value="Liste 1re année primaire" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/primaire-01.csv" />
+			</bean>
+		</property>
 	</bean>
-<!-- 	<bean id="listeMotCompose" class="com.servicelibre.corpus.entity.Liste"> -->
-<!-- 		<constructor-arg value="Mots composés" /> -->
-<!-- 		<constructor-arg value="Liste des mots composés lexicaux (unifiés, à apostrophe, à trait d'union, détaché)" /> -->
-<!-- 		<constructor-arg ref="corpus" /> -->
-<!-- 		<property name="fichierSource"> -->
-<!-- 			<bean class="java.io.File"> -->
-<!-- 				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/liste_filtre_motComposes.csv" /> -->
-<!-- 			</bean> -->
-<!-- 		</property> -->
-<!-- 		<property name="ligneSplitter" ref="splitter" /> -->
-<!-- 	</bean> -->
+	<bean id="listePrimaire-2" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="2e année primaire" />
+		<constructor-arg value="Liste 2e année primaire" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/primaire-02.csv" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="listePrimaire-3" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="3e année primaire" />
+		<constructor-arg value="Liste 3e année primaire" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/primaire-03.csv" />
+			</bean>
+		</property>
+	</bean>
+		<bean id="listePrimaire-4" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="4e année primaire" />
+		<constructor-arg value="Liste 4e année primaire" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/primaire-04.csv" />
+			</bean>
+		</property>
+	</bean>
+		<bean id="listePrimaire-5" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="5e année primaire" />
+		<constructor-arg value="Liste 5e année primaire" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/primaire-05.csv" />
+			</bean>
+		</property>
+	</bean>
+		<bean id="listePrimaire-6" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="6e année primaire" />
+		<constructor-arg value="Liste 6e année primaire" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/primaire-06.csv" />
+			</bean>
+		</property>
+	</bean>
+		<bean id="listeSecondaire-01" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="Littérature pour ados" />
+		<constructor-arg value="Liste littérature pour ados" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/secondaire-01.csv" />
+			</bean>
+		</property>
+	</bean>
 
-<!-- 	<bean id="listeCyclePrimaire2" class="com.servicelibre.corpus.entity.Liste"> -->
-<!-- 		<constructor-arg value="2e cycle primaire" /> -->
-<!-- 		<constructor-arg value="Liste 2e cycle primaire" /> -->
-<!-- 		<constructor-arg ref="corpus" /> -->
-<!-- 		<property name="fichierSource"> -->
-<!-- 			<bean class="java.io.File"> -->
-<!-- 				<constructor-arg value="${java.io.tmpdir}/primaire-2.csv" /> -->
-<!-- 			</bean> -->
-<!-- 		</property> -->
-<!-- 		<property name="ligneSplitter" ref="splitter" /> -->
-<!-- 	</bean> -->
-	
-<!-- 	<bean id="listeCyclePrimaire3" class="com.servicelibre.corpus.entity.Liste"> -->
-<!-- 		<constructor-arg value="3e cycle primaire" /> -->
-<!-- 		<constructor-arg value="Liste 3e cycle primaire" /> -->
-<!-- 		<constructor-arg ref="corpus" /> -->
-<!-- 				<property name="fichierSource"> -->
-<!-- 			<bean class="java.io.File"> -->
-<!-- 				<constructor-arg value="${java.io.tmpdir}/primaire-3.csv" /> -->
-<!-- 			</bean> -->
-<!-- 		</property> -->
-<!-- 		<property name="ligneSplitter" ref="splitter" /> -->
-<!-- 	</bean> -->
+	<bean id="listesThématiques" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="Liste thématiques" />
+		<constructor-arg value="Toutes les listes thématiques" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="${java.io.tmpdir}/listes_thématiques.csv" />
+			</bean>
+		</property>
+		<property name="listesPrimaire" value="false"/>
+	</bean>
 
-<!-- 	<bean id="listeSecondaire" class="com.servicelibre.corpus.entity.Liste"> -->
-<!-- 		<constructor-arg value="secondaire" /> -->
-<!-- 		<constructor-arg value="Liste du secondaire" /> -->
-<!-- 		<constructor-arg ref="corpus" /> -->
-<!-- 				<property name="fichierSource"> -->
-<!-- 			<bean class="java.io.File"> -->
-<!-- 				<constructor-arg value="${java.io.tmpdir}/secondaire.csv" /> -->
-<!-- 			</bean> -->
-<!-- 		</property> -->
-<!-- 		<property name="ligneSplitter" ref="splitter" /> -->
-<!-- 	</bean> -->
-	
-	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneMtlSplitter" />
+
+	<bean id="listeLettreMuette" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="Liste lettre muette" />
+		<constructor-arg value="Liste des mots avec une lettre muette" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/thématiques/listes_lettreMuette.csv" />
+			</bean>
+		</property>
+		<property name="listesPrimaire" value="false"/>
+	</bean>
+
+	<bean id="listeMotsComposés" class="com.servicelibre.corpus.entity.Liste">
+		<constructor-arg value="Mots composés" />
+		<constructor-arg value="Liste des mots composés" />
+		<property name="fichierSource">
+			<bean class="java.io.File">
+				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/thématiques/liste_motComposes.csv" />
+			</bean>
+		</property>
+		<property name="listesPrimaire" value="false"/>
+	</bean>
+
+
+
+	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneMtlMotSplitter" />
 
 	<!--${properties} -->
 	<context:property-placeholder />

@@ -12,7 +12,7 @@
 	<bean id="prononciationImport" class="com.servicelibre.corpus.prononciation.PrononciationImport"/>
 
 	<bean id="prononciationFichierSource" class="java.io.File">
-		<constructor-arg value="${java.io.tmpdir}/prononciations.txt" />
+		<constructor-arg value="${java.io.tmpdir}/prononciations-mels.txt" />
 	</bean>
 
 	<!--${properties} -->

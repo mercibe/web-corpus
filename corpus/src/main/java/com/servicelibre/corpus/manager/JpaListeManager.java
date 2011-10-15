@@ -99,13 +99,13 @@ public class JpaListeManager implements ListeManager
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Liste> findSecondaireByCorpusId(long corpusId) {
+	public List<Liste> findParticularitésByCorpusId(long corpusId) {
 		  List<Liste> listes = new ArrayList<Liste>();
 	        
 	        try
 	        {
 	        	
-	        	Query nativeQuery = entityManager.createNativeQuery("select distinct l.*  from liste l left outer join  mot m on (l.id = m.liste_id)  where m.liste_id is null  order by l.ordre, l.nom", Liste.class);
+	        	Query nativeQuery = entityManager.createNativeQuery("select distinct l.*  from liste l left outer join  mot m on (l.id = m.liste_id)  where m.liste_id is null AND l.nom NOT LIKE 'Thème:%' order by l.ordre, l.nom", Liste.class);
 	        	listes = nativeQuery.getResultList();
 	            //listes = (List<Liste>) entityManager.createQuery("SELECT DISTINCT m.liste FROM  Mot m OUTER JOIN m.liste WHERE l.corpus.id = ? and m.liste IS NULL ORDER BY l.ordre, l.nom").setParameter(1, corpusId).getResultList();
 	        }
@@ -118,6 +118,26 @@ public class JpaListeManager implements ListeManager
 	}
 
 	@Override
+	public List<Liste> findThématiquesByCorpusId(long corpusId) {
+		  List<Liste> listes = new ArrayList<Liste>();
+	        
+	        try
+	        {
+	        	
+	        	Query nativeQuery = entityManager.createNativeQuery("select distinct l.*  from liste l left outer join  mot m on (l.id = m.liste_id)  where m.liste_id is null AND l.nom LIKE 'Thème:%' order by l.ordre, l.nom", Liste.class);
+	        	listes = nativeQuery.getResultList();
+	            //listes = (List<Liste>) entityManager.createQuery("SELECT DISTINCT m.liste FROM  Mot m OUTER JOIN m.liste WHERE l.corpus.id = ? and m.liste IS NULL ORDER BY l.ordre, l.nom").setParameter(1, corpusId).getResultList();
+	        }
+	        catch (NoResultException e)
+	        {
+	            logger.warn("Aucune liste pour le corpus [{}]. ({})", corpusId, e.getMessage());
+	        }        
+	        
+	        return listes;
+	}
+	
+	
+	@Override
 	public int findMaxOrdre() {
 		Number n = (Number)entityManager.createQuery("select MAX(l.ordre) from Liste l").getSingleResult();
 		if(n == null){
@@ -125,7 +145,5 @@ public class JpaListeManager implements ListeManager
 		}
 		return n.intValue();
 	}
-
-
 
 }

@@ -177,6 +177,10 @@ public class CorpusService {
 		return contexteSet;
 	}
 
+	public boolean isLemme(String mot) {
+		return formeService.getFormes(mot).size() > 0;
+	}
+	
 	private ContexteSet getContextes(RésultatRecherche résultats) {
 
 		ContexteSet contexteSet = new ContexteSet();

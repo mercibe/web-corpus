@@ -35,18 +35,30 @@ public class ListeFiltreManager extends FiltreManager {
 		
 		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste", listesClésValeurs));
 		
-		// ajout du filtre des listes secondaires
-		List<Liste> listesSecondaires = listeManager.findSecondaireByCorpusId(corpusService.getCorpus().getId());
+		// TODO gérer des catégories de listes et faire un filtre par catégorie! => bien plus générique
 		
-		List<DefaultKeyValue> listesSecondairesClésValeurs = new ArrayList<DefaultKeyValue>(listesSecondaires.size() + 1);
+		// ajout du filtre des listes thématiques
+		List<Liste> listesThématiques = listeManager.findThématiquesByCorpusId(corpusService.getCorpus().getId());
 		
-		//listesSecondairesClésValeurs.add(keyValueVide);
+		List<DefaultKeyValue> listesThématiquesClésValeurs = new ArrayList<DefaultKeyValue>(listesThématiques.size() + 1);
 		
-		for (Liste liste : listesSecondaires) {
+		for (Liste liste : listesThématiques) {
+			listesThématiquesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
+		}
+		
+		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_thématiques", "Thémes", listesThématiquesClésValeurs));		
+		
+		
+		// ajout du filtre des listes de particularités
+		List<Liste> listesParticularités = listeManager.findParticularitésByCorpusId(corpusService.getCorpus().getId());
+		
+		List<DefaultKeyValue> listesSecondairesClésValeurs = new ArrayList<DefaultKeyValue>(listesParticularités.size() + 1);
+		
+		for (Liste liste : listesParticularités) {
 			listesSecondairesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 		}
 		
-		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_secondaire", "Particularités", listesSecondairesClésValeurs));		
+		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_particularités", "Particularités", listesSecondairesClésValeurs));		
 		
 		
 

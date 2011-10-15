@@ -144,7 +144,7 @@ public class JpaMotManager implements MotManager {
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Predicate p;
 		if (condition == Condition.ENTIER) {
-			p = cb.equal(mot.get("lemme"), graphie);
+			p = cb.equal(mot.get("mot"), graphie);
 		} else {
 			String likeCondition = "";
 			switch (condition) {
@@ -159,7 +159,7 @@ public class JpaMotManager implements MotManager {
 				break;
 
 			}
-			p = cb.like(mot.get("lemme").as(String.class), likeCondition);
+			p = cb.like(mot.get("mot").as(String.class), likeCondition);
 
 		}
 
@@ -248,8 +248,8 @@ public class JpaMotManager implements MotManager {
 			// exactement au nom de la colonne dans la DB / modèle
 			// Sinon, NPE!
 
-			// Tour de passe passe rapide pour liste / particularités...
-			String nomFiltre = filtre.nom.replaceAll("_secondaire", "");
+			// Tour de passe passe rapide pour liste / thématiques / particularités...
+			String nomFiltre = filtre.nom.replaceAll("_.*", "");
 			
 			Path<Object> path = motRacine.get(nomFiltre);
 

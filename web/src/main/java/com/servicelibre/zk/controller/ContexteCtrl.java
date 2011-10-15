@@ -153,12 +153,17 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		FiltreMot filtres = getFiltres();
 
+		// si le mot n'est pas un lemme, rechercher ce mot seulement
+		if(!corpusService.isLemme(aChercher)) {
+			// ajustement du critère de recherche
+			condition.setSelectedIndex(0);
+		}
+		
 		// Chercher toutes les formes en fonction de condition.getValue()
 		if (condition.getItemAtIndex(condition.getSelectedIndex()).getValue().equals("TOUTES_LES_FORMES_DU_MOT")) {
-			// FIXME quid si le mot n'est pas un lemme? Rechercher son lemme et
-			// lancer la recherche?
-			contexteSet = corpusService.getContextesLemme(aChercher, filtres);
-		} else {
+				contexteSet = corpusService.getContextesLemme(aChercher, filtres);
+		} 
+		else {
 			contexteSet = corpusService.getContextesMot(aChercher, filtres);
 		}
 
