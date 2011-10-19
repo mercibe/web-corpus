@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
-public class FiltreMot
+public class FiltreRecherche
 {
 	/**
 	 * Cette classe permet de construire un filtre logique, une liste d'objet Filtre qui
@@ -74,7 +74,7 @@ public class FiltreMot
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder("FiltreMot [\n");
+        StringBuilder sb = new StringBuilder("FiltreRecherche [\n");
         
         
         

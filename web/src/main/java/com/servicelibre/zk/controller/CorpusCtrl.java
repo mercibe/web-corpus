@@ -35,7 +35,7 @@ import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.service.CorpusService;
 
 public abstract class CorpusCtrl extends GenericForwardComposer implements VariableResolver {
@@ -110,7 +110,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	 * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
 	 * le filtre en construction par l'utilisateur.
 	 */
-	FiltreMot filtreActifModel = new FiltreMot();
+	FiltreRecherche filtreActifModel = new FiltreRecherche();
 
 	CorpusService corpusService = ServiceLocator.getCorpusService();
 
@@ -258,9 +258,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	 * 
 	 * @return
 	 */
-	protected FiltreMot getFiltres() {
+	protected FiltreRecherche getFiltres() {
 
-		FiltreMot filtres = new FiltreMot();
+		FiltreRecherche filtres = new FiltreRecherche();
 
 		// Ajout des autres filtres
 		for (Filtre filtre : filtreActifModel.getFiltres()) {

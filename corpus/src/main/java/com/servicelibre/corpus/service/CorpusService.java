@@ -25,7 +25,7 @@ import com.servicelibre.corpus.lucene.InformationTermeTextComparator;
 import com.servicelibre.corpus.lucene.LuceneIndexManager;
 import com.servicelibre.corpus.lucene.RésultatRecherche;
 import com.servicelibre.corpus.manager.CorpusManager;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.metadata.StringMetadata;
 
@@ -126,7 +126,7 @@ public class CorpusService {
 	 * @param filtres
 	 * @return
 	 */
-	public ContexteSet getContextesMot(String mot, FiltreMot filtres) {
+	public ContexteSet getContextesMot(String mot, FiltreRecherche filtres) {
 
 		// connecter à l'index Lucene et faire la recherche
 		LuceneIndexManager manager = getLuceneIndexManager();
@@ -152,7 +152,7 @@ public class CorpusService {
 		return getContextesLemme(lemme, null);
 	}
 
-	public ContexteSet getContextesLemme(String lemme, FiltreMot filtres) {
+	public ContexteSet getContextesLemme(String lemme, FiltreRecherche filtres) {
 
 		// rechercher toutes les formes du lemme
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();

@@ -48,11 +48,17 @@
 			<groupbox width="286px" height="340px">
 					<caption>Filtre</caption>
 					<hbox >
-						<listbox id="nomFiltre"  style="width:140px;" mold="select"/>
+						<bandbox id="nomFiltreBandbox" width="145px" readonly="true" buttonVisible="true" autodrop="true">
+							<bandpopup vflex="min" hflex="min">
+								<vbox style="margin:0px;" >
+									<listbox id="nomFiltre"  style="width:140px;"  mold="paging" pageSize="999" onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);"/>
+								</vbox>
+							</bandpopup>
+						</bandbox>
 			
 						<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
 							<bandpopup vflex="min" hflex="min">
-								<vbox style="margin:0px;" >
+								<vbox style="margin:0px;">
 								
 <!-- 								
 	mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
@@ -61,7 +67,7 @@
 	Essayer d'isoler cas avec ajout des listitems via Java
 -->								
 								
-										<listbox width="200px" checkmark="true" id="valeurFiltre" multiple="true" mold="paging" pageSize="999">
+										<listbox width="400px" checkmark="true" id="valeurFiltre" multiple="true" mold="paging" pageSize="999">
 											<listhead><listheader>Tout sélectionner</listheader></listhead>
 										</listbox>
 								</vbox>
@@ -72,7 +78,7 @@
 					<div align="center" style="margin-top:10px;">
 	<!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->
 						 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
-	                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter le filtre et la valeur sélectionnés aux filtres actifs"/>
+	                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs"/>
 						 <button  id="boutonEffacerFiltre" image="/images/effacer-2-16x16.png"
 	                    width="32px" orient="horizontal" tooltiptext="supprimer tous les filtres actifs"/>                    
 					</div>

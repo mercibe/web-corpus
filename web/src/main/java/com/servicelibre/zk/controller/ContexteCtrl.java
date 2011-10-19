@@ -36,7 +36,7 @@ import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.manager.DocMetadataManager;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
@@ -61,7 +61,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	Combobox voisinage;
 
-	Grid contextesGrid; // autowire car même type/ID que le composant dans la
+	Grid contextesGrid; // autowire car même type/ID que le comgetposant dans la
 	// page ZUL
 
 	Window contexteWindow;
@@ -151,7 +151,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		corpusService.setTailleVoisinage(phraseComplète ? 50 : voisinage);
 
-		FiltreMot filtres = getFiltres();
+		FiltreRecherche filtres = getFiltres();
 
 		// si le mot n'est pas un lemme, rechercher ce mot seulement
 		if(!corpusService.isLemme(aChercher)) {

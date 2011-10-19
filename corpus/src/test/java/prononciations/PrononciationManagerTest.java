@@ -126,7 +126,7 @@ public class PrononciationManagerTest implements ApplicationContextAware
     //    @Test
     //    public void motManagerFilterTest() {
     //
-    //    	FiltreMot f = new FiltreMot();
+    //    	FiltreRecherche f = new FiltreRecherche();
     //
     //    	// Syntaxe verbeuse
     //    	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);

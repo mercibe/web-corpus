@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 
 @ContextConfiguration("MotManagerTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -19,7 +19,7 @@ public class FiltreMotTest {
 	
 	@Test
 	public void FiltreTest() {
-		FiltreMot fm = new FiltreMot();
+		FiltreRecherche fm = new FiltreRecherche();
 		
 		List<DefaultKeyValue> kv = new ArrayList<DefaultKeyValue>();
 		kv.add(new DefaultKeyValue("clé1", "valeur1"));
@@ -33,13 +33,13 @@ public class FiltreMotTest {
 		
 		System.err.println(fm);
 		
-		System.err.println("Affichage des groupes du FiltreMot");
+		System.err.println("Affichage des groupes du FiltreRecherche");
 		for(DefaultKeyValue dkv :fm.getFiltreGroupes())
 		{
 			System.err.println("Groupe: " + dkv);
 		}
 		
-		System.err.println("Affichage des valeurs du FiltreMot");
+		System.err.println("Affichage des valeurs du FiltreRecherche");
 		for(Object[] o :fm.getFiltreValeurs())
 		{
 			System.err.print("Valeur: ");

@@ -16,7 +16,7 @@ import org.apache.lucene.util.Version;
 
 import ca.franqus.lexique.FranqusLexicalAnalyzer;
 
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 
 public class ContexteSet {
 
@@ -34,7 +34,7 @@ public class ContexteSet {
 
 	boolean formesDuLemme;
 
-	FiltreMot filtre;
+	FiltreRecherche filtre;
 
 	public int tailleVoisinage;
 
@@ -72,11 +72,11 @@ public class ContexteSet {
 		this.motCherché = motCherché;
 	}
 
-	public FiltreMot getFiltre() {
+	public FiltreRecherche getFiltre() {
 		return filtre;
 	}
 
-	public void setFiltre(FiltreMot filtre) {
+	public void setFiltre(FiltreRecherche filtre) {
 		this.filtre = filtre;
 	}
 

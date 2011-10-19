@@ -119,7 +119,7 @@ public class JpaMotManager implements MotManager {
     }
 
     @Override
-    public List<Mot> findByGraphie(String graphie, Condition condition, FiltreMot filtres) {
+    public List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres) {
 
 	final CriteriaBuilder cb = getBuilder();
 	final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
@@ -176,7 +176,7 @@ public class JpaMotManager implements MotManager {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreMot filtres) {
+    public List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres) {
 
 	CriteriaBuilder cb = getBuilder();
 	CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
@@ -232,7 +232,7 @@ public class JpaMotManager implements MotManager {
 	return q.getResultList();
     }
 
-    private Predicate addFiltresToPrédicat(CriteriaBuilder cb, Root<Mot> motRacine, Predicate p, FiltreMot filtres) {
+    private Predicate addFiltresToPrédicat(CriteriaBuilder cb, Root<Mot> motRacine, Predicate p, FiltreRecherche filtres) {
 
 	LinkedHashSet<Filtre> f = filtres.getFiltres();
 

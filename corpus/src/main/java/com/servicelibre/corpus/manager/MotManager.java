@@ -10,7 +10,7 @@ import com.servicelibre.corpus.entity.Mot;
 public interface MotManager {
 
     enum Condition {
-	ENTIER, COMMENCE_PAR, FINIT_PAR, CONTIENT
+    	ENTIER, COMMENCE_PAR, FINIT_PAR, CONTIENT
     };
 
     List<Mot> findAll();
@@ -26,7 +26,7 @@ public interface MotManager {
 
     //int removeAllFrom(Liste liste);
 
-    List<Mot> findByGraphie(String value, Condition valueOf, FiltreMot filtres);
+    List<Mot> findByGraphie(String value, Condition valueOf, FiltreRecherche filtres);
 
     EntityManager getEntityManager();
 
@@ -34,6 +34,6 @@ public interface MotManager {
 
     int ajoutePrononciation(String forme, String phonétique);
 
-    List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreMot filtres);
+    List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres);
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.service.CorpusService;
 
@@ -23,7 +23,7 @@ public abstract class FiltreManager {
 
 	protected ListeManager listeManager;
 
-	private FiltreMot filtreActifModel;
+	private FiltreRecherche filtreActifModel;
 
 	public FiltreManager() {
 		super();
@@ -111,7 +111,7 @@ public abstract class FiltreManager {
 
 	abstract public void init();
 
-	public void setFiltreActif(FiltreMot filtreActifModel) {
+	public void setFiltreActif(FiltreRecherche filtreActifModel) {
 		this.filtreActifModel = filtreActifModel;
 
 	}

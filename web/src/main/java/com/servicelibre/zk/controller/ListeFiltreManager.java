@@ -7,7 +7,7 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 
 /**
  * Cette classe fournit les filtres (Filtre), disponibles pour filtrer les mots
@@ -33,7 +33,7 @@ public class ListeFiltreManager extends FiltreManager {
 			listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 		}
 		
-		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name(), "Liste", listesClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name(), "Liste", listesClésValeurs));
 		
 		// TODO gérer des catégories de listes et faire un filtre par catégorie! => bien plus générique
 		
@@ -46,7 +46,7 @@ public class ListeFiltreManager extends FiltreManager {
 			listesThématiquesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 		}
 		
-		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_thématiques", "Thèmes", listesThématiquesClésValeurs));		
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name() + "_thématiques", "Thèmes", listesThématiquesClésValeurs));		
 		
 		
 		// ajout du filtre des listes de particularités
@@ -58,7 +58,7 @@ public class ListeFiltreManager extends FiltreManager {
 			listesSecondairesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 		}
 		
-		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_particularités", "Particularités", listesSecondairesClésValeurs));		
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name() + "_particularités", "Particularités", listesSecondairesClésValeurs));		
 		
 		
 
@@ -75,28 +75,28 @@ public class ListeFiltreManager extends FiltreManager {
 		catgramClésValeurs.add(new DefaultKeyValue("prép.", "préposition"));
 		catgramClésValeurs.add(new DefaultKeyValue("pron.", "pronom"));
 		catgramClésValeurs.add(new DefaultKeyValue("v.", "verbe"));
-		filtres.add(new Filtre(FiltreMot.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs));
 
 		// Ajout de la liste des genres
 		List<DefaultKeyValue> genreClésValeurs = new ArrayList<DefaultKeyValue>(2);
 		//genreClésValeurs.add(keyValueVide);
 		genreClésValeurs.add(new DefaultKeyValue("f.", "féminin"));
 		genreClésValeurs.add(new DefaultKeyValue("m.", "masculin"));
-		filtres.add(new Filtre(FiltreMot.CléFiltre.genre.name(), "Genre", genreClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs));
 
 		// Ajout de la liste des nombres
 		List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
 		//nombreClésValeurs.add(keyValueVide);
 		nombreClésValeurs.add(new DefaultKeyValue("inv.", "invariable"));
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "pluriel"));
-		filtres.add(new Filtre(FiltreMot.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
 
 		// Ajout de la liste RO
 		List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
 		//roClésValeurs.add(keyValueVide);
 		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "graphies rectifiées"));
 //		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "graphies traditionnelles"));
-		filtres.add(new Filtre(FiltreMot.CléFiltre.ro.name(), "Orthographe", roClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe", roClésValeurs));
 		
 	}
 

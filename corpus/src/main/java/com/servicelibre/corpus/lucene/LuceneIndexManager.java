@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 
 import com.servicelibre.corpus.helpers.LuceneHelper;
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreMot;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 
 /**
  * Interface de gestion et d'interrogation d'un index Lucene
@@ -202,7 +202,7 @@ public class LuceneIndexManager
 	return scoreDocs;
     }
 
-    private BooleanQuery getFiltresBooleanQuery(FiltreMot filtres) {
+    private BooleanQuery getFiltresBooleanQuery(FiltreRecherche filtres) {
 
 	LinkedHashSet<Filtre> f = filtres.getFiltres();
 
@@ -239,7 +239,7 @@ public class LuceneIndexManager
      * @param filtres
      * @return
      */
-    public RésultatRecherche getDocumentsWithContexts(String query, int slop, int tailleVoisinage, FiltreMot filtres) {
+    public RésultatRecherche getDocumentsWithContexts(String query, int slop, int tailleVoisinage, FiltreRecherche filtres) {
 
 	RésultatRecherche résultat = new RésultatRecherche();
 
@@ -285,7 +285,7 @@ public class LuceneIndexManager
     }
 
     // TODO gérer le filtre
-    public RésultatRecherche getDocumentsWithContexts(List<String> formes, int tailleVoisinage, FiltreMot filtres) {
+    public RésultatRecherche getDocumentsWithContexts(List<String> formes, int tailleVoisinage, FiltreRecherche filtres) {
 	RésultatRecherche résultat = new RésultatRecherche();
 
 	logger.debug("Query string = {}", queryParser.toString());

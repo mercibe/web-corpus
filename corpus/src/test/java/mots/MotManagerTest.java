@@ -23,8 +23,8 @@ import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreMot;
-import com.servicelibre.corpus.manager.FiltreMot.CléFiltre;
+import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
 import com.servicelibre.corpus.manager.MotManager;
 
 @ContextConfiguration
@@ -118,7 +118,7 @@ public class MotManagerTest implements ApplicationContextAware {
 	@Rollback(value = false)
 	public void motManagerFilterTest() {
 
-		FiltreMot f = new FiltreMot();
+		FiltreRecherche f = new FiltreRecherche();
 
 		// Syntaxe verbeuse
 		List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
