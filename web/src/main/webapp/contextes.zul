@@ -48,11 +48,16 @@
 	
 		<hbox width="100%" height="100%" style="margin-top:20px;">
 		
+		<vbox>
+			
+			<!-- **************** -->
+			<!-- Zone des filtre  -->
+			<!-- **************** -->
+		
 			<!-- FIXME utiliser include  -->
-	<vbox>
 			<groupbox width="286px" height="340px">
 					<caption>Filtre</caption>
-					<hbox>
+					<hbox >
 						<bandbox id="nomFiltreBandbox" width="145px" readonly="true" buttonVisible="true" autodrop="true">
 							<bandpopup vflex="min" hflex="min">
 								<vbox style="margin:0px;" >
@@ -63,7 +68,7 @@
 			
 						<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
 							<bandpopup vflex="min" hflex="min">
-								<vbox style="margin:0px;" >
+								<vbox style="margin:0px;">
 								
 <!-- 								
 	mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
@@ -99,11 +104,14 @@
 					</grid>
 	
 				</groupbox>
-				
-				<groupbox  width="286px" height="204px">
-					<caption>Historique des recherches</caption>
-				</groupbox>
-			</vbox>
+			
+			<!-- ************************* -->
+			<!-- Historique des recherches -->
+			<!-- ************************* -->
+
+			<include id="historiqueRechercheInclude" src="/historiqueRecherches.zul"/>
+			
+		</vbox>
 			
 			<!-- ******************** -->
 			<!--   Colonne résultats  -->

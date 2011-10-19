@@ -1,8 +1,8 @@
-package com.servicelibre.zk.controller;
+package com.servicelibre.zk.recherche;
 
 public class RechercheContexte extends Recherche {
 
-	enum PrécisionChaîne {EXACTEMENT, FORMES}
+	public enum PrécisionChaîne {EXACTEMENT_LE_MOT, TOUTES_LES_FORMES_DU_MOT}
 	
 	// cible = toujours contexte
 	

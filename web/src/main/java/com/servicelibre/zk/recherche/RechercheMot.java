@@ -1,9 +1,7 @@
-package com.servicelibre.zk.controller;
+package com.servicelibre.zk.recherche;
 
 public class RechercheMot extends Recherche {
 
-	enum Cible {MOT, PRONONCIATION};
-	
 	// Précision chaîne = MotManager.Condition
 	
 	@Override
