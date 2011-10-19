@@ -51,8 +51,8 @@
 						<listbox id="nomFiltre"  style="width:140px;" mold="select"/>
 			
 						<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
-							<bandpopup height="205px" width="205px">
-								<vbox height="205px" style="margin:0px;" >
+							<bandpopup vflex="min" hflex="min">
+								<vbox style="margin:0px;" >
 								
 <!-- 								
 	mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...

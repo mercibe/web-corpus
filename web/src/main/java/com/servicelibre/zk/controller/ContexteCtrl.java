@@ -326,8 +326,8 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private void créeEtAfficheOngletInfoContexte(Contexte contexte) {
-		// Vérifier si contexte déjà ouvert
 
+	    // Vérifier si contexte déjà ouvert
 		Tab infoContexteTab = getTabDéjàOuvert(contexte.getId());
 
 		if (infoContexteTab == null) {

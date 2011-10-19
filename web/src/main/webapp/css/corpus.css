@@ -92,12 +92,18 @@ body {
  }
  
  .mot {
- 	/*cursor:hand;*/
  	cursor:pointer;
  	font-weight: bold;
+ 	text-decoration: none; 
  }
  
- .clicable {
+  .mot:hover {
+ 	cursor:pointer;
+ 	font-weight: bold;
+ 	text-decoration: underline; 
+ }
+ 
+ .cliquable {
  	cursor:pointer;
  }
  

@@ -46,7 +46,7 @@ public class ListeFiltreManager extends FiltreManager {
 			listesThématiquesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 		}
 		
-		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_thématiques", "Thémes", listesThématiquesClésValeurs));		
+		filtres.add(new Filtre(FiltreMot.CléFiltre.liste.name() + "_thématiques", "Thèmes", listesThématiquesClésValeurs));		
 		
 		
 		// ajout du filtre des listes de particularités
@@ -95,7 +95,7 @@ public class ListeFiltreManager extends FiltreManager {
 		List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
 		//roClésValeurs.add(keyValueVide);
 		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "graphies rectifiées"));
-		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "graphies traditionnelles"));
+//		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "graphies traditionnelles"));
 		filtres.add(new Filtre(FiltreMot.CléFiltre.ro.name(), "Orthographe", roClésValeurs));
 		
 	}

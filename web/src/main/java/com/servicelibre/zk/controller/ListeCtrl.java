@@ -307,10 +307,10 @@ public class ListeCtrl extends CorpusCtrl {
 					or.setValue("*");
 					or.setStyle("text-align:center");
 					or.setTooltiptext("orthographe rectifiée");
-					motPlus.append(" (OR) ⇔ ").append(mot.getMot_autreGraphie()).append(" (OT)");
+					motPlus.append(" (OR) ⇔ ").append(mot.getMot_autreGraphie());
 				}
 				else if (mot.getMot_autreGraphie() != null && !mot.getMot_autreGraphie().isEmpty()) {
-					motPlus.append(" (OT) ⇔ ").append(mot.getMot_autreGraphie()).append(" (OR)");
+					motPlus.append(" ⇔ ").append(mot.getMot_autreGraphie()).append(" (OR)");
 				}
 				
 				

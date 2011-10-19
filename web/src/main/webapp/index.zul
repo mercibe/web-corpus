@@ -26,6 +26,7 @@
 		<tabs id="corpusTabs" width="100%">
 			<tab id="listeTab" label="Listes" />
 			<tab id="contexteTab" label="Contextes" />
+			<tab id="activitésTab" label="Exemples d'activités" />
 		</tabs>
 		
 		<toolbar>
@@ -54,6 +55,17 @@
 				<include id="contexteInclude" src="/contextes.zul" height="100%"/>
 			
 			</tabpanel>
+
+			
+<!-- 			TODO généraliser : x onglets optionnels iframe -->
+		<!-- **************** -->
+		<!-- Onglet Optionnel -->
+		<!-- **************** -->			
+			
+			<tabpanel id="optionnelTabpanel" height="100%">
+				<iframe id="optionnelIframe" src="http://franqus.ca/static_corpus/mels/envrech/activites.html" height="100%" width="100%"/>
+			</tabpanel>
+			
 			
 		</tabpanels>
 	</tabbox>

@@ -38,7 +38,7 @@ public class ContexteFiltreManager extends FiltreManager {
 
 	private List<DefaultKeyValue> getChampValeurs(String champIndex) {
 
-		List<DefaultKeyValue> valeursChamp = corpusService.getValeursChamp(champIndex);
+		List<DefaultKeyValue> valeursChamp = corpusService.getValeursChampAvecFréquence(champIndex);
 		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(
 				valeursChamp.size());
 

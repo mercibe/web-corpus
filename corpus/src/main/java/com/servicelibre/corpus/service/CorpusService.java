@@ -162,8 +162,7 @@ public class CorpusService {
 		}
 
 		RésultatRecherche résultats = luceneIndexManager
-				.getDocumentsWithContexts(
-						formeService.getFormes(lemme),
+				.getDocumentsWithContexts(formeService.getFormes(lemme),
 						tailleVoisinage, filtres);
 
 		logger.debug("Trouvé " + résultats.scoreDocs.length
@@ -180,7 +179,7 @@ public class CorpusService {
 	public boolean isLemme(String mot) {
 		return formeService.getFormes(mot).size() > 0;
 	}
-	
+
 	private ContexteSet getContextes(RésultatRecherche résultats) {
 
 		ContexteSet contexteSet = new ContexteSet();
@@ -233,17 +232,19 @@ public class CorpusService {
 		// L'ordre des champs de la liste est respecté
 		for (DocMetadata docMetadata : this.corpus.getMétadonnéesDoc()) {
 			String nomChamp = docMetadata.getChampIndex();
-			Field champ = (Field)document.getFieldable(nomChamp);
+			Field champ = (Field) document.getFieldable(nomChamp);
 			if (champ != null && !champ.isBinary()) {
-				// Utilisation du nom au lieu du champ (pour la présentation à l'écran)
-				métadonnées.add(new StringMetadata(docMetadata.getNom(), champ.stringValue(), docMetadata.isPrimaire()));
+				// Utilisation du nom au lieu du champ (pour la présentation à
+				// l'écran)
+				métadonnées.add(new StringMetadata(docMetadata.getNom(), champ
+						.stringValue(), docMetadata.isPrimaire()));
 			}
 		}
 
 		return métadonnées;
 	}
 
-	public List<DefaultKeyValue> getValeursChamp(String champIndex) {
+	public List<DefaultKeyValue> getValeursChampAvecFréquence(String champIndex) {
 
 		// Récupérer les valeurs = topTerms Lucene , trié par ordre alpha fr_CA
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
@@ -252,9 +253,7 @@ public class CorpusService {
 			return new ArrayList<DefaultKeyValue>();
 		}
 
-		List<InformationTerme> topTerms = luceneIndexManager.getTopTerms(
-				champIndex,
-				new InformationTermeTextComparator<InformationTerme>());
+		List<InformationTerme> topTerms = luceneIndexManager.getTopTerms(champIndex,new InformationTermeTextComparator<InformationTerme>());
 
 		List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(
 				topTerms.size());
