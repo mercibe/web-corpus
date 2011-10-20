@@ -1,5 +1,6 @@
 package com.servicelibre.zk.recherche;
 
+import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 
 public abstract class Recherche {
@@ -63,8 +64,22 @@ public abstract class Recherche {
 	public void setFiltres(FiltreRecherche filtres) {
 	    this.filtres = filtres;
 	}
-	
-	
+
+	public boolean isFiltrée() {
+	    return filtres.getFiltres().size() > 0;
+	}
+
+	public abstract String getChaîneEtPrécision();
+
+	public int getNombreConditions() {
+	    int nbCondition = 0;
+	    for(Filtre f : filtres.getFiltres()) {
+		nbCondition += f.getKeyValues().size();
+	    }
+	    return nbCondition;
+	}
+
+	public abstract Recherche getCopie();
 	
 	
 }

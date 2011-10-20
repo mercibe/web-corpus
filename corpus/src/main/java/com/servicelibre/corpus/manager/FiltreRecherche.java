@@ -8,7 +8,7 @@ public class FiltreRecherche
 {
 	/**
 	 * Cette classe permet de construire un filtre logique, une liste d'objet Filtre qui
-	 * sera passée à la couche JPA pour filtrer les query (filtreNom IN (...) AND filtreNom IN (...))
+	 * sera passée à la couche métier (JPA, Lucene) pour filtrer les query (filtreNom IN (...) AND filtreNom IN (...))
 	 * 
 	 * Les Filtre.nom doivent correspondre exactement aux noms des colonnes dans la DB.  Utiliser pour ce faire l'enum CléFiltre
 	 * @author mercibe

@@ -40,6 +40,8 @@ import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.manager.DocMetadataManager;
+import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.manager.MotManager.Condition;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
@@ -50,6 +52,7 @@ import com.servicelibre.corpus.service.PhraseService;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
 import com.servicelibre.zk.recherche.RechercheExécution;
+import com.servicelibre.zk.recherche.RechercheMot;
 
 /**
  * 
@@ -689,6 +692,32 @@ public class ContexteCtrl extends CorpusCtrl {
     protected Grid getHistoriqueRecherchesGrid() {
 	
 	return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/contexteInclude/contexteWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
+    }
+
+    @Override
+    protected void chargerRecherche(Recherche recherche) {
+	RechercheContexte r = (RechercheContexte) recherche;
+
+	// Cible : rien à faire - toujours CONTEXTE
+
+	// Précision chaîne
+	RechercheContexte.PrécisionChaîne précision = RechercheContexte.PrécisionChaîne.valueOf(r.précisionChaîne);
+
+	switch (précision) {
+	case EXACTEMENT_LE_MOT:
+	    condition.setSelectedIndex(0);
+	    break;
+	case TOUTES_LES_FORMES_DU_MOT:
+	    condition.setSelectedIndex(1);
+	    break;
+	}
+
+	// Chaîne
+	cherche.setText(r.chaîne);
+	
+	// Filtres
+	remplacerFiltres(r.getFiltres());
+	
     }
 
 }

@@ -13,66 +13,76 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
  */
 public class Filtre {
 
-	public String nom;
-	public String description;
-	public List<DefaultKeyValue> keyValues;
+    public String nom;
+    public String description;
+    public List<DefaultKeyValue> keyValues;
 
-	public Filtre(String nom, String description, List<DefaultKeyValue> keyValues) {
-		super();
-		this.nom = nom;
-		this.description = description;
-		this.keyValues = keyValues;
+    public Filtre(String nom, String description, List<DefaultKeyValue> keyValues) {
+	super();
+	this.nom = nom;
+	this.description = description;
+	this.keyValues = keyValues;
+    }
+
+    public Filtre(String nom, String description, Object[] values) {
+	super();
+	this.nom = nom;
+	this.description = description;
+
+	List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(values.length);
+	for (int i = 0; i < values.length; i++) {
+	    keyValues.add(new DefaultKeyValue(values[i], values[i]));
 	}
 
-	public Filtre(String nom, String description, Object[] values) {
-		super();
-		this.nom = nom;
-		this.description = description;
+	this.keyValues = keyValues;
+    }
 
-		List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(values.length);
-		for (int i = 0; i < values.length; i++) {
-			keyValues.add(new DefaultKeyValue(values[i], values[i]));
-		}
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((nom == null) ? 0 : nom.hashCode());
+	return result;
+    }
 
-		this.keyValues = keyValues;
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Filtre other = (Filtre) obj;
+	if (nom == null) {
+	    if (other.nom != null)
+		return false;
+	} else if (!nom.equals(other.nom))
+	    return false;
+	return true;
+    }
+
+    @Override
+    public String toString() {
+	return "Filtre [nom=" + nom + ", description=" + description + ", keyValues=" + keyValues + "]";
+    }
+
+    public List<DefaultKeyValue> getKeyValues() {
+	return keyValues;
+    }
+
+    public void setKeyValues(List<DefaultKeyValue> keyValues) {
+	this.keyValues = keyValues;
+    }
+
+    public Filtre getCopie() {
+	List<DefaultKeyValue> copieKv = new ArrayList<DefaultKeyValue>(this.keyValues.size());
+	for (DefaultKeyValue kv : this.keyValues) {
+	    copieKv.add(kv);
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
-		return result;
-	}
+	Filtre copieFiltre = new Filtre(this.nom, this.description, copieKv);
+	return copieFiltre;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Filtre other = (Filtre) obj;
-		if (nom == null) {
-			if (other.nom != null)
-				return false;
-		} else if (!nom.equals(other.nom))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Filtre [nom=" + nom + ", description=" + description + ", keyValues=" + keyValues + "]";
-	}
-
-	public List<DefaultKeyValue> getKeyValues() {
-		return keyValues;
-	}
-
-	public void setKeyValues(List<DefaultKeyValue> keyValues) {
-		this.keyValues = keyValues;
-	}
-	
 }

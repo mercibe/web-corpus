@@ -45,7 +45,9 @@ import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.manager.PrononciationManager;
+import com.servicelibre.corpus.manager.MotManager.Condition;
 import com.servicelibre.zk.recherche.Recherche;
+import com.servicelibre.zk.recherche.Recherche.Cible;
 import com.servicelibre.zk.recherche.RechercheExécution;
 import com.servicelibre.zk.recherche.RechercheMot;
 
@@ -94,7 +96,11 @@ public class ListeCtrl extends CorpusCtrl {
     }
 
     public void onSelect$gp(Event event) {
-	//
+	ajustementsGraphiePrononciation();
+	
+    }
+
+    private void ajustementsGraphiePrononciation() {
 	if (getCible() == Recherche.Cible.PRONONCIATION) {
 	    api.setVisible(true);
 	    caractèresSpéciaux.setVisible(false);
@@ -183,10 +189,10 @@ public class ListeCtrl extends CorpusCtrl {
 	List<Mot> mots = new ArrayList<Mot>();
 
 	// Ne rien faire si la chaîne est vide ET filtre vide
-	if((recherche.chaîne == null || recherche.chaîne.trim().isEmpty()) && filtreActifModel.getFiltres().size() == 0 ) {
+	if ((recherche.chaîne == null || recherche.chaîne.trim().isEmpty()) && filtreActifModel.getFiltres().size() == 0) {
 	    return mots;
 	}
-	
+
 	logger.info(recherche.getDescription());
 
 	switch (recherche.cible) {
@@ -575,8 +581,51 @@ public class ListeCtrl extends CorpusCtrl {
 
     @Override
     protected Grid getHistoriqueRecherchesGrid() {
-	
+
 	return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/listeInclude/listeWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
+    }
+
+    @Override
+    protected void chargerRecherche(Recherche recherche) {
+
+	RechercheMot r = (RechercheMot) recherche;
+
+	// Cible
+	switch (r.cible) {
+	case GRAPHIE:
+	    gp.setSelectedIndex(0);
+	    break;
+	case PRONONCIATION:
+	    gp.setSelectedIndex(1);
+	    break;
+	}
+
+	ajustementsGraphiePrononciation();
+	
+	// Précision chaîne
+	Condition précision = MotManager.Condition.valueOf(r.précisionChaîne);
+
+	switch (précision) {
+	case COMMENCE_PAR:
+	    condition.setSelectedIndex(0);
+	    break;
+	case FINIT_PAR:
+	    condition.setSelectedIndex(1);
+	    break;
+	case CONTIENT:
+	    condition.setSelectedIndex(2);
+	    break;
+	case ENTIER:
+	    condition.setSelectedIndex(3);
+	    break;
+	}
+
+	// Chaîne
+	cherche.setText(r.chaîne);
+	
+	// Filtres
+	remplacerFiltres(r.getFiltres());
+
     }
 
 }

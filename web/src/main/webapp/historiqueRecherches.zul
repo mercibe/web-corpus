@@ -3,12 +3,11 @@
 			<grid id="historiqueRecherchesGrid" fixedLayout="true" height="195px"
 					
 					emptyMessage="Aucune recherche dans l'historique.">
-							
-					<columns sizable="true" height="20px">
-						<column  width="60px" id="dateExécution" label="Heure" tooltiptext="heure de l'exécution"/>
-						<column  width="70px" id="nbRésultats" label="Résultats"  tooltiptext="nombre de résultats"/> 
-						<column  id="Description" label="Description"   tooltiptext="description de la recherche"/> 
-<!-- 						<column  hflex="min" id="Information"/>  -->
+					<columns sizable="false">
+						<column width="46%" visible="true"/>
+						<column width="20%" visible="true"/> 
+						<column width="17%" visible="true"/>
+						<column width="17%" visible="true"/>
 					</columns>
 					<rows />
 				</grid>

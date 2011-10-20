@@ -43,6 +43,7 @@ import org.zkoss.zul.Window;
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheExécution;
@@ -55,7 +56,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
     private static final long serialVersionUID = -5225701427150774798L;
 
     SimpleDateFormat df_historique = new SimpleDateFormat("HH:mm:ss");
-    
+
     Textbox cherche; // autowire car même type/ID que le composant dans la page
     // ZUL
 
@@ -77,7 +78,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
     // page ZUL
 
     Grid historiqueRecherchesGrid;
-    
+
     Label infoRésultats;
 
     protected Window webCorpusWindow;
@@ -86,7 +87,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
     Image exportationCsv;
     Image exportationXls;
-    
+
     List<RechercheExécution> historiqueRecherche = new ArrayList<RechercheExécution>(10);
 
     // Enregistrement des événements onOK (la touche ENTER) sur tous les
@@ -216,6 +217,24 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	    chercheEtAffiche(false);
 	}
     }
+    
+    protected void remplacerFiltres(FiltreRecherche filtres) {
+	
+	    filtreActifModel.removeAll();
+	    for (Filtre filtre : filtres.getFiltres()) {
+		// Cloner les filtres - sinon lors de la suppression d'une condition dans les filtres on modifie l'historique...
+		filtreActifModel.addFiltre(filtre.getCopie());
+	    }
+	    	
+	    gridFiltreActif.setModel(new SimpleGroupsModel(filtres.getFiltreValeurs(), filtres.getFiltreGroupes()));
+	    
+	    // Mettre à jour (modèle) les valeurs du filtre courant (sans les
+	    // valeurs qui viennent d'être ajoutées au filtre)
+	    filtreManager.setFiltreActif(filtres);	    
+	    
+	    actualiseValeursFiltreCourant();
+    }
+    
 
     public void onSelect$nomFiltre(Event event) {
 	actualiseValeursFiltreCourant();
@@ -279,7 +298,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	FiltreRecherche filtres = new FiltreRecherche();
 
-	// Ajout des autres filtres
+	// Ajout des filtres (une copie)
 	for (Filtre filtre : filtreActifModel.getFiltres()) {
 	    filtres.addFiltre(filtre);
 	}
@@ -287,48 +306,99 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	return filtres;
     }
 
-protected void initialiseHistoriqueRecherches() {
-	
-   	historiqueRecherchesGrid = getHistoriqueRecherchesGrid();
-   	
-   	historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
-   	historiqueRecherchesGrid.setRowRenderer(new RowRenderer() {
-   	    
-   	    @Override
-   	    public void render(Row row, Object model) throws Exception {
-   		
-   		RechercheExécution rx = (RechercheExécution) model;
-   		
-   		Cell cell = new Cell();
-   		cell.setParent(row);
+    protected void initialiseHistoriqueRecherches() {
 
-//   		long tempsÉcoulé = System.currentTimeMillis() - rx.dateExécution.getTime();
-//   		
-//   		String ilya = String.format("%d min, %d sec",  TimeUnit.MILLISECONDS.toMinutes(tempsÉcoulé),
-//   			    TimeUnit.MILLISECONDS.toSeconds(tempsÉcoulé) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(tempsÉcoulé))
-//   			);
-   		
-   		final Label labelDate = new Label(df_historique.format(rx.dateExécution));
-   		labelDate.setAttribute("recherche", rx.recherche);
-   		labelDate.setParent(cell);
-   		
-   		cell = new Cell();
-   		cell.setParent(row);
-   		final Label labelNb = new Label(rx.nbRésultats + "");
-   		labelNb.setParent(cell);
-   		
-   		cell = new Cell();
-   		cell.setParent(row);
-   		final Label labelDescription = new Label(rx.recherche.getDescription());
-   		labelDescription.setParent(cell);
-   		
-   	    }
-   	});
-       }
+	historiqueRecherchesGrid = getHistoriqueRecherchesGrid();
 
-    
+	historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
+	historiqueRecherchesGrid.setRowRenderer(new RowRenderer() {
+
+	    @Override
+	    public void render(Row row, Object model) throws Exception {
+
+		RechercheExécution rx = (RechercheExécution) model;
+
+		// Sauvegarde de l'objet recherche dans les attribut de la ligne
+		row.setAttribute("recherche", rx.recherche);
+
+		final Row currentRow = row;
+
+		// Ajout de la cellule avec la chaîne+précision
+		Cell cell = new Cell();
+		cell.setParent(row);
+		
+		String chaîneEtPrécision = rx.recherche.getChaîneEtPrécision();
+		final Label labelDescription = new Label(chaîneEtPrécision);
+		labelDescription.setParent(cell);
+		
+		// Info filtre
+		cell = new Cell();
+		cell.setParent(row);
+		
+		int nombreConditions = rx.recherche.getNombreConditions();
+		if(nombreConditions > 0) {
+		    final Label filtreDescription = new Label(nombreConditions + " filtre" + (nombreConditions > 1 ?"s":""));
+		    filtreDescription.setParent(cell);
+		}
+		
+		// Ajout d'un bouton Information
+		final Button informationBtn = new Button();
+		informationBtn.setParent(row);
+		informationBtn.setMold("os");
+		informationBtn.setImage("/images/information-16x16.png");
+		informationBtn.setTooltiptext("information sur la recherche");
+		informationBtn.addEventListener(Events.ON_CLICK, new EventListener() {
+		    
+		    @Override
+		    public void onEvent(Event arg0) throws Exception {
+			System.err.println("afficher une infobulle avec tout ce que l'on sait sur cette recherche");
+		    }
+		});
+		
+
+		// Ajout du bouton Exécuter
+		final Button exécuterBtn = new Button();
+		exécuterBtn.setParent(row);
+		exécuterBtn.setMold("os");
+		exécuterBtn.setImage("/images/exécuter-16x16.png");
+		exécuterBtn.setTooltiptext("exécuter la recherche");
+		exécuterBtn.addEventListener(Events.ON_CLICK, new EventListener() {
+
+		    @Override
+		    public void onEvent(Event arg0) throws Exception {
+			
+			System.err.println("Exécution de la requête");
+			chargerRecherche((Recherche)currentRow.getAttribute("recherche"));
+			chercheEtAffiche(false);
+
+		    }
+		});
+
+		// long tempsÉcoulé = System.currentTimeMillis() -
+		// rx.dateExécution.getTime();
+		//
+		// String ilya = String.format("%d min, %d sec",
+		// TimeUnit.MILLISECONDS.toMinutes(tempsÉcoulé),
+		// TimeUnit.MILLISECONDS.toSeconds(tempsÉcoulé) -
+		// TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(tempsÉcoulé))
+		// );
+
+		// final Label labelDate = new
+		// Label(df_historique.format(rx.dateExécution));
+		// labelDate.setAttribute("recherche", rx.recherche);
+		// labelDate.setParent(cell);
+		//
+		// cell = new Cell();
+		// cell.setParent(row);
+		// final Label labelNb = new Label(rx.nbRésultats + "");
+		// labelNb.setParent(cell);
+
+	    }
+	});
+    }
+
     protected abstract Grid getHistoriqueRecherchesGrid();
-    
+
     protected void initialiseFiltre() {
 
 	// Initialisation des filtres (noms)
@@ -401,11 +471,13 @@ protected void initialiseHistoriqueRecherches() {
 				Label labelGroupe = (Label) currentRow.getGroup().getFirstChild().getFirstChild();
 
 				filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key"));
+				
 				gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
 
 				filtreManager.setFiltreActif(filtreActifModel);
+				
 				actualiseValeursFiltreCourant();
-
+				
 				chercheEtAffiche(true);
 			    }
 			}
@@ -453,7 +525,7 @@ protected void initialiseHistoriqueRecherches() {
 	initialiseRecherche();
 
 	initialiseFiltre();
-	
+
 	initialiseHistoriqueRecherches();
 
 	Tabbox tabbox = (Tabbox) webCorpusWindow.getFellow("corpusTabbox");
@@ -519,18 +591,20 @@ protected void initialiseHistoriqueRecherches() {
 	return guillemetsOK.replaceAll("\n", "\u2028");
     }
 
+    protected abstract void chargerRecherche(Recherche recherche);
+    
     protected void ajouterRechercheHistorique(Recherche recherche, int nbRésultats) {
+
+	// TODO en faire indexOf + get(index) + comparateur de rechercheExécution: même chaîne/présicions/filtres = même recherche
+	// TODO ajouter compteur exécution
+	// TODO soit ajout en tête, soit déplacement en tête (remove + add au début)
 	
 	// ajout en début de liste (plus récent en tête)
-	this.historiqueRecherche.add(0,new RechercheExécution(recherche, new Date(), nbRésultats));
-	
+	this.historiqueRecherche.add(0, new RechercheExécution(recherche.getCopie(), new Date(), nbRésultats));
+
 	// mettre à jour le modèle
 	historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
-	
-	for(RechercheExécution exec : this.historiqueRecherche) {
-	    System.out.println(exec.dateExécution + " | " + exec.nbRésultats + " | " + exec.recherche.getDescription() );
-	}
-	
+
     }
 
 }
