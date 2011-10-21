@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 
 public interface MotManager {

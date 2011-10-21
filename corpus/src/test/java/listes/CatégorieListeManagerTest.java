@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
@@ -27,9 +28,9 @@ import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
 
 
-@ContextConfiguration
+@ContextConfiguration("ListeManagerTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ListeManagerTest implements ApplicationContextAware
+public class CatégorieListeManagerTest implements ApplicationContextAware
 {
     @Autowired
     ListeManager lm;
@@ -37,6 +38,9 @@ public class ListeManagerTest implements ApplicationContextAware
     @Autowired
     CorpusManager cm;
     
+    @Autowired
+    CatégorieListeManager clm;
+
     @Autowired
     ListeImport listeImport;
 
@@ -63,60 +67,49 @@ public class ListeManagerTest implements ApplicationContextAware
 
     @Test
     @Transactional
-    public void créationListes()
+    public void créationCatégorieListe()
     {
-        Corpus corpus = new Corpus("Corpus de test", "description du corpus de test");
+	Corpus corpus = new Corpus("Corpus de test", "description du corpus de test");
+	cm.save(corpus);
+	
+	CatégorieListe catégorie = new CatégorieListe("Thèmes", "Listes thématiques", corpus);
+	
+	clm.save(catégorie);
+	
+	assertNotNull(catégorie.getId());
+	
+	System.out.println("Catégorie id = " + catégorie.getId());
+	
+	// Création de listes et association avec cette catégorie
+	Liste lThématique1 = new Liste("à la maison", "Liste des mots du vocabulaire utilisé à la maison", corpus);
+	Liste lThématique2 = new Liste("à l'école", "Liste des mots du vocabulaire utilisé à l'école", corpus);
 
-        Liste lTest1 = new Liste("Liste de test", "Liste de test TDD", corpus);
-        
-        System.err.println("corpus_id: " + corpus.getId());
-
-        cm.save(corpus);
-
-        System.err.println("corpus_id: " + corpus.getId());
-
-        assertEquals("Liste de test", lTest1.getNom());
-        assertEquals("Liste de test TDD", lTest1.getDescription());
-
-        // Création de la liste de lemmes
-        List<Mot> mots = new ArrayList<Mot>();
-        mots.add(new Mot("manger", "manger", true, "VERBE", "", lTest1));
-        mots.add(new Mot("pomme", "pomme", true, "NOM_COMMUN", "", lTest1));
-
-        // Ajout de la liste de lemmes à la définition de la liste
-        lTest1.setMots(mots);
-
-        lm.save(lTest1);
-
-        List<Mot> mots2 = lTest1.getMots();
-        assertNotNull(mots2);
-        assertEquals(mots.size(), mots2.size());
-        assertEquals(mots.size(), lTest1.size());
-
-        List<Mot> mots3 = lTest1.getMots();
-        assertNotNull(mots3);
-        for (int i = 0; i < lTest1.size(); i++)
-        {
-            assertEquals(mots.get(i), mots3.get(i));
-            System.out.println(mots.get(i));
-        }
-        
-        System.out.println("Catégorie == " + lTest1.getCatégorie());
-
+	lm.save(lThématique1);
+	lm.save(lThématique2);
+	
+	catégorie.ajouterListe(lThématique1);
+	catégorie.ajouterListe(lThématique2);
+	
+	assertNotNull(catégorie.getListes());
+	assertEquals(2,catégorie.getListes().size());
+	
+	// Récupération de la catégorie fraîchement créée dans la DB
+	CatégorieListe catDB = clm.findByNom("Thèmes");
+	assertNotNull(catDB.getListes());
+	assertEquals(2,catDB.getListes().size());
+	
+	// Supprimer une liste de la catégorie
+	catDB.enleverListe(lThématique1);
+	assertEquals(1,catDB.getListes().size());
+	
+	System.out.println(catDB);
+	
+	// S'assurer que la suppression est effective dans la DB
+	catDB = clm.findByNom("Thèmes");
+	assertEquals(1,catDB.getListes().size());
     }
 
-    @Test
-    @Transactional
-    public void testContenuDB()
-    {
-        Liste liste_test_1 = lm.findByNom(listeTest1.getNom());
-        assertEquals(50, liste_test_1.getMots().size());
-
-        liste_test_1 = lm.findOne(listeTest1.getId());
-        assertEquals(50, liste_test_1.getMots().size());
-    }
-
-    
+      
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
     {

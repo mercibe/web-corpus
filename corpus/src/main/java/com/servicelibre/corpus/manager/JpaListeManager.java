@@ -117,6 +117,7 @@ public class JpaListeManager implements ListeManager
 	        return listes;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Liste> findThématiquesByCorpusId(long corpusId) {
 		  List<Liste> listes = new ArrayList<Liste>();

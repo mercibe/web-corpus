@@ -1,0 +1,134 @@
+package com.servicelibre.corpus.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+@Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
+public class CatégorieListe {
+
+    @Id
+    @SequenceGenerator(name = "catégorieListe_seq", sequenceName = "catégorieListe_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "catégorieListe_seq")
+    Long id;
+
+    @Column
+    String nom;
+
+    @Column
+    String description;
+
+    @Column
+    Integer ordre;
+
+    @ManyToOne(optional=false)
+    @JoinColumn(name = "corpus_id")
+    Corpus corpus;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catégorie")
+    List<Liste> listes = new ArrayList<Liste>();
+
+    public CatégorieListe() {
+	super();
+    }
+
+    public CatégorieListe(String nom, String description) {
+	super();
+	this.nom = nom;
+	this.description = description;
+    }
+
+    public CatégorieListe(String nom, String description, Corpus corpus) {
+	super();
+	this.nom = nom;
+	this.description = description;
+	this.corpus = corpus;
+    }
+
+    public Long getId() {
+	return id;
+    }
+
+    public void setId(Long id) {
+	this.id = id;
+    }
+
+    public String getNom() {
+	return nom;
+    }
+
+    public void setNom(String nom) {
+	this.nom = nom;
+    }
+
+    public String getDescription() {
+	return description;
+    }
+
+    public void setDescription(String description) {
+	this.description = description;
+    }
+
+    public Integer getOrdre() {
+	return ordre;
+    }
+
+    public void setOrdre(Integer ordre) {
+	this.ordre = ordre;
+    }
+
+    public List<Liste> getListes() {
+	return listes;
+    }
+
+    public void setListes(List<Liste> listes) {
+	this.listes = listes;
+    }
+
+    public void ajouterListe(Liste liste) {
+	if (!this.listes.contains(liste)) {
+	    this.listes.add(liste);
+	    liste.setCatégorieListe(this);
+	}
+    }
+
+    public void enleverListe(Liste liste) {
+	this.listes.remove(liste);
+    }
+
+    public Corpus getCorpus() {
+	return corpus;
+    }
+
+    public void setCorpus(Corpus corpus) {
+	if (this.corpus != corpus) {
+	    if (this.corpus != null) {
+		this.corpus.enleverCatégorieListe(this);
+	    }
+	    this.corpus = corpus;
+	    if (corpus != null) {
+		corpus.ajouterCatégorieListe(this);
+	    }
+	}
+
+    }
+
+    @Override
+    public String toString() {
+	return "CatégorieListe [id=" + id + ", nom=" + nom + ", description=" + description + "]";
+    }
+
+}

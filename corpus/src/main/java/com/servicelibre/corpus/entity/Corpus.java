@@ -18,154 +18,169 @@ import javax.persistence.UniqueConstraint;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
 public class Corpus {
 
-	@Id
-	@SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "corpus_seq")
-	long id;
+    @Id
+    @SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "corpus_seq")
+    long id;
 
-	@Column
-	String nom;
+    @Column
+    String nom;
 
-	@Column
-	String description;
+    @Column
+    String description;
 
-	/**
-	 * Chemin filesystem qui pointe vers la racine du dossier des données de ce corpus (index Lucene, etc.)
-	 */
-	@Column
-	String dossierData;
+    /**
+     * Chemin filesystem qui pointe vers la racine du dossier des données de ce
+     * corpus (index Lucene, etc.)
+     */
+    @Column
+    String dossierData;
 
-	@Column
-	String analyseurRechercheFQCN = "com.servicelibre.corpus.analysis.FrenchAnalyzer";
+    @Column
+    String analyseurRechercheFQCN = "com.servicelibre.corpus.analysis.FrenchAnalyzer";
 
-	@Column
-	String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";
-	
-	@Column
-	Boolean parDéfaut;
+    @Column
+    String analyseurLexicalFQCN = "org.apache.lucene.analysis.standard.StandardAnalyzer";
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="corpus")
-	List<DocMetadata> métadonnéesDoc = new ArrayList<DocMetadata>();
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="corpus")
-	List<Liste> listes = new ArrayList<Liste>();
+    @Column
+    Boolean parDéfaut;
 
-	public Corpus() {
-		super();
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus")
+    List<DocMetadata> métadonnéesDoc = new ArrayList<DocMetadata>();
 
-	public Corpus(String nom, String description) {
-		super();
-		this.nom = nom;
-		this.description = description;
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus")
+    List<Liste> listes = new ArrayList<Liste>();
 
-	public Corpus(String nom, String description, String dossierData, String analyseurRechercheFQCN, String analyseurLexicalFQCN) {
-		super();
-		this.nom = nom;
-		this.description = description;
-		this.dossierData = dossierData;
-		this.analyseurRechercheFQCN = analyseurRechercheFQCN;
-		this.analyseurLexicalFQCN = analyseurLexicalFQCN;
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus")
+    List<CatégorieListe> catégoriesListes = new ArrayList<CatégorieListe>();
+    
+    public Corpus() {
+	super();
+    }
 
-	public long getId() {
-		return id;
-	}
+    public Corpus(String nom, String description) {
+	super();
+	this.nom = nom;
+	this.description = description;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public Corpus(String nom, String description, String dossierData, String analyseurRechercheFQCN, String analyseurLexicalFQCN) {
+	super();
+	this.nom = nom;
+	this.description = description;
+	this.dossierData = dossierData;
+	this.analyseurRechercheFQCN = analyseurRechercheFQCN;
+	this.analyseurLexicalFQCN = analyseurLexicalFQCN;
+    }
 
-	public String getNom() {
-		return nom;
-	}
+    public long getId() {
+	return id;
+    }
 
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
+    public void setId(long id) {
+	this.id = id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getNom() {
+	return nom;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setNom(String nom) {
+	this.nom = nom;
+    }
 
-	public String getDossierData() {
-		return this.dossierData;
-	}
+    public String getDescription() {
+	return description;
+    }
 
-	public void setDossierData(String dossierData) {
-		this.dossierData = dossierData;
-	}
+    public void setDescription(String description) {
+	this.description = description;
+    }
 
-	public String getAnalyseurRechercheFQCN() {
-		return analyseurRechercheFQCN;
-	}
+    public String getDossierData() {
+	return this.dossierData;
+    }
 
-	public void setAnalyseurRechercheFQCN(String analyseurRechercheFQCN) {
-		this.analyseurRechercheFQCN = analyseurRechercheFQCN;
-	}
+    public void setDossierData(String dossierData) {
+	this.dossierData = dossierData;
+    }
 
-	public String getAnalyseurLexicalFQCN() {
-		return analyseurLexicalFQCN;
-	}
+    public String getAnalyseurRechercheFQCN() {
+	return analyseurRechercheFQCN;
+    }
 
-	public void setAnalyseurLexicalFQCN(String analyseurLexicalFQCN) {
-		this.analyseurLexicalFQCN = analyseurLexicalFQCN;
-	}
-	
-	public boolean isParDéfaut() {
-		return parDéfaut;
-	}
+    public void setAnalyseurRechercheFQCN(String analyseurRechercheFQCN) {
+	this.analyseurRechercheFQCN = analyseurRechercheFQCN;
+    }
 
-	public void setParDéfaut(boolean parDéfaut) {
-		this.parDéfaut = parDéfaut;
-	}
+    public String getAnalyseurLexicalFQCN() {
+	return analyseurLexicalFQCN;
+    }
 
-	
+    public void setAnalyseurLexicalFQCN(String analyseurLexicalFQCN) {
+	this.analyseurLexicalFQCN = analyseurLexicalFQCN;
+    }
 
-	public List<DocMetadata> getMétadonnéesDoc() {
-		return métadonnéesDoc;
-	}
+    public boolean isParDéfaut() {
+	return parDéfaut;
+    }
 
-	@Override
-	public String toString() {
-		return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + ", dossierData=" + dossierData + ", parDéfaut=" + parDéfaut + "]";
-	}
+    public void setParDéfaut(boolean parDéfaut) {
+	this.parDéfaut = parDéfaut;
+    }
 
-	public void setMétadonnéesDoc(List<DocMetadata> métadonnéesDoc) {
-		this.métadonnéesDoc = métadonnéesDoc;
-	}
+    public List<DocMetadata> getMétadonnéesDoc() {
+	return métadonnéesDoc;
+    }
 
-	public void enleverDocMetadata(DocMetadata docMetadata) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void enleverListe(Liste liste) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public String toString() {
+	return "Corpus [id=" + id + ", nom=" + nom + ", description=" + description + ", dossierData=" + dossierData + ", parDéfaut=" + parDéfaut + "]";
+    }
 
-	public void ajouterDocMetadata(DocMetadata docMetadata) {
-		 if(!this.métadonnéesDoc.contains(docMetadata)) {
-			    this.métadonnéesDoc.add(docMetadata);
-			    docMetadata.setCorpus(this);
-			  }
+    public void setMétadonnéesDoc(List<DocMetadata> métadonnéesDoc) {
+	this.métadonnéesDoc = métadonnéesDoc;
+    }
 
+
+    
+    public void ajouterListe(Liste liste) {
+	if (!this.listes.contains(liste)) {
+	    this.listes.add(liste);
+	    liste.setCorpus(this);
 	}
 	
-	public void ajouterListe(Liste liste) {
-		 if(!this.listes.contains(liste)) {
-			    this.listes.add(liste);
-			    liste.setCorpus(this);
-			  }
+    }
+    
+    public void enleverListe(Liste liste) {
+	// TODO Auto-generated method stub
+	
+    }
 
+    public void ajouterDocMetadata(DocMetadata docMetadata) {
+	if (!this.métadonnéesDoc.contains(docMetadata)) {
+	    this.métadonnéesDoc.add(docMetadata);
+	    docMetadata.setCorpus(this);
+	}
+
+    }
+    public void enleverDocMetadata(DocMetadata docMetadata) {
+	// TODO Auto-generated method stub
+	
+    }
+
+    public void ajouterCatégorieListe(CatégorieListe catégorieListe) {
+	if (!this.catégoriesListes.contains(catégorieListe)) {
+	    this.catégoriesListes.add(catégorieListe);
+	    catégorieListe.setCorpus(this);
 	}
 	
+    }
+    
+    public void enleverCatégorieListe(CatégorieListe catégorieListe) {
+	// TODO Auto-generated method stub
 	
+    }
+    
 
 }

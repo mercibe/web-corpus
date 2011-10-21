@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.entity.Prononciation;
 
@@ -246,7 +245,8 @@ public class JpaMotManager implements MotManager {
 	    // exactement au nom de la colonne dans la DB / modèle
 	    // Sinon, NPE!
 
-	    // FIXME
+	    // FIXME - BUG : toutes les listes ne peuvent pas être dans un seul "ou"!!!
+	    // => liste_thé in (12, 54) AND liste_particu in (35, 54) => split du in en X in reliés par ET
 	    // Tour de passe passe rapide pour liste / thématiques /
 	    // particularités...
 	    String nomFiltre = filtre.nom.replaceAll("_.*", "");
@@ -267,6 +267,7 @@ public class JpaMotManager implements MotManager {
 			// appartiennent le mot = étiquettes associées au mot)
 			Join<Object, Object> joinListe = motRacine.join("listes");
 
+			// FIXME BUG 
 			in = cb.in(joinListe);
 			inClauses.put(nomFiltre, in);
 		    }

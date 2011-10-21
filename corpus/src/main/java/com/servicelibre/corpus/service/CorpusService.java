@@ -18,12 +18,15 @@ import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.DocMetadata;
+import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.lucene.InformationTerme;
 import com.servicelibre.corpus.lucene.InformationTermeTextComparator;
 import com.servicelibre.corpus.lucene.LuceneIndexManager;
 import com.servicelibre.corpus.lucene.RésultatRecherche;
+import com.servicelibre.corpus.manager.CatégorieListeManager;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.metadata.Metadata;
@@ -40,6 +43,8 @@ public class CorpusService {
 	private Corpus corpus;
 
 	private CorpusManager corpusManager;
+	
+	private CatégorieListeManager catégorieListeManager;
 
 	private LuceneIndexManager indexManager;
 
@@ -365,6 +370,22 @@ public class CorpusService {
 
 	public void setFormeService(FormeService formeService) {
 		this.formeService = formeService;
+	}
+	
+	public List<CatégorieListe> getCatégorieListes() {
+	    return catégorieListeManager.findAllByCorpusId(corpus.getId());
+	}
+	
+	public List<Liste> getCatégorieListeListes(CatégorieListe catégorie) {
+	    return catégorieListeManager.getListes(catégorie);
+	}
+
+	public CatégorieListeManager getCatégorieListeManager() {
+	    return catégorieListeManager;
+	}
+
+	public void setCatégorieListeManager(CatégorieListeManager catégorieListeManager) {
+	    this.catégorieListeManager = catégorieListeManager;
 	}
 
 }

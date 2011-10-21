@@ -12,108 +12,112 @@ import com.servicelibre.corpus.service.CorpusService;
 
 public abstract class FiltreManager {
 
-	public static final String VIDE = "     ";
+    public static final String VIDE = "     ";
 
-	// Définition valeur vide
-	protected DefaultKeyValue keyValueVide = new DefaultKeyValue("-1", VIDE);
+    // Définition valeur vide
+    protected DefaultKeyValue keyValueVide = new DefaultKeyValue("-1", VIDE);
 
-	protected List<Filtre> filtres = new ArrayList<Filtre>(3);
+    protected List<Filtre> filtres = new ArrayList<Filtre>(3);
 
-	protected CorpusService corpusService;
+    protected CorpusService corpusService;
 
-	protected ListeManager listeManager;
+    protected ListeManager listeManager;
 
-	private FiltreRecherche filtreActifModel;
+    private FiltreRecherche filtreActifModel;
 
-	public FiltreManager() {
-		super();
+    public FiltreManager() {
+	super();
+    }
+
+    public List<DefaultKeyValue> getFiltreNoms() {
+
+	List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
+	for (Filtre filtre : filtres) {
+	    noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
 	}
 
-	public List<DefaultKeyValue> getFiltreNoms() {
+	return noms;
+    }
 
-		List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
-		for (Filtre filtre : filtres) {
-			noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
+    /**
+     * Pour un filtre donné, retourne les valeurs sélectionnables du filtre («
+     * que l'on peut encore ajouter », « qui ne font pas partie du filtre actif
+     * »)
+     * 
+     * @param nom
+     * @return
+     */
+    public List<DefaultKeyValue> getFiltreValeurs(String nom) {
+	List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
+
+	Filtre f = getFiltre(nom);
+
+	// Si le filtre est trouvé, récupérer ses valeurs
+	if (f != null) {
+	    values = getValeursActives(nom, f.keyValues);
+	}
+
+	return values;
+    }
+
+    public Filtre getFiltre(String nom) {
+	// recherche du filtre
+	Filtre f = null;
+	for (Filtre filtre : filtres) {
+	    if (filtre.nom.equalsIgnoreCase(nom)) {
+		f = filtre;
+		break;
+	    }
+	}
+	return f;
+    }
+
+    /**
+     * Retourne toutes les valeurs possibles du filtre <i>nom</i> qui ne font
+     * pas partie du filtre actif
+     * 
+     * @param nom
+     * @param keyValues
+     * @return
+     */
+    private List<DefaultKeyValue> getValeursActives(String nom, List<DefaultKeyValue> keyValues) {
+	List<DefaultKeyValue> valeursActives = new ArrayList<DefaultKeyValue>(keyValues.size());
+
+	// Construire la liste des valeurs disponibles (non actives)
+	if (filtreActifModel != null) {
+	    for (DefaultKeyValue keyValue : keyValues) {
+		if (!filtreActifModel.isActif(nom, keyValue.getKey())) {
+		    valeursActives.add(keyValue);
 		}
-
-		return noms;
+	    }
+	} else {
+	    return keyValues;
 	}
 
-	/**
-	 * Pour un filtre donné, retourne les valeurs sélectionnables du filtre (« que l'on peut encore ajouter », 
-	 * « qui ne font pas partie du filtre actif »)
-	 * @param nom
-	 * @return
-	 */
-	public List<DefaultKeyValue> getFiltreValeurs(String nom) {
-		List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
+	return valeursActives;
+    }
 
-		Filtre f = getFiltre(nom);
+    public CorpusService getCorpusService() {
+	return corpusService;
+    }
 
-		// Si le filtre est trouvé, récupérer ses valeurs
-		if (f != null) {
-			values = getValeursActives(nom, f.keyValues);
-		}
+    public void setCorpusService(CorpusService corpusService) {
+	this.corpusService = corpusService;
+    }
 
-		return values;
-	}
+    public ListeManager getListeManager() {
+	return listeManager;
+    }
 
-	public Filtre getFiltre(String nom) {
-		// recherche du filtre
-		Filtre f = null;
-		for (Filtre filtre : filtres) {
-			if (filtre.nom.equalsIgnoreCase(nom)) {
-				f = filtre;
-				break;
-			}
-		}
-		return f;
-	}
+    public void setListeManager(ListeManager listeManager) {
+	this.listeManager = listeManager;
+    }
 
-	/**
-	 * Retourne toutes les valeurs possibles du filtre <i>nom</i> qui ne font pas partie du filtre actif
-	 * @param nom
-	 * @param keyValues
-	 * @return
-	 */
-	private List<DefaultKeyValue> getValeursActives(String nom, List<DefaultKeyValue> keyValues) {
-		List<DefaultKeyValue> valeursActives = new ArrayList<DefaultKeyValue>(keyValues.size());
+    abstract public void init();
 
-		// Construire la liste des valeurs disponibles (non actives)
-		if (filtreActifModel != null) {
-			for (DefaultKeyValue keyValue : keyValues) {
-				if (!filtreActifModel.isActif(nom, keyValue.getKey())) {
-					valeursActives.add(keyValue);
-				}
-			}
-		} else {
-			return keyValues;
-		}
+    public void setFiltreActif(FiltreRecherche filtreActifModel) {
+	this.filtreActifModel = filtreActifModel;
 
-		return valeursActives;
-	}
-
-	public CorpusService getCorpusService() {
-		return corpusService;
-	}
-
-	public void setCorpusService(CorpusService corpusService) {
-		this.corpusService = corpusService;
-	}
-
-	public ListeManager getListeManager() {
-		return listeManager;
-	}
-
-	public void setListeManager(ListeManager listeManager) {
-		this.listeManager = listeManager;
-	}
-
-	abstract public void init();
-
-	public void setFiltreActif(FiltreRecherche filtreActifModel) {
-		this.filtreActifModel = filtreActifModel;
-
-	}
+    }
 
 }
