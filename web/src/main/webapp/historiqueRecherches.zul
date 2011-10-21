@@ -4,10 +4,10 @@
 					
 					emptyMessage="Aucune recherche dans l'historique.">
 					<columns sizable="false">
-						<column width="46%" visible="true"/>
-						<column width="20%" visible="true"/> 
-						<column width="17%" visible="true"/>
-						<column width="17%" visible="true"/>
+						<column width="40%" visible="true"/>
+						<column width="24%" visible="true"/> 
+						<column width="18%" visible="true"/>
+						<column width="18%" visible="true"/>
 					</columns>
 					<rows />
 				</grid>

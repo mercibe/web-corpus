@@ -233,7 +233,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	    return contexteSet;
 	}
 
-	logger.info(recherche.getDescription());
+	logger.info(recherche.getDescriptionChaîne());
 
 	corpusService.setTailleVoisinage(Integer.parseInt(recherche.précisionRésultat));
 

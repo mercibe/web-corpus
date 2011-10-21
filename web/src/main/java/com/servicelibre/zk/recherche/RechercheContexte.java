@@ -2,6 +2,9 @@ package com.servicelibre.zk.recherche;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.manager.MotManager.Condition;
+import com.servicelibre.zk.recherche.Recherche.Cible;
 
 public class RechercheContexte extends Recherche {
 
@@ -10,8 +13,35 @@ public class RechercheContexte extends Recherche {
 	// cible = toujours contexte
 	
 	@Override
-	public String getDescription() {
-		return "Tous les contextes du mot " + this.chaîne;
+	public String getDescriptionChaîne() {
+
+		StringBuilder desc = new StringBuilder();
+		
+		// Avec chaîne
+		if (chaîne != null && !chaîne.isEmpty()) {
+			
+			desc.append("les contextes ");
+			
+			String chaîneEnrobée =  "« " + chaîne + " »";
+			
+
+			PrécisionChaîne précision = PrécisionChaîne.valueOf(this.précisionChaîne);
+
+			switch (précision) {
+			case EXACTEMENT_LE_MOT:
+				desc.append("du mot ").append(chaîneEnrobée);
+				break;
+			case TOUTES_LES_FORMES_DU_MOT: 
+				desc.append("de toutes les formes du mot ").append(chaîneEnrobée);
+				break;
+			}
+
+		} else {
+			
+			desc.append("");
+
+		}
+		return desc.toString();
 	}
 
 	/**
@@ -57,5 +87,10 @@ public class RechercheContexte extends Recherche {
 	    copie.filtres = copieFiltres;
 	    
 	    return copie;
+	}
+
+	@Override
+	public String getDescriptionPortéeFiltre() {
+		return "dont les ouvrages desquels ils sont issus satisfont aux conditions suivantes:";
 	}
 }

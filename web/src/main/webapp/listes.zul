@@ -100,6 +100,19 @@
 	
 				</groupbox>
 				
+				
+				<popup id="popupHistorique" style="padding:0px; margin:0px;">
+					<vlayout style="overflow:auto;padding:0px;margin:0px;" width="200px" height="200px">
+						<label id="descriptionRechercheHistorique"/>
+						<grid id="gridFiltreHistorique" fixedLayout="true" style="border:0px;padding:0px; margin:0px;">
+							<columns/>
+							<rows/>
+						</grid>
+					</vlayout>
+				</popup>
+				
+				
+				
 			<!-- ************************* -->
 			<!-- Historique des recherches -->
 			<!-- ************************* -->
@@ -148,5 +161,6 @@
 				</grid>
 			</vbox>
 		</hbox>
+		
 </window>
 </zk>
