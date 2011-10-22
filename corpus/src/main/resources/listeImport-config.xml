@@ -13,6 +13,7 @@
 		<property name="ligneSplitter" ref="splitter" />
 		<property name="corpus" ref="corpus" />
 		<property name="simulation" value="false"></property>
+		<property name="catégorieImportation" ref="listeParticularitésCatégorie"/>
 	</bean>
 
 	<util:list id="listes" list-class="java.util.ArrayList"
@@ -48,6 +49,7 @@
 				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/formatMtl-cas.csv" />
 			</bean>
 		</property>
+		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>	
 
 	<bean id="listePrimaire-1" class="com.servicelibre.corpus.entity.Liste">
@@ -58,6 +60,7 @@
 				<constructor-arg value="${java.io.tmpdir}/primaire-01.csv" />
 			</bean>
 		</property>
+		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>
 	<bean id="listePrimaire-2" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="2e année primaire" />
@@ -67,6 +70,7 @@
 				<constructor-arg value="${java.io.tmpdir}/primaire-02.csv" />
 			</bean>
 		</property>
+		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>
 	<bean id="listePrimaire-3" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="3e année primaire" />
@@ -94,6 +98,7 @@
 				<constructor-arg value="${java.io.tmpdir}/primaire-05.csv" />
 			</bean>
 		</property>
+		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>
 		<bean id="listePrimaire-6" class="com.servicelibre.corpus.entity.Liste">
 		<constructor-arg value="6e année primaire" />
@@ -149,6 +154,24 @@
 	</bean>
 
 
+	<!-- Catégorie de listes -->
+	<bean id="listePartitionnementCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+		<constructor-arg name="corpus" ref="corpus"/>
+		<constructor-arg name="nom" value="Listes"/>
+		<constructor-arg name="description" value="Listes partitionnement des mots"/>
+	</bean>
+	
+	<bean id="listeParticularitésCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+		<constructor-arg name="corpus" ref="corpus"/>
+		<constructor-arg name="nom" value="Particularités"/>
+		<constructor-arg name="description" value="Listes de particularités"/>
+	</bean>
+	
+	<bean id="listeThématiquesCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+		<constructor-arg name="corpus" ref="corpus"/>
+		<constructor-arg name="nom" value="Thèmes"/>
+		<constructor-arg name="description" value="Listes thématiques"/>
+	</bean>
 
 	<bean id="splitter" class="com.servicelibre.corpus.liste.LigneMtlMotSplitter" />
 

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -61,7 +62,7 @@ public class ListeManagerTest implements ApplicationContextAware
         }
     }
 
-    @Test
+    @Ignore
     @Transactional
     public void créationListes()
     {

@@ -13,9 +13,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.corpus.manager.CatégorieListeManager;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
@@ -45,6 +47,8 @@ public class ListeImport {
 	private boolean simulation = true;
 	
 	private Map<String, Liste> listesCache = new HashMap<String, Liste>();
+	
+	private CatégorieListe catégorieImportation;
 
 	@Transactional
 	public int execute(Liste infoListe) {
@@ -178,9 +182,13 @@ public class ListeImport {
 					liste);
 			
 			liste.setCorpus(getOrCreateCorpus(this.corpus));
-
+			
+			catégorieImportation = getOrCreateCatégorieListe(this.catégorieImportation);
+			liste.setCatégorieListe(catégorieImportation);
+			
 			// récupération de l'ordre le plus élevé
 			int maxOrdre = lm.findMaxOrdre();
+			
 			liste.setOrdre(maxOrdre + 10);
 
 			
@@ -238,6 +246,36 @@ public class ListeImport {
 		}
 
 	}
+	
+	private CatégorieListe getOrCreateCatégorieListe(CatégorieListe catégorie) {
+		CatégorieListeManager clm = (CatégorieListeManager) ctx.getBean("catégorieListeManager");
+		
+		if (catégorie == null || catégorie.getNom().isEmpty()) {
+			logger.error("Il faut préciser une catégorie!");
+			return null;
+		}
+
+		// Est-ce que la catégorie existe-déjà?
+		CatégorieListe dbCatégorieListe = clm.findByNom(catégorie.getNom());
+
+		if (dbCatégorieListe == null) {
+			if(simulation) {
+				logger.info("Simulation de la création de la catégorie {} dans la base de données.",
+						catégorie);
+			}
+			else {
+				clm.save(catégorie);
+				logger.info("Création de la catégorie {} dans la base de données.",
+						catégorie);
+			}
+			return catégorie;
+		} else {
+			logger.info("La catégorie {} a été trouvée dans la base de données.",
+					catégorie);
+			return dbCatégorieListe;
+		}
+		
+	}
 
 	public List<Liste> getListes() {
 		return listes;
@@ -275,6 +313,14 @@ public class ListeImport {
 
 	public void setSimulation(boolean simulation) {
 		this.simulation = simulation;
+	}
+
+	public CatégorieListe getCatégorieImportation() {
+		return catégorieImportation;
+	}
+
+	public void setCatégorieImportation(CatégorieListe catégorieImportation) {
+		this.catégorieImportation = catégorieImportation;
 	}
 
 	

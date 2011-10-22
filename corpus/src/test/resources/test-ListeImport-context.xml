@@ -12,6 +12,7 @@
 		<property name="corpus" ref="corpus" />
 		<property name="ligneSplitter" ref="splitter" />
 		<property name="simulation" value="false"></property>
+		<property name="catégorieImportation" ref="listePartitionnementCatégorie"/>
 	</bean>
 
 	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
@@ -62,5 +63,24 @@
 	<!--${properties} -->
 	<context:property-placeholder />
 
+
+	<!-- Catégorie de listes -->
+	<bean id="listePartitionnementCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+		<constructor-arg name="corpus" ref="corpus"/>
+		<constructor-arg name="nom" value="Listes"/>
+		<constructor-arg name="description" value="Listes partitionnement des mots"/>
+	</bean>
+	
+	<bean id="listeParticularitésCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+		<constructor-arg name="corpus" ref="corpus"/>
+		<constructor-arg name="nom" value="Particularités"/>
+		<constructor-arg name="description" value="Listes de particularités"/>
+	</bean>
+	
+	<bean id="listeThématiquesCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+		<constructor-arg name="corpus" ref="corpus"/>
+		<constructor-arg name="nom" value="Thèmes"/>
+		<constructor-arg name="description" value="Listes thématiques"/>
+	</bean>
 
 </beans>

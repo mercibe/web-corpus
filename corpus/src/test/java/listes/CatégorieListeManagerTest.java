@@ -81,8 +81,8 @@ public class CatégorieListeManagerTest implements ApplicationContextAware
 	System.out.println("Catégorie id = " + catégorie.getId());
 	
 	// Création de listes et association avec cette catégorie
-	Liste lThématique1 = new Liste("à la maison", "Liste des mots du vocabulaire utilisé à la maison", corpus);
-	Liste lThématique2 = new Liste("à l'école", "Liste des mots du vocabulaire utilisé à l'école", corpus);
+	Liste lThématique1 = new Liste("à la maison", "Liste des mots du vocabulaire utilisé à la maison", corpus, catégorie);
+	Liste lThématique2 = new Liste("à l'école", "Liste des mots du vocabulaire utilisé à l'école", corpus, catégorie);
 
 	lm.save(lThématique1);
 	lm.save(lThématique2);
