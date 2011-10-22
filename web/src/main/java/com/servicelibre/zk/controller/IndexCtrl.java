@@ -39,6 +39,8 @@ VariableResolver {
 			tab.close();
 			tab = (Tab)corpusTabs.getLastChild();
 		}
+		((Tab)corpusTabs.getFirstChild()).setSelected(true);
+		
 	}
 	
 	@Override

@@ -1,6 +1,6 @@
 		<groupbox  width="286px" height="204px">
 			<caption>Historique des recherches</caption>
-			<grid id="historiqueRecherchesGrid" fixedLayout="true" height="195px"
+			<grid id="historiqueRecherchesGrid" fixedLayout="true" style="border:0px" height="193px"
 					
 					emptyMessage="Aucune recherche dans l'historique.">
 					<columns sizable="false">

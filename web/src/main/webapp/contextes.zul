@@ -86,7 +86,6 @@
 					</hbox>
 					
 					<div align="center" style="margin-top:10px;">
-	<!-- 					<button id="boutonAjoutFiltre" label="ajouter" disabled="false" image=""/> -->
 						 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
 	                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs"/>
 						 <button  id="boutonEffacerFiltre" image="/images/effacer-2-16x16.png"
@@ -94,7 +93,7 @@
 					</div>
 					
 					<grid id="gridFiltreActif" fixedLayout="true"
-						 style="margin-top:10px;" emptyMessage="Aucun filtre actif." height="255px">
+						 style="margin-top:10px; border:0px" emptyMessage="Aucun filtre actif." height="255px">
 						<auxhead sclass="category-center">
 							<auxheader label="Filtres actifs" colspan="2"
 								rowspan="1" />
@@ -105,6 +104,7 @@
 	
 				</groupbox>
 				
+				
 				<popup id="popupHistorique" style="padding:0px; margin:0px;">
 					<vlayout style="overflow:auto;padding:0px;margin:0px;" width="200px" height="200px">
 						<label id="descriptionRechercheHistorique"/>
@@ -114,7 +114,7 @@
 						</grid>
 					</vlayout>
 				</popup>
-			
+				
 			<!-- ************************* -->
 			<!-- Historique des recherches -->
 			<!-- ************************* -->

@@ -89,7 +89,7 @@
 					</div>
 					
 					<grid id="gridFiltreActif" fixedLayout="true"
-						 style="margin-top:10px;" emptyMessage="Aucun filtre actif." height="255px">
+						 style="margin-top:10px; border:0px" emptyMessage="Aucun filtre actif." height="255px">
 						<auxhead sclass="category-center">
 							<auxheader label="Filtres actifs" colspan="2"
 								rowspan="1" />
