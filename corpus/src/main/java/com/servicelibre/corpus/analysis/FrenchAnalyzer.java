@@ -89,7 +89,7 @@ public final class FrenchAnalyzer extends Analyzer
      */
     public FrenchAnalyzer()
     {
-        this(Version.LUCENE_30);
+        this(Version.LUCENE_33);
     }
 
     /**

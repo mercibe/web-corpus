@@ -44,6 +44,7 @@ import com.servicelibre.corpus.service.ContexteSet.Position;
 import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
+import com.servicelibre.corpus.service.LigatureService;
 import com.servicelibre.corpus.service.PhraseService;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
@@ -59,6 +60,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	private static Logger logger = LoggerFactory.getLogger(ContexteCtrl.class);
 
 	private static final int MAX_COOCCURRENTS = 100;
+	
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
 
@@ -200,7 +202,8 @@ public class ContexteCtrl extends CorpusCtrl {
 		recherche.setChaîne(motCherché);
 
 		// si le mot n'est pas un lemme, rechercher ce mot seulement
-		if (!corpusService.isLemme(motCherché)) {
+		// FIXME hack - ou qu'il contient un tiret...
+		if (!corpusService.isLemme(motCherché) || motCherché.contains("-")) {
 			// ajustement du critère de recherche
 			condition.setSelectedIndex(0);
 		}
@@ -235,10 +238,10 @@ public class ContexteCtrl extends CorpusCtrl {
 		case CONTEXTE:
 			switch (RechercheContexte.PrécisionChaîne.valueOf(recherche.précisionChaîne)) {
 			case EXACTEMENT_LE_MOT:
-				contexteSet = corpusService.getContextesMot(recherche.chaîne, recherche.filtres);
+				contexteSet = corpusService.getContextesMot(prépareChaîneMot(recherche.chaîne), recherche.filtres);
 				break;
 			case TOUTES_LES_FORMES_DU_MOT:
-				contexteSet = corpusService.getContextesLemme(recherche.chaîne, recherche.filtres);
+				contexteSet = corpusService.getContextesLemme(prépareChaîneLemme(recherche.chaîne), recherche.filtres);
 				break;
 			default:
 				logger.error("PrécisionChaîne invalide pour une recherche de contextes: " + recherche.précisionChaîne);
@@ -255,6 +258,24 @@ public class ContexteCtrl extends CorpusCtrl {
 		}
 
 		return contexteSet;
+	}
+
+	/**
+	 * Hack en attendant couche Lucene OK (alignement analyser/query paser, etc.)
+	 * @param recherche
+	 * @return
+	 */
+	private String prépareChaîneLemme(String chaîne) {
+	     return chaîne.replaceAll("-", " ");
+	}
+
+	/**
+	 * Hack en attendant couche Lucene OK (alignement analyser/query paser, etc.)
+	 * @param recherche
+	 * @return
+	 */
+	private String prépareChaîneMot(String rechechaînerche) {
+	    return "\"" + prépareChaîneLemme(rechechaînerche) + "\"";
 	}
 
 	private int getVoisinageUtilisateur() {

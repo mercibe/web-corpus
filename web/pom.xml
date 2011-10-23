@@ -10,7 +10,6 @@
 		<version>6-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.servicelibre</groupId>
 	<artifactId>web-corpus</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 
@@ -422,9 +421,6 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.5-FINAL</version>
-			<type>pom</type>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

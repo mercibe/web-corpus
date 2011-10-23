@@ -91,9 +91,19 @@ public class LuceneIndexManager
 
     private FSDirectory dossierIndex;
 
+    private String champRecherche;
+
     public LuceneIndexManager(FSDirectory dossierIndex, Analyzer analyseur) {
 	super();
 	this.analyseur = analyseur;
+	this.champRecherche = DEFAULT_SEARCH_FIELD;
+	setDossierIndex(dossierIndex);
+    }
+
+    public LuceneIndexManager(FSDirectory dossierIndex, Analyzer analyseur, String champRecherche) {
+	super();
+	this.analyseur = analyseur;
+	this.champRecherche = champRecherche;
 	setDossierIndex(dossierIndex);
     }
 
@@ -107,15 +117,17 @@ public class LuceneIndexManager
 	try {
 	    reader = IndexReader.open(dossierIndex, true);
 	} catch (CorruptIndexException e) {
-	    logger.error("Erreur lors de la récupération d,un reader sur l'index Lucene", e);
+	    logger.error("Erreur lors de la récupération d'un reader sur l'index Lucene", e);
 	} catch (IOException e) {
-	    logger.error("Erreur lors de la récupération d,un reader sur l'index Lucene", e);
+	    logger.error("Erreur lors de la récupération d'un reader sur l'index Lucene", e);
 
 	}
 	searcher = new IndexSearcher(reader);
 
-	// FIXME txt devrait venir via config (Spring ou configurator?)
-	queryParser = new QueryParser(Version.LUCENE_30, DEFAULT_SEARCH_FIELD, analyseur);
+	// Toujours s'assurer que le query parser utilise bien l'analyseur qui a
+	// été utilisé pour indexer
+	// le champ sur le quel s'effectue la recherche!
+	queryParser = new QueryParser(Version.LUCENE_33, champRecherche, analyseur);
     }
 
     public Document getDocument(String docId) {
@@ -162,7 +174,7 @@ public class LuceneIndexManager
 		// Split sur blanc et construction du phrase query
 		String[] terms = query.split(" ");
 		for (String term : terms) {
-		    pq.add(new Term(DEFAULT_SEARCH_FIELD, term));
+		    pq.add(new Term(this.champRecherche, term));
 		}
 		bQuery.add(pq, Occur.MUST);
 	    } else {
@@ -288,6 +300,7 @@ public class LuceneIndexManager
     public RésultatRecherche getDocumentsWithContexts(List<String> formes, int tailleVoisinage, FiltreRecherche filtres) {
 	RésultatRecherche résultat = new RésultatRecherche();
 
+	logger.debug("formes à chercher: " + formes);
 	logger.debug("Query string = {}", queryParser.toString());
 	SpanOrQuery spanOrQuery = getSpanOrQuery(formes);
 	logger.debug("Query Span {}", spanOrQuery);
@@ -318,7 +331,7 @@ public class LuceneIndexManager
 	    SpanTermQuery clauses[] = new SpanTermQuery[formes.size()];
 
 	    for (int i = 0; i < formes.size(); i++) {
-		clauses[i] = new SpanTermQuery(new Term(DEFAULT_SEARCH_FIELD, formes.get(i)));
+		clauses[i] = new SpanTermQuery(new Term(champRecherche, formes.get(i)));
 	    }
 
 	    spanOrQuery = new SpanOrQuery(clauses);
@@ -346,11 +359,11 @@ public class LuceneIndexManager
 		String[] strings = query.split(" ");
 		clauses = new SpanTermQuery[strings.length];
 		for (int i = 0; i < strings.length; i++) {
-		    clauses[i] = new SpanTermQuery(new Term(DEFAULT_SEARCH_FIELD, strings[i]));
+		    clauses[i] = new SpanTermQuery(new Term(this.champRecherche, strings[i]));
 		}
 	    } else {
 		clauses = new SpanTermQuery[1];
-		clauses[0] = new SpanTermQuery(new Term(DEFAULT_SEARCH_FIELD, query));
+		clauses[0] = new SpanTermQuery(new Term(this.champRecherche, query));
 	    }
 
 	    // FIXME configurable
@@ -435,12 +448,11 @@ public class LuceneIndexManager
 				// Chargement du vecteur des termes dans une
 				// structure
 				// qui facilite la gestion de leur position
-				reader.getTermFreqVector(currentDocId, DEFAULT_SEARCH_FIELD, tvm);
+				reader.getTermFreqVector(currentDocId, champRecherche, tvm);
 
 				// Recupération du champ texte du document
 				// courant
-				txtField = reader.document(currentDocId, new MapFieldSelector(DEFAULT_SEARCH_FIELD)).getField(DEFAULT_SEARCH_FIELD)
-					.stringValue();
+				txtField = reader.document(currentDocId, new MapFieldSelector(champRecherche)).getField(champRecherche).stringValue();
 
 			    } catch (IOException e) {
 				logger.error("Erreur lors de l'accès à l'index Lucene", e);
@@ -448,7 +460,7 @@ public class LuceneIndexManager
 
 			    Map<String, Map<Integer, TVPositionInfo>> fieldToTerms = tvm.getFieldToTerms();
 
-			    tokenPositions = fieldToTerms.get(DEFAULT_SEARCH_FIELD);
+			    tokenPositions = fieldToTerms.get(champRecherche);
 			}
 
 			oldDoc = currentDocId;
@@ -479,6 +491,30 @@ public class LuceneIndexManager
 			int stopSpanIndex = endOffsetInfo.getEndOffset();
 
 			// Récupération des contextes sous forme de 4 Strings
+			if (stopContextIndex >= txtField.length()) {
+			    System.err.println("analyseur: " + this.analyseur.getClass().getName());
+			    System.err.println("queryParser: " + this.queryParser.getClass().getName());
+
+			    System.err.println("txtField.length() = " + txtField.length() + ", startContextIndex=" + startContextIndex + ", stopContextIndex="
+				    + stopContextIndex);
+			    System.err.println(txtField.substring(startContextIndex));
+			    for (int i : result.documentContexts.keySet()) {
+
+				System.err.println(i + "    ************************ ");
+				for (String[] c : result.documentContexts.get(i)) {
+
+				    System.err.println(c[1] + "=>" + c[2] + "<=" + c[3]);
+
+				    // for(String s : c)
+				    // {
+				    // System.err.println("=====================");
+				    // }
+
+				}
+
+			    }
+			}
+
 			contextParts[0] = txtField.substring(startContextIndex, stopContextIndex); // gauche
 												   // +
 												   // mot
@@ -560,11 +596,11 @@ public class LuceneIndexManager
 		String[] strings = query.split(" ");
 		clauses = new SpanTermQuery[strings.length];
 		for (int i = 0; i < strings.length; i++) {
-		    clauses[i] = new SpanTermQuery(new Term(DEFAULT_SEARCH_FIELD, strings[i]));
+		    clauses[i] = new SpanTermQuery(new Term(champRecherche, strings[i]));
 		}
 	    } else {
 		clauses = new SpanTermQuery[1];
-		clauses[0] = new SpanTermQuery(new Term(DEFAULT_SEARCH_FIELD, query));
+		clauses[0] = new SpanTermQuery(new Term(champRecherche, query));
 	    }
 
 	    // FIXME configurable
@@ -643,7 +679,7 @@ public class LuceneIndexManager
 			spanCount++;
 
 			// FIXME lent...
-			String[] contextes = getContexte(reader, DEFAULT_SEARCH_FIELD, spans, tvm, window);
+			String[] contextes = getContexte(reader, champRecherche, spans, tvm, window);
 
 			List<String[]> docContexts = result.documentContexts.get(spans.doc());
 
@@ -852,9 +888,9 @@ public class LuceneIndexManager
 	return topTerms;
     }
 
-    public static String getDefaultSearchField() {
-	return DEFAULT_SEARCH_FIELD;
-    }
+    // public static String getDefaultSearchField() {
+    // return DEFAULT_SEARCH_FIELD;
+    // }
 
     public IndexReader getReader() {
 	return reader;

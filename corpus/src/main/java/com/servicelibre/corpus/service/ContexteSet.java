@@ -20,7 +20,7 @@ import com.servicelibre.corpus.manager.FiltreRecherche;
 
 public class ContexteSet {
 
-	private static FranqusLexicalAnalyzer lexicalAnalyzer = new FranqusLexicalAnalyzer(Version.LUCENE_30);
+	private static FranqusLexicalAnalyzer lexicalAnalyzer = new FranqusLexicalAnalyzer(Version.LUCENE_33);
 
 	public enum Position {
 		AVANT, APRÈS, AVANT_APRÈS

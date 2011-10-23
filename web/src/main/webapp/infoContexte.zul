@@ -18,7 +18,7 @@
 		</div>
 	</north>
 	<center autoscroll="true" border="none">
-		<div align="center" style="margin:15px;" height="200px">
+		<div align="center" style="margin:15px;" vflex="min">
 				<div align="left" style="margin:15px;"  >
 				
 					<label value="${arg.voisinage_g}" multiline="true"/>

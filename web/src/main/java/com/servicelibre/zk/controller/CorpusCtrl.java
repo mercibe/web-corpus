@@ -46,6 +46,7 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.corpus.service.LigatureService;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheExécution;
 
@@ -56,6 +57,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	 */
 	private static final long serialVersionUID = -5225701427150774798L;
 
+	protected final static LigatureService ligatureService = new LigatureService();
+	
 	SimpleDateFormat df_historique = new SimpleDateFormat("HH:mm:ss");
 
 	Textbox cherche; // autowire car même type/ID que le composant dans la page
@@ -528,7 +531,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	}
 
 	protected String getMotCherché() {
-		return cherche.getText().trim();
+		return ligatureService.getMotAvecLigature(cherche.getText().trim());
 	}
 
 	protected String getEntêteCsv(Grid grid, String séparateur) {

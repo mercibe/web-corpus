@@ -123,6 +123,15 @@ public class CorpusServiceTest {
 
 	System.out.println("Trouvé " + contexteSet.size() + " formes du lemme " + lemme + " dans " + contexteSet.getDocumentCount() + " documents.");
 
+	// FIXME devrait fonctionner!
+//	lemme = "grand-père";
+//	contexteSet = cs.getContextesLemme(lemme);
+//
+//	assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
+//	assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+//
+//	System.out.println("Trouvé " + contexteSet.size() + " formes du lemme " + lemme + " dans " + contexteSet.getDocumentCount() + " documents.");
+	
     }
 
     @Test

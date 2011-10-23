@@ -44,6 +44,7 @@ import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.manager.MotManager.Condition;
 import com.servicelibre.corpus.manager.PrononciationManager;
+import com.servicelibre.corpus.service.LigatureService;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheExécution;
 import com.servicelibre.zk.recherche.RechercheMot;
