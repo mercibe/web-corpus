@@ -21,20 +21,30 @@ public class RechercheMot extends Recherche {
 			
 			String enrobée = chaîne;
 			String laCible = "";
+			String préposition = "à ";
+			
 			if (cible == Cible.PRONONCIATION) {
 				enrobée = "[" + chaîne + "]";
 				laCible = "la prononciation ";
 			}
 			else {
 				enrobée = "« " + chaîne + " »";
-				laCible = "la graphie ";
+				// la lettre, les lettres
+				if (chaîne.length() == 1){
+				    laCible = "la lettre ";
+				}
+				else
+				{
+				    préposition = "aux ";
+				    laCible = "les lettres ";
+				}
 			}
 
 			Condition précision = MotManager.Condition.valueOf(this.précisionChaîne);
 
 			switch (précision) {
 			case ENTIER:
-				desc.append("correspondent exactement ").append("à ").append(laCible).append(enrobée);
+				desc.append("correspondent exactement ").append(préposition).append(laCible).append(enrobée);
 				break;
 			case COMMENCE_PAR: 
 				desc.append("commencent par ").append(laCible).append(enrobée);

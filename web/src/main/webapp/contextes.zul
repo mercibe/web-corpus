@@ -134,8 +134,8 @@
 								<a id="cooccurrentLien" visible="false">cooccurrents</a>
 						</div>
 						<div align="right">
-<!-- 							<image id="exportationCsv"	src="/images/csv.png" class="clicable"/> -->
-							<image id="exportationXls"	src="/images/xls.png" class="clicable"/>
+<!-- 							<image id="exportationCsv"	src="/images/csv.png" class="cliquable"/> -->
+							<image id="exportationXls"	src="/images/xls.png" class="cliquable" tooltiptext="exporter les résultats"/>
 						</div>
 					</hbox>
 							
