@@ -75,15 +75,16 @@ public class CorpusServiceTest {
 
 	Corpus corpus = new Corpus("Corpus de test nouveau", "");
 
-	corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
+	String dossierData = System.getProperty("java.io.tmpdir") + File.separator + "index";
+	corpus.setDossierData(dossierData);
 
 	CorpusService cs = new CorpusService(cm, corpus);
 
 	String mot = "chien";
 	ContexteSet contexteSet = cs.getContextesMot(mot);
 
-	assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
-	assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
+	assertNotNull("La liste des contextes ne peut être null.  Le dossier des données existe-t-il ? " + dossierData, contexteSet.getContextes());
+	assertTrue("La liste des contextes de ne peut être vide.  Le dossier des données existe-t-il ? " + dossierData, contexteSet.size() > 0);
 
 	System.out.println("Trouvé " + contexteSet.size() + " occurrences du mot " + mot + " dans " + contexteSet.getDocumentCount() + " documents.");
 

@@ -88,7 +88,7 @@ public class MotInfo
         // Si catgram NULL, problème à signaler
         if (catgram == null)
         {
-            System.err.println("catgram.id == NULL pour " + mot + "|" + lemme);
+            System.err.println("catgram.id == NULL pour " + mot + "|" + lemme + "|" + note);
             sb.append("NULL");
         }
         else
@@ -267,44 +267,71 @@ public class MotInfo
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((catgram == null) ? 0 : catgram.hashCode());
-        result = prime * result + ((lemme == null) ? 0 : lemme.hashCode());
-        result = prime * result + ((mot == null) ? 0 : mot.hashCode());
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((catgram == null) ? 0 : catgram.hashCode());
+		result = prime * result + ((lemme == null) ? 0 : lemme.hashCode());
+		result = prime * result + ((mot == null) ? 0 : mot.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MotInfo other = (MotInfo) obj;
+		if (catgram == null) {
+			if (other.catgram != null)
+				return false;
+		} else if (!catgram.equals(other.catgram))
+			return false;
+		if (lemme == null) {
+			if (other.lemme != null)
+				return false;
+		} else if (!lemme.equals(other.lemme))
+			return false;
+		if (mot == null) {
+			if (other.mot != null)
+				return false;
+		} else if (!mot.equals(other.mot))
+			return false;
+		return true;
+	}
+	
+	    public boolean equalsOld(Object obj)
+	    {
+	        if (this == obj) return true;
+	        if (obj == null) return false;
+	        if (getClass() != obj.getClass()) return false;
 
-        MotInfo other = (MotInfo) obj;
+	        MotInfo other = (MotInfo) obj;
 
-        if (catgram == null)
-        {
-            if (other.catgram != null) return false;
-        }
-        else if (!catgram.id.equals(other.catgram.id)) return false;
+	        if (catgram == null)
+	        {
+	            if (other.catgram != null) return false;
+	        }
+	        else if (!catgram.id.equals(other.catgram.id)) return false;
 
-        if (lemme == null)
-        {
-            if (other.lemme != null) return false;
-        }
-        else if (!lemme.equals(other.lemme)) return false;
+	        if (lemme == null)
+	        {
+	            if (other.lemme != null) return false;
+	        }
+	        else if (!lemme.equals(other.lemme)) return false;
 
-        if (mot == null)
-        {
-            if (other.mot != null) return false;
-        }
-        else if (!mot.equals(other.mot)) return false;
+	        if (mot == null)
+	        {
+	            if (other.mot != null) return false;
+	        }
+	        else if (!mot.equals(other.mot)) return false;
 
-        return true;
-    }
+	        return true;
+	    }
+
+   
 
 }
