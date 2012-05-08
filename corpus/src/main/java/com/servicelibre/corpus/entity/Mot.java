@@ -3,6 +3,7 @@ package com.servicelibre.corpus.entity;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.persistence.CascadeType;
@@ -13,8 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -31,23 +32,16 @@ public class Mot implements Comparable<Mot> {
 	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
 
 	@Id
-	@SequenceGenerator(name = "mot_seq", sequenceName = "mot_seq")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mot_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	// Liste primaire
 	@OneToOne
 	private Liste liste;
 
-	/*
-	 * Mot est maître de la relation ManyToMany (il n'a pas le « mappedBy») Il
-	 * est donc responsable de la gestion bi-directionnelle de la relation
-	 * (insert/update)
-	 */
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "mot_liste")
-	Collection<Liste> listes = new ArrayList<Liste>();
-
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL)
+	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
+	
 	@Column(nullable = false)
 	String mot;
 
@@ -121,7 +115,6 @@ public class Mot implements Comparable<Mot> {
 			String catgramPrécision, boolean ro, String note) {
 		super();
 		this.liste = liste;
-		this.listes.add(liste);
 		this.mot = mot;
 		this.lemme = lemme;
 		this.isLemme = isLemme;
@@ -245,16 +238,6 @@ public class Mot implements Comparable<Mot> {
 		return prononcs.toString();
 	}
 
-	public Collection<Liste> getListes() {
-		return listes;
-	}
-
-	public void setListes(Collection<Liste> listes) {
-		this.listes = listes;
-	}
-
-	
-	
 	public String getLemme() {
 		return lemme;
 	}
@@ -265,6 +248,15 @@ public class Mot implements Comparable<Mot> {
 
 	public String getAutreGraphie() {
 		return autreGraphie;
+	}
+
+
+	public boolean isLemme() {
+		return isLemme;
+	}
+
+	public void setLemme(boolean isLemme) {
+		this.isLemme = isLemme;
 	}
 
 	@Override
@@ -293,23 +285,14 @@ public class Mot implements Comparable<Mot> {
 		return this;
 	}
 
-	/**
-	 * Gestion de l'ajout de couple mot/liste (étiquette) dans la relation
-	 * ManyToMany qui unit Mot et Liste
-	 * 
-	 * @param liste
-	 * @return
-	 */
-	public Mot ajouteListe(Liste liste) {
-		if (!getListes().contains(liste)) {
-			getListes().add(liste);
-		}
+	
+	
+	public List<ListeMot> getListeMots() {
+		return listeMots;
+	}
 
-		if (!liste.getMots().contains(this)) {
-			liste.getMots().add(this);
-		}
-
-		return this;
+	public void setListeMots(List<ListeMot> listeMots) {
+		this.listeMots = listeMots;
 	}
 
 }

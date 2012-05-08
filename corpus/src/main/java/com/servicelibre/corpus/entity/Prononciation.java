@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -23,8 +22,7 @@ public class Prononciation implements Comparable<Prononciation> {
 	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
 
 	@Id
-	@SequenceGenerator(name = "prononciation_seq", sequenceName = "prononciation_seq")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "prononciation_seq")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@ManyToMany(mappedBy = "prononciations", cascade = CascadeType.ALL)

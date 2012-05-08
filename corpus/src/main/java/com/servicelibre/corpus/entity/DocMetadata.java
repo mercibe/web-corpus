@@ -7,14 +7,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"corpus_id", "champindex" }))
 public class DocMetadata {
 
 	@Id
-	@SequenceGenerator(name = "docmetadata_seq", sequenceName = "docmetadata_seq")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "docmetadata_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	long id;
 
 	@Column

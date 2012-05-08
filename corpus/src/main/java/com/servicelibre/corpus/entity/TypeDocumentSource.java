@@ -5,14 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 
 @Entity
 public class TypeDocumentSource {
 
     @Id
-    @SequenceGenerator(name = "typeDocumentSource_seq", sequenceName = "typeDocumentSource_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "typeDocumentSource_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     
     @Column

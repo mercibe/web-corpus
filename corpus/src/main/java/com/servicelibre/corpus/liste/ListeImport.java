@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
+import com.servicelibre.corpus.entity.ListeMot;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.manager.CatégorieListeManager;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
+import com.servicelibre.corpus.manager.ListeMotManager;
 import com.servicelibre.corpus.manager.MotManager;
 
 /**
@@ -60,6 +62,7 @@ public class ListeImport {
 		if (fichierSource != null && fichierSource.exists()) {
 
 			MotManager mm = (MotManager) ctx.getBean("motManager");
+			ListeMotManager lmm = (ListeMotManager) ctx.getBean("listeMotManager");
 
 			// Suppression des mots qui existeraient déjà pour cette liste
 			// logger.info("Suppression des mots de la liste {}.",
@@ -123,7 +126,9 @@ public class ListeImport {
 						if (!simulation) {
 							// Le mot est présent dans la base, lui associer sa liste
 							logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]", liste.getNom(), mot.lemme);
-							motCourant.ajouteListe(liste);
+							ListeMot listeMot = new ListeMot(motCourant, liste);
+							lmm.save(listeMot);
+							//motCourant.ajouteListe(liste);
 						}
 						else {
 							logger.info("Simulation de l'ajout de l'étiquette (liste) [{}] au mot [{}]", liste.getNom(), mot.lemme);

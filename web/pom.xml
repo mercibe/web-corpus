@@ -401,13 +401,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.zkoss.spring</groupId>
+			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkspring-security</artifactId>
 			<version>3.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
 		</dependency>
-
 
 
 		<!-- <dependency> -->

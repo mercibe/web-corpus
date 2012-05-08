@@ -11,20 +11,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"corpus_id", "nom"}))
 public class Liste implements Comparable<Liste> {
 
 	@Id
-	@SequenceGenerator(name = "liste_seq", sequenceName = "liste_seq")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "liste_seq")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
 	@Column
@@ -36,9 +34,9 @@ public class Liste implements Comparable<Liste> {
 	@Column
 	Integer ordre;
 
-	@ManyToMany(mappedBy = "listes", cascade = CascadeType.ALL)
-	private List<Mot> mots = new ArrayList<Mot>();
-
+	@OneToMany(mappedBy = "liste", cascade = CascadeType.ALL)
+	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
+	
 	@ManyToOne
 	@JoinColumn(name = "corpus_id")
 	Corpus corpus;
@@ -101,14 +99,6 @@ public class Liste implements Comparable<Liste> {
 		this.description = description;
 	}
 
-	public void setMots(List<Mot> mots) {
-		this.mots = mots;
-	}
-
-	public int size() {
-		return mots.size();
-	}
-
 	public Corpus getCorpus() {
 		return corpus;
 	}
@@ -124,18 +114,18 @@ public class Liste implements Comparable<Liste> {
 			}
 		}
 	}
+	
+	public List<ListeMot> getListeMots() {
+		return listeMots;
+	}
+
+	public void setListeMots(List<ListeMot> listeMots) {
+		this.listeMots = listeMots;
+	}
 
 	@Override
 	public String toString() {
 		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
-	}
-
-	/*
-	 * Gestion relation bidirectionnelle liste/mot
-	 */
-
-	public List<Mot> getMots() {
-		return mots;
 	}
 
 	public void ajouteMot(Mot mot) {
@@ -190,6 +180,13 @@ public class Liste implements Comparable<Liste> {
 	public CatégorieListe getCatégorie() {
 		return catégorie;
 	}
+
+	
+	
+	public void setCatégorie(CatégorieListe catégorie) {
+		this.catégorie = catégorie;
+	}
+
 
 	public void setCatégorieListe(CatégorieListe catégorie) {
 		if (this.catégorie != catégorie) {

@@ -1,7 +1,9 @@
 package com.servicelibre.corpus.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -10,10 +12,13 @@ import javax.persistence.ManyToOne;
 public class Contexte
 {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int Id;
 
     @ManyToOne(optional = false)
-    Mot mot;
+    ListeMot listeMot;
+    
+    @Column
+    String note;
 
 }

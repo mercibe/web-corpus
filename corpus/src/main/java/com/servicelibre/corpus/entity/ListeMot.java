@@ -1,0 +1,103 @@
+package com.servicelibre.corpus.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+/**
+ * Association d'un mot à une liste
+ * 
+ * @author benoitm
+ *
+ */
+@Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"liste_id", "mot_id"}))
+public class ListeMot
+{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int Id;
+
+    
+	/*
+	 * ListeMot est maître de la relation OneToMany (il n'a pas le « mappedBy») Il
+	 * est donc responsable de la gestion bi-directionnelle de la relation
+	 * (insert/update)
+	 */
+    @ManyToOne(optional = false)
+    Mot mot;
+    
+    @ManyToOne(optional = false)
+    Liste liste;
+    
+	@OneToMany(mappedBy = "listeMot", cascade = CascadeType.ALL)
+	private List<Contexte> contextes = new ArrayList<Contexte>();
+
+    
+    @Column
+    String note;
+
+	public ListeMot() {
+		super();
+	}
+
+	public ListeMot(Mot mot, Liste liste) {
+		super();
+		this.mot = mot;
+		this.liste = liste;
+		this.note = "";
+	}
+
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		Id = id;
+	}
+
+	public Mot getMot() {
+		return mot;
+	}
+
+	public void setMot(Mot mot) {
+		this.mot = mot;
+	}
+
+	public Liste getListe() {
+		return liste;
+	}
+
+	public void setListe(Liste liste) {
+		this.liste = liste;
+	}
+
+	public List<Contexte> getContextes() {
+		return contextes;
+	}
+
+	public void setContextes(List<Contexte> contextes) {
+		this.contextes = contextes;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	
+    
+}

@@ -12,17 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"corpus_id", "nom"}))
 public class CatégorieListe {
 
     @Id
-    @SequenceGenerator(name = "catégorieListe_seq", sequenceName = "catégorieListe_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "catégorieListe_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column

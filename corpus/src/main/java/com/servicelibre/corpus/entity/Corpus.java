@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -19,8 +18,7 @@ import javax.persistence.UniqueConstraint;
 public class Corpus {
 
     @Id
-    @SequenceGenerator(name = "corpus_seq", sequenceName = "corpus_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "corpus_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     @Column

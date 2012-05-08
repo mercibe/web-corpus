@@ -2,6 +2,7 @@ package corpus;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -17,43 +18,48 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.manager.CorpusManager;
-import com.servicelibre.corpus.manager.DocMetadataManager;
+import com.servicelibre.corpus.repository.CorpusRepository;
+import com.servicelibre.corpus.repository.DocMetadataRepository;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CorpusManagerTest implements ApplicationContextAware {
-	@Autowired
-	CorpusManager cm;
-	
-	@Autowired
-	DocMetadataManager dmm;
 
+	@Autowired
+	DocMetadataRepository docMetadataRepo;
+
+	@Autowired
+	CorpusRepository corpusRepo;
+
+	@SuppressWarnings("unused")
 	private ApplicationContext ctx;
 
 	@Test
 	@Transactional
 	public void créationCorpus() {
 		Corpus corpus = new Corpus("Corpus de test", "description du corpus de test");
+		// cm.save(corpus);
+		corpus = corpusRepo.save(corpus);
 
-		cm.save(corpus);
-		
+		assertEquals(1, corpusRepo.count());
+		assertEquals("Corpus de test", corpusRepo.findOne(1L).getNom());
+		assertTrue(corpusRepo.exists(corpus.getId()));
+
 		System.out.println("corpus_id: " + corpus.getId());
-		
+
 		DocMetadata docMetadata = new DocMetadata("Catégorie", "La catégorie du document", "categorie", 40, corpus);
 		corpus.getMétadonnéesDoc().add(docMetadata);
-		
-		dmm.save(docMetadata);
-		
+
+		docMetadata = docMetadataRepo.save(docMetadata);
+
 		List<DocMetadata> métadonnéesDoc = corpus.getMétadonnéesDoc();
 
 		assertNotNull(métadonnéesDoc);
 		assertEquals(1, métadonnéesDoc.size());
-		
-		for(DocMetadata métadonnéeDoc : métadonnéesDoc) {
+
+		for (DocMetadata métadonnéeDoc : métadonnéesDoc) {
 			System.out.println(métadonnéeDoc);
 		}
-		
 
 	}
 
