@@ -14,9 +14,9 @@
 <!-- 	<bean id="catégorieListeManager" class="com.servicelibre.corpus.manager.JpaCatégorieListeManager" /> -->
 <!-- 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" /> -->
 <!-- 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" /> -->
-	<bean id="listeMotManager" class="com.servicelibre.corpus.manager.JpaListeMotManager" />
-	<bean id="typeDocumentSourceManager" class="com.servicelibre.corpus.manager.JpaTypeDocumentSourceManager" />
-	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />	
+<!-- 	<bean id="listeMotManager" class="com.servicelibre.corpus.manager.JpaListeMotManager" /> -->
+<!-- 	<bean id="typeDocumentSourceManager" class="com.servicelibre.corpus.manager.JpaTypeDocumentSourceManager" /> -->
+<!-- 	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />	 -->
 
 
 	
@@ -33,5 +33,5 @@
 		package sous com.servicelibre.corpus.manager qui contiennent des interfaces 
 		qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
 <!-- 	<jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
-		<jpa:repositories   base-package="com.servicelibre.corpus.repository" />
+		<jpa:repositories   base-package="com.servicelibre.corpus.repository"/>
 </beans>

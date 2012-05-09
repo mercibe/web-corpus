@@ -19,21 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.corpus.entity.MotPrononciation;
 import com.servicelibre.corpus.entity.Prononciation;
 import com.servicelibre.corpus.liste.ListeImport;
-import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.corpus.manager.PrononciationManager;
+import com.servicelibre.corpus.repository.MotPrononciationRepository;
 import com.servicelibre.corpus.repository.MotRepository;
+import com.servicelibre.corpus.repository.PrononciationRepository;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 public class PrononciationManagerTest implements ApplicationContextAware
 {
     @Autowired
-    PrononciationManager prononcManager;
+    PrononciationRepository prononciationRepo;
 
     @Autowired
     MotRepository motRepo;
+    
+    @Autowired
+    MotPrononciationRepository motPrononciationRepo;
 
     @Autowired
     ListeImport listImport;
@@ -71,36 +75,41 @@ public class PrononciationManagerTest implements ApplicationContextAware
         System.out.println(mangerMot);
 
         Prononciation prononc = new Prononciation("mɑ̃ʒe");
-        mangerMot.ajoutePrononciation(prononc);
         mangerMot = motRepo.save(mangerMot);
+        prononc = prononciationRepo.save(prononc);
+        motPrononciationRepo.save(new MotPrononciation(mangerMot, prononc));
+
         System.out.println("mangerMot ++++++++++++++  " + mangerMot);
 
         List<Mot> mots2 = motRepo.findByMot("blancheur");
         Mot blancheurMot = mots2.get(0);
         Prononciation prononc2 = new Prononciation("blɑ̃ʃœʀ");
-        blancheurMot.ajoutePrononciation(prononc2);
+
         blancheurMot = motRepo.save(blancheurMot);
+        prononc2 = prononciationRepo.save(prononc2);
+        motPrononciationRepo.save(new MotPrononciation(blancheurMot, prononc2));
+
         System.out.println("blancheurMot ++++++++++++++  " + blancheurMot);
 
-        Prononciation prononc3 = prononcManager.findOne((long) 1);
+        Prononciation prononc3 = prononciationRepo.findOne((long) 1);
 
         assertNotNull("La prononciation d'id = " + 1 + " ne peut-être null.", prononc3);
         System.out.println(prononc3);
 
-        List<Prononciation> prononcs = prononcManager.findByMot(mangerMot);
-        assertNotNull(prononcs);
-        assertEquals("Le mot « manger » n'a qu'une seule prononciation", 1, prononcs.size());
-        assertEquals("mɑ̃ʒe", prononcs.get(0).prononciation);
+        List<MotPrononciation> motPrononcs = motPrononciationRepo.findByMot(mangerMot);
+        assertNotNull(motPrononcs);
+        assertEquals("Le mot « manger » n'a qu'une seule prononciation", 1, motPrononcs.size());
+        assertEquals("mɑ̃ʒe", motPrononcs.get(0).getPrononciation().prononciation);
 
-        assertEquals("Le mot « manger » n'a qu'une seule prononciation", 1, mangerMot.getPrononciations().size());
-        assertEquals("mɑ̃ʒe", mangerMot.getPrononciations().iterator().next().prononciation);
+        assertEquals("Le mot « manger » n'a qu'une seule prononciation", 1, mangerMot.getMotPrononciations().size());
+        assertEquals("mɑ̃ʒe", mangerMot.getMotPrononciations().iterator().next().getPrononciation().prononciation);
 
         // suppression d'une prononciation
-        assertTrue(mangerMot.getPrononciations().remove(prononcs.get(0)));
-        assertEquals("Le mot « manger » n'a plus de prononciation", 0, mangerMot.getPrononciations().size());
+        assertTrue(mangerMot.getMotPrononciations().remove(motPrononcs.get(0)));
+        assertEquals("Le mot « manger » n'a plus de prononciation", 0, mangerMot.getMotPrononciations().size());
 
-        prononcs = prononcManager.findByMot(mangerMot);
-        assertEquals("Le mot « manger » n'a plus de prononciation", 0, prononcs.size());
+        motPrononcs = motPrononciationRepo.findByMot(mangerMot);
+        assertEquals("Le mot « manger » n'a plus de prononciation", 0, motPrononcs.size());
     }
 
     //    

@@ -3,8 +3,6 @@ package corpus;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -15,37 +13,34 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.DocMetadata;
 import com.servicelibre.corpus.entity.TypeDocumentSource;
-import com.servicelibre.corpus.manager.CorpusManager;
-import com.servicelibre.corpus.manager.DocMetadataManager;
-import com.servicelibre.corpus.manager.TypeDocumentSourceManager;
+import com.servicelibre.corpus.repository.TypeDocumentSourceRepository;
 
 @ContextConfiguration("CorpusManagerTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TypeDocumentSourceManagerTest implements ApplicationContextAware {
-	
+
 	@Autowired
-	TypeDocumentSourceManager tdsm;
+	TypeDocumentSourceRepository typeDocumentSourceRepo;
 
 	private ApplicationContext ctx;
 
 	@Test
 	@Transactional
 	public void typeDocumentSourceCRUDTest() {
-		
-	    TypeDocumentSource tds = new TypeDocumentSource("Microsoft Word","Document Microsoft Word quelconque.  Les métadonnées sont extraites des prorpiétés du document.","");
-	    
-	    tdsm.save(tds);
-	    
-	    TypeDocumentSource tdsDB = tdsm.findOne(tds.getId());
-	    
-	    assertNotNull(tdsDB);
-	    assertNotNull(tdsDB.getId());
-	    assertNotNull(tdsDB.getNom());
-	    assertEquals("Microsoft Word",tdsDB.getNom());
-	    
+
+		TypeDocumentSource tds = new TypeDocumentSource("Microsoft Word",
+				"Document Microsoft Word quelconque.  Les métadonnées sont extraites des prorpiétés du document.", "");
+
+		tds = typeDocumentSourceRepo.save(tds);
+
+		TypeDocumentSource tdsDB = typeDocumentSourceRepo.findOne(tds.getId());
+
+		assertNotNull(tdsDB);
+		assertNotNull(tdsDB.getId());
+		assertNotNull(tdsDB.getNom());
+		assertEquals("Microsoft Word", tdsDB.getNom());
+
 	}
 
 	@Override

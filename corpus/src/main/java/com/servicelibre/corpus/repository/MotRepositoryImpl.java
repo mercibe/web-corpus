@@ -1,4 +1,4 @@
-package com.servicelibre.corpus.manager;
+package com.servicelibre.corpus.repository;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,31 +22,33 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.corpus.entity.MotPrononciation;
 import com.servicelibre.corpus.entity.Prononciation;
-import com.servicelibre.corpus.repository.MotRepository;
-import com.servicelibre.corpus.repository.MotRepositoryCustom;
+import com.servicelibre.corpus.manager.Filtre;
+import com.servicelibre.corpus.manager.FiltreRecherche;
 
-@Repository
-public class MotRepositoryCustomImpl implements MotRepositoryCustom {
+public class MotRepositoryImpl implements MotRepositoryCustom {
 
-	private static Logger logger = LoggerFactory.getLogger(MotRepositoryCustomImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(MotRepositoryImpl.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
 	MotRepository motRepository;
+	
+	@Autowired
+	MotPrononciationRepository motPrononciationRepo;
 
 	@Autowired
-	PrononciationManager prononciationManager;
+	PrononciationRepository prononciationRepo;
 
 	private CriteriaBuilder builder;
 
-	public MotRepositoryCustomImpl() {
+	public MotRepositoryImpl() {
 		super();
 	}
 
@@ -58,11 +60,10 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 
 		Prononciation prononciation = null;
 
-		prononciation = prononciationManager.findByPrononciation(phonétique);
+		prononciation = prononciationRepo.findByPrononciation(phonétique);
 
 		if (prononciation == null) {
-			prononciation = new Prononciation(phonétique);
-			prononciationManager.save(prononciation);
+			prononciation = prononciationRepo.save(new Prononciation(phonétique));
 		}
 
 		// logger.debug("importation de la prononciation {}",
@@ -71,9 +72,8 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 		// Rechercher le/les éventuels mot/forme associés et lier
 		List<Mot> mots = motRepository.findByMot(forme);
 		for (Mot mot : mots) {
-			mot.ajoutePrononciation(prononciation);
-			logger.debug("liaison de la prononciation {} à la forme {}", prononciation.prononciation, forme);
-			mot = motRepository.save(mot);
+			MotPrononciation motPrononciation = motPrononciationRepo.save(new MotPrononciation(mot, prononciation));
+			logger.debug("liaison de la prononciation {} à la forme {}", motPrononciation.getPrononciation(), forme);
 			liaisonCpt++;
 		}
 
@@ -81,12 +81,12 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 	}
 
 	@Override
-	public List<Mot> g(String graphie, Condition condition) {
-		return g(graphie, condition, null);
+	public List<Mot> findByGraphie(String graphie, Condition condition) {
+		return findByGraphie(graphie, condition, null);
 	}
 
 	@Override
-	public List<Mot> g(String graphie, Condition condition, FiltreRecherche filtres) {
+	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres) {
 
 		final CriteriaBuilder cb = getBuilder();
 		final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
@@ -96,7 +96,7 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 		criteria.select(mot);
 
 		// chargement EAGER des prononciations => DISTINCT dans le critère
-		mot.fetch("prononciations", JoinType.LEFT);
+		mot.fetch("motPrononciations", JoinType.LEFT);
 
 		// chargement EAGER de la liste primaire du mot
 		mot.fetch("liste", JoinType.LEFT);
@@ -217,7 +217,7 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<Mot> p(String prononciation, Condition condition, FiltreRecherche filtres) {
+	public List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres) {
 
 		CriteriaBuilder cb = getBuilder();
 		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
@@ -227,19 +227,16 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 		criteria.select(mot);
 
 		// chargement EAGER des prononciations => DISTINCT dans le critère
-		mot.fetch("prononciations");
+		mot.fetch("motPrononciations");
 
 		// chargement EAGER de la liste primaire du mot
 		mot.fetch("liste", JoinType.LEFT);
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
-		Path<Object> prononciationPath = mot.join("prononciations").get("prononciation");
+		Path<Object> prononciationPath = mot.join("motPrononciations").get("prononciation");
 
 		Predicate p;
 		if (condition == Condition.ENTIER) {
-			// return
-			// entityManager.createQuery("SELECT m FROM Mot m JOIN m.prononciations p WHERE p.prononciation = ?").setParameter(1,
-			// prononciation).getResultList();
 			p = cb.equal(prononciationPath, prononciation);
 		} else {
 			String likeCondition = "";
@@ -272,6 +269,5 @@ public class MotRepositoryCustomImpl implements MotRepositoryCustom {
 
 		return q.getResultList();
 	}
-
 
 }

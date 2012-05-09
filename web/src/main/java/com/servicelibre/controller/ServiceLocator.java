@@ -1,73 +1,48 @@
 package com.servicelibre.controller;
 
-import java.util.List;
-
 import org.springframework.context.ApplicationContext;
 import org.zkoss.spring.SpringUtil;
 
-import com.servicelibre.corpus.manager.DocMetadataManager;
-import com.servicelibre.corpus.manager.ListeManager;
-import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.corpus.manager.PrononciationManager;
-import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.repository.ListeRepository;
 import com.servicelibre.corpus.repository.MotRepository;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
 
-public class ServiceLocator
-{
+public class ServiceLocator {
 
-    private static ApplicationContext ctx;
+	private static ApplicationContext ctx;
 
-    static
-    {
+	static {
 
-        ctx = SpringUtil.getApplicationContext();
-    }
+		ctx = SpringUtil.getApplicationContext();
+	}
 
-    private ServiceLocator()
-    {
-    }
+	private ServiceLocator() {
+	}
 
-    public static ListeRepository getListeRepo()
-    {
-        return (ListeRepository) ctx.getBean("listeRepository");
-    }
+	public static ListeRepository getListeRepo() {
+		return (ListeRepository) ctx.getBean("listeRepository");
+	}
 
-    public static MotRepository getMotRepo()
-    {
-        return (MotRepository) ctx.getBean("motRepository");
-    }
+	public static MotRepository getMotRepo() {
+		return (MotRepository) ctx.getBean("motRepository");
+	}
 
-    public static FiltreManager getListeFiltreManager()
-    {
-        return (FiltreManager) ctx.getBean("listeFiltreManager");
-    }
+	public static FiltreManager getListeFiltreManager() {
+		return (FiltreManager) ctx.getBean("listeFiltreManager");
+	}
 
-    public static ContexteFiltreManager getContexteFiltreManager()
-    {
-        return (ContexteFiltreManager) ctx.getBean("contexteFiltreManager");
-    }
-    
-    public static CorpusService getCorpusService()
-    {
-        return (CorpusService) ctx.getBean("corpusService");
-    }
-    
-    public static CorpusService getFormeService()
-    {
-        return (CorpusService) ctx.getBean("formeService");
-    }
-    
-//    public static DocMetadataManager getDocMetataManager()
-//    {
-//        return (DocMetadataManager) ctx.getBean("docMetadataManager");
-//    }
+	public static ContexteFiltreManager getContexteFiltreManager() {
+		return (ContexteFiltreManager) ctx.getBean("contexteFiltreManager");
+	}
 
-    public static PrononciationManager getPrononciationManager() {
-    	return (PrononciationManager) ctx.getBean("prononciationManager");
-    }
-    
+	public static CorpusService getCorpusService() {
+		return (CorpusService) ctx.getBean("corpusService");
+	}
+
+	public static CorpusService getFormeService() {
+		return (CorpusService) ctx.getBean("formeService");
+	}
+
 }

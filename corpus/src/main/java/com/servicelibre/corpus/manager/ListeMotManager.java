@@ -9,6 +9,7 @@ import com.servicelibre.corpus.entity.ListeMot;
 import com.servicelibre.corpus.entity.Mot;
 
 @Transactional
+@Deprecated
 public interface ListeMotManager // extends JpaRepository<Liste, Long>
 {
 

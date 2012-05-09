@@ -13,6 +13,7 @@ import com.servicelibre.corpus.entity.Prononciation;
 
 @Repository
 @Transactional
+@Deprecated
 public class JpaPrononciationManager implements PrononciationManager
 {
     @PersistenceContext

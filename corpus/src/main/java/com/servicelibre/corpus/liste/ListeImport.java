@@ -18,13 +18,9 @@ import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.ListeMot;
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.manager.CatégorieListeManager;
-import com.servicelibre.corpus.manager.CorpusManager;
-import com.servicelibre.corpus.manager.ListeManager;
-import com.servicelibre.corpus.manager.ListeMotManager;
-import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.repository.CatégorieListeRepository;
 import com.servicelibre.corpus.repository.CorpusRepository;
+import com.servicelibre.corpus.repository.ListeMotRepository;
 import com.servicelibre.corpus.repository.ListeRepository;
 import com.servicelibre.corpus.repository.MotRepository;
 
@@ -45,18 +41,17 @@ public class ListeImport {
 	private List<Liste> listes;
 
 	private ApplicationContext ctx;
-	
+
 	private LigneSplitter ligneSplitter;
-	
+
 	private Corpus corpus;
-	
+
 	private boolean simulation = true;
-	
+
 	private Map<String, Liste> listesCache = new HashMap<String, Liste>();
-	
+
 	private CatégorieListe catégorieImportation;
 
-	
 	public int execute(Liste infoListe) {
 
 		logger.info("Exécution de l'importation de la liste {}", infoListe);
@@ -65,8 +60,8 @@ public class ListeImport {
 		// Chargement du fichier en liste
 		if (fichierSource != null && fichierSource.exists()) {
 
-			MotRepository motRepository = (MotRepository) ctx.getBean("motRepository");
-			ListeMotManager lmm = (ListeMotManager) ctx.getBean("listeMotManager");
+			MotRepository motRepo = (MotRepository) ctx.getBean("motRepository");
+			ListeMotRepository listeMotRepo = (ListeMotRepository) ctx.getBean("listeMotRepository");
 
 			// Suppression des mots qui existeraient déjà pour cette liste
 			// logger.info("Suppression des mots de la liste {}.",
@@ -85,24 +80,23 @@ public class ListeImport {
 					}
 
 					List<Mot> mots = ligneSplitter.splitLigne(ligne);
-					
+
 					Liste liste = mots.get(0).getListe();
-					if(liste == null || liste.getNom() == null) {
+					if (liste == null || liste.getNom() == null) {
 						liste = getOrCreateListe(infoListe);
-					}
-					else {
+					} else {
 						liste = getOrCreateListe(liste);
 					}
-					
+
 					if (liste == null) {
 						return -1;
 					}
-					
+
 					for (Mot mot : mots) {
 						logger.info("Traitement du mot [{}]", mot.getMot());
-						Mot motCourant = motRepository.findByLemmeAndMotAndCatgramAndGenre(mot.lemme, mot.getMot(),
-								mot.getCatgram(), mot.getGenre());
-						
+						Mot motCourant = motRepo.findByLemmeAndMotAndCatgramAndGenre(mot.lemme, mot.getMot(), mot.getCatgram(),
+								mot.getGenre());
+
 						// Le mot existe-t-il déjà?
 						if (motCourant == null) {
 							// Ajouter un nouveau mot
@@ -111,16 +105,14 @@ public class ListeImport {
 							if (!simulation) {
 								logger.info("Ajout du mot [{}]", mot.lemme);
 								// Définition de la liste primaire du mot, si la liste est primaire
-								if(liste.isListesPrimaire()) {
+								if (liste.isListesPrimaire()) {
 									mot.setListe(liste);
-								}
-								else {
+								} else {
 									mot.setListe(null);
 								}
-								
-								mot = motRepository.save(mot);
-							}
-							else {
+
+								mot = motRepo.save(mot);
+							} else {
 								logger.info("Simulation de l'ajout du mot [{}]", mot.lemme);
 							}
 
@@ -131,26 +123,21 @@ public class ListeImport {
 							// Le mot est présent dans la base, lui associer sa liste
 							logger.info("Ajout de l'étiquette (liste) [{}] au mot [{}]", liste.getNom(), mot.lemme);
 							ListeMot listeMot = new ListeMot(motCourant, liste);
-							lmm.save(listeMot);
-							//motCourant.ajouteListe(liste);
-						}
-						else {
+							listeMot = listeMotRepo.save(listeMot);
+							// motCourant.ajouteListe(liste);
+						} else {
 							logger.info("Simulation de l'ajout de l'étiquette (liste) [{}] au mot [{}]", liste.getNom(), mot.lemme);
 						}
-						
+
 						cptNouvelleÉtiquette++;
 					}
 				}
 
-				logger.info(
-						"{} mots ont été ajoutés à la liste {}. {} nouvelles étiquettes.",
-						new Object[] { cptMotAjouté, infoListe,
-								cptNouvelleÉtiquette });
+				logger.info("{} mots ont été ajoutés à la liste {}. {} nouvelles étiquettes.", new Object[] { cptMotAjouté, infoListe,
+						cptNouvelleÉtiquette });
 
 			} catch (IOException e) {
-				logger.error(
-						"Erreur lors de la lecture de la liste des mots {}",
-						fichierSource, e);
+				logger.error("Erreur lors de la lecture de la liste des mots {}", fichierSource, e);
 			}
 
 		} else {
@@ -171,54 +158,50 @@ public class ListeImport {
 
 		// Est-ce que la liste existe déjà?
 		Liste dbListe = null;
-		
+
 		// En cache?
 		dbListe = listesCache.get(liste.getNom());
-		
+
 		if (dbListe == null) {
 			// Dans la DB ?
 			dbListe = listeRepository.findByNom(liste.getNom());
 			if (dbListe != null) {
-				logger.info("La liste {} a été trouvé dans la base de données.",dbListe);
+				logger.info("La liste {} a été trouvé dans la base de données.", dbListe);
 				System.err.println("Chargement de la liste en cache: " + dbListe.getNom());
 				listesCache.put(dbListe.getNom(), dbListe);
 			}
 		}
 
 		if (dbListe == null) {
-			
-			logger.info("Création de la liste {} dans la base de données.",
-					liste);
-			
+
+			logger.info("Création de la liste {} dans la base de données.", liste);
+
 			Corpus createCorpus = getOrCreateCorpus(this.corpus);
 			liste.setCorpus(createCorpus);
 			this.catégorieImportation.setCorpus(createCorpus);
-			
+
 			catégorieImportation = getOrCreateCatégorieListe(this.catégorieImportation);
 			liste.setCatégorieListe(catégorieImportation);
-			
+
 			// récupération de l'ordre le plus élevé
 			Number maxOrdre = listeRepository.findMaxOrdre();
-			int ordre = maxOrdre == null? 0: maxOrdre.intValue();
-			
+			int ordre = maxOrdre == null ? 0 : maxOrdre.intValue();
+
 			liste.setOrdre(ordre + 10);
 
-			
-			if(simulation) {
+			if (simulation) {
 				logger.info("Simulation de la sauvegarde de la liste {} dans la base de données.", liste);
-			}
-			else {
-				logger.info("Création de la liste {} dans la base de données.",
-						liste);
+			} else {
+				logger.info("Création de la liste {} dans la base de données.", liste);
 				liste = listeRepository.save(liste);
 			}
-			
+
 			liste.setListesPrimaire(liste.isListesPrimaire());
 
 			listesCache.put(liste.getNom(), dbListe);
-			
+
 			return liste;
-			
+
 		} else {
 			// récupération des champs transient éventuels
 			dbListe.setFichierSource(liste.getFichierSource());
@@ -242,28 +225,24 @@ public class ListeImport {
 		Corpus dbCorpus = corpusRepo.findByNom(corpus.getNom());
 
 		if (dbCorpus == null) {
-			if(simulation) {
-				logger.info("Simulation de la création du corpus {} dans la base de données.",
-						corpus);
-			}
-			else {
+			if (simulation) {
+				logger.info("Simulation de la création du corpus {} dans la base de données.", corpus);
+			} else {
 				corpus = corpusRepo.save(corpus);
-				logger.info("Création du corpus {} dans la base de données.",
-						corpus);
+				logger.info("Création du corpus {} dans la base de données.", corpus);
 			}
 			return corpus;
 		} else {
-			logger.info("Le corpus {} a été trouvé dans la base de données.",
-					corpus);
+			logger.info("Le corpus {} a été trouvé dans la base de données.", corpus);
 			return dbCorpus;
 		}
 
 	}
-	
+
 	@Transactional
 	private CatégorieListe getOrCreateCatégorieListe(CatégorieListe catégorie) {
 		CatégorieListeRepository catégoreListeRepo = (CatégorieListeRepository) ctx.getBean("catégorieListeRepository");
-		
+
 		if (catégorie == null || catégorie.getNom().isEmpty()) {
 			logger.error("Il faut préciser une catégorie!");
 			return null;
@@ -273,22 +252,18 @@ public class ListeImport {
 		CatégorieListe dbCatégorieListe = catégoreListeRepo.findByNom(catégorie.getNom());
 
 		if (dbCatégorieListe == null) {
-			if(simulation) {
-				logger.info("Simulation de la création de la catégorie {} dans la base de données.",
-						catégorie);
-			}
-			else {
+			if (simulation) {
+				logger.info("Simulation de la création de la catégorie {} dans la base de données.", catégorie);
+			} else {
 				catégorie = catégoreListeRepo.save(catégorie);
-				logger.info("Création de la catégorie {} dans la base de données.",
-						catégorie);
+				logger.info("Création de la catégorie {} dans la base de données.", catégorie);
 			}
 			return catégorie;
 		} else {
-			logger.info("La catégorie {} a été trouvée dans la base de données.",
-					catégorie);
+			logger.info("La catégorie {} a été trouvée dans la base de données.", catégorie);
 			return dbCatégorieListe;
 		}
-		
+
 	}
 
 	public List<Liste> getListes() {
@@ -299,8 +274,7 @@ public class ListeImport {
 		this.listes = listes;
 	}
 
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.ctx = applicationContext;
 
 	}
@@ -337,5 +311,4 @@ public class ListeImport {
 		this.catégorieImportation = catégorieImportation;
 	}
 
-	
 }

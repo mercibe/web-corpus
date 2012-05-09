@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 
 import com.servicelibre.corpus.entity.Mot;
 
+@Deprecated
 public interface MotManager {
 
     enum Condition {

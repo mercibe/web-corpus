@@ -17,6 +17,7 @@ import com.servicelibre.corpus.entity.Mot;
 @Repository
 // Essentiellement pour traduction des exceptions « vendor-neutral »
 @Transactional
+@Deprecated
 public class JpaListeMotManager implements ListeMotManager {
 
 	private static Logger logger = LoggerFactory.getLogger(JpaListeMotManager.class);
@@ -26,22 +27,22 @@ public class JpaListeMotManager implements ListeMotManager {
 
 	@Override
 	public ListeMot findOne(long listeMotId) {
-		 return (ListeMot) entityManager.createQuery("select lm from ListeMot lm where lm.id = ?").setParameter(1, listeMotId)
-	                .getSingleResult();
+		return (ListeMot) entityManager.createQuery("select lm from ListeMot lm where lm.id = ?").setParameter(1, listeMotId)
+				.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ListeMot> findByListe(Liste liste) {
-		 return (List<ListeMot>) entityManager.createQuery("select lm from ListeMot lm where lm.liste = ?").setParameter(1, liste)
-	                .getResultList();
+		return (List<ListeMot>) entityManager.createQuery("select lm from ListeMot lm where lm.liste = ?").setParameter(1, liste)
+				.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ListeMot> findByMot(Mot mot) {
-		 return (List<ListeMot>) entityManager.createQuery("select lm from ListeMot lm where lm.mot = ?").setParameter(1, mot)
-	                .getResultList();
+		return (List<ListeMot>) entityManager.createQuery("select lm from ListeMot lm where lm.mot = ?").setParameter(1, mot)
+				.getResultList();
 	}
 
 	@Override

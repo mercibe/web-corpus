@@ -30,6 +30,7 @@ import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.entity.Prononciation;
 
 @Repository
+@Deprecated
 public class JpaMotManager implements MotManager {
 
 	private static Logger logger = LoggerFactory.getLogger(JpaMotManager.class);
@@ -331,9 +332,10 @@ public class JpaMotManager implements MotManager {
 		// Rechercher le/les éventuels mot/forme associés et lier
 		List<Mot> mots = findByMot(forme);
 		for (Mot mot : mots) {
-			mot.ajoutePrononciation(prononciation);
+			// conservé pour l'histoire
+//			mot.ajoutePrononciation(prononciation);
 			logger.debug("liaison de la prononciation {} à la forme {}", prononciation.prononciation, forme);
-			save(mot);
+//			save(mot);
 			liaisonCpt++;
 		}
 

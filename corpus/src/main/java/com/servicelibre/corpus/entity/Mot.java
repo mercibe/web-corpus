@@ -2,7 +2,6 @@ package com.servicelibre.corpus.entity;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,15 +11,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"lemme", "mot", "catgram", "genre" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "lemme", "mot", "catgram", "genre" }))
 /**
  * Cette classe représente un conteneur d'information pour un mot donné de la langue française.
  * 
@@ -32,7 +29,7 @@ public class Mot implements Comparable<Mot> {
 	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	// Liste primaire
@@ -41,35 +38,28 @@ public class Mot implements Comparable<Mot> {
 
 	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
-	
+
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL)
+	private List<MotPrononciation> motPrononciations = new ArrayList<MotPrononciation>();
+
 	@Column(nullable = false)
 	String mot;
 
-	
 	/**
-	 * Graphie alternative.  Si la graphie du mot est rectifiée (ro = true), ce champ contient la graphie traditionnelle.
+	 * Graphie alternative. Si la graphie du mot est rectifiée (ro = true), ce champ contient la graphie traditionnelle.
 	 * Si la graphie du mot est traditionnelle, ce champ contient la graphie rectifiée.
 	 */
 	@Column
 	String autreGraphie;
-	
+
 	@Column
 	public String lemme;
 
 	@Column
 	boolean ro;
-	
+
 	@Column
 	public boolean isLemme;
-
-	/*
-	 * Mot est maître de la relation ManyToMany (il n'a pas le « mappedBy») Il
-	 * est donc responsable de la gestion bi-directionnelle de la relation
-	 * (insert/update)
-	 */
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "mot_prononciation")
-	Collection<Prononciation> prononciations = new ArrayList<Prononciation>();
 
 	@Column(nullable = false)
 	String catgram;
@@ -88,7 +78,7 @@ public class Mot implements Comparable<Mot> {
 
 	/**
 	 * Information additionnelles sur la classe du mot (et donc du lemme également)
-	 * Transitivité du verbe (tr. dir., tr. indir. ou  intr.)
+	 * Transitivité du verbe (tr. dir., tr. indir. ou intr.)
 	 * Mais aussi: pron., impers., etc.
 	 */
 	@Column(name = "catgram_precision")
@@ -105,13 +95,11 @@ public class Mot implements Comparable<Mot> {
 		this(mot, lemme, isLemme, catgram, null, null);
 	}
 
-	public Mot(String mot, String lemme, boolean isLemme, String catgram,
-			String note, Liste liste) {
+	public Mot(String mot, String lemme, boolean isLemme, String catgram, String note, Liste liste) {
 		this(liste, mot, lemme, isLemme, catgram, "", "", "", false, note);
 	}
 
-	public Mot(Liste liste, String mot, String lemme, boolean isLemme,
-			String catgram, String genre, String nombre,
+	public Mot(Liste liste, String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre,
 			String catgramPrécision, boolean ro, String note) {
 		super();
 		this.liste = liste;
@@ -128,12 +116,9 @@ public class Mot implements Comparable<Mot> {
 
 	@Override
 	public String toString() {
-		return "Mot [id=" + id + ", liste=" + liste + ", mot=" + mot
-				+ ", lemme=" + lemme + ", isLemme=" + isLemme
-				+ ", prononciations=" + prononciations + ", catgram=" + catgram
-				+ ", genre=" + genre + ", nombre=" + nombre
-				+ ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro
-				+ ", note=" + note + "]";
+		return "Mot [id=" + id + ", liste=" + liste + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", prononciations="
+				+ motPrononciations + ", catgram=" + catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion="
+				+ catgramPrésicion + ", ro=" + ro + ", note=" + note + "]";
 	}
 
 	public Liste getListe() {
@@ -200,8 +185,6 @@ public class Mot implements Comparable<Mot> {
 		this.ro = ro;
 	}
 
-	
-	
 	public String getMot_autreGraphie() {
 		return autreGraphie;
 	}
@@ -218,21 +201,11 @@ public class Mot implements Comparable<Mot> {
 		this.note = note;
 	}
 
-	public Collection<Prononciation> getPrononciations() {
-		return prononciations;
-	}
-
-	public void setPrononciations(Collection<Prononciation> prononciations) {
-		this.prononciations = prononciations;
-	}
-
-	
-	
 	public String getPrononciationsString() {
 		StringBuilder prononcs = new StringBuilder();
 		String sep = "";
-		for (Prononciation p : prononciations) {
-			prononcs.append(sep).append("[").append(p.prononciation).append("]");
+		for (MotPrononciation mp : motPrononciations) {
+			prononcs.append(sep).append("[").append(mp.getPrononciation().prononciation).append("]");
 			sep = ", ";
 		}
 		return prononcs.toString();
@@ -250,7 +223,6 @@ public class Mot implements Comparable<Mot> {
 		return autreGraphie;
 	}
 
-
 	public boolean isLemme() {
 		return isLemme;
 	}
@@ -263,36 +235,21 @@ public class Mot implements Comparable<Mot> {
 	public int compareTo(Mot autreMot) {
 		return collator.compare(this.lemme, autreMot.lemme);
 	}
-	
-	
 
-	/**
-	 * Gestion de l'ajout de couple mot/prononciation dans la relation
-	 * ManyToMany qui unit Mot et Prononciation
-	 * 
-	 * @param prononc
-	 * @return
-	 */
-	public Mot ajoutePrononciation(Prononciation prononc) {
-		if (!getPrononciations().contains(prononc)) {
-			getPrononciations().add(prononc);
-		}
-
-		if (!prononc.getMots().contains(this)) {
-			prononc.getMots().add(this);
-		}
-
-		return this;
-	}
-
-	
-	
 	public List<ListeMot> getListeMots() {
 		return listeMots;
 	}
 
 	public void setListeMots(List<ListeMot> listeMots) {
 		this.listeMots = listeMots;
+	}
+
+	public List<MotPrononciation> getMotPrononciations() {
+		return motPrononciations;
+	}
+
+	public void setMotPrononciations(List<MotPrononciation> motPrononciations) {
+		this.motPrononciations = motPrononciations;
 	}
 
 }

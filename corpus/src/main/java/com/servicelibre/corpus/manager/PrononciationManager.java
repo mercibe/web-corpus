@@ -10,6 +10,7 @@ import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.entity.Prononciation;
 
 @Transactional
+@Deprecated
 public interface PrononciationManager {
 
     List<Prononciation> findAll();
