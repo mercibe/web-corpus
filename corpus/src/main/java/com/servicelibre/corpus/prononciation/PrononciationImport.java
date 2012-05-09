@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.repository.MotRepository;
 
 /**
  * Outil d'importation des prononcistions
@@ -29,7 +30,7 @@ public class PrononciationImport {
 	private static final String SÉPARATEUR = "\\t";
 
 	@Autowired
-	MotManager motManager;
+	MotRepository motRepository;
 
 	public int execute(File fichierSource) {
 
@@ -48,7 +49,7 @@ public class PrononciationImport {
 
 					String[] cols = ligne.split(SÉPARATEUR);
 
-					liaisonCpt += motManager.ajoutePrononciation(cols[0], cols[1]);
+					liaisonCpt += motRepository.ajoutePrononciation(cols[0], cols[1]);
 
 					prononciationCpt++;
 

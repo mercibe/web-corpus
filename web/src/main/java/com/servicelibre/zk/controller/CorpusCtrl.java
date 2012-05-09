@@ -292,7 +292,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		// List<Liste> listes = new ArrayList<Liste>(1);
 		// listes.add(new Liste("Toutes les listes", "Toutes les listes",
 		// null));
-		// listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
+		// listes.addAll(listeRepo.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
 		// return listes;
 		// }
 		return null;

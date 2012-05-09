@@ -8,15 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.manager.ListeManager;
+import com.servicelibre.corpus.repository.ListeRepository;
 
 @Controller
 public class AccueilController
 {
 
     @Autowired
-    ListeManager listeManager;
+    ListeRepository listeRepository;
 
     @Transactional
     @RequestMapping("/")
@@ -24,7 +26,7 @@ public class AccueilController
     {
 
         //TODO corpus par défaut => configuration, via nom au lieu de ID
-        List<Liste> listes = listeManager.findAllByCorpusId(1);
+        List<Liste> listes = listeRepository.findByCorpusId(1);
 
         model.addAttribute("listes", listes);
 

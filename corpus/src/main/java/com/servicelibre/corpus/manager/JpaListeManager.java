@@ -19,6 +19,7 @@ import com.servicelibre.corpus.entity.Liste;
 @Repository
 // Essentiellement pour traduction des exceptions « vendor-neutral »
 @Transactional
+@Deprecated
 public class JpaListeManager implements ListeManager
 {
     private static Logger logger = LoggerFactory.getLogger(JpaListeManager.class);

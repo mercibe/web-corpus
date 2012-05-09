@@ -2,8 +2,8 @@ package com.servicelibre.zk.recherche;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
-import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.corpus.manager.MotManager.Condition;
+import com.servicelibre.corpus.repository.MotRepositoryCustom;
+import com.servicelibre.corpus.repository.MotRepositoryCustom.Condition;
 
 public class RechercheMot extends Recherche {
 
@@ -40,7 +40,7 @@ public class RechercheMot extends Recherche {
 				}
 			}
 
-			Condition précision = MotManager.Condition.valueOf(this.précisionChaîne);
+			Condition précision = MotRepositoryCustom.Condition.valueOf(this.précisionChaîne);
 
 			switch (précision) {
 			case ENTIER:
@@ -86,7 +86,7 @@ public class RechercheMot extends Recherche {
 			chaînePrécsision.append("[");
 		}
 
-		Condition précision = MotManager.Condition.valueOf(this.précisionChaîne);
+		Condition précision = MotRepositoryCustom.Condition.valueOf(this.précisionChaîne);
 
 		switch (précision) {
 		case ENTIER:

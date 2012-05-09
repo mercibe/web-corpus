@@ -40,13 +40,13 @@ import org.zkoss.zul.Window;
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.corpus.manager.MotManager.Condition;
 import com.servicelibre.corpus.manager.PrononciationManager;
-import com.servicelibre.corpus.service.LigatureService;
+import com.servicelibre.corpus.repository.ListeRepository;
+import com.servicelibre.corpus.repository.MotRepository;
+import com.servicelibre.corpus.repository.MotRepositoryCustom;
+import com.servicelibre.corpus.repository.MotRepositoryCustom.Condition;
 import com.servicelibre.zk.recherche.Recherche;
-import com.servicelibre.zk.recherche.RechercheExécution;
 import com.servicelibre.zk.recherche.RechercheMot;
 
 /**
@@ -72,9 +72,9 @@ public class ListeCtrl extends CorpusCtrl {
 	Column colonnePrononciation;
 	Menuitem menuitemPrononciation;
 
-	ListeManager listeManager = ServiceLocator.getListeManager();
+	ListeRepository listeRepo = ServiceLocator.getListeRepo();
 
-	MotManager motManager = ServiceLocator.getMotManager();
+	MotRepository motRepository = ServiceLocator.getMotRepo();
 	PrononciationManager prononciationManager = ServiceLocator.getPrononciationManager();
 
 	private static final long serialVersionUID = 779679285074159073L;
@@ -122,7 +122,7 @@ public class ListeCtrl extends CorpusCtrl {
 		// List<Liste> listes = new ArrayList<Liste>(1);
 		// listes.add(new Liste("Toutes les listes", "Toutes les listes",
 		// null));
-		// listes.addAll(listeManager.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
+		// listes.addAll(listeRepo.findByCorpusId(CORPUS_ID_PAR_DÉFAUT));
 		// return listes;
 		// }
 		return null;
@@ -134,15 +134,13 @@ public class ListeCtrl extends CorpusCtrl {
 
 		int nbConditions = recherche.getNombreConditions();
 		String f = "";
-		
+
 		String filtresActifs = "";
-		if(nbConditions > 1) {
+		if (nbConditions > 1) {
 			filtresActifs = ", filtrés par les " + nbConditions + " filtres actifs";
-		}
-		else if (nbConditions == 1) {
+		} else if (nbConditions == 1) {
 			filtresActifs = ", filtrés par le filtre actif";
 		}
-		
 
 		if (nbTrouvés == 0) {
 			sb.append("Aucun mot trouvé (");
@@ -175,10 +173,10 @@ public class ListeCtrl extends CorpusCtrl {
 	// FiltreRecherche filtres = getFiltres();
 	//
 	// if (getCible() == Recherche.Cible.GRAPHIE) {
-	// mots = motManager.findByGraphie(getMotCherché(),
+	// mots = motRepository.findByGraphie(getMotCherché(),
 	// MotManager.Condition.valueOf(conditionActive), filtres);
 	// } else {
-	// mots = motManager.findByPrononciation(getMotCherché(),
+	// mots = motRepository.findByPrononciation(getMotCherché(),
 	// MotManager.Condition.valueOf(conditionActive), filtres);
 	// }
 	//
@@ -186,17 +184,17 @@ public class ListeCtrl extends CorpusCtrl {
 	// }
 
 	public List<Mot> exécuterRecherche(Recherche recherche, boolean ajouterHistorique) {
-		
+
 		List<Mot> mots = new ArrayList<Mot>();
 
 		logger.info(recherche.getDescriptionChaîne());
 
 		switch (recherche.cible) {
 		case GRAPHIE:
-			mots = motManager.findByGraphie(recherche.getChaîne(), MotManager.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
+			mots = motRepository.g(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		case PRONONCIATION:
-			mots = motManager.findByPrononciation(recherche.getChaîne(), MotManager.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
+			mots = motRepository.p(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		default:
 			logger.error("Cible invalide pour une recherche de mots: " + recherche.cible);
@@ -344,9 +342,9 @@ public class ListeCtrl extends CorpusCtrl {
 		Recherche recherche = getRecherche();
 
 		ListModelList modelList = new ListModelList(exécuterRecherche(recherche, false));
-		
+
 		motsGrid.setModel(modelList);
-		
+
 		infoRésultats.setValue(getInfoRésultat(recherche, modelList.size()));
 
 		motsGrid.setRowRenderer(new RowRenderer() {
@@ -446,7 +444,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@Override
 	protected void initialiseRecherche() {
-		
+
 		gp.setSelectedIndex(0);
 		condition.setSelectedIndex(0);
 		cherche.setText("");
@@ -454,7 +452,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 		initialiseMotsGrid();
 
-		//infoRésultats.setValue("Tous les mots (" + motsGrid.getModel().getSize() + ")");
+		// infoRésultats.setValue("Tous les mots (" + motsGrid.getModel().getSize() + ")");
 
 	}
 
@@ -605,7 +603,8 @@ public class ListeCtrl extends CorpusCtrl {
 		ajustementsGraphiePrononciation();
 
 		// Précision chaîne
-		Condition précision = MotManager.Condition.valueOf(r.précisionChaîne);
+		
+		Condition précision = MotRepositoryCustom.Condition.valueOf(r.précisionChaîne);
 
 		switch (précision) {
 		case COMMENCE_PAR:

@@ -8,6 +8,7 @@ import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Liste;
 
 @Transactional(readOnly = true)
+@Deprecated
 public interface CatégorieListeManager // extends JpaRepository<CatégorieListe,
 				       // Long>
 {

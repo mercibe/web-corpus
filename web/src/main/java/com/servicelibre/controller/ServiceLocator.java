@@ -10,6 +10,8 @@ import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.manager.PrononciationManager;
 import com.servicelibre.corpus.metadata.Metadata;
+import com.servicelibre.corpus.repository.ListeRepository;
+import com.servicelibre.corpus.repository.MotRepository;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
@@ -29,14 +31,14 @@ public class ServiceLocator
     {
     }
 
-    public static ListeManager getListeManager()
+    public static ListeRepository getListeRepo()
     {
-        return (ListeManager) ctx.getBean("listeManager");
+        return (ListeRepository) ctx.getBean("listeRepository");
     }
 
-    public static MotManager getMotManager()
+    public static MotRepository getMotRepo()
     {
-        return (MotManager) ctx.getBean("motManager");
+        return (MotRepository) ctx.getBean("motRepository");
     }
 
     public static FiltreManager getListeFiltreManager()
@@ -59,10 +61,10 @@ public class ServiceLocator
         return (CorpusService) ctx.getBean("formeService");
     }
     
-    public static DocMetadataManager getDocMetataManager()
-    {
-        return (DocMetadataManager) ctx.getBean("docMetadataManager");
-    }
+//    public static DocMetadataManager getDocMetataManager()
+//    {
+//        return (DocMetadataManager) ctx.getBean("docMetadataManager");
+//    }
 
     public static PrononciationManager getPrononciationManager() {
     	return (PrononciationManager) ctx.getBean("prononciationManager");

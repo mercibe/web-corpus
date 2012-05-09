@@ -15,6 +15,7 @@ import com.servicelibre.corpus.entity.Corpus;
 @Repository
 // Essentiellement pour traduction des exceptions « vendor-neutral »
 @Transactional
+@Deprecated
 public class JpaCorpusManager implements CorpusManager 
 {
 	private static Logger logger = LoggerFactory.getLogger(JpaCorpusManager.class);

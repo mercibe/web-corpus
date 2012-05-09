@@ -6,20 +6,19 @@ import java.util.List;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
 import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.manager.Filtre;
+import com.servicelibre.corpus.repository.DocMetadataRepository;
 import com.servicelibre.corpus.service.CorpusService;
 
 public class ContexteFiltreManager extends FiltreManager {
 
-	private DocMetadataManager docMetadataManager;
+	private DocMetadataRepository docMetadataRepo;
 	private CorpusService corpusService;
 
 	@Override
 	public void init() {
 
-		List<DocMetadata> metadatas = docMetadataManager
-				.findByCorpusId(corpusService.getCorpus().getId());
+		List<DocMetadata> metadatas = docMetadataRepo.findByCorpus(corpusService.getCorpus());
 
 		// Ajout d'un filtre pour chaque champ d'index
 		filtres.clear();
@@ -29,8 +28,7 @@ public class ContexteFiltreManager extends FiltreManager {
 
 				String champIndex = meta.getChampIndex();
 
-				filtres.add(new Filtre(champIndex, meta.getNom(),
-						getChampValeurs(champIndex)));
+				filtres.add(new Filtre(champIndex, meta.getNom(), getChampValeurs(champIndex)));
 			}
 		}
 
@@ -39,29 +37,27 @@ public class ContexteFiltreManager extends FiltreManager {
 	private List<DefaultKeyValue> getChampValeurs(String champIndex) {
 
 		List<DefaultKeyValue> valeursChamp = corpusService.getValeursChampAvecFréquence(champIndex);
-		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(
-				valeursChamp.size());
+		List<DefaultKeyValue> clésValeurs = new ArrayList<DefaultKeyValue>(valeursChamp.size());
 
-		//clésValeurs.add(keyValueVide);
+		// clésValeurs.add(keyValueVide);
 
 		for (DefaultKeyValue cléValeur : valeursChamp) {
 			StringBuilder sb = new StringBuilder(cléValeur.getKey().toString());
 
 			sb.append(" (").append(cléValeur.getValue()).append(")");
-			
-			clésValeurs.add(new DefaultKeyValue(cléValeur.getKey(), sb
-					.toString()));
+
+			clésValeurs.add(new DefaultKeyValue(cléValeur.getKey(), sb.toString()));
 		}
 
 		return clésValeurs;
 	}
 
-	public DocMetadataManager getDocMetadataManager() {
-		return docMetadataManager;
+	public DocMetadataRepository getDocMetadataRepo() {
+		return docMetadataRepo;
 	}
 
-	public void setDocMetadataManager(DocMetadataManager docMetadataManager) {
-		this.docMetadataManager = docMetadataManager;
+	public void setDocMetadataRepo(DocMetadataRepository docMetadataRepo) {
+		this.docMetadataRepo = docMetadataRepo;
 	}
 
 	public CorpusService getCorpusService() {

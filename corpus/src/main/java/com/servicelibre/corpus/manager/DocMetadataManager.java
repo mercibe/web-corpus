@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.entity.DocMetadata;
 
 @Transactional
+@Deprecated
 public interface DocMetadataManager
 {
 

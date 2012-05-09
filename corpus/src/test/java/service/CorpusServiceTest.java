@@ -23,6 +23,8 @@ import com.servicelibre.corpus.entity.DocMetadata;
 import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.metadata.Metadata;
+import com.servicelibre.corpus.repository.CorpusRepository;
+import com.servicelibre.corpus.repository.DocMetadataRepository;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusPhraseService;
@@ -35,10 +37,10 @@ import com.servicelibre.corpus.service.Phrase;
 public class CorpusServiceTest {
 
     @Autowired
-    CorpusManager cm;
+    CorpusRepository corpusRepo;
 
     @Autowired
-    DocMetadataManager dmm;
+    DocMetadataRepository docMetadataRepo;
 
     @Autowired
     FormeService formeService;
@@ -49,7 +51,7 @@ public class CorpusServiceTest {
     public void créeTest() {
 	Corpus corpus = new Corpus("Corpus de test", "Un nouveau corpus de test");
 
-	CorpusService cs = new CorpusService(cm, corpus);
+	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
 	assertNotNull("Le corpus doit exister (création))", cs.getCorpus());
 
@@ -62,7 +64,7 @@ public class CorpusServiceTest {
     public void ouvreTest() {
 	Corpus corpus = new Corpus("Corpus de test", "");
 
-	CorpusService cs = new CorpusService(cm, corpus);
+	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
 	assertNotNull("Le corpus doit exister (ouverture))", cs.getCorpus());
 
@@ -78,7 +80,7 @@ public class CorpusServiceTest {
 	String dossierData = System.getProperty("java.io.tmpdir") + File.separator + "index";
 	corpus.setDossierData(dossierData);
 
-	CorpusService cs = new CorpusService(cm, corpus);
+	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
 	String mot = "chien";
 	ContexteSet contexteSet = cs.getContextesMot(mot);
@@ -112,7 +114,7 @@ public class CorpusServiceTest {
 
 	// corpus.ajouterDocMetadata(docMetadata);
 
-	CorpusService cs = new CorpusService(cm, corpus);
+	CorpusService cs = new CorpusService(corpusRepo, corpus);
 	cs.setFormeService(formeService);
 
 	String lemme = "manger";
@@ -302,7 +304,7 @@ public class CorpusServiceTest {
 
 	corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
 
-	CorpusService cs = new CorpusService(cm, corpus);
+	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
 	int nbPhrases = 1;
 	int nbMoyMotPhrase = 50;
@@ -376,7 +378,7 @@ public class CorpusServiceTest {
 
 	corpus.setDossierData(System.getProperty("java.io.tmpdir") + File.separator + "index");
 
-	CorpusService cs = new CorpusService(cm, corpus);
+	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
 	ContexteSet contexteSet = cs.getContextesMot("E");
 

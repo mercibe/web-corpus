@@ -23,6 +23,10 @@ import com.servicelibre.corpus.manager.CorpusManager;
 import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.manager.ListeMotManager;
 import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.repository.CatégorieListeRepository;
+import com.servicelibre.corpus.repository.CorpusRepository;
+import com.servicelibre.corpus.repository.ListeRepository;
+import com.servicelibre.corpus.repository.MotRepository;
 
 /**
  * Outil d'importation de listes
@@ -52,7 +56,7 @@ public class ListeImport {
 	
 	private CatégorieListe catégorieImportation;
 
-	@Transactional
+	
 	public int execute(Liste infoListe) {
 
 		logger.info("Exécution de l'importation de la liste {}", infoListe);
@@ -61,7 +65,7 @@ public class ListeImport {
 		// Chargement du fichier en liste
 		if (fichierSource != null && fichierSource.exists()) {
 
-			MotManager mm = (MotManager) ctx.getBean("motManager");
+			MotRepository motRepository = (MotRepository) ctx.getBean("motRepository");
 			ListeMotManager lmm = (ListeMotManager) ctx.getBean("listeMotManager");
 
 			// Suppression des mots qui existeraient déjà pour cette liste
@@ -96,7 +100,7 @@ public class ListeImport {
 					
 					for (Mot mot : mots) {
 						logger.info("Traitement du mot [{}]", mot.getMot());
-						Mot motCourant = mm.findByMot(mot.lemme, mot.getMot(),
+						Mot motCourant = motRepository.findByLemmeAndMotAndCatgramAndGenre(mot.lemme, mot.getMot(),
 								mot.getCatgram(), mot.getGenre());
 						
 						// Le mot existe-t-il déjà?
@@ -114,7 +118,7 @@ public class ListeImport {
 									mot.setListe(null);
 								}
 								
-								mm.save(mot);
+								mot = motRepository.save(mot);
 							}
 							else {
 								logger.info("Simulation de l'ajout du mot [{}]", mot.lemme);
@@ -158,7 +162,7 @@ public class ListeImport {
 
 	public Liste getOrCreateListe(Liste liste) {
 
-		ListeManager lm = (ListeManager) ctx.getBean("listeManager");
+		ListeRepository listeRepository = (ListeRepository) ctx.getBean("listeRepository");
 
 		if (liste == null) {
 			logger.error("Pour importer une liste, il faut préciser cette liste!");
@@ -173,7 +177,7 @@ public class ListeImport {
 		
 		if (dbListe == null) {
 			// Dans la DB ?
-			dbListe = lm.findByNom(liste.getNom());
+			dbListe = listeRepository.findByNom(liste.getNom());
 			if (dbListe != null) {
 				logger.info("La liste {} a été trouvé dans la base de données.",dbListe);
 				System.err.println("Chargement de la liste en cache: " + dbListe.getNom());
@@ -186,15 +190,18 @@ public class ListeImport {
 			logger.info("Création de la liste {} dans la base de données.",
 					liste);
 			
-			liste.setCorpus(getOrCreateCorpus(this.corpus));
+			Corpus createCorpus = getOrCreateCorpus(this.corpus);
+			liste.setCorpus(createCorpus);
+			this.catégorieImportation.setCorpus(createCorpus);
 			
 			catégorieImportation = getOrCreateCatégorieListe(this.catégorieImportation);
 			liste.setCatégorieListe(catégorieImportation);
 			
 			// récupération de l'ordre le plus élevé
-			int maxOrdre = lm.findMaxOrdre();
+			Number maxOrdre = listeRepository.findMaxOrdre();
+			int ordre = maxOrdre == null? 0: maxOrdre.intValue();
 			
-			liste.setOrdre(maxOrdre + 10);
+			liste.setOrdre(ordre + 10);
 
 			
 			if(simulation) {
@@ -203,7 +210,7 @@ public class ListeImport {
 			else {
 				logger.info("Création de la liste {} dans la base de données.",
 						liste);
-				lm.save(liste);
+				liste = listeRepository.save(liste);
 			}
 			
 			liste.setListesPrimaire(liste.isListesPrimaire());
@@ -222,8 +229,9 @@ public class ListeImport {
 
 	}
 
+	@Transactional
 	private Corpus getOrCreateCorpus(Corpus corpus) {
-		CorpusManager cm = (CorpusManager) ctx.getBean("corpusManager");
+		CorpusRepository corpusRepo = (CorpusRepository) ctx.getBean("corpusRepository");
 
 		if (corpus == null || corpus.getNom().isEmpty()) {
 			logger.error("Il faut préciser un corpus!");
@@ -231,7 +239,7 @@ public class ListeImport {
 		}
 
 		// Est-ce que le corpus existe-déjà?
-		Corpus dbCorpus = cm.findByNom(corpus.getNom());
+		Corpus dbCorpus = corpusRepo.findByNom(corpus.getNom());
 
 		if (dbCorpus == null) {
 			if(simulation) {
@@ -239,7 +247,7 @@ public class ListeImport {
 						corpus);
 			}
 			else {
-				cm.save(corpus);
+				corpus = corpusRepo.save(corpus);
 				logger.info("Création du corpus {} dans la base de données.",
 						corpus);
 			}
@@ -252,8 +260,9 @@ public class ListeImport {
 
 	}
 	
+	@Transactional
 	private CatégorieListe getOrCreateCatégorieListe(CatégorieListe catégorie) {
-		CatégorieListeManager clm = (CatégorieListeManager) ctx.getBean("catégorieListeManager");
+		CatégorieListeRepository catégoreListeRepo = (CatégorieListeRepository) ctx.getBean("catégorieListeRepository");
 		
 		if (catégorie == null || catégorie.getNom().isEmpty()) {
 			logger.error("Il faut préciser une catégorie!");
@@ -261,7 +270,7 @@ public class ListeImport {
 		}
 
 		// Est-ce que la catégorie existe-déjà?
-		CatégorieListe dbCatégorieListe = clm.findByNom(catégorie.getNom());
+		CatégorieListe dbCatégorieListe = catégoreListeRepo.findByNom(catégorie.getNom());
 
 		if (dbCatégorieListe == null) {
 			if(simulation) {
@@ -269,7 +278,7 @@ public class ListeImport {
 						catégorie);
 			}
 			else {
-				clm.save(catégorie);
+				catégorie = catégoreListeRepo.save(catégorie);
 				logger.info("Création de la catégorie {} dans la base de données.",
 						catégorie);
 			}

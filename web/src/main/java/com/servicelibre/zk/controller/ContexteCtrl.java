@@ -37,14 +37,12 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
 import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
-import com.servicelibre.corpus.service.LigatureService;
 import com.servicelibre.corpus.service.PhraseService;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
@@ -60,7 +58,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	private static Logger logger = LoggerFactory.getLogger(ContexteCtrl.class);
 
 	private static final int MAX_COOCCURRENTS = 100;
-	
+
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
 
@@ -76,7 +74,6 @@ public class ContexteCtrl extends CorpusCtrl {
 	PhraseService phraseService = new CorpusPhraseService();
 
 	CorpusService corpusService = ServiceLocator.getCorpusService();
-	DocMetadataManager corpusMétadonnéesManager = ServiceLocator.getDocMetataManager();
 
 	private static final long serialVersionUID = 779679285074159073L;
 
@@ -262,20 +259,22 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	/**
 	 * Hack en attendant couche Lucene OK (alignement analyser/query paser, etc.)
+	 * 
 	 * @param recherche
 	 * @return
 	 */
 	private String prépareChaîneLemme(String chaîne) {
-	     return chaîne.replaceAll("-", " ");
+		return chaîne.replaceAll("-", " ");
 	}
 
 	/**
 	 * Hack en attendant couche Lucene OK (alignement analyser/query paser, etc.)
+	 * 
 	 * @param recherche
 	 * @return
 	 */
 	private String prépareChaîneMot(String rechechaînerche) {
-	    return "\"" + prépareChaîneLemme(rechechaînerche) + "\"";
+		return "\"" + prépareChaîneLemme(rechechaînerche) + "\"";
 	}
 
 	private int getVoisinageUtilisateur() {
@@ -455,7 +454,7 @@ public class ContexteCtrl extends CorpusCtrl {
 					// Redonne le focus au Tab qui était actif lors de la demande d'affichage de l'onglet d'information
 					// sur les contextes SI le tab actuel est sélectionné
 					Tab tabActuel = (Tab) event.getTarget();
-					if (  tabActuel.isSelected() && tabPrécédent != null) {
+					if (tabActuel.isSelected() && tabPrécédent != null) {
 						tabPrécédent.setSelected(true);
 					}
 

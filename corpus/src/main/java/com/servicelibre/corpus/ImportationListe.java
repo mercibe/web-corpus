@@ -32,15 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.LigneSplitter;
-import com.servicelibre.corpus.manager.CorpusManager;
-import com.servicelibre.corpus.manager.ListeManager;
-import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.repository.CorpusRepository;
+import com.servicelibre.corpus.repository.ListeRepository;
 
 /**
  * 
@@ -59,11 +57,11 @@ public class ImportationListe {
 
 	private static String configLocation;
 
-	private CorpusManager cm;
+	private CorpusRepository corpusRepo;
 
 	private ApplicationContext ctx;
 
-	private ListeManager lm;
+	private ListeRepository listeRepo;
 
 	private String ligneSplitterFQN;
 
@@ -106,9 +104,8 @@ public class ImportationListe {
 	private String run() {
 
 		String message = "";
-		
+
 		ctx = new ClassPathXmlApplicationContext(configLocation);
-		
 
 		// Vérifier si le nomCorpus existe
 		Corpus corpus = getCorpus(nomCorpus);
@@ -121,72 +118,62 @@ public class ImportationListe {
 		// Vérifier si la liste existe déjà
 		Liste liste = getListe(nomListe, descriptionListe, corpus);
 		if (liste == null) {
-			message="La liste [" + liste + "] est introuvable dans la base de données et n'a pu être créée.";
+			message = "La liste [" + liste + "] est introuvable dans la base de données et n'a pu être créée.";
 			System.err.println(message);
 			return message;
 		}
 
 		// Instanciation du lineSplitter
 		LigneSplitter splitter = getLigneSplitter(ligneSplitterFQN);
-		
+
 		// Chargement du fichier
 		chargementListe(splitter, liste);
-		
-		//            // récupération des champs transient éventuels
-        //dbListe.setFichierSource(new File(fichierSource));
-        //dbListe.setLigneSplitter(currentListe.getLigneSplitter());
+
+		// // récupération des champs transient éventuels
+		// dbListe.setFichierSource(new File(fichierSource));
+		// dbListe.setLigneSplitter(currentListe.getLigneSplitter());
 
 		return message;
-		
+
 	}
 
 	private void chargementListe(LigneSplitter splitter, Liste liste) {
-		
+
 		File fichierSource = new File(getFichierSource());
-        // Chargement du fichier en liste
-        if (fichierSource != null && fichierSource.exists())
-        {
+		// Chargement du fichier en liste
+		if (fichierSource != null && fichierSource.exists()) {
 
-            MotManager mm = (MotManager) ctx.getBean("motManager");
+			try {
+				List<String> lignes = FileUtils.readLines(fichierSource);
 
-            try
-            {
-                List<String> lignes = FileUtils.readLines(fichierSource);
+				int cptMot = 0;
+				for (String ligne : lignes) {
+					List<Mot> mots = splitter.splitLigne(ligne);
+					for (Mot mot : mots) {
+						// TODO utiliser JdbcTemplate pour performance et facilité...
+						//
+						// // Vérifier si le mot existe déjà. Si oui, mettre à jour sa liste/partition et sauver. Sinon,
+						// ajouter.
+						// Mot findByMot = mm.findByMot(mot.lemme, mot.getMot(), mot.getCatgram(), mot.getGenre());
+						// if(findByMot != null) {
+						// findByMot.setListe(liste);
+						// }
+						//
+						// mm.save(findByMot);
+						// cptMot++;
+					}
+				}
 
-                int cptMot = 0;
-                for (String ligne : lignes)
-                {
-                    List<Mot> mots = splitter.splitLigne(ligne);
-                    for (Mot mot : mots)
-                    {
-                    	// TODO utiliser JdbcTemplate pour performance et facilité...
-//                    	
-//                    	// Vérifier si le mot existe déjà.  Si oui, mettre à jour sa liste/partition et sauver.  Sinon, ajouter.
-//                    	Mot findByMot = mm.findByMot(mot.lemme, mot.getMot(), mot.getCatgram(), mot.getGenre());
-//                    	if(findByMot != null) {
-//                    		findByMot.setListe(liste);
-//                    	}
-//                    	
-//                        mm.save(findByMot);
-//                        cptMot++;
-                    }
-                }
+				logger.info("{} mots ont été ajoutés à la partition {}.", cptMot, liste);
 
-                logger.info("{} mots ont été ajoutés à la partition {}.", cptMot, liste);
+			} catch (IOException e) {
+				logger.error("Erreur lors de la lecture de la liste des mots {}", fichierSource, e);
+			}
 
-            }
-            catch (IOException e)
-            {
-                logger.error("Erreur lors de la lecture de la liste des mots {}", fichierSource, e);
-            }
+		} else {
+			logger.error("Fichier null ou inexistant: {}", fichierSource);
+		}
 
-        }
-        else
-        {
-            logger.error("Fichier null ou inexistant: {}", fichierSource);
-        }
-
-		
 	}
 
 	private LigneSplitter getLigneSplitter(String ligneSplitterFQN) {
@@ -205,28 +192,25 @@ public class ImportationListe {
 	}
 
 	private Liste getListe(String nom, String description, Corpus corpus) {
-		lm = (ListeManager) ctx.getBean("listeManager");
-		Liste dbListe = lm.findByNom(nom);
+		listeRepo = (ListeRepository) ctx.getBean("listeRepository");
+		Liste dbListe = listeRepo.findByNom(nom);
 
-        if (dbListe == null)
-        {
-            logger.info("Création de la liste {} dans la base de données.", nom);
-            Liste liste  = new Liste(nom, description, corpus);
-            lm.save(liste);
-            return liste;
-        }
-        else
-        {
-            logger.info("La liste {} a été trouvé dans la base de données.", dbListe);
-            return dbListe;
-        }
+		if (dbListe == null) {
+			logger.info("Création de la liste {} dans la base de données.", nom);
+			Liste liste = new Liste(nom, description, corpus);
+			listeRepo.save(liste);
+			return liste;
+		} else {
+			logger.info("La liste {} a été trouvé dans la base de données.", dbListe);
+			return dbListe;
+		}
 	}
 
 	private Corpus getCorpus(String nomCorpus) {
 
-		cm = (CorpusManager) ctx.getBean("corpusManager");
+		corpusRepo = (CorpusRepository) ctx.getBean("corpusRepository");
 
-		Corpus dbCorpus = cm.findByNom(nomCorpus);
+		Corpus dbCorpus = corpusRepo.findByNom(nomCorpus);
 
 		if (dbCorpus != null) {
 			logger.info("Le nomCorpus {} a été trouvé dans la base de données.", dbCorpus);
@@ -259,22 +243,19 @@ public class ImportationListe {
 
 			System.out.println("Entrer le chemin complet du fichier qui contient la liste des mots de cette liste: ");
 			importationListe.setFichierSource(in.readLine());
-			
+
 			System.out.println("(optionnel) Entrer le FQN de la classe du splitter de ligne [com.servicelibre.corpus.liste.LigneSimpleSplitter]: ");
 			String splitterFQN = in.readLine();
-			if(splitterFQN != null && !splitterFQN.isEmpty())
-			{
+			if (splitterFQN != null && !splitterFQN.isEmpty()) {
 				importationListe.setLigneSplitterFQN(splitterFQN);
-			}
-			else {
+			} else {
 				importationListe.setLigneSplitterFQN("com.servicelibre.corpus.liste.LigneSimpleSplitter");
 			}
-			
+
 			System.out.println("Entrer le nom du Corpus auxquel il faut ajouter cette liste (sensible à la casse): ");
 			importationListe.setNomCorpus(in.readLine());
 
-			String confirmation = MessageFormat.format(
-					"Confirmer: importer la liste de mots {0}({1}) depuis [{2}] et l''associer au Corpus [{3}] [O/N]?",
+			String confirmation = MessageFormat.format("Confirmer: importer la liste de mots {0}({1}) depuis [{2}] et l''associer au Corpus [{3}] [O/N]?",
 					new Object[] { importationListe.getNomListe(), importationListe.getDescriptionListe(), importationListe.getFichierSource(),
 							importationListe.getNomCorpus() });
 			System.out.println(confirmation);
@@ -302,6 +283,5 @@ public class ImportationListe {
 	public void setLigneSplitterFQN(String ligneSplitterFQN) {
 		this.ligneSplitterFQN = ligneSplitterFQN;
 	}
-	
 
 }

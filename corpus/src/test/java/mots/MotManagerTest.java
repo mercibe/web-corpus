@@ -25,13 +25,14 @@ import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
-import com.servicelibre.corpus.manager.MotManager;
+import com.servicelibre.corpus.repository.MotRepository;
+import com.servicelibre.corpus.repository.MotRepositoryCustom;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MotManagerTest implements ApplicationContextAware {
 	@Autowired
-	MotManager motManager;
+	MotRepository motRepository;
 
 	@Autowired
 	ListeImport listImport;
@@ -58,12 +59,12 @@ public class MotManagerTest implements ApplicationContextAware {
 	@Rollback(value = false)
 	public void motManagerSimpleTest() {
 
-		Mot mot = motManager.findOne((long) 1);
+		Mot mot = motRepository.findOne((long) 1);
 
 		assertNotNull(mot);
 		System.out.println(mot);
 
-		List<Mot> mots = motManager.findByMot("manger");
+		List<Mot> mots = motRepository.findByMot("manger");
 		assertNotNull(mots);
 		assertTrue(mots.size() > 0);
 		System.out.println(mots);
@@ -73,18 +74,18 @@ public class MotManagerTest implements ApplicationContextAware {
 	@Test
 	@Transactional
 	public void motManagerGraphieTest() {
-		List<Mot> mots = motManager.findByGraphie("acheminement", MotManager.Condition.ENTIER);
+		List<Mot> mots = motRepository.g("acheminement", MotRepositoryCustom.Condition.ENTIER);
 		assertEquals("acheminement", mots.get(0).lemme);
 		System.out.println(mots);
 
 		// FIXME ajouter assertions
-		mots = motManager.findByGraphie("ache", MotManager.Condition.COMMENCE_PAR);
+		mots = motRepository.g("ache", MotRepositoryCustom.Condition.COMMENCE_PAR);
 		System.out.println(mots);
 
-		mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
+		mots = motRepository.g("ment", MotRepositoryCustom.Condition.FINIT_PAR);
 		System.out.println(mots);
 
-		mots = motManager.findByGraphie("ari", MotManager.Condition.CONTIENT);
+		mots = motRepository.g("ari", MotRepositoryCustom.Condition.CONTIENT);
 		System.out.println(mots);
 
 	}
@@ -94,20 +95,20 @@ public class MotManagerTest implements ApplicationContextAware {
 	@Rollback(value = false)
 	public void motManagerPrononciationTest() {
 
-		List<Mot> mots = motManager.findByPrononciation("vɛʀ", MotManager.Condition.ENTIER, null);
+		List<Mot> mots = motRepository.p("vɛʀ", MotRepositoryCustom.Condition.ENTIER, null);
 		// assertEquals("pomme", mots.get(0).lemme);
 		System.out.println(mots);
 
 		// FIXME ajouter assertions
-		// mots = motManager.findByGraphie("pom",
+		// mots = motRepository.findByGraphie("pom",
 		// MotManager.Condition.COMMENCE_PAR);
 		// System.out.println(mots);
 		//
-		// mots = motManager.findByGraphie("ment",
+		// mots = motRepository.findByGraphie("ment",
 		// MotManager.Condition.FINIT_PAR);
 		// System.out.println(mots);
 		//
-		// mots = motManager.findByGraphie("ari",
+		// mots = motRepository.findByGraphie("ari",
 		// MotManager.Condition.CONTIENT);
 		// System.out.println(mots);
 
@@ -133,28 +134,33 @@ public class MotManagerTest implements ApplicationContextAware {
 
 		String graphie = "a";
 
-		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		List<Mot> mots = motRepository.g(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
+				+ f);
 		assertEquals(1, mots.size());
 
 		f.removeFiltre(CléFiltre.ro.name(), Boolean.TRUE);
-		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		mots = motRepository.g(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
+				+ f);
 		assertEquals(21, mots.size());
 
 		f.removeFiltre(CléFiltre.genre.name(), "m.");
-		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		mots = motRepository.g(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
+				+ f);
 		assertEquals(36, mots.size());
 
 		f.removeFiltre(CléFiltre.catgram.name(), "adv.");
-		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		mots = motRepository.g(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
+				+ f);
 		assertEquals(35, mots.size());
 
 		f.removeFiltre(CléFiltre.catgram.name(), "n.");
-		mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
+		mots = motRepository.g(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f);
+		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
+				+ f);
 		assertEquals(46, mots.size());
 
 	}

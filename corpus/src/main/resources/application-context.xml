@@ -3,20 +3,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 
 	<!-- Chargement des listes via JPA -->
-	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" />
-	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" />
+<!-- 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" /> -->
+<!-- 	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"></bean> -->
+<!-- 	<bean id="catégorieListeManager" class="com.servicelibre.corpus.manager.JpaCatégorieListeManager" /> -->
+<!-- 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" /> -->
+<!-- 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" /> -->
 	<bean id="listeMotManager" class="com.servicelibre.corpus.manager.JpaListeMotManager" />
-	<bean id="catégorieListeManager" class="com.servicelibre.corpus.manager.JpaCatégorieListeManager" />
 	<bean id="typeDocumentSourceManager" class="com.servicelibre.corpus.manager.JpaTypeDocumentSourceManager" />
-	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" />
 	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />	
-	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"></bean>
 
 
 	

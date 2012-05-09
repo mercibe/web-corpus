@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.servicelibre.corpus.entity.Liste;
 
 @Transactional
+@Deprecated
 public interface ListeManager // extends JpaRepository<Liste, Long>
 {
 

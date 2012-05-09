@@ -17,6 +17,7 @@ import com.servicelibre.corpus.entity.DocMetadata;
 @Repository
 // Essentiellement pour traduction des exceptions « vendor-neutral »
 @Transactional
+@Deprecated
 public class JpaDocMetadataManager implements DocMetadataManager {
 	
 	private static Logger logger = LoggerFactory.getLogger(JpaDocMetadataManager.class);

@@ -9,19 +9,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.manager.ListeManager;
+import com.servicelibre.corpus.repository.ListeRepository;
 
 @Controller
 public class ListeController
 {
 
     @Autowired
-    ListeManager listeManager;
+    ListeRepository listeRepo;
 
     @RequestMapping(value = "/liste/{id}", method = RequestMethod.GET)
     public String affiche(@PathVariable("id") long listeId, Model model)
     {
 
-        Liste liste = listeManager.findOne(listeId);
+        Liste liste = listeRepo.findOne(listeId);
 
         System.err.println("Trouvé liste " + liste);
 

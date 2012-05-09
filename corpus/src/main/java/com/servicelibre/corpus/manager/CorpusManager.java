@@ -6,6 +6,7 @@ import com.servicelibre.corpus.entity.Corpus;
 
 
 @Transactional(readOnly = true)
+@Deprecated
 public interface CorpusManager // extends JpaRepository<Corpus, Long>
 {
 

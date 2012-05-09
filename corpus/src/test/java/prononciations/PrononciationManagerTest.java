@@ -23,6 +23,7 @@ import com.servicelibre.corpus.entity.Prononciation;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.manager.PrononciationManager;
+import com.servicelibre.corpus.repository.MotRepository;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,7 +33,7 @@ public class PrononciationManagerTest implements ApplicationContextAware
     PrononciationManager prononcManager;
 
     @Autowired
-    MotManager motManager;
+    MotRepository motRepo;
 
     @Autowired
     ListeImport listImport;
@@ -65,20 +66,20 @@ public class PrononciationManagerTest implements ApplicationContextAware
     public void prononciationManagerSimpleTest()
     {
 
-        List<Mot> mots = motManager.findByMot("manger");
+        List<Mot> mots = motRepo.findByMot("manger");
         mangerMot = mots.get(0);
         System.out.println(mangerMot);
 
         Prononciation prononc = new Prononciation("mɑ̃ʒe");
         mangerMot.ajoutePrononciation(prononc);
-        motManager.save(mangerMot);
+        mangerMot = motRepo.save(mangerMot);
         System.out.println("mangerMot ++++++++++++++  " + mangerMot);
 
-        List<Mot> mots2 = motManager.findByMot("blancheur");
+        List<Mot> mots2 = motRepo.findByMot("blancheur");
         Mot blancheurMot = mots2.get(0);
         Prononciation prononc2 = new Prononciation("blɑ̃ʃœʀ");
         blancheurMot.ajoutePrononciation(prononc2);
-        motManager.save(blancheurMot);
+        blancheurMot = motRepo.save(blancheurMot);
         System.out.println("blancheurMot ++++++++++++++  " + blancheurMot);
 
         Prononciation prononc3 = prononcManager.findOne((long) 1);
@@ -107,18 +108,18 @@ public class PrononciationManagerTest implements ApplicationContextAware
     //    @Ignore
     //    public void motManagerGraphieTest() {
     //        
-    //        List<Mot> mots = motManager.findByGraphie("pomme", MotManager.Condition.ENTIER);
+    //        List<Mot> mots = motRepository.findByGraphie("pomme", MotManager.Condition.ENTIER);
     //        assertEquals("pomme", mots.get(0).lemme);
     //        System.out.println(mots);
     //        
     //        //FIXME ajouter assertions
-    //        mots = motManager.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
+    //        mots = motRepository.findByGraphie("pom", MotManager.Condition.COMMENCE_PAR);
     //        System.out.println(mots);
     //        
-    //        mots = motManager.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
+    //        mots = motRepository.findByGraphie("ment", MotManager.Condition.FINIT_PAR);
     //        System.out.println(mots);
     //        
-    //        mots = motManager.findByGraphie("ari", MotManager.Condition.CONTIENT);        
+    //        mots = motRepository.findByGraphie("ari", MotManager.Condition.CONTIENT);        
     //        System.out.println(mots);
     //        
     //    }
@@ -142,7 +143,7 @@ public class PrononciationManagerTest implements ApplicationContextAware
     //    	
     //    	String graphie = "a";
     //    	
-    //		List<Mot> mots = motManager.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
+    //		List<Mot> mots = motRepository.findByGraphie(graphie, MotManager.Condition.COMMENCE_PAR, f);
     //    	System.out.println("Trouvé " + mots.size() + " mots qui " + MotManager.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre " + f);
     //    	assertEquals(152, mots.size());
     //    	

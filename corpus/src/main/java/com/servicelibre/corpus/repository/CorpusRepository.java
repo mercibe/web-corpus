@@ -6,4 +6,8 @@ import com.servicelibre.corpus.entity.Corpus;
 
 public interface CorpusRepository extends CrudRepository<Corpus, Long> {
 
+	Corpus findByNom(String nom);
+
+	Corpus findByParDéfaut(boolean parDéfaut);
+
 }
