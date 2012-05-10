@@ -2,9 +2,6 @@ package com.servicelibre.zk.recherche;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
-import com.servicelibre.corpus.manager.MotManager;
-import com.servicelibre.corpus.manager.MotManager.Condition;
-import com.servicelibre.zk.recherche.Recherche.Cible;
 
 public class RechercheContexte extends Recherche {
 

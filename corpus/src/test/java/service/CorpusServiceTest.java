@@ -9,7 +9,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +18,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.manager.CorpusManager;
-import com.servicelibre.corpus.manager.DocMetadataManager;
 import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.repository.CorpusRepository;
 import com.servicelibre.corpus.repository.DocMetadataRepository;

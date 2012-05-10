@@ -105,11 +105,11 @@ public abstract class FiltreManager {
 		this.corpusService = corpusService;
 	}
 
-	public ListeRepository getListeRepo() {
+	public ListeRepository getListeRepository() {
 		return listeRepo;
 	}
 
-	public void setListeManager(ListeRepository listeRepo) {
+	public void setListeRepository(ListeRepository listeRepo) {
 		this.listeRepo = listeRepo;
 	}
 

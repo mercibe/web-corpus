@@ -52,11 +52,11 @@ public class ContexteFiltreManager extends FiltreManager {
 		return clésValeurs;
 	}
 
-	public DocMetadataRepository getDocMetadataRepo() {
+	public DocMetadataRepository getDocMetadataRepository() {
 		return docMetadataRepo;
 	}
 
-	public void setDocMetadataRepo(DocMetadataRepository docMetadataRepo) {
+	public void setDocMetadataRepository(DocMetadataRepository docMetadataRepo) {
 		this.docMetadataRepo = docMetadataRepo;
 	}
 

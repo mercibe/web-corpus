@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,10 +37,10 @@ public class Mot implements Comparable<Mot> {
 	@OneToOne
 	private Liste liste;
 
-	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
-	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MotPrononciation> motPrononciations = new ArrayList<MotPrononciation>();
 
 	@Column(nullable = false)
@@ -252,4 +253,5 @@ public class Mot implements Comparable<Mot> {
 		this.motPrononciations = motPrononciations;
 	}
 
+	
 }

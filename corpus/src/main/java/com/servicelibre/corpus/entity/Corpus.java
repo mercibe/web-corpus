@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -43,13 +44,13 @@ public class Corpus {
     @Column
     Boolean parDéfaut;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus", orphanRemoval = true, fetch=FetchType.EAGER)
     List<DocMetadata> métadonnéesDoc = new ArrayList<DocMetadata>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus",orphanRemoval = true)
     List<Liste> listes = new ArrayList<Liste>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "corpus",orphanRemoval = true)
     List<CatégorieListe> catégoriesListes = new ArrayList<CatégorieListe>();
     
     public Corpus() {

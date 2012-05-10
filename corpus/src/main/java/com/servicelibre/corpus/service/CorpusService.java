@@ -69,11 +69,11 @@ public class CorpusService {
 		return this.corpus;
 	}
 
-	public CorpusRepository getCorpusRepo() {
+	public CorpusRepository getCorpusRepository() {
 		return corpusRepo;
 	}
 
-	public void setCorpusRepo(CorpusRepository corpusRepo) {
+	public void setCorpusRepository(CorpusRepository corpusRepo) {
 		this.corpusRepo = corpusRepo;
 	}
 

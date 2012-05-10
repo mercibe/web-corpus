@@ -7,32 +7,22 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-
-	<!-- Définitions des managers JPA (repository) -->
-<!-- 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" /> -->
-<!-- 	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"/> -->
-<!-- 	<bean id="catégorieListeManager" class="com.servicelibre.corpus.manager.JpaCatégorieListeManager" /> -->
-<!-- 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" /> -->
-<!-- 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" /> -->
-<!-- 	<bean id="typeDocumentSourceManager" class="com.servicelibre.corpus.manager.JpaTypeDocumentSourceManager" /> -->
-<!-- 	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" /> -->
-
 	<!-- Définition managers objets ZK -->
 	<bean id="listeFiltreManager" class="com.servicelibre.zk.controller.ListeFiltreManager"
 		init-method="init"  scope="prototype">
 		<property name="corpusService" ref="corpusService" />
-		<property name="listeManager" ref="listeManager" />
+		<property name="listeRepository" ref="listeRepository" />
 	</bean>
 
 	<bean id="contexteFiltreManager" class="com.servicelibre.zk.controller.ContexteFiltreManager"
 		init-method="init"  scope="prototype">
-		<property name="docMetadataManager" ref="docMetadataManager" />
+		<property name="docMetadataRepository" ref="docMetadataRepository" />
 		<property name="corpusService" ref="corpusService"></property>
 	</bean>
 
 	<!-- Définition des services -->
 	<bean id="corpusService" class="com.servicelibre.corpus.service.CorpusService">
-		<constructor-arg ref="corpusManager" />
+		<constructor-arg ref="corpusRepository" />
 		<property name="formeService" ref="formeService" />
 		<property name="catégorieListeRepository" ref="catégorieListeRepository"/>
 		<property name="listeRepository" ref="listeRepository"/>

@@ -28,7 +28,7 @@ public class Prononciation implements Comparable<Prononciation> {
 	@Column(nullable = false)
 	public String prononciation;
 
-	@OneToMany(mappedBy = "prononciation", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "prononciation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MotPrononciation> motPrononciations = new ArrayList<MotPrononciation>();
 
 	public Prononciation() {

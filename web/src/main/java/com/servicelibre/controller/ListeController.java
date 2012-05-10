@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.repository.ListeRepository;
 
 @Controller

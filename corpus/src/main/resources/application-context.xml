@@ -8,18 +8,6 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 
-	<!-- Chargement des listes via JPA -->
-<!-- 	<bean id="corpusManager" class="com.servicelibre.corpus.manager.JpaCorpusManager" /> -->
-<!-- 	<bean id="docMetadataManager" class="com.servicelibre.corpus.manager.JpaDocMetadataManager"></bean> -->
-<!-- 	<bean id="catégorieListeManager" class="com.servicelibre.corpus.manager.JpaCatégorieListeManager" /> -->
-<!-- 	<bean id="listeManager" class="com.servicelibre.corpus.manager.JpaListeManager" /> -->
-<!-- 	<bean id="motManager" class="com.servicelibre.corpus.manager.JpaMotManager" /> -->
-<!-- 	<bean id="listeMotManager" class="com.servicelibre.corpus.manager.JpaListeMotManager" /> -->
-<!-- 	<bean id="typeDocumentSourceManager" class="com.servicelibre.corpus.manager.JpaTypeDocumentSourceManager" /> -->
-<!-- 	<bean id="prononciationManager" class="com.servicelibre.corpus.manager.JpaPrononciationManager" />	 -->
-
-
-	
 	<!-- Demande à Spring d'instrumenter les beans qui contiennent l'annotation 
 		@Transactionnal -->
 	<tx:annotation-driven transaction-manager="transactionManager" />

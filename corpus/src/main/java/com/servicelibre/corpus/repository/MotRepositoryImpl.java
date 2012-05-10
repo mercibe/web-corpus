@@ -233,7 +233,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		mot.fetch("liste", JoinType.LEFT);
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
-		Path<Object> prononciationPath = mot.join("motPrononciations").get("prononciation");
+		Path<Object> prononciationPath = mot.join("motPrononciations").get("prononciation").get("prononciation");
 
 		Predicate p;
 		if (condition == Condition.ENTIER) {

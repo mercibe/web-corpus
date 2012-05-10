@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.manager.MotManager;
 import com.servicelibre.corpus.repository.MotRepository;
 
 

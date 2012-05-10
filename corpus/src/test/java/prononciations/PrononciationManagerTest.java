@@ -77,7 +77,9 @@ public class PrononciationManagerTest implements ApplicationContextAware
         Prononciation prononc = new Prononciation("mɑ̃ʒe");
         mangerMot = motRepo.save(mangerMot);
         prononc = prononciationRepo.save(prononc);
-        motPrononciationRepo.save(new MotPrononciation(mangerMot, prononc));
+        MotPrononciation motPrononciation = motPrononciationRepo.save(new MotPrononciation(mangerMot, prononc));
+        mangerMot.getMotPrononciations().add(motPrononciation);
+		
 
         System.out.println("mangerMot ++++++++++++++  " + mangerMot);
 

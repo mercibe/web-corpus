@@ -29,18 +29,13 @@ public class ListeMot
     int Id;
 
     
-	/*
-	 * ListeMot est maître de la relation OneToMany (il n'a pas le « mappedBy») Il
-	 * est donc responsable de la gestion bi-directionnelle de la relation
-	 * (insert/update)
-	 */
     @ManyToOne(optional = false)
     Mot mot;
     
     @ManyToOne(optional = false)
     Liste liste;
     
-	@OneToMany(mappedBy = "listeMot", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "listeMot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Contexte> contextes = new ArrayList<Contexte>();
 
     

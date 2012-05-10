@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.manager.ListeManager;
 import com.servicelibre.corpus.repository.ListeRepository;
 
 @Controller
