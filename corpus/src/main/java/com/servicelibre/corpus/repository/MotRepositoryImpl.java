@@ -96,7 +96,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		criteria.select(mot);
 
 		// chargement EAGER des prononciations => DISTINCT dans le critère
-		mot.fetch("motPrononciations", JoinType.LEFT);
+		mot.fetch("motPrononciations", JoinType.LEFT).fetch("prononciation", JoinType.LEFT);
 
 		// chargement EAGER de la liste primaire du mot
 		mot.fetch("liste", JoinType.LEFT);
@@ -170,13 +170,14 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 				if (filtre.nom.startsWith("liste_")) {
 					in = inClauses.get(filtre.nom);
 					if (in == null) {
-						// Il faut ajouter un critère sur l'objet « listes »,
+						// Il faut ajouter un critère sur l'objet « liste »,
 						// variable d'instance de la classe Mot (collection des listes
 						// auxquelles appartiennent le mot = étiquettes associées au mot)
 
-						// Il faut rejoindre les listes pour chaque CatégorieListe inclues dans le filtre
-						Join<Object, Object> joinListe = motRacine.join("listes");
+						Join<Object, Object> joinListe = motRacine.join("listeMots").join("liste");
+						
 
+						
 						// FIXME BUG
 						in = cb.in(joinListe);
 						inClauses.put(filtre.nom, in);
@@ -226,8 +227,8 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		criteria.distinct(true);
 		criteria.select(mot);
 
-		// chargement EAGER des prononciations => DISTINCT dans le critère
-		mot.fetch("motPrononciations");
+		// chargement EAGER des prononciations => DISTINCT dans le critère (cf. ci-dessus)
+		mot.fetch("motPrononciations").fetch("prononciation");
 
 		// chargement EAGER de la liste primaire du mot
 		mot.fetch("liste", JoinType.LEFT);

@@ -96,32 +96,12 @@ public class CatégorieListe {
 		this.listes = listes;
 	}
 
-	public void ajouterListe(Liste liste) {
-		if (!this.listes.contains(liste)) {
-			this.listes.add(liste);
-			liste.setCatégorieListe(this);
-		}
-	}
-
-	public void enleverListe(Liste liste) {
-		this.listes.remove(liste);
-	}
-
 	public Corpus getCorpus() {
 		return corpus;
 	}
 
 	public void setCorpus(Corpus corpus) {
-		if (this.corpus != corpus) {
-			if (this.corpus != null) {
-				this.corpus.enleverCatégorieListe(this);
-			}
-			this.corpus = corpus;
-			if (corpus != null) {
-				corpus.ajouterCatégorieListe(this);
-			}
-		}
-
+		this.corpus = corpus;
 	}
 
 	@Override

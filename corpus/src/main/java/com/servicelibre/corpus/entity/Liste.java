@@ -104,15 +104,7 @@ public class Liste implements Comparable<Liste> {
 	}
 
 	public void setCorpus(Corpus corpus) {
-		if (this.corpus != corpus) {
-			if (this.corpus != null) {
-				this.corpus.enleverListe(this);
-			}
-			this.corpus = corpus;
-			if (corpus != null) {
-				corpus.ajouterListe(this);
-			}
-		}
+		this.corpus = corpus;
 	}
 	
 	public List<ListeMot> getListeMots() {
@@ -189,16 +181,19 @@ public class Liste implements Comparable<Liste> {
 
 
 	public void setCatégorieListe(CatégorieListe catégorie) {
-		if (this.catégorie != catégorie) {
-			if (this.catégorie != null) {
-				this.catégorie.enleverListe(this);
-			}
-			this.catégorie = catégorie;
-			if (catégorie != null) {
-				catégorie.ajouterListe(this);
-			}
-		}
-
+		this.catégorie = catégorie;
 	}
+//	public void setCatégorieListe(CatégorieListe catégorie) {
+//		if (this.catégorie != catégorie) {
+//			if (this.catégorie != null) {
+//				this.catégorie.enleverListe(this);
+//			}
+//			this.catégorie = catégorie;
+//			if (catégorie != null) {
+//				catégorie.ajouterListe(this);
+//			}
+//		}
+//
+//	}
 
 }

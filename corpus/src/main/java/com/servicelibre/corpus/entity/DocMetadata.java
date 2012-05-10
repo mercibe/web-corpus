@@ -95,16 +95,7 @@ public class DocMetadata {
 	}
 
 	public void setCorpus(Corpus corpus) {
-		if (this.corpus != corpus) {
-			if (this.corpus != null) {
-				this.corpus.enleverDocMetadata(this);
-			}
-			this.corpus = corpus;
-			if (corpus != null) {
-				corpus.ajouterDocMetadata(this);
-			}
-		}
-
+		this.corpus = corpus;
 	}
 
 	public String getDescription() {

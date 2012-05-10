@@ -12,6 +12,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,20 +48,37 @@ public class CorpusManagerTest implements ApplicationContextAware {
 
 		System.out.println("corpus_id: " + corpus.getId());
 
-		DocMetadata docMetadata = new DocMetadata("Catégorie", "La catégorie du document", "categorie", 40, corpus);
-		corpus.getMétadonnéesDoc().add(docMetadata);
-
-		docMetadata = docMetadataRepo.save(docMetadata);
+		DocMetadata docMetadataCatégorie = new DocMetadata("Catégorie", "La catégorie du document", "categorie", 30, corpus);
+		DocMetadata docMetadataAuteur = new DocMetadata("Auteur", "L'auteur du document", "auteur", 10, corpus);
+		DocMetadata docMetadataDate = new DocMetadata("Date", "Date du document", "date", 20, corpus);
+		
+		corpus.getMétadonnéesDoc().add(docMetadataCatégorie);
+		corpus.getMétadonnéesDoc().add(docMetadataAuteur);
+		corpus.getMétadonnéesDoc().add(docMetadataDate);
+		
+		//corpus = corpusRepo.save(corpus);
+		//docMetadataCatégorie = docMetadataRepo.save(docMetadataCatégorie);
 
 		List<DocMetadata> métadonnéesDoc = corpus.getMétadonnéesDoc();
 
 		assertNotNull(métadonnéesDoc);
-		assertEquals(1, métadonnéesDoc.size());
+		assertEquals(3, métadonnéesDoc.size());
 
 		for (DocMetadata métadonnéeDoc : métadonnéesDoc) {
-			System.out.println(métadonnéeDoc);
+			System.out.println("PAS TRIÉ: " + métadonnéeDoc);
 		}
 
+		// Vérifie que le tri se fait bien
+		métadonnéesDoc = docMetadataRepo.findByCorpus(corpus, new Sort("ordre"));
+		assertNotNull(métadonnéesDoc);
+		assertEquals(3, métadonnéesDoc.size());
+		int ordre = 10;
+		for (DocMetadata métadonnéeDoc : métadonnéesDoc) {
+			assertEquals(ordre, métadonnéeDoc.getOrdre());
+			ordre +=10;
+			System.out.println("TRIÉ: " + métadonnéeDoc);
+		}
+		
 	}
 
 	@Override

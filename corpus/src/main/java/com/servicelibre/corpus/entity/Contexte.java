@@ -17,8 +17,56 @@ public class Contexte
 
     @ManyToOne(optional = false)
     ListeMot listeMot;
+
+    @ManyToOne(optional = false)
+    ListeMot typeContexte;
+    
+    @Column
+    String documentId;
     
     @Column
     String note;
 
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		Id = id;
+	}
+
+	public ListeMot getListeMot() {
+		return listeMot;
+	}
+
+	public void setListeMot(ListeMot listeMot) {
+		this.listeMot = listeMot;
+	}
+
+	public ListeMot getTypeContexte() {
+		return typeContexte;
+	}
+
+	public void setTypeContexte(ListeMot typeContexte) {
+		this.typeContexte = typeContexte;
+	}
+
+	public String getDocumentId() {
+		return documentId;
+	}
+
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+    
+    
 }

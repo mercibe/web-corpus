@@ -17,6 +17,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 
 import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Corpus;
@@ -352,7 +353,7 @@ public class CorpusService {
 	}
 
 	public List<CatégorieListe> getCatégorieListes() {
-		return catégorieListeRepo.findByCorpus(corpus);
+		return catégorieListeRepo.findByCorpus(corpus, new Sort("ordre", "nom"));
 	}
 
 	public CatégorieListeRepository getCatégorieListeRepo() {

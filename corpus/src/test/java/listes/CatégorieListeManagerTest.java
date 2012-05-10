@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -72,13 +73,18 @@ public class CatégorieListeManagerTest implements ApplicationContextAware {
 
 		// Création de listes et association avec cette catégorie
 		Liste lThématique1 = new Liste("à la maison", "Liste des mots du vocabulaire utilisé à la maison", corpus, catégorie);
+		lThématique1.setOrdre(1);
 		Liste lThématique2 = new Liste("à l'école", "Liste des mots du vocabulaire utilisé à l'école", corpus, catégorie);
+		lThématique2.setOrdre(2);
 
 		lThématique1 = listeRepo.save(lThématique1);
 		lThématique2 = listeRepo.save(lThématique2);
 
-		catégorie.ajouterListe(lThématique1);
-		catégorie.ajouterListe(lThématique2);
+		catégorie.getListes().add(lThématique1);
+		catégorie.getListes().add(lThématique2);
+
+		// catégorie.ajouterListe(lThématique1);
+		// catégorie.ajouterListe(lThématique2);
 
 		assertNotNull(catégorie.getListes());
 		assertEquals(2, catégorie.getListes().size());
@@ -88,8 +94,12 @@ public class CatégorieListeManagerTest implements ApplicationContextAware {
 		assertNotNull(catDB.getListes());
 		assertEquals(2, catDB.getListes().size());
 
+		// Test syntaxe du tri
+		catégorieListeRepo.findByCorpus(corpus, new Sort("ordre", "nom"));
+
 		// Supprimer une liste de la catégorie
-		catDB.enleverListe(lThématique1);
+		catDB.getListes().remove(lThématique1);
+		// catDB.enleverListe(lThématique1);
 		assertEquals(1, catDB.getListes().size());
 
 		System.out.println(catDB);

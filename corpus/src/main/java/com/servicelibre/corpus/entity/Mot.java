@@ -2,8 +2,10 @@ package com.servicelibre.corpus.entity;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,8 +42,11 @@ public class Mot implements Comparable<Mot> {
 	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
-	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MotPrononciation> motPrononciations = new ArrayList<MotPrononciation>();
+	// Utilisation d'un Set pour permettre le chargement EAGER et éviter
+	// javax.persistence.PersistenceException: org.hibernate.HibernateException: cannot simultaneously fetch multiple
+	// bags cf. http://blog.eyallupu.com/2010/06/hibernate-exception-simultaneously.html
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Set<MotPrononciation> motPrononciations = new HashSet<MotPrononciation>();
 
 	@Column(nullable = false)
 	String mot;
@@ -245,13 +250,12 @@ public class Mot implements Comparable<Mot> {
 		this.listeMots = listeMots;
 	}
 
-	public List<MotPrononciation> getMotPrononciations() {
+	public Set<MotPrononciation> getMotPrononciations() {
 		return motPrononciations;
 	}
 
-	public void setMotPrononciations(List<MotPrononciation> motPrononciations) {
+	public void setMotPrononciations(Set<MotPrononciation> motPrononciations) {
 		this.motPrononciations = motPrononciations;
 	}
 
-	
 }
