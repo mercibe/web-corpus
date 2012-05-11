@@ -25,9 +25,7 @@ public class AccueilController
     {
 
         //TODO corpus par défaut => configuration, via nom au lieu de ID
-    	Corpus corpus = new Corpus();
-    	corpus.setId(1);
-        List<Liste> listes = listeRepository.findByCorpus(corpus);
+        List<Liste> listes = listeRepository.findByCorpusId(1);
 
         model.addAttribute("listes", listes);
 

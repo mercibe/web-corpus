@@ -197,7 +197,7 @@ public class ImportationListe {
 
 		if (dbListe == null) {
 			logger.info("Création de la liste {} dans la base de données.", nom);
-			Liste liste = new Liste(nom, description, corpus);
+			Liste liste = new Liste(nom, description);
 			listeRepo.save(liste);
 			return liste;
 		} else {

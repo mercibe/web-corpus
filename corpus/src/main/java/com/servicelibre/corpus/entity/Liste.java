@@ -18,7 +18,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"corpus_id", "nom"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "catégorie_id", "nom" }))
 public class Liste implements Comparable<Liste> {
 
 	@Id
@@ -36,14 +36,9 @@ public class Liste implements Comparable<Liste> {
 
 	@OneToMany(mappedBy = "liste", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
-	
-	@ManyToOne
-	@JoinColumn(name = "corpus_id")
-	Corpus corpus;
 
-	// FIXME rajouter nullable = false une fois le processus d'importation de liste revu pour tenir compte de cette variable
 	@ManyToOne
-	@JoinColumn(name = "catégorie_id")
+	@JoinColumn(name = "catégorie_id", nullable=false)
 	CatégorieListe catégorie;
 
 	@Transient
@@ -63,15 +58,10 @@ public class Liste implements Comparable<Liste> {
 		this(nom, description, null);
 	}
 
-	public Liste(String nom, String description, Corpus corpus) {
-		this(nom, description, corpus, null);
-	}
-
-	public Liste(String nom, String description, Corpus corpus, CatégorieListe catégorie) {
+	public Liste(String nom, String description, CatégorieListe catégorie) {
 		super();
 		this.nom = nom;
 		this.description = description;
-		this.corpus = corpus;
 		this.catégorie = catégorie;
 	}
 
@@ -99,14 +89,6 @@ public class Liste implements Comparable<Liste> {
 		this.description = description;
 	}
 
-	public Corpus getCorpus() {
-		return corpus;
-	}
-
-	public void setCorpus(Corpus corpus) {
-		this.corpus = corpus;
-	}
-	
 	public List<ListeMot> getListeMots() {
 		return listeMots;
 	}
@@ -117,7 +99,7 @@ public class Liste implements Comparable<Liste> {
 
 	@Override
 	public String toString() {
-		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + ", corpus=" + corpus + "]";
+		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + "]";
 	}
 
 	public void ajouteMot(Mot mot) {
@@ -173,27 +155,24 @@ public class Liste implements Comparable<Liste> {
 		return catégorie;
 	}
 
-	
-	
 	public void setCatégorie(CatégorieListe catégorie) {
 		this.catégorie = catégorie;
 	}
 
-
 	public void setCatégorieListe(CatégorieListe catégorie) {
 		this.catégorie = catégorie;
 	}
-//	public void setCatégorieListe(CatégorieListe catégorie) {
-//		if (this.catégorie != catégorie) {
-//			if (this.catégorie != null) {
-//				this.catégorie.enleverListe(this);
-//			}
-//			this.catégorie = catégorie;
-//			if (catégorie != null) {
-//				catégorie.ajouterListe(this);
-//			}
-//		}
-//
-//	}
+	// public void setCatégorieListe(CatégorieListe catégorie) {
+	// if (this.catégorie != catégorie) {
+	// if (this.catégorie != null) {
+	// this.catégorie.enleverListe(this);
+	// }
+	// this.catégorie = catégorie;
+	// if (catégorie != null) {
+	// catégorie.ajouterListe(this);
+	// }
+	// }
+	//
+	// }
 
 }

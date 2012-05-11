@@ -177,7 +177,6 @@ public class ListeImport {
 			logger.info("Création de la liste {} dans la base de données.", liste);
 
 			Corpus createCorpus = getOrCreateCorpus(this.corpus);
-			liste.setCorpus(createCorpus);
 			this.catégorieImportation.setCorpus(createCorpus);
 
 			catégorieImportation = getOrCreateCatégorieListe(this.catégorieImportation);

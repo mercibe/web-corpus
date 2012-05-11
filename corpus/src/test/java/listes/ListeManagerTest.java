@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.servicelibre.corpus.entity.CatégorieListe;
 import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.ListeMot;
@@ -73,11 +74,14 @@ public class ListeManagerTest implements ApplicationContextAware
     {
         Corpus corpus = new Corpus("Corpus de test", "description du corpus de test");
 
-        Liste lTest1 = new Liste("Liste de test", "Liste de test TDD", corpus);
-        
         System.err.println("corpus_id: " + corpus.getId());
-
+        
         corpus = corpusRepo.save(corpus);
+        
+        CatégorieListe catégorieListe = new CatégorieListe("Listes", "Listes de partitionnement des mots", corpus);
+        
+        Liste lTest1 = new Liste("Liste de test", "Liste de test TDD", catégorieListe);
+        
 
         System.err.println("corpus_id: " + corpus.getId());
 
