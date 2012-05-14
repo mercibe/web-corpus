@@ -30,6 +30,7 @@ import com.servicelibre.corpus.repository.MotRepository;
  * @author benoitm
  * 
  */
+@Deprecated
 public class ListeImport {
 
 	private static Logger logger = LoggerFactory.getLogger(ListeImport.class);
@@ -81,12 +82,7 @@ public class ListeImport {
 
 					List<Mot> mots = ligneSplitter.splitLigne(ligne);
 
-					Liste liste = mots.get(0).getListe();
-					if (liste == null || liste.getNom() == null) {
-						liste = getOrCreateListe(infoListe);
-					} else {
-						liste = getOrCreateListe(liste);
-					}
+					Liste liste = getOrCreateListe(infoListe);
 
 					if (liste == null) {
 						return -1;
@@ -104,13 +100,7 @@ public class ListeImport {
 
 							if (!simulation) {
 								logger.info("Ajout du mot [{}]", mot.lemme);
-								// Définition de la liste primaire du mot, si la liste est primaire
-								if (liste.isListesPrimaire()) {
-									mot.setListe(liste);
-								} else {
-									mot.setListe(null);
-								}
-
+							
 								mot = motRepo.save(mot);
 							} else {
 								logger.info("Simulation de l'ajout du mot [{}]", mot.lemme);
@@ -195,7 +185,7 @@ public class ListeImport {
 				liste = listeRepository.save(liste);
 			}
 
-			liste.setListesPrimaire(liste.isListesPrimaire());
+			liste.setPartitionPrimaire(liste.isPartitionPrimaire());
 
 			listesCache.put(liste.getNom(), dbListe);
 
@@ -205,7 +195,7 @@ public class ListeImport {
 			// récupération des champs transient éventuels
 			dbListe.setFichierSource(liste.getFichierSource());
 			dbListe.setFichierEncoding(liste.getFichierEncoding());
-			dbListe.setListesPrimaire(liste.isListesPrimaire());
+			dbListe.setPartitionPrimaire(liste.isPartitionPrimaire());
 			return dbListe;
 		}
 

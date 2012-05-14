@@ -11,9 +11,13 @@ import com.servicelibre.corpus.entity.Corpus;
 public interface CatégorieListeRepository extends CrudRepository<CatégorieListe, Long> {
 
 	CatégorieListe findByNom(String nom);
-	
+
 	List<CatégorieListe> findByCorpus(Corpus corpus);
-	
+
 	List<CatégorieListe> findByCorpus(Corpus corpus, Sort sort);
+
+	List<CatégorieListe> findAll();
+
+	List<CatégorieListe> findAll(Sort sort);
 
 }

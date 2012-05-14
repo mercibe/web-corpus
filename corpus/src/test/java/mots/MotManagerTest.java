@@ -41,6 +41,7 @@ public class MotManagerTest implements ApplicationContextAware {
 
 	/**
 	 * Devrait être @Before, mais celui-ci fait un rollback...
+	 * FIXME utiliser nouveau mécanime d'inportation et importer UNE fois (@Before) pour tous les tests.
 	 */
 	@Test
 	@Transactional
@@ -53,6 +54,15 @@ public class MotManagerTest implements ApplicationContextAware {
 		}
 
 	}
+
+	// @Test
+	// public void motListePrimaireTest() {
+	// List<Mot> mots = motRepository.findByGraphie("acheminement", MotRepositoryCustom.Condition.ENTIER);
+	//
+	// Liste listePrimaire = motRepository.findListePrimaire(mots.get(0));
+	//
+	// assertTrue(listePrimaire.getId() == 1);
+	// }
 
 	@Test
 	@Transactional

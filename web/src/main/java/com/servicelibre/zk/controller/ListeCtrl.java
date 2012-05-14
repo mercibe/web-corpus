@@ -38,7 +38,6 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.repository.ListeRepository;
 import com.servicelibre.corpus.repository.MotRepository;
@@ -187,12 +186,11 @@ public class ListeCtrl extends CorpusCtrl {
 
 		switch (recherche.cible) {
 		case GRAPHIE:
-			mots = motRepository.findByGraphie(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne),
-					recherche.filtres);
+			mots = motRepository.findByGraphie(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		case PRONONCIATION:
-			mots = motRepository.findByPrononciation(recherche.getChaîne(),
-					MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
+			mots = motRepository
+					.findByPrononciation(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		default:
 			logger.error("Cible invalide pour une recherche de mots: " + recherche.cible);
@@ -268,10 +266,9 @@ public class ListeCtrl extends CorpusCtrl {
 	private void initialiseClavierPhonétique() {
 
 		String[][] apiLettres = { { "i", "ép[i], [î]le, l[y]s, out[il]" }, { "i:", "j[ea]n, tw[ee]d" }, { "y", "[hu]tte, b[u]lle, f[ût]" },
-				{ "u", "[ou]rs, t[ou]ndra, p[ouls]" }, { "u:", "slow f[oo]d, p[oo]l" },
-				{ "e", "(e fermé) [é]rable, p[é]ch[er], ch[ez], hock[ey]" }, { "ø", "(eu fermé)j[eu], heu]r[eux], bl[eu]et" },
-				{ "o", "(o fermé) [au]to, c[ô]té, b[eau], sir[op]" }, { "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" },
-				{ "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
+				{ "u", "[ou]rs, t[ou]ndra, p[ouls]" }, { "u:", "slow f[oo]d, p[oo]l" }, { "e", "(e fermé) [é]rable, p[é]ch[er], ch[ez], hock[ey]" },
+				{ "ø", "(eu fermé)j[eu], heu]r[eux], bl[eu]et" }, { "o", "(o fermé) [au]to, c[ô]té, b[eau], sir[op]" },
+				{ "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" }, { "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
 				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" }, { "ɔ", "(o ouvert) [o]béir, [au]t[o]chtone, p[o]rt" },
 				{ "ə", "(e caduc, ou muet)m[e]ner, crén[e]lage" }, { "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" },
 				{ "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "(a postérieur) là-b[as], p[â]te, cip[ai]lle, pyjam[a]" },
@@ -279,18 +276,16 @@ public class ListeCtrl extends CorpusCtrl {
 				{ "ɔ̃", "m[on]tagnais, [om]ble, p[ont]" }, { "ɑ̃", "[an], [en], j[am]bon, s[ang], t[emps]" },
 
 				{ "p", "[p]aix, sa[p]in, cége[p]" }, { "t", "[t]oit, [th]é, pa[t]in, a[tt]aché, fourche[tt]e" },
-				{ "k", "[c]oq, [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" },
-				{ "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" }, { "g", "[g]a[g], al[gu]e, [gu]ide" },
-				{ "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" }, { "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" },
-				{ "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" }, { "v", "[v]ille, ca[v]ité, dra[v]e" },
-				{ "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
-				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" },
-				{ "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" }, { "n", "[n]ordet, ante[nn]e, caba[n]e" }, { "ɲ", "bei[gn]e, campa[gn]e" },
+				{ "k", "[c]oq, [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" }, { "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" },
+				{ "g", "[g]a[g], al[gu]e, [gu]ide" }, { "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" },
+				{ "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" }, { "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" },
+				{ "v", "[v]ille, ca[v]ité, dra[v]e" }, { "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
+				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" }, { "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" },
+				{ "n", "[n]ordet, ante[nn]e, caba[n]e" }, { "ɲ", "bei[gn]e, campa[gn]e" },
 				{ "ŋ", "big ba[ng], camp[ing], flame[n]co, bi[n]go, pi[ng] p[ong]" },
 				{ "'", "les [h]aches, un [h]uit, la [ou]ananiche, les [u]nes (sans élision ni liaison)" },
 
-				{ "j", "r[i]en, pa[y]er, écureu[il], fi[ll]e, [y]ogourt" }, { "ɥ", "l[u]i, [hu]issier, t[u]ile" },
-				{ "w", "l[ou]er, [ou]ate, [w]att, b[o]is" }, };
+				{ "j", "r[i]en, pa[y]er, écureu[il], fi[ll]e, [y]ogourt" }, { "ɥ", "l[u]i, [hu]issier, t[u]ile" }, { "w", "l[ou]er, [ou]ate, [w]att, b[o]is" }, };
 
 		int idCpt = 1;
 		for (String[] apiLettreInfo : apiLettres) {
@@ -329,8 +324,7 @@ public class ListeCtrl extends CorpusCtrl {
 	private String getHtml(String string) {
 
 		// FIXME faire en une opération!
-		return string.replaceAll("\\[([a-zâàëèéêïîôûü]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "")
-				.replaceAll("\\]", "");
+		return string.replaceAll("\\[([a-zâàëèéêïîôûü]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "").replaceAll("\\]", "");
 	}
 
 	private void initialiseChamps() {
@@ -362,9 +356,9 @@ public class ListeCtrl extends CorpusCtrl {
 					or.setValue("*");
 					or.setStyle("text-align:center");
 					or.setTooltiptext("orthographe rectifiée");
-					motPlus.append(" (OR) ⇔ ").append(mot.getMot_autreGraphie());
-				} else if (mot.getMot_autreGraphie() != null && !mot.getMot_autreGraphie().isEmpty()) {
-					motPlus.append(" ⇔ ").append(mot.getMot_autreGraphie()).append(" (OR)");
+					motPlus.append(" (OR) ⇔ ").append(mot.getAutreGraphie());
+				} else if (mot.getAutreGraphie() != null && !mot.getAutreGraphie().isEmpty()) {
+					motPlus.append(" ⇔ ").append(mot.getAutreGraphie()).append(" (OR)");
 				}
 
 				Label motLabel = new Label(motPlus.toString());
@@ -393,8 +387,10 @@ public class ListeCtrl extends CorpusCtrl {
 				row.appendChild(new Label(mot.getGenre()));
 				row.appendChild(new Label(mot.getNombre()));
 				row.appendChild(new Label(mot.getCatgramPrésicion()));
-				Liste liste = mot.getListe();
-				row.appendChild(new Label(liste != null ? liste.getNom() : ""));
+				// FIXME
+				// Liste liste = mot.getListe();
+				// row.appendChild(new Label(liste != null ? liste.getNom() : ""));
+				// row.appendChild(new Label());
 
 			}
 		});
@@ -483,8 +479,9 @@ public class ListeCtrl extends CorpusCtrl {
 			csv.append(ajouteGuillemetsCsv(mot.getCatgram())).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(mot.getGenre())).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(mot.getNombre())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrésicion())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
+			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrésicion())).append("\n");
+			// FIXME
+			// csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
 
 		}
 		Filedownload.save(csv.toString().getBytes(), "text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
@@ -558,9 +555,11 @@ public class ListeCtrl extends CorpusCtrl {
 			cell = row.createCell(6);
 			cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrésicion()));
 
-			cell = row.createCell(7);
-			Liste liste = mot.getListe();
-			cell.setCellValue(createHelper.createRichTextString(liste != null ? liste.getNom() : ""));
+			// FIXME
+			// cell = row.createCell(7);
+			// Liste liste = motRepository.findListePrimaire(mot);
+			// cell.setCellValue(createHelper.createRichTextString(liste != null ? liste.getNom() : ""));
+			// cell.setCellValue(createHelper.createRichTextString(""));
 
 		}
 
@@ -584,8 +583,7 @@ public class ListeCtrl extends CorpusCtrl {
 	@Override
 	protected Grid getHistoriqueRecherchesGrid() {
 
-		return (Grid) Path
-				.getComponent("//webCorpusPage/webCorpusWindow/listeInclude/listeWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
+		return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/listeInclude/listeWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
 	}
 
 	@Override

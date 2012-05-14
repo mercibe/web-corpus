@@ -15,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -35,9 +34,9 @@ public class Mot implements Comparable<Mot> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	// Liste primaire
-	@OneToOne
-	private Liste liste;
+	// // Liste primaire
+	// @OneToOne
+	// private Liste liste;
 
 	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
@@ -97,18 +96,8 @@ public class Mot implements Comparable<Mot> {
 		super();
 	}
 
-	public Mot(String mot, String lemme, boolean isLemme, String catgram) {
-		this(mot, lemme, isLemme, catgram, null, null);
-	}
-
-	public Mot(String mot, String lemme, boolean isLemme, String catgram, String note, Liste liste) {
-		this(liste, mot, lemme, isLemme, catgram, "", "", "", false, note);
-	}
-
-	public Mot(Liste liste, String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre,
-			String catgramPrécision, boolean ro, String note) {
+	public Mot(String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro, String note) {
 		super();
-		this.liste = liste;
 		this.mot = mot;
 		this.lemme = lemme;
 		this.isLemme = isLemme;
@@ -122,17 +111,8 @@ public class Mot implements Comparable<Mot> {
 
 	@Override
 	public String toString() {
-		return "Mot [id=" + id + ", liste=" + liste + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", prononciations="
-				+ motPrononciations + ", catgram=" + catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion="
-				+ catgramPrésicion + ", ro=" + ro + ", note=" + note + "]";
-	}
-
-	public Liste getListe() {
-		return liste;
-	}
-
-	public void setListe(Liste liste) {
-		this.liste = liste;
+		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", prononciations=" + motPrononciations + ", catgram="
+				+ catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro + ", note=" + note + "]";
 	}
 
 	public long getId() {
@@ -189,10 +169,6 @@ public class Mot implements Comparable<Mot> {
 
 	public void setRo(boolean ro) {
 		this.ro = ro;
-	}
-
-	public String getMot_autreGraphie() {
-		return autreGraphie;
 	}
 
 	public void setAutreGraphie(String autreGraphie) {

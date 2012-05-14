@@ -186,7 +186,6 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 				}
 
 				Mot modeleMot = new Mot();
-				modeleMot.setListe(liste);
 				modeleMot.setNombre("");
 				modeleMot.setCatgramPrésicion("");
 				modeleMot.setNote("");
@@ -241,7 +240,6 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 
 			Mot modeleMot = new Mot();
 
-			modeleMot.setListe(liste);
 			modeleMot.setNombre("");
 			modeleMot.setCatgramPrésicion("");
 			modeleMot.setNote("");

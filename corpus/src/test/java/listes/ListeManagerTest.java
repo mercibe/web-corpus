@@ -90,8 +90,8 @@ public class ListeManagerTest implements ApplicationContextAware
 
         // Création de la liste de lemmes
         List<Mot> mots = new ArrayList<Mot>();
-        mots.add(new Mot("manger", "manger", true, "VERBE", "", lTest1));
-        mots.add(new Mot("pomme", "pomme", true, "NOM_COMMUN", "", lTest1));
+        mots.add(new Mot("manger", "manger", true, "VERBE", "", null, null, false, null));
+        mots.add(new Mot("pomme", "pomme", true, "NOM_COMMUN", "", null, null, false, null));
 
         // Ajout de la liste de lemmes à la définition de la liste
         

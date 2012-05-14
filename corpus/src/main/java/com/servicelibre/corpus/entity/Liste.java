@@ -41,14 +41,14 @@ public class Liste implements Comparable<Liste> {
 	@JoinColumn(name = "catégorie_id", nullable=false)
 	CatégorieListe catégorie;
 
+	@Column
+	Boolean partitionPrimaire = true;
+	
 	@Transient
 	File fichierSource;
 
 	@Transient
 	String fichierEncoding = "UTF-8";
-
-	@Transient
-	boolean listesPrimaire = true;
 
 	public Liste() {
 		super();
@@ -102,14 +102,6 @@ public class Liste implements Comparable<Liste> {
 		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + "]";
 	}
 
-	public void ajouteMot(Mot mot) {
-		mot.setListe(this);
-	}
-
-	public void supprimeMot(Mot mot) {
-		mot.setListe(null);
-	}
-
 	public File getFichierSource() {
 		return fichierSource;
 	}
@@ -143,12 +135,14 @@ public class Liste implements Comparable<Liste> {
 		return this.getNom().compareTo(o.getNom());
 	}
 
-	public boolean isListesPrimaire() {
-		return listesPrimaire;
+	
+	
+	public Boolean isPartitionPrimaire() {
+		return partitionPrimaire;
 	}
 
-	public void setListesPrimaire(boolean listesPrimaire) {
-		this.listesPrimaire = listesPrimaire;
+	public void setPartitionPrimaire(Boolean partitionPrimaire) {
+		this.partitionPrimaire = partitionPrimaire;
 	}
 
 	public CatégorieListe getCatégorie() {

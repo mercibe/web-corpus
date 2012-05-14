@@ -153,9 +153,9 @@
 						<column width="40px" id="colonneRO" label="OR"  sort="auto(ro,lemme)" tooltiptext="orthographe rectifiée" visible="false"/> 
 						<column width="100px" id="colonneClasse" label="Classe de mot"  sort="auto(catgram,genre,lemme)"/> 
 						<column width="50px" id="colonneGenre" label="Genre" sort="auto(genre, lemme)"/>
-						<column width="60px" id="colonneNombre" label="Nombre"  sort="auto(nombre, lemme)" visible="false"/>
-						<column width="70px" id="colonnePrécision" label="Précision" sort="auto(catgramPrésicion, lemme)" visible="false"/>
-						<column  id="colonneListe" label="Liste" sort="auto(liste, lemme)"/>
+						<column width="60px" id="colonneNombre" label="Nombre"  sort="auto(nombre, lemme)" visible="true"/>
+						<column width="70px" id="colonnePrécision" label="Précision" sort="auto(catgramPrésicion, lemme)" visible="true"/>
+						<column  id="colonneListe" label="Liste" sort="auto(liste, lemme)" visible="false"/>
 					</columns>
 					<rows />
 				</grid>

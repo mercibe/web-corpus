@@ -39,7 +39,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 
 	@Autowired
 	MotRepository motRepository;
-	
+
 	@Autowired
 	MotPrononciationRepository motPrononciationRepo;
 
@@ -99,7 +99,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		mot.fetch("motPrononciations", JoinType.LEFT).fetch("prononciation", JoinType.LEFT);
 
 		// chargement EAGER de la liste primaire du mot
-		mot.fetch("liste", JoinType.LEFT);
+		// mot.join("listeMots", JoinType.LEFT).fetch("liste", JoinType.LEFT);
 
 		// Tous les mots sont en minuscules
 		graphie = graphie.toLowerCase();
@@ -161,24 +161,21 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 			// Fonctionne à condition que le nom du filtre corresponde
 			// exactement au nom de la colonne dans la DB / modèle
 			// Sinon, NPE!
-			Path<Object> path = motRacine.get(filtre.nom.replaceAll("_.*", ""));
 
-			if (path != null) {
 
-				In<Object> in = null;
+			In<Object> in = null;
+			if (filtre.nom.replaceAll("_.*", "").equals("liste")) {
 
 				if (filtre.nom.startsWith("liste_")) {
+					
 					in = inClauses.get(filtre.nom);
+					
 					if (in == null) {
-						// Il faut ajouter un critère sur l'objet « liste »,
-						// variable d'instance de la classe Mot (collection des listes
+						// Il faut ajouter un critère sur la « liste », (collection des listes
 						// auxquelles appartiennent le mot = étiquettes associées au mot)
 
 						Join<Object, Object> joinListe = motRacine.join("listeMots").join("liste");
-						
 
-						
-						// FIXME BUG
 						in = cb.in(joinListe);
 						inClauses.put(filtre.nom, in);
 					}
@@ -189,23 +186,23 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 						in.value(Long.parseLong(kv.getKey().toString()));
 					}
 
-				} else {
+				}
+			} else {
 
-					in = inClauses.get(filtre.nom);
+				Path<Object> path = motRacine.get(filtre.nom);
+				
+				in = inClauses.get(filtre.nom);
 
-					if (in == null) {
-						in = cb.in(path);
-						inClauses.put(filtre.nom, in);
-					}
-
-					for (DefaultKeyValue kv : filtre.keyValues) {
-						in.value(kv.getKey());
-					}
+				if (in == null) {
+					in = cb.in(path);
+					inClauses.put(filtre.nom, in);
 				}
 
-			} else {
-				logger.error("{} ne correspond à aucune colonne dans la DB/modèle.", filtre.nom);
+				for (DefaultKeyValue kv : filtre.keyValues) {
+					in.value(kv.getKey());
+				}
 			}
+
 		}
 
 		// ajout de toutes les clauses IN
@@ -231,7 +228,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		mot.fetch("motPrononciations").fetch("prononciation");
 
 		// chargement EAGER de la liste primaire du mot
-		mot.fetch("liste", JoinType.LEFT);
+		// mot.join("listeMots", JoinType.LEFT).fetch("liste", JoinType.LEFT);
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Path<Object> prononciationPath = mot.join("motPrononciations").get("prononciation").get("prononciation");

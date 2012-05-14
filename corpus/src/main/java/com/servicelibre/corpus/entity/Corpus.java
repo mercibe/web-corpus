@@ -144,4 +144,21 @@ public class Corpus {
 		this.métadonnéesDoc = métadonnéesDoc;
 	}
 
+	public Boolean getParDéfaut() {
+		return parDéfaut;
+	}
+
+	public void setParDéfaut(Boolean parDéfaut) {
+		this.parDéfaut = parDéfaut;
+	}
+
+	public List<CatégorieListe> getCatégoriesListes() {
+		return catégoriesListes;
+	}
+
+	public void setCatégoriesListes(List<CatégorieListe> catégoriesListes) {
+		this.catégoriesListes = catégoriesListes;
+	}
+
+	
 }

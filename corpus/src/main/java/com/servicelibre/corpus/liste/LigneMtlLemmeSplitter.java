@@ -3,9 +3,7 @@ package com.servicelibre.corpus.liste;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
-
 
 /**
  * mot\tlemme\tcatgram\tcatgram_precision\tgenre\tnombre\tro\tnote
@@ -13,22 +11,22 @@ import com.servicelibre.corpus.entity.Mot;
  * Tous les mots de la liste sont considérés comme des lemmes (seuls les lemmes
  * sont retenus)
  * 
- * Exemple d'entrées 
+ * Exemple d'entrées
  * -----------------
  * 
- * malade \t \t adj. 
- * vite \t \t adv. 
- * comme \t \t conj.. 
- * deux \t \t dét. 
- * auto \t \t n.f. 
+ * malade \t \t adj.
+ * vite \t \t adv.
+ * comme \t \t conj..
+ * deux \t \t dét.
+ * auto \t \t n.f.
  * bars \t \t n.m.
  * 
- * ami, amie \t \t n.m., n.f. 
+ * ami, amie \t \t n.m., n.f.
  * il \t elle, ils, elles \t pron.
  * 
- * beau \t bel, belle \t adj. 
- * animal \t animaux \t n.m. 
- * ne pas \t ne...pas, n'…pas \t adv. 
+ * beau \t bel, belle \t adj.
+ * animal \t animaux \t n.m.
+ * ne pas \t ne...pas, n'…pas \t adv.
  * du \t de l', de la, des \t dét.
  * 
  * RO:
@@ -49,9 +47,9 @@ public class LigneMtlLemmeSplitter implements LigneSplitter {
 		List<Mot> mots = new ArrayList<Mot>(1);
 
 		String[] cols = ligne.split(SÉPARATEUR);
-		
-		if(cols.length< 3) {
-			System.err.println("Colonnes insuffisantes (minimum 3 - trouvé "+cols.length+"): " + ligne);
+
+		if (cols.length < 3) {
+			System.err.println("Colonnes insuffisantes (minimum 3 - trouvé " + cols.length + "): " + ligne);
 			return mots;
 		}
 
@@ -95,22 +93,22 @@ public class LigneMtlLemmeSplitter implements LigneSplitter {
 			lemme = graphie;
 
 			if (genres.isEmpty()) {
-				mots.add(new Mot(new Liste(), graphie2, lemme2, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
-				mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, false, note));
+				mots.add(new Mot(graphie2, lemme2, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
+				mots.add(new Mot(graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, false, note));
 
 			} else {
 				for (String genre : genres) {
-					mots.add(new Mot(new Liste(), graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
-					mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, false, note));
+					mots.add(new Mot(graphie2, lemme2, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+					mots.add(new Mot(graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, false, note));
 				}
 			}
 
 		} else {
 			if (genres.isEmpty()) {
-				mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
+				mots.add(new Mot(graphie, lemme, isLemme, catgram, "", nombre, catgramPrécision, isRo, note));
 			} else {
 				for (String genre : genres) {
-					mots.add(new Mot(new Liste(), graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
+					mots.add(new Mot(graphie, lemme, isLemme, catgram, genre, nombre, catgramPrécision, isRo, note));
 				}
 			}
 		}

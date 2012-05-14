@@ -3,9 +3,7 @@ package com.servicelibre.corpus.liste;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.entity.Mot;
-
 
 /**
  * 
@@ -16,30 +14,25 @@ import com.servicelibre.corpus.entity.Mot;
  * @author benoitm
  * 
  */
-public class LigneSimpleSplitter implements LigneSplitter
-{
-    private static final String SÉPARATEUR = "\\t";
+public class LigneSimpleSplitter implements LigneSplitter {
+	private static final String SÉPARATEUR = "\\t";
 
-    @Override
-    public List<Mot> splitLigne(String ligne)
-    {
-    	 List<Mot> mots = new ArrayList<Mot>(1);
-    	 
-        String[] cols = ligne.split(SÉPARATEUR);
+	@Override
+	public List<Mot> splitLigne(String ligne) {
+		List<Mot> mots = new ArrayList<Mot>(1);
 
-        nettoie(cols);
-        
-        mots.add(new Mot(new Liste(), cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), ""));
-        
-        return mots;
-    }
+		String[] cols = ligne.split(SÉPARATEUR);
 
- 
-    private void nettoie(String[] cols)
-    {
-        for (int i = 0; i < cols.length; i++)
-        {
-            cols[i] = cols[i].trim();
-        }
-    }
+		nettoie(cols);
+
+		mots.add(new Mot(cols[0], cols[1], cols[0].equals(cols[1]), cols[2], cols[3], cols[4], cols[5], Boolean.parseBoolean(cols[6]), ""));
+
+		return mots;
+	}
+
+	private void nettoie(String[] cols) {
+		for (int i = 0; i < cols.length; i++) {
+			cols[i] = cols[i].trim();
+		}
+	}
 }
