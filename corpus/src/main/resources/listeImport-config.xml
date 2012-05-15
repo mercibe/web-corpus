@@ -17,7 +17,7 @@
 	</bean>
 
 	<util:list id="listes" list-class="java.util.ArrayList"
-		value-type="com.servicelibre.corpus.entity.Liste">
+		value-type="com.servicelibre.entities.corpus.Liste">
 <!-- 		<ref bean="listePrimaire-1" /> -->
 <!-- 		<ref bean="listePrimaire-2" /> -->
 <!-- 		<ref bean="listePrimaire-3" /> -->
@@ -34,14 +34,14 @@
 <!-- 		<ref bean="listeTest" /> -->
 	</util:list>
 
-	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
+	<bean id="corpus" class="com.servicelibre.entities.corpus.Corpus">
 		<constructor-arg value="MELS-CJ" />
 		<constructor-arg value="Corpus de Littérature Jeunesse du MELS"></constructor-arg>
 	</bean>
 
 	<!-- Listes -->
 	
-	<bean id="listeTest" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listeTest" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="cas de figure" />
 		<constructor-arg value="liste test" />
 		<property name="fichierSource">
@@ -52,7 +52,7 @@
 		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>	
 
-	<bean id="listePrimaire-1" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listePrimaire-1" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="1re année primaire" />
 		<constructor-arg value="Liste 1re année primaire" />
 		<property name="fichierSource">
@@ -62,7 +62,7 @@
 		</property>
 		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>
-	<bean id="listePrimaire-2" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listePrimaire-2" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="2e année primaire" />
 		<constructor-arg value="Liste 2e année primaire" />
 		<property name="fichierSource">
@@ -72,7 +72,7 @@
 		</property>
 		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>
-	<bean id="listePrimaire-3" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listePrimaire-3" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="3e année primaire" />
 		<constructor-arg value="Liste 3e année primaire" />
 		<property name="fichierSource">
@@ -81,7 +81,7 @@
 			</bean>
 		</property>
 	</bean>
-		<bean id="listePrimaire-4" class="com.servicelibre.corpus.entity.Liste">
+		<bean id="listePrimaire-4" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="4e année primaire" />
 		<constructor-arg value="Liste 4e année primaire" />
 		<property name="fichierSource">
@@ -90,7 +90,7 @@
 			</bean>
 		</property>
 	</bean>
-		<bean id="listePrimaire-5" class="com.servicelibre.corpus.entity.Liste">
+		<bean id="listePrimaire-5" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="5e année primaire" />
 		<constructor-arg value="Liste 5e année primaire" />
 		<property name="fichierSource">
@@ -100,7 +100,7 @@
 		</property>
 		<property name="catégorieListe" ref="listePartitionnementCatégorie"/>
 	</bean>
-		<bean id="listePrimaire-6" class="com.servicelibre.corpus.entity.Liste">
+		<bean id="listePrimaire-6" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="6e année primaire" />
 		<constructor-arg value="Liste 6e année primaire" />
 		<property name="fichierSource">
@@ -109,7 +109,7 @@
 			</bean>
 		</property>
 	</bean>
-		<bean id="listeSecondaire-01" class="com.servicelibre.corpus.entity.Liste">
+		<bean id="listeSecondaire-01" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="Littérature pour ados" />
 		<constructor-arg value="Liste littérature pour ados" />
 		<property name="fichierSource">
@@ -119,7 +119,7 @@
 		</property>
 	</bean>
 
-	<bean id="listesThématiques" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listesThématiques" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="Liste thématiques" />
 		<constructor-arg value="Toutes les listes thématiques" />
 		<property name="fichierSource">
@@ -131,7 +131,7 @@
 	</bean>
 
 
-	<bean id="listeLettreMuette" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listeLettreMuette" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="Liste lettre muette" />
 		<constructor-arg value="Liste des mots avec une lettre muette" />
 		<property name="fichierSource">
@@ -142,7 +142,7 @@
 		<property name="partitionPrimaire" value="false"/>
 	</bean>
 
-	<bean id="listeMotsComposés" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listeMotsComposés" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="Mots composés" />
 		<constructor-arg value="Liste des mots composés" />
 		<property name="fichierSource">
@@ -155,19 +155,19 @@
 
 
 	<!-- Catégorie de listes -->
-	<bean id="listePartitionnementCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+	<bean id="listePartitionnementCatégorie" class="com.servicelibre.entities.corpus.CatégorieListe">
 		<constructor-arg name="corpus" ref="corpus"/>
 		<constructor-arg name="nom" value="Listes"/>
 		<constructor-arg name="description" value="Listes partitionnement des mots"/>
 	</bean>
 	
-	<bean id="listeParticularitésCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+	<bean id="listeParticularitésCatégorie" class="com.servicelibre.entities.corpus.CatégorieListe">
 		<constructor-arg name="corpus" ref="corpus"/>
 		<constructor-arg name="nom" value="Particularités"/>
 		<constructor-arg name="description" value="Listes de particularités"/>
 	</bean>
 	
-	<bean id="listeThématiquesCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+	<bean id="listeThématiquesCatégorie" class="com.servicelibre.entities.corpus.CatégorieListe">
 		<constructor-arg name="corpus" ref="corpus"/>
 		<constructor-arg name="nom" value="Thèmes"/>
 		<constructor-arg name="description" value="Listes thématiques"/>

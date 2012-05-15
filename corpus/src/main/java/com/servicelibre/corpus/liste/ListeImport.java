@@ -13,16 +13,16 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.CatégorieListe;
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.ListeMot;
-import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.repository.CatégorieListeRepository;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.ListeMotRepository;
-import com.servicelibre.corpus.repository.ListeRepository;
-import com.servicelibre.corpus.repository.MotRepository;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.ListeMot;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
+import com.servicelibre.repositories.corpus.ListeRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
 
 /**
  * Outil d'importation de listes

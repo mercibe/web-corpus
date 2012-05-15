@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.repository.CorpusRepository;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.FormeService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.repositories.corpus.CorpusRepository;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

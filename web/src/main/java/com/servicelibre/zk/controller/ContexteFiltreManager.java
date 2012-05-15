@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
-import com.servicelibre.corpus.entity.DocMetadata;
 import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.repository.DocMetadataRepository;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.repositories.corpus.DocMetadataRepository;
 
 public class ContexteFiltreManager extends FiltreManager {
 

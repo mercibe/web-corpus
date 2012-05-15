@@ -3,6 +3,7 @@ package com.servicelibre.corpus;
 import java.io.File;
 import java.util.List;
 
+import org.apache.batik.anim.SetAnimation;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -14,36 +15,44 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.beust.jcommander.JCommander;
-import com.servicelibre.corpus.entity.CatégorieListe;
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.ListeMot;
-import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.repository.CatégorieListeRepository;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.DocMetadataRepository;
-import com.servicelibre.corpus.repository.ListeMotRepository;
-import com.servicelibre.corpus.repository.ListeRepository;
-import com.servicelibre.corpus.repository.MotPrononciationRepository;
-import com.servicelibre.corpus.repository.MotRepository;
-import com.servicelibre.corpus.repository.PrononciationRepository;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.ListeMot;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.DocMetadataRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
+import com.servicelibre.repositories.corpus.ListeRepository;
+import com.servicelibre.repositories.corpus.MotPrononciationRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.corpus.PrononciationRepository;
 
 public class Importation {
 
 	private static Logger logger = LoggerFactory.getLogger(Importation.class);
 
-	ApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "application-context.xml", "system-context.xml" });
+	ApplicationContext context;
 
-	CorpusRepository corpusRepo = (CorpusRepository) context.getBean("corpusRepository");
-	CatégorieListeRepository catégorieListeRepo = (CatégorieListeRepository) context.getBean("catégorieListeRepository");
-	ListeRepository listeRepo = (ListeRepository) context.getBean("listeRepository");
-	ListeMotRepository listeMotRepo = (ListeMotRepository) context.getBean("listeMotRepository");
-	MotPrononciationRepository motPrononciationRepo = (MotPrononciationRepository) context.getBean("motPrononciationRepository");
-	DocMetadataRepository docMetadataRepo = (DocMetadataRepository) context.getBean("docMetadataRepository");
+	CorpusRepository corpusRepo;
+	CatégorieListeRepository catégorieListeRepo;
+	ListeRepository listeRepo;
+	ListeMotRepository listeMotRepo;
+	MotPrononciationRepository motPrononciationRepo;
+	DocMetadataRepository docMetadataRepo;
+	MotRepository motRepo;
+	PrononciationRepository prononciationRepo;
 
-	MotRepository motRepo = (MotRepository) context.getBean("motRepository");
-	PrononciationRepository prononciationRepo = (PrononciationRepository) context.getBean("prononciationRepository");
+	public Importation() {
+		super();
+		setContext(new ClassPathXmlApplicationContext(new String[] { "application-context.xml", "system-context.xml" }));
+	}
+	
+	public Importation(ApplicationContext context) {
+		setContext(context);
+	}
 
 	public void importeCorpus(String nomDuCorpus, File corpusFichier) {
 
@@ -189,7 +198,7 @@ public class Importation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void importeMots(File motsFichier) {
+	public void importeMots(File motsFichier) {
 
 		// Charger le document XML
 		SAXReader reader = new SAXReader();
@@ -276,4 +285,90 @@ public class Importation {
 
 	}
 
+	public ApplicationContext getContext() {
+		return context;
+	}
+
+	public void setContext(ApplicationContext context) {
+		
+		this.context = context;
+		
+		corpusRepo = (CorpusRepository) context.getBean("corpusRepository");
+		catégorieListeRepo = (CatégorieListeRepository) context.getBean("catégorieListeRepository");
+		listeRepo = (ListeRepository) context.getBean("listeRepository");
+		listeMotRepo = (ListeMotRepository) context.getBean("listeMotRepository");
+		motPrononciationRepo = (MotPrononciationRepository) context.getBean("motPrononciationRepository");
+		docMetadataRepo = (DocMetadataRepository) context.getBean("docMetadataRepository");
+
+		motRepo = (MotRepository) context.getBean("motRepository");
+		prononciationRepo = (PrononciationRepository) context.getBean("prononciationRepository");
+		
+	}
+
+	public CorpusRepository getCorpusRepo() {
+		return corpusRepo;
+	}
+
+	public void setCorpusRepo(CorpusRepository corpusRepo) {
+		this.corpusRepo = corpusRepo;
+	}
+
+	public CatégorieListeRepository getCatégorieListeRepo() {
+		return catégorieListeRepo;
+	}
+
+	public void setCatégorieListeRepo(CatégorieListeRepository catégorieListeRepo) {
+		this.catégorieListeRepo = catégorieListeRepo;
+	}
+
+	public ListeRepository getListeRepo() {
+		return listeRepo;
+	}
+
+	public void setListeRepo(ListeRepository listeRepo) {
+		this.listeRepo = listeRepo;
+	}
+
+	public ListeMotRepository getListeMotRepo() {
+		return listeMotRepo;
+	}
+
+	public void setListeMotRepo(ListeMotRepository listeMotRepo) {
+		this.listeMotRepo = listeMotRepo;
+	}
+
+	public MotPrononciationRepository getMotPrononciationRepo() {
+		return motPrononciationRepo;
+	}
+
+	public void setMotPrononciationRepo(MotPrononciationRepository motPrononciationRepo) {
+		this.motPrononciationRepo = motPrononciationRepo;
+	}
+
+	public DocMetadataRepository getDocMetadataRepo() {
+		return docMetadataRepo;
+	}
+
+	public void setDocMetadataRepo(DocMetadataRepository docMetadataRepo) {
+		this.docMetadataRepo = docMetadataRepo;
+	}
+
+	public MotRepository getMotRepo() {
+		return motRepo;
+	}
+
+	public void setMotRepo(MotRepository motRepo) {
+		this.motRepo = motRepo;
+	}
+
+	public PrononciationRepository getPrononciationRepo() {
+		return prononciationRepo;
+	}
+
+	public void setPrononciationRepo(PrononciationRepository prononciationRepo) {
+		this.prononciationRepo = prononciationRepo;
+	}
+
+	
+	
 }

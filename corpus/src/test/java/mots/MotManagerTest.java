@@ -19,14 +19,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.ListeImport;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
-import com.servicelibre.corpus.repository.MotRepository;
-import com.servicelibre.corpus.repository.MotRepositoryCustom;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

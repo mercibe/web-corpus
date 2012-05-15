@@ -21,5 +21,7 @@
 		package sous com.servicelibre.corpus.manager qui contiennent des interfaces 
 		qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
 <!-- 	<jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
-		<jpa:repositories   base-package="com.servicelibre.corpus.repository"/>
+<!-- 		<jpa:repositories   base-package="com.servicelibre.corpus.repository"/> -->
+		<jpa:repositories   base-package="com.servicelibre.repositories"/>
+		
 </beans>

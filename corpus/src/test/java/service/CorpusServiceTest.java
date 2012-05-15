@@ -17,16 +17,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Corpus;
 import com.servicelibre.corpus.metadata.Metadata;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.DocMetadataRepository;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.FormeService;
 import com.servicelibre.corpus.service.Phrase;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.DocMetadataRepository;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

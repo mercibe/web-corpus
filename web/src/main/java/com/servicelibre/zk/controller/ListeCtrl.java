@@ -38,11 +38,11 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.repository.ListeRepository;
-import com.servicelibre.corpus.repository.MotRepository;
-import com.servicelibre.corpus.repository.MotRepositoryCustom;
-import com.servicelibre.corpus.repository.MotRepositoryCustom.Condition;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.ListeRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom.Condition;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheMot;
 

@@ -18,21 +18,21 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Sort;
 
 import com.beust.jcommander.JCommander;
-import com.servicelibre.corpus.entity.CatégorieListe;
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.ListeMot;
-import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.entity.MotPrononciation;
-import com.servicelibre.corpus.entity.Prononciation;
-import com.servicelibre.corpus.repository.CatégorieListeRepository;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.ListeMotRepository;
-import com.servicelibre.corpus.repository.ListeRepository;
-import com.servicelibre.corpus.repository.MotPrononciationRepository;
-import com.servicelibre.corpus.repository.MotRepository;
-import com.servicelibre.corpus.repository.PrononciationRepository;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.ListeMot;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.entities.corpus.MotPrononciation;
+import com.servicelibre.entities.corpus.Prononciation;
+import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
+import com.servicelibre.repositories.corpus.ListeRepository;
+import com.servicelibre.repositories.corpus.MotPrononciationRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.corpus.PrononciationRepository;
 
 public class Exportation {
 

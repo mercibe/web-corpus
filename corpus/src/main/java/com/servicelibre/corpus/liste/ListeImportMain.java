@@ -2,7 +2,7 @@ package com.servicelibre.corpus.liste;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.servicelibre.corpus.entity.Liste;
+import com.servicelibre.entities.corpus.Liste;
 
 public class ListeImportMain {
 	

@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
-import com.servicelibre.corpus.entity.CatégorieListe;
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Liste;
 
 /**
  * Cette classe fournit les filtres (Filtre), disponibles pour filtrer les mots

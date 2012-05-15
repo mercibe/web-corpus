@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.repository.MotRepository;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.MotRepository;
 
 
 @Controller

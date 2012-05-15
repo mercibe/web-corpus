@@ -2,8 +2,8 @@ package com.servicelibre.zk.recherche;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
-import com.servicelibre.corpus.repository.MotRepositoryCustom;
-import com.servicelibre.corpus.repository.MotRepositoryCustom.Condition;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom.Condition;
 
 public class RechercheMot extends Recherche {
 

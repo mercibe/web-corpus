@@ -3,9 +3,9 @@ package com.servicelibre.controller;
 import org.springframework.context.ApplicationContext;
 import org.zkoss.spring.SpringUtil;
 
-import com.servicelibre.corpus.repository.ListeRepository;
-import com.servicelibre.corpus.repository.MotRepository;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.repositories.corpus.ListeRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
 

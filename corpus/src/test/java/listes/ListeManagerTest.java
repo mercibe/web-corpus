@@ -18,15 +18,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.CatégorieListe;
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.ListeMot;
-import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.ListeImport;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.ListeMotRepository;
-import com.servicelibre.corpus.repository.ListeRepository;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.ListeMot;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
+import com.servicelibre.repositories.corpus.ListeRepository;
 
 
 @ContextConfiguration

@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.Mot;
 import com.servicelibre.corpus.liste.LigneSplitter;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.ListeRepository;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.ListeRepository;
 
 /**
  * 

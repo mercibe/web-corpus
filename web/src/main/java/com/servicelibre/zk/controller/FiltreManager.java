@@ -7,8 +7,8 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
-import com.servicelibre.corpus.repository.ListeRepository;
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.repositories.corpus.ListeRepository;
 
 public abstract class FiltreManager {
 

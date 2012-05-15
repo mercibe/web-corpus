@@ -19,10 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 
-import com.servicelibre.corpus.entity.CatégorieListe;
-import com.servicelibre.corpus.entity.Corpus;
-import com.servicelibre.corpus.entity.DocMetadata;
-import com.servicelibre.corpus.entity.Liste;
 import com.servicelibre.corpus.lucene.InformationTerme;
 import com.servicelibre.corpus.lucene.InformationTermeTextComparator;
 import com.servicelibre.corpus.lucene.LuceneIndexManager;
@@ -30,9 +26,13 @@ import com.servicelibre.corpus.lucene.RésultatRecherche;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.metadata.StringMetadata;
-import com.servicelibre.corpus.repository.CatégorieListeRepository;
-import com.servicelibre.corpus.repository.CorpusRepository;
-import com.servicelibre.corpus.repository.ListeRepository;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Corpus;
+import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.CorpusRepository;
+import com.servicelibre.repositories.corpus.ListeRepository;
 
 public class CorpusService {
 

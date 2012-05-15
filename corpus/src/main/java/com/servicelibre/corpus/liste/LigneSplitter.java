@@ -2,8 +2,8 @@ package com.servicelibre.corpus.liste;
 
 import java.util.List;
 
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.Mot;
 
 
 public interface LigneSplitter

@@ -15,25 +15,25 @@
 		<property name="catégorieImportation" ref="listePartitionnementCatégorie"/>
 	</bean>
 
-	<bean id="corpus" class="com.servicelibre.corpus.entity.Corpus">
+	<bean id="corpus" class="com.servicelibre.entities.corpus.Corpus">
 		<constructor-arg value="corpus-test" />
 		<constructor-arg value="Corpus de test"></constructor-arg>
 	</bean>
 
 	<util:list id="listes" list-class="java.util.ArrayList"
-		value-type="com.servicelibre.corpus.entity.Liste">
+		value-type="com.servicelibre.entities.corpus.Liste">
 		<ref bean="listeTest1" />
 		<ref bean="listeTest2" />
 	</util:list>
 	
 	<!-- Listes -->
-	<bean id="listeTest1" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listeTest1" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="liste-test-1" />
 		<constructor-arg value="Liste de test 1" />
 		<property name="fichierSource" ref="fichierMots1" />
 	</bean>
 
-	<bean id="listeTest2" class="com.servicelibre.corpus.entity.Liste">
+	<bean id="listeTest2" class="com.servicelibre.entities.corpus.Liste">
 		<constructor-arg value="liste-test-2" />
 		<constructor-arg value="Liste de test 2" />
 		<property name="fichierSource" ref="fichierMots2" />
@@ -65,19 +65,19 @@
 
 
 	<!-- Catégorie de listes -->
-	<bean id="listePartitionnementCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+	<bean id="listePartitionnementCatégorie" class="com.servicelibre.entities.corpus.CatégorieListe">
 		<constructor-arg name="corpus" ref="corpus"/>
 		<constructor-arg name="nom" value="Listes"/>
 		<constructor-arg name="description" value="Listes partitionnement des mots"/>
 	</bean>
 	
-	<bean id="listeParticularitésCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+	<bean id="listeParticularitésCatégorie" class="com.servicelibre.entities.corpus.CatégorieListe">
 		<constructor-arg name="corpus" ref="corpus"/>
 		<constructor-arg name="nom" value="Particularités"/>
 		<constructor-arg name="description" value="Listes de particularités"/>
 	</bean>
 	
-	<bean id="listeThématiquesCatégorie" class="com.servicelibre.corpus.entity.CatégorieListe">
+	<bean id="listeThématiquesCatégorie" class="com.servicelibre.entities.corpus.CatégorieListe">
 		<constructor-arg name="corpus" ref="corpus"/>
 		<constructor-arg name="nom" value="Thèmes"/>
 		<constructor-arg name="description" value="Listes thématiques"/>

@@ -17,14 +17,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.Liste;
-import com.servicelibre.corpus.entity.Mot;
-import com.servicelibre.corpus.entity.MotPrononciation;
-import com.servicelibre.corpus.entity.Prononciation;
 import com.servicelibre.corpus.liste.ListeImport;
-import com.servicelibre.corpus.repository.MotPrononciationRepository;
-import com.servicelibre.corpus.repository.MotRepository;
-import com.servicelibre.corpus.repository.PrononciationRepository;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.entities.corpus.MotPrononciation;
+import com.servicelibre.entities.corpus.Prononciation;
+import com.servicelibre.repositories.corpus.MotPrononciationRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.corpus.PrononciationRepository;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

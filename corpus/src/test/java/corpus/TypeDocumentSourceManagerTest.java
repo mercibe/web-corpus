@@ -13,8 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.servicelibre.corpus.entity.TypeDocumentSource;
-import com.servicelibre.corpus.repository.TypeDocumentSourceRepository;
+import com.servicelibre.entities.corpus.TypeDocumentSource;
+import com.servicelibre.repositories.corpus.TypeDocumentSourceRepository;
 
 @ContextConfiguration("CorpusManagerTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)

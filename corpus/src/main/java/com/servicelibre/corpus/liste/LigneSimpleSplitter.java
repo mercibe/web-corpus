@@ -3,7 +3,7 @@ package com.servicelibre.corpus.liste;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.servicelibre.corpus.entity.Mot;
+import com.servicelibre.entities.corpus.Mot;
 
 /**
  * 
