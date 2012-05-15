@@ -1,6 +1,5 @@
-		<groupbox  width="286px" height="204px">
-			<caption>Historique des recherches</caption>
-			<grid id="historiqueRecherchesGrid" fixedLayout="true" style="border:0px" height="193px"
+<vbox height="100%" width="100%">
+			<grid id="historiqueRecherchesGrid" fixedLayout="true" style="border:0px" height="463px"
 					
 					emptyMessage="Aucune recherche dans l'historique.">
 					<columns sizable="false">
@@ -11,4 +10,8 @@
 					</columns>
 					<rows />
 				</grid>
-		</groupbox>
+				<div align="center">
+				<button  id="boutonEffacerHistorique" image="/images/effacer-2-16x16.png"
+	                    width="32px" orient="horizontal" tooltiptext="vider l'historique de recherche"/> 
+				</div>
+</vbox>

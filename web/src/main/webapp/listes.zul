@@ -4,163 +4,226 @@
 
 <zk>
 
-<!-- http://books.zkoss.org/wiki/ZK_Developer's_Reference/Performance_Tips/Listbox,_Grid_and_Tree_for_Huge_Data/Turn_on_Render_on_Demand -->
-<custom-attributes org.zkoss.zul.grid.rod="true" scope="page"/>
+	<!-- http://books.zkoss.org/wiki/ZK_Developer's_Reference/Performance_Tips/Listbox,_Grid_and_Tree_for_Huge_Data/Turn_on_Render_on_Demand -->
+	<custom-attributes org.zkoss.zul.grid.rod="true" scope="page" />
 
-<window id="listeWindow" border="none" apply="com.servicelibre.zk.controller.ListeCtrl">
+	<window id="listeWindow" border="none"
+		apply="com.servicelibre.zk.controller.ListeCtrl">
 		<groupbox>
-		
+
 			<caption>Recherche</caption>
 			<hbox style="margin-top:10px;">
 
 				<combobox id="gp" readonly="true" width="120px">
-						<comboitem label="mots" value="GRAPHIE" />
-						<comboitem label="prononciations" value="PRONONCIATION" />
+					<comboitem label="mots" value="GRAPHIE" />
+					<comboitem label="prononciations"
+						value="PRONONCIATION" />
 				</combobox>
-	
+
 				<combobox id="condition" readonly="true"
-						width="185px">
-						<comboitem label="commencent par"
-							value="COMMENCE_PAR" />
-						<comboitem label="se terminent par"
-							value="FINIT_PAR" />
-						<comboitem label="contiennent" value="CONTIENT" />
-						<comboitem label="correspondent exactement à"
-							value="ENTIER" />
-					</combobox>
-					
-				<textbox id="cherche" focus="true" style="font-family: 'Doulos SIL', 'Gentium', 'DejaVu Sans', 'Lucida Grande', 'Segoe UI', 'Arial Unicode MS', 'Adobe Pi Std', 'Lucida Sans Unicode', 'Chrysanthi Unicode', Code2000, Gentium, GentiumAlt, 'TITUS Cyberbit Basic', 'Bitstream Vera Sans', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', 'Charis SIL' ,sans-serif;"></textbox>
-				
-				<button id="boutonRecherche" label="Recherche"/>
-				<button  id="effacerRecherche" image="/images/effacer-2-16x16.png"
-                    width="32px" orient="horizontal" tooltiptext="réinitialiser la recherche"/>  
+					width="185px">
+					<comboitem label="commencent par"
+						value="COMMENCE_PAR" />
+					<comboitem label="se terminent par"
+						value="FINIT_PAR" />
+					<comboitem label="contiennent" value="CONTIENT" />
+					<comboitem label="correspondent exactement à"
+						value="ENTIER" />
+				</combobox>
+
+				<textbox id="cherche" focus="true"
+					style="font-family: 'Doulos SIL', 'Gentium', 'DejaVu Sans', 'Lucida Grande', 'Segoe UI', 'Arial Unicode MS', 'Adobe Pi Std', 'Lucida Sans Unicode', 'Chrysanthi Unicode', Code2000, Gentium, GentiumAlt, 'TITUS Cyberbit Basic', 'Bitstream Vera Sans', 'Bitstream Cyberbit', 'Hiragino Kaku Gothic Pro', 'Matrix Unicode', 'Charis SIL' ,sans-serif;">
+				</textbox>
+
+				<button id="boutonRecherche" label="Recherche" />
+				<button id="effacerRecherche"
+					image="/images/effacer-2-16x16.png" width="32px"
+					orient="horizontal" tooltiptext="réinitialiser la recherche" />
 			</hbox>
-			
+
 			<!-- L'alphabet phonétique est inséré ici dynamiquement -->
-			<div id="api" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
-			<div id="caractèresSpéciaux" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
-			
+			<div id="api" align="center" visible="false"
+				style="margin-top:7px; margin-bottom:7px;" />
+			<div id="caractèresSpéciaux" align="center" visible="false"
+				style="margin-top:7px; margin-bottom:7px;" />
+
 		</groupbox>
 
-		<hbox width="100%" style="margin-top:20px;">
-		
-		<vbox>
-			
-			<!-- **************** -->
-			<!-- Zone des filtre  -->
-			<!-- **************** -->
-		
-			<!-- FIXME utiliser include  -->
-			<groupbox width="286px" height="340px">
-					<caption>Filtre</caption>
-					<hbox >
-						<bandbox id="nomFiltreBandbox" width="145px" readonly="true" buttonVisible="true" autodrop="true">
-							<bandpopup vflex="min" hflex="min">
-								<vbox style="margin:0px;" >
-									<listbox id="nomFiltre"  style="width:140px;"  mold="paging" pageSize="999" onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);"/>
-								</vbox>
-							</bandpopup>
-						</bandbox>
-			
-						<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
-							<bandpopup vflex="min" hflex="min">
-								<vbox style="margin:0px;">
-								
-<!-- 								
-	mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
-	Documenter et envoyer à ZK 
-	Pas possible de reproduire dans sandbox avec création statique de listitem.  
-	Essayer d'isoler cas avec ajout des listitems via Java
--->								
-								
-										<listbox width="400px" checkmark="true" id="valeurFiltre" multiple="true" mold="paging" pageSize="999">
-											<listhead><listheader>Tout sélectionner</listheader></listhead>
-										</listbox>
-								</vbox>
-							</bandpopup>
-						</bandbox>
-					</hbox>
-					
-					<div align="center" style="margin-top:10px;">
-						 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
-	                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs"/>
-						 <button  id="boutonEffacerFiltre" image="/images/effacer-2-16x16.png"
-	                    width="32px" orient="horizontal" tooltiptext="supprimer tous les filtres actifs"/>                    
-					</div>
-					
-					<grid id="gridFiltreActif" fixedLayout="true"
-						 style="margin-top:10px; border:0px" emptyMessage="Aucun filtre actif." height="255px">
-						<auxhead sclass="category-center">
-							<auxheader label="Filtres actifs" colspan="2"
-								rowspan="1" />
-						</auxhead>
-						<columns/>
-						<rows/>
-					</grid>
-	
-				</groupbox>
-				
-				
-				<popup id="popupHistorique" style="padding:0px; margin:0px;">
-					<vlayout style="overflow:auto;padding:0px;margin:0px;" width="200px" height="200px">
-						<label id="descriptionRechercheHistorique"/>
-						<grid id="gridFiltreHistorique" fixedLayout="true" style="border:0px;padding:0px; margin:0px;">
-							<columns/>
-							<rows/>
-						</grid>
-					</vlayout>
-				</popup>
-				
-				
-				
-			<!-- ************************* -->
-			<!-- Historique des recherches -->
-			<!-- ************************* -->
+		<hbox width="100%" height="100%" style="margin-top:20px;">
 
-			<include id="historiqueRechercheInclude" src="/historiqueRecherches.zul"/>
-				
-		</vbox>
-			
-		<menupopup id="editPopup">       
-              		<menuitem id="menuitemPrononciation" autocheck="true" label="afficher la colonne « Phonétique »"  onClick="colonnePrononciation.setVisible(!colonnePrononciation.isVisible())" checked="false"/>
-              		<menuitem id="menuitemNombre" autocheck="true" label="afficher la colonne « Nombre »"  onClick="colonneNombre.setVisible(!colonneNombre.isVisible())" checked="false"/>
-              		<menuitem id="menuitemPrécision" autocheck="true" label="afficher la colonne « Précision »"  onClick="colonnePrécision.setVisible(!colonnePrécision.isVisible())" checked="false"/>
-   		</menupopup>
-		
-		<!-- ******************** -->
-		<!--   Colonne résultats  -->
-		<!-- ******************** -->
-		
-		<vbox  height="645px" width="700px">
+			<tabbox id="tb" width="295px" height="575px"
+				mold="accordion">
+				<tabs>
+					<tab label="Filtre" />
+					<tab label="Historique des recherches" />
+					<tab label="Panier des mots" />
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<!-- ***************** -->
+						<!-- Zone des filtres  -->
+						<!-- ***************** -->
+
+						<!-- FIXME utiliser include  -->
+						<hbox>
+							<bandbox id="nomFiltreBandbox" width="145px"
+								readonly="true" buttonVisible="true" autodrop="true">
+								<bandpopup vflex="min" hflex="min">
+									<vbox style="margin:0px;">
+										<listbox id="nomFiltre"
+											style="width:140px;" mold="paging" pageSize="999"
+											onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);" />
+									</vbox>
+								</bandpopup>
+							</bandbox>
+
+							<bandbox width="135px" readonly="true"
+								buttonVisible="true" autodrop="true">
+								<bandpopup vflex="min" hflex="min">
+									<vbox style="margin:0px;">
+
+										<!-- 								
+											mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
+											Documenter et envoyer à ZK 
+											Pas possible de reproduire dans sandbox avec création statique de listitem.  
+											Essayer d'isoler cas avec ajout des listitems via Java
+										-->
+
+										<listbox width="400px"
+											checkmark="true" id="valeurFiltre" multiple="true"
+											mold="paging" pageSize="999">
+											<listhead>
+												<listheader>
+													Tout sélectionner
+												</listheader>
+											</listhead>
+										</listbox>
+									</vbox>
+								</bandpopup>
+							</bandbox>
+						</hbox>
+
+						<div align="center" style="margin-top:10px;">
+							<button id="boutonAjoutFiltre"
+								image="/images/flècheBleueBas-16x16.png"
+								hoverImage="/images/flècheVerteBas-16x16.png" width="70px"
+								orient="horizontal" dir="reverse"
+								tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs" />
+							<button id="boutonEffacerFiltre"
+								image="/images/effacer-2-16x16.png" width="32px"
+								orient="horizontal"
+								tooltiptext="supprimer tous les filtres actifs" />
+						</div>
+
+						<grid id="gridFiltreActif" fixedLayout="true"
+							style="margin-top:10px; border:0px"
+							emptyMessage="Aucun filtre actif." height="255px">
+							<auxhead sclass="category-center">
+								<auxheader label="Filtres actifs"
+									colspan="2" rowspan="1" />
+							</auxhead>
+							<columns />
+							<rows />
+						</grid>
+						<popup id="popupHistorique"
+							style="padding:0px; margin:0px;">
+							<vlayout
+								style="overflow:auto;padding:0px;margin:0px;" width="200px"
+								height="200px">
+								<label
+									id="descriptionRechercheHistorique" />
+								<grid id="gridFiltreHistorique"
+									fixedLayout="true"
+									style="border:0px;padding:0px; margin:0px;">
+									<columns />
+									<rows />
+								</grid>
+							</vlayout>
+						</popup>
+					</tabpanel>
+
+					<tabpanel>
+						<!-- ************************* -->
+						<!-- Historique des recherches -->
+						<!-- ************************* -->
+
+						<include id="historiqueRechercheInclude"
+							src="/historiqueRecherches.zul" />
+					</tabpanel>
+
+					<tabpanel>
+						<!-- ************************* -->
+						<!--      Panier des mots      -->
+						<!-- ************************* -->
+
+						<include id="panierMotsInclude"
+							src="/panierMots.zul" />
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+
+
+			<menupopup id="editPopup">
+				<menuitem id="menuitemPrononciation" autocheck="true"
+					label="afficher la colonne « Phonétique »"
+					onClick="colonnePrononciation.setVisible(!colonnePrononciation.isVisible())"
+					checked="false" />
+				<menuitem id="menuitemNombre" autocheck="true"
+					label="afficher la colonne « Nombre »"
+					onClick="colonneNombre.setVisible(!colonneNombre.isVisible())"
+					checked="false" />
+				<menuitem id="menuitemPrécision" autocheck="true"
+					label="afficher la colonne « Précision »"
+					onClick="colonnePrécision.setVisible(!colonnePrécision.isVisible())"
+					checked="false" />
+			</menupopup>
+
+			<!-- ******************** -->
+			<!--   Colonne résultats  -->
+			<!-- ******************** -->
+
+			<vbox height="645px" width="700px">
 
 				<hbox>
 					<div align="left" width="680px">
-						<label id="infoRésultats" value="Tous les mots"  style="font-style:italic;"/>
+						<label id="infoRésultats" value="Tous les mots"
+							style="font-style:italic;" />
 					</div>
 					<div align="right">
-<!-- 						<image id="exportationCsv"	src="/images/csv.png" class="cliquable"/> -->
-						<image id="exportationXls"	src="/images/xls.png" class="cliquable" tooltiptext="exporter les résultats"/>
+						<!-- 						<image id="exportationCsv"	src="/images/csv.png" class="cliquable"/> -->
+						<image id="exportationXls" src="/images/xls.png"
+							class="cliquable" tooltiptext="exporter les résultats" />
 					</div>
-				</hbox>			
-				 
+				</hbox>
+
 				<grid id="motsGrid" mold="paging" pageSize="20"
-					height="550px" width="700px"
-					emptyMessage="Aucun mot trouvé.">
-							
+					height="550px" width="700px" emptyMessage="Aucun mot trouvé.">
+
 					<columns sizable="true" menupopup="editPopup">
-						<column width="290px" id="mot" label="Mot" sortDirection="ascending" sort="auto"/>
-						<column width="100px" id="colonnePrononciation" label="Phonétique"  sort="auto(prononciationsString,lemme)" tooltiptext="transcription phonétique"  visible="false" /> 
-						<column width="40px" id="colonneRO" label="OR"  sort="auto(ro,lemme)" tooltiptext="orthographe rectifiée" visible="false"/> 
-						<column width="100px" id="colonneClasse" label="Classe de mot"  sort="auto(catgram,genre,lemme)"/> 
-						<column width="50px" id="colonneGenre" label="Genre" sort="auto(genre, lemme)"/>
-						<column width="60px" id="colonneNombre" label="Nombre"  sort="auto(nombre, lemme)" visible="true"/>
-						<column width="70px" id="colonnePrécision" label="Précision" sort="auto(catgramPrésicion, lemme)" visible="true"/>
-						<column  id="colonneListe" label="Liste" sort="auto(liste, lemme)" visible="false"/>
+						<column width="290px" id="mot" label="Mot"
+							sortDirection="ascending" sort="auto" />
+						<column width="100px" id="colonnePrononciation"
+							label="Phonétique" sort="auto(prononciationsString,lemme)"
+							tooltiptext="transcription phonétique" visible="false" />
+						<column width="40px" id="colonneRO" label="OR"
+							sort="auto(ro,lemme)" tooltiptext="orthographe rectifiée"
+							visible="false" />
+						<column width="100px" id="colonneClasse"
+							label="Classe de mot" sort="auto(catgram,genre,lemme)" />
+						<column width="50px" id="colonneGenre"
+							label="Genre" sort="auto(genre, lemme)" />
+						<column width="60px" id="colonneNombre"
+							label="Nombre" sort="auto(nombre, lemme)" visible="true" />
+						<column width="70px" id="colonnePrécision"
+							label="Précision" sort="auto(catgramPrésicion, lemme)"
+							visible="true" />
+						<column id="colonneListe" label="Liste"
+							sort="auto(liste, lemme)" visible="false" />
 					</columns>
 					<rows />
 				</grid>
 			</vbox>
 		</hbox>
-		
-</window>
+
+	</window>
 </zk>

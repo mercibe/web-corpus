@@ -1,0 +1,29 @@
+<vbox height="100%" width="100%">
+	<grid id="panierContextesGrid" fixedLayout="true" style="border:0px"
+		height="413px" emptyMessage="Aucune contexte dans le panier.">
+		<columns sizable="false">
+			<column width="100%" visible="true" />
+		</columns>
+		<rows />
+	</grid>
+	<hbox>
+		<label value="Associer au mot" />
+		<combobox>
+			<comboitem label="" />
+			<comboitem label="" />
+		</combobox>
+	</hbox>
+	<hbox>
+		<label value="de la liste" />
+		<combobox>
+			<comboitem label="" />
+			<comboitem label="" />
+		</combobox>
+	</hbox>
+	<hbox>
+		<button id="boutonAssocier" label="OK" />
+		<button id="boutonEffacerPanierContextes"
+			image="/images/effacer-2-16x16.png" width="32px" orient="horizontal"
+			tooltiptext="vider le panier des contextes" />
+	</hbox>
+</vbox>

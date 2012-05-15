@@ -1,158 +1,204 @@
 <?page id="contextePage" title="Web corpus - Contextes" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window id="contexteWindow" border="none" width="100%" height="100%" apply="com.servicelibre.zk.controller.ContexteCtrl">
-	<groupbox>
-		<caption>Recherche</caption>
-		<hbox style="margin-top:10px;">
-			<combobox id="condition" readonly="true"
-				width="185px">
-				<comboitem label="Exactement le mot"
-					value="EXACTEMENT_LE_MOT" />
-				<comboitem label="Toutes les formes du mot"
-					value="TOUTES_LES_FORMES_DU_MOT" />
-			</combobox>
-			
-			<textbox id="cherche" focus="true"></textbox>
-			
-			<combobox id="voisinage" readonly="true" width="185px">
-				<comboitem label="dans une phrase complète" value="0"/>
-				<comboitem label="entouré de 1 mots" value="1"/>
-				<comboitem label="entouré de 2 mots" value="2"/>
-				<comboitem label="entouré de 3 mots" value="3"/>
-				<comboitem label="entouré de 4 mots" value="4"/>
-				<comboitem label="entouré de 5 mots" value="5"/>
-				<comboitem label="entouré de 6 mots" value="6"/>
-				<comboitem label="entouré de 7 mots" value="7"/>
-				<comboitem label="entouré de 8 mots" value="8"/>
-				<comboitem label="entouré de 9 mots" value="9"/>
-				<comboitem label="entouré de 10 mots" value="10"/>
-				<comboitem label="entouré de 15 mots" value="15"/>
-				<comboitem label="entouré de 20 mots" value="20"/>
-				<comboitem label="entouré de 25 mots" value="25"/>
-				<comboitem label="entouré de 30 mots" value="30"/>
-				<comboitem label="entouré de 40 mots" value="40"/>
-				<comboitem label="entouré de 50 mots" value="50"/>
-			</combobox>
-				
-			<button id="boutonRecherche" label="Recherche"/>
-			
-			<button  id="effacerRecherche" image="/images/effacer-2-16x16.png"
-                    width="32px" orient="horizontal" tooltiptext="réinitialiser la recherche"/>  
-			
-		</hbox>
-		
-		<div id="caractèresSpéciaux" align="center" visible="false" style="margin-top:7px; margin-bottom:7px;"/>
-		
-	</groupbox>
-	
-	
-		<hbox width="100%" height="100%" style="margin-top:20px;">
-		
-		<vbox>
-			
-			<!-- **************** -->
-			<!-- Zone des filtre  -->
-			<!-- **************** -->
-		
-			<!-- FIXME utiliser include  -->
-			<groupbox width="286px" height="340px">
-					<caption>Filtre</caption>
-					<hbox >
-						<bandbox id="nomFiltreBandbox" width="145px" readonly="true" buttonVisible="true" autodrop="true">
-							<bandpopup vflex="min" hflex="min">
-								<vbox style="margin:0px;" >
-									<listbox id="nomFiltre"  style="width:140px;"  mold="paging" pageSize="999" onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);"/>
-								</vbox>
-							</bandpopup>
-						</bandbox>
-			
-						<bandbox width="135px" readonly="true" buttonVisible="true" autodrop="true">
-							<bandpopup vflex="min" hflex="min">
-								<vbox style="margin:0px;">
-								
-<!-- 								
-	mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
-	Documenter et envoyer à ZK 
-	Pas possible de reproduire dans sandbox avec création statique de listitem.  
-	Essayer d'isoler cas avec ajout des listitems via Java
--->								
-								
-										<listbox width="400px" checkmark="true" id="valeurFiltre" multiple="true" mold="paging" pageSize="999">
-											<listhead><listheader>Tout sélectionner</listheader></listhead>
-										</listbox>
-								</vbox>
-							</bandpopup>
-						</bandbox>
-					</hbox>
-					
-					<div align="center" style="margin-top:10px;">
-						 <button  id="boutonAjoutFiltre" image="/images/flècheBleueBas-16x16.png"
-	                    hoverImage="/images/flècheVerteBas-16x16.png" width="70px" orient="horizontal" dir="reverse" tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs"/>
-						 <button  id="boutonEffacerFiltre" image="/images/effacer-2-16x16.png"
-	                    width="32px" orient="horizontal" tooltiptext="supprimer tous les filtres actifs"/>                    
-					</div>
-					
-					<grid id="gridFiltreActif" fixedLayout="true"
-						 style="margin-top:10px; border:0px" emptyMessage="Aucun filtre actif." height="255px">
-						<auxhead sclass="category-center">
-							<auxheader label="Filtres actifs" colspan="2"
-								rowspan="1" />
-						</auxhead>
-						<columns/>
-						<rows/>
-					</grid>
-	
-				</groupbox>
-				
-				
-				<popup id="popupHistorique" style="padding:0px; margin:0px;">
-					<vlayout style="overflow:auto;padding:0px;margin:0px;" width="200px" height="200px">
-						<label id="descriptionRechercheHistorique"/>
-						<grid id="gridFiltreHistorique" fixedLayout="true" style="border:0px;padding:0px; margin:0px;">
-							<columns/>
-							<rows/>
-						</grid>
-					</vlayout>
-				</popup>
-				
-			<!-- ************************* -->
-			<!-- Historique des recherches -->
-			<!-- ************************* -->
+	<window id="contexteWindow" border="none" width="100%" height="100%"
+		apply="com.servicelibre.zk.controller.ContexteCtrl">
+		<groupbox>
+			<caption>Recherche</caption>
+			<hbox style="margin-top:10px;">
+				<combobox id="condition" readonly="true"
+					width="185px">
+					<comboitem label="Exactement le mot"
+						value="EXACTEMENT_LE_MOT" />
+					<comboitem label="Toutes les formes du mot"
+						value="TOUTES_LES_FORMES_DU_MOT" />
+				</combobox>
 
-			<include id="historiqueRechercheInclude" src="/historiqueRecherches.zul"/>
-			
-		</vbox>
-			
+				<textbox id="cherche" focus="true"></textbox>
+
+				<combobox id="voisinage" readonly="true"
+					width="185px">
+					<comboitem label="dans une phrase complète"
+						value="0" />
+					<comboitem label="entouré de 1 mots" value="1" />
+					<comboitem label="entouré de 2 mots" value="2" />
+					<comboitem label="entouré de 3 mots" value="3" />
+					<comboitem label="entouré de 4 mots" value="4" />
+					<comboitem label="entouré de 5 mots" value="5" />
+					<comboitem label="entouré de 6 mots" value="6" />
+					<comboitem label="entouré de 7 mots" value="7" />
+					<comboitem label="entouré de 8 mots" value="8" />
+					<comboitem label="entouré de 9 mots" value="9" />
+					<comboitem label="entouré de 10 mots" value="10" />
+					<comboitem label="entouré de 15 mots" value="15" />
+					<comboitem label="entouré de 20 mots" value="20" />
+					<comboitem label="entouré de 25 mots" value="25" />
+					<comboitem label="entouré de 30 mots" value="30" />
+					<comboitem label="entouré de 40 mots" value="40" />
+					<comboitem label="entouré de 50 mots" value="50" />
+				</combobox>
+
+				<button id="boutonRecherche" label="Recherche" />
+
+				<button id="effacerRecherche"
+					image="/images/effacer-2-16x16.png" width="32px"
+					orient="horizontal" tooltiptext="réinitialiser la recherche" />
+
+			</hbox>
+
+			<div id="caractèresSpéciaux" align="center" visible="false"
+				style="margin-top:7px; margin-bottom:7px;" />
+
+		</groupbox>
+
+
+		<hbox width="100%" height="100%" style="margin-top:20px;">
+
+			<tabbox id="tb" width="295px" height="575px"
+				mold="accordion">
+				<tabs>
+					<tab label="Filtre" />
+					<tab label="Historique des recherches" />
+					<tab label="Panier des contextes" />
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<!-- ***************** -->
+						<!-- Zone des filtres  -->
+						<!-- ***************** -->
+						<hbox>
+							<bandbox id="nomFiltreBandbox" width="145px"
+								readonly="true" buttonVisible="true" autodrop="true">
+								<bandpopup vflex="min" hflex="min">
+									<vbox style="margin:0px;">
+										<listbox id="nomFiltre"
+											style="width:140px;" mold="paging" pageSize="999"
+											onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);" />
+									</vbox>
+								</bandpopup>
+							</bandbox>
+
+							<bandbox width="135px" readonly="true"
+								buttonVisible="true" autodrop="true">
+								<bandpopup vflex="min" hflex="min">
+									<vbox style="margin:0px;">
+
+										<!-- 								
+											mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
+											Documenter et envoyer à ZK 
+											Pas possible de reproduire dans sandbox avec création statique de listitem.  
+											Essayer d'isoler cas avec ajout des listitems via Java
+										-->
+
+										<listbox width="400px"
+											checkmark="true" id="valeurFiltre" multiple="true"
+											mold="paging" pageSize="999">
+											<listhead>
+												<listheader>
+													Tout sélectionner
+												</listheader>
+											</listhead>
+										</listbox>
+									</vbox>
+								</bandpopup>
+							</bandbox>
+						</hbox>
+
+						<div align="center" style="margin-top:10px;">
+							<button id="boutonAjoutFiltre"
+								image="/images/flècheBleueBas-16x16.png"
+								hoverImage="/images/flècheVerteBas-16x16.png" width="70px"
+								orient="horizontal" dir="reverse"
+								tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs" />
+							<button id="boutonEffacerFiltre"
+								image="/images/effacer-2-16x16.png" width="32px"
+								orient="horizontal"
+								tooltiptext="supprimer tous les filtres actifs" />
+						</div>
+
+						<grid id="gridFiltreActif" fixedLayout="true"
+							style="margin-top:10px; border:0px"
+							emptyMessage="Aucun filtre actif." height="425px">
+							<auxhead sclass="category-center">
+								<auxheader label="Filtres actifs"
+									colspan="2" rowspan="1" />
+							</auxhead>
+							<columns />
+							<rows />
+						</grid>
+
+						<popup id="popupHistorique"
+							style="padding:0px; margin:0px;">
+							<vlayout
+								style="overflow:auto;padding:0px;margin:0px;" width="200px"
+								height="200px">
+								<label
+									id="descriptionRechercheHistorique" />
+								<grid id="gridFiltreHistorique"
+									fixedLayout="true"
+									style="border:0px;padding:0px; margin:0px;">
+									<columns />
+									<rows />
+								</grid>
+							</vlayout>
+						</popup>
+
+					</tabpanel>
+					<tabpanel>
+						<!-- ************************* -->
+						<!-- Historique des recherches -->
+						<!-- ************************* -->
+
+						<include id="historiqueRechercheInclude"
+							src="/historiqueRecherches.zul" />
+					</tabpanel>
+					<tabpanel>
+						<!-- ************************* -->
+						<!-- Panier des contextes      -->
+						<!-- ************************* -->
+
+						<include id="panierContextesInclude"
+							src="/panierContextes.zul" />
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+
+
 			<!-- ******************** -->
 			<!--   Colonne résultats  -->
 			<!-- ******************** -->
-			
-			<vbox  height="645px" width="700px">
-					<hbox>
-						<div align="left" width="680px">
-								<label id="infoRésultats" style="font-style:italic;text-align:center;"/>
-								<a id="cooccurrentLien" visible="false">cooccurrents</a>
-						</div>
-						<div align="right">
-<!-- 							<image id="exportationCsv"	src="/images/csv.png" class="cliquable"/> -->
-							<image id="exportationXls"	src="/images/xls.png" class="cliquable" tooltiptext="exporter les résultats"/>
-						</div>
-					</hbox>
-							
-					<grid id="contextesGrid" mold="paging" pageSize="15"
-						 height="550px" width="700px" emptyMessage="Aucun contexte trouvé.">
-			
-						<columns sizable="true">
-		
-							<column hflex="3" id="contexte" label="Contexte" />
-	
-						</columns>
-						<rows />
-					</grid>
+
+			<vbox height="645px" width="700px">
+				<hbox>
+					<div align="left" width="680px">
+						<label id="infoRésultats"
+							style="font-style:italic;text-align:center;" />
+						<a id="cooccurrentLien" visible="false">
+							cooccurrents
+						</a>
+					</div>
+					<div align="right">
+						<!-- 							<image id="exportationCsv"	src="/images/csv.png" class="cliquable"/> -->
+						<image id="exportationXls" src="/images/xls.png"
+							class="cliquable" tooltiptext="exporter les résultats" />
+					</div>
+				</hbox>
+
+				<grid id="contextesGrid" mold="paging" pageSize="15"
+					height="550px" width="700px"
+					emptyMessage="Aucun contexte trouvé.">
+
+					<columns sizable="true">
+
+						<column hflex="3" id="contexte"
+							label="Contexte" />
+
+					</columns>
+					<rows />
+				</grid>
 			</vbox>
-			
-		</hbox>	
-	
-	
-</window>
+
+		</hbox>
+
+
+	</window>
 </zk>

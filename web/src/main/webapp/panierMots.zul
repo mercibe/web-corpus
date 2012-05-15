@@ -1,0 +1,23 @@
+<vbox height="100%" width="100%">
+	<grid id="panierMotsGrid" fixedLayout="true" style="border:0px"
+		height="413px" emptyMessage="Aucun mot dans le panier.">
+		<columns sizable="false">
+			<column width="100%" visible="true" />
+		</columns>
+		<rows />
+	</grid>
+	<hbox>
+		<label value="Ajouter à la liste" />
+		<combobox>
+			<comboitem label="" />
+			<comboitem label="" />
+		</combobox>
+	</hbox>
+	<hbox>
+		<button id="boutonAssocier" label="OK" />
+		<button id="boutonCréerListe" label="Créer une nouvelle liste" />
+		<button id="boutonEffacerPanierMots"
+			image="/images/effacer-2-16x16.png" width="32px" orient="horizontal"
+			tooltiptext="vider le panier des mots" />
+	</hbox>
+</vbox>
