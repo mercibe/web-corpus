@@ -6,14 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-/**
- * Aurait dû s'appeler Client, mais impossible avec Spring Data JPA dans ce contexte (entitées dans sous-paquetages différents)
- * @author benoitm
- *
- */
 @Entity
-public class Consommateur {
-
+public class Client {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

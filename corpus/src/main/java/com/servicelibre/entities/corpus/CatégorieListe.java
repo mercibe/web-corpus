@@ -1,4 +1,4 @@
-package com.servicelibre.corpus.entity;
+package com.servicelibre.entities.corpus;
 
 import java.util.ArrayList;
 import java.util.List;
