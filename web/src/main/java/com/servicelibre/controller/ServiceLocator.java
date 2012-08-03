@@ -6,6 +6,7 @@ import org.zkoss.spring.SpringUtil;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.ui.OngletRepository;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
 
@@ -21,6 +22,11 @@ public class ServiceLocator {
 	private ServiceLocator() {
 	}
 
+	public static OngletRepository getOngletRepo() {
+		return (OngletRepository) ctx.getBean("ongletRepository");
+	}
+
+	
 	public static ListeRepository getListeRepo() {
 		return (ListeRepository) ctx.getBean("listeRepository");
 	}

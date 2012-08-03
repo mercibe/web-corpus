@@ -718,7 +718,6 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	@Override
 	protected Grid getHistoriqueRecherchesGrid() {
-
 		return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/contexteInclude/contexteWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
 	}
 

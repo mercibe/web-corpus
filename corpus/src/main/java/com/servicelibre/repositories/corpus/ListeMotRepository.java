@@ -2,9 +2,6 @@ package com.servicelibre.repositories.corpus;
 
 import java.util.List;
 
-import javax.persistence.OrderBy;
-
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.servicelibre.entities.corpus.Liste;

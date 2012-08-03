@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -253,6 +254,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
+		
 		super.doAfterCompose(comp);
 
 		initialiseChamps();
@@ -582,7 +584,6 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@Override
 	protected Grid getHistoriqueRecherchesGrid() {
-
 		return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/listeInclude/listeWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
 	}
 

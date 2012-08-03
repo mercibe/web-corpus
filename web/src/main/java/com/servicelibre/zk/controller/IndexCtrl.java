@@ -1,15 +1,24 @@
 package com.servicelibre.zk.controller;
 
-import java.util.Collections;
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Include;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Toolbarbutton;
+
+import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.entities.ui.Onglet;
+import com.servicelibre.repositories.ui.OngletRepository;
 
 /**
  * Démontre MVC: Autowire UI objects to data members
@@ -17,38 +26,79 @@ import org.zkoss.zul.Toolbarbutton;
  * @author benoitm
  * 
  */
-public class IndexCtrl extends GenericForwardComposer implements
-VariableResolver {
-
+public class IndexCtrl extends GenericForwardComposer implements VariableResolver {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3190337135508498208L;
 
-	//private static Logger logger = LoggerFactory.getLogger(IndexCtrl.class);
+	// private static Logger logger = LoggerFactory.getLogger(IndexCtrl.class);
+
+	Tabs corpusTabs;
+	Tabpanels corpusTabpanels; 
 
 	Toolbarbutton boutonFermerTousLesOnglets;
-	Tabs corpusTabs;
-	
-	
+
 	public void onClick$boutonFermerTousLesOnglets(Event event) {
 		// Fermer tous les onglets fermables
-		Tab tab = (Tab)corpusTabs.getLastChild();
-		while(tab.isClosable()) {
+		Tab tab = (Tab) corpusTabs.getLastChild();
+		while (tab.isClosable()) {
 			tab.close();
-			tab = (Tab)corpusTabs.getLastChild();
+			tab = (Tab) corpusTabs.getLastChild();
 		}
-		((Tab)corpusTabs.getFirstChild()).setSelected(true);
-		
+		((Tab) corpusTabs.getFirstChild()).setSelected(true);
+
 	}
-	
+
 	@Override
 	public Object resolveVariable(String arg0) throws XelException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+		initOnglets();
+	}
 
-	
-	
+	public void initOnglets() {
+
+		OngletRepository ongletRepo = ServiceLocator.getOngletRepo();
+		
+		// Récupération des onglets à afficher
+		List<Onglet> onglets = (List<Onglet>) ongletRepo.findAll(new Sort("ordre"));
+		for (Onglet onglet : onglets) {
+			// Créer le Tab (onglet)
+			Tab newTab = new Tab();
+			newTab.setId(onglet.getIdComposant() + "Tab");
+			newTab.setLabel(onglet.getNom());
+			newTab.setParent(corpusTabs);
+			
+			// Créer le TabPanel (contenu de l'onglet)
+			Tabpanel newTabpanel = new Tabpanel();
+			newTabpanel.setId(onglet.getIdComposant() + "Tabpanel" );
+			newTabpanel.setHeight("100%");
+			
+			// Include ou Iframe?
+			if(onglet.isIframe()) {
+				Iframe newIframe = new Iframe(onglet.getSrc());
+				newIframe.setId(onglet.getIdComposant() + "Iframe");
+				newIframe.setHeight("100%");
+				newIframe.setParent(newTabpanel);
+				System.out.println("Création de l'iframe pour le composant " + onglet.getIdComposant());
+			}
+			else {
+				Include newInclude = new Include(onglet.getSrc());
+				newInclude.setId(onglet.getIdComposant() + "Include");
+				newInclude.setHeight("100%");
+				newInclude.setParent(newTabpanel);
+				System.out.println("Création de l'include pour le composant " + onglet.getIdComposant());
+			}
+			
+			newTabpanel.setParent(corpusTabpanels);
+		}
+	}
+
 }

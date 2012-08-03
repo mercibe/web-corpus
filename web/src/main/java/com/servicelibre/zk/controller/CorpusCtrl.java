@@ -24,6 +24,7 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
+import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
@@ -35,7 +36,9 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
@@ -47,6 +50,8 @@ import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.LigatureService;
+import com.servicelibre.entities.ui.Onglet;
+import com.servicelibre.repositories.ui.OngletRepository;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheExécution;
 
@@ -98,7 +103,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Image exportationXls;
 
 	List<RechercheExécution> historiqueRecherche = new ArrayList<RechercheExécution>(10);
-
+	
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
 	public void onOK$cherche(Event event) {
@@ -319,6 +324,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		historiqueRecherchesGrid = getHistoriqueRecherchesGrid();
 
+		System.out.println("COUCOU - historiqueRecherchesGrid = " + historiqueRecherchesGrid);
+		System.out.println("COUCOU - this.historiqueRecherche = " + this.historiqueRecherche);
+		
 		historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
 		historiqueRecherchesGrid.setRowRenderer(new RowRenderer() {
 
@@ -505,6 +513,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		caractèresSpéciaux.setVisible(true);
 
 	}
+
+	
 
 	protected void initialiseClavierCaractèresSpéciaux() {
 		String[][] caractères = { { "à", "à" }, { "â", "â" }, { "é", "é" }, { "è", "è" }, { "ê", "ê" }, { "ë", "ë" }, { "ï", "ï" }, { "î", "î" }, { "ô", "ô" },

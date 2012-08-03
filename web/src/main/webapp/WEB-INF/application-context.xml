@@ -27,7 +27,7 @@
 		<property name="catégorieListeRepository" ref="catégorieListeRepository"/>
 		<property name="listeRepository" ref="listeRepository"/>
 	</bean>
-
+	
 	<bean id="formeService" class="com.servicelibre.corpus.service.FormeService"
 		init-method="init" />
 
@@ -44,12 +44,11 @@
 		pour toutes les post-processors d'annotations de configuration standard (traduction 
 		des exceptions, etc.) -->
 	<context:annotation-config />
-
+	
 	<!-- Spring-data: pour activer le support des Repository par JPA et scanner 
-		tous les package sous com.servicelibre.corpus.manager qui contiennent des 
+		tous les package sous com.servicelibre.repositories qui contiennent des 
 		interfaces qui étendent JpaRepository pour leur créer les beans Spring nécessaires. -->
-	<!-- <jpa:repositories base-package="com.servicelibre.corpus.manager" /> -->
-	<jpa:repositories   base-package="com.servicelibre.corpus.repository" />
+	<jpa:repositories   base-package="com.servicelibre.repositories" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
