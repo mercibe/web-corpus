@@ -33,7 +33,7 @@
 		
 		
 		<tabpanels id="corpusTabpanels" width="100%" height="100%">
-			<!-- les Tabpanelsont ajoutés dynamiquement depuis la base de données -->
+			<!-- les Tabpanel sont ajoutés dynamiquement depuis la base de données -->
 		</tabpanels>
 		
 	</tabbox>

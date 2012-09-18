@@ -269,22 +269,22 @@ public class ListeCtrl extends CorpusCtrl {
 
 		String[][] apiLettres = { { "i", "ép[i], [î]le, l[y]s, out[il]" }, { "i:", "j[ea]n, tw[ee]d" }, { "y", "[hu]tte, b[u]lle, f[ût]" },
 				{ "u", "[ou]rs, t[ou]ndra, p[ouls]" }, { "u:", "slow f[oo]d, p[oo]l" }, { "e", "(e fermé) [é]rable, p[é]ch[er], ch[ez], hock[ey]" },
-				{ "ø", "(eu fermé)j[eu], heu]r[eux], bl[eu]et" }, { "o", "(o fermé) [au]to, c[ô]té, b[eau], sir[op]" },
+				{ "ø", "(eu fermé) j[eu], heu]r[eux], bl[eu]et" }, { "o", "(o fermé) [au]t[o], c[ô]té, b[eau], sir[op]" },
 				{ "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" }, { "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
-				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" }, { "ɔ", "(o ouvert) [o]béir, [au]t[o]chtone, p[o]rt" },
-				{ "ə", "(e caduc, ou muet)m[e]ner, crén[e]lage" }, { "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" },
+				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" }, { "ɔ", "(o ouvert) [o]béir, [au]t[o]cht[o]ne, p[o]rt" },
+				{ "ə", "(e caduc, ou muet) m[e]ner, crén[e]lage" }, { "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" },
 				{ "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "(a postérieur) là-b[as], p[â]te, cip[ai]lle, pyjam[a]" },
-				{ "ɛ̃", "br[in], [im]pair, [in]d[ie]n, cert[ain], fr[ein]" }, { "œ̃", "[un], l[un]di, br[un], parf[um]" },
+				{ "ɛ̃", "br[in], [im]pair, [in]di[en], cert[ain], fr[ein]" }, { "œ̃", "[un], l[un]di, br[un], parf[um]" },
 				{ "ɔ̃", "m[on]tagnais, [om]ble, p[ont]" }, { "ɑ̃", "[an], [en], j[am]bon, s[ang], t[emps]" },
 
 				{ "p", "[p]aix, sa[p]in, cége[p]" }, { "t", "[t]oit, [th]é, pa[t]in, a[tt]aché, fourche[tt]e" },
-				{ "k", "[c]oq, [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" }, { "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" },
+				{ "k", "[c]o[q], [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" }, { "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" },
 				{ "g", "[g]a[g], al[gu]e, [gu]ide" }, { "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" },
 				{ "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" }, { "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" },
 				{ "v", "[v]ille, ca[v]ité, dra[v]e" }, { "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
 				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" }, { "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" },
 				{ "n", "[n]ordet, ante[nn]e, caba[n]e" }, { "ɲ", "bei[gn]e, campa[gn]e" },
-				{ "ŋ", "big ba[ng], camp[ing], flame[n]co, bi[n]go, pi[ng] p[ong]" },
+				{ "ŋ", "big ba[ng], campi[ng], flame[n]co, bi[n]go, pi[ng] po[ng]" },
 				{ "'", "les [h]aches, un [h]uit, la [ou]ananiche, les [u]nes (sans élision ni liaison)" },
 
 				{ "j", "r[i]en, pa[y]er, écureu[il], fi[ll]e, [y]ogourt" }, { "ɥ", "l[u]i, [hu]issier, t[u]ile" }, { "w", "l[ou]er, [ou]ate, [w]att, b[o]is" }, };
@@ -326,7 +326,7 @@ public class ListeCtrl extends CorpusCtrl {
 	private String getHtml(String string) {
 
 		// FIXME faire en une opération!
-		return string.replaceAll("\\[([a-zâàëèéêïîôûü]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "").replaceAll("\\]", "");
+		return string.replaceAll("\\[([a-zâàëèéêïîôûüùç]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "").replaceAll("\\]", "");
 	}
 
 	private void initialiseChamps() {
