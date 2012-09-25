@@ -273,7 +273,7 @@ public class ListeCtrl extends CorpusCtrl {
 				{ "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" }, { "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
 				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" }, { "ɔ", "(o ouvert) [o]béir, [au]t[o]cht[o]ne, p[o]rt" },
 				{ "ə", "(e caduc, ou muet) m[e]ner, crén[e]lage" }, { "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" },
-				{ "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "(a postérieur) là-b[as], p[â]te, cip[ai]lle, pyjam[a]" },
+				{ "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "(a postérieur) là-b[as], p[â]te, cip[a]ille, pyjam[a]" },
 				{ "ɛ̃", "br[in], [im]pair, [in]di[en], cert[ain], fr[ein]" }, { "œ̃", "[un], l[un]di, br[un], parf[um]" },
 				{ "ɔ̃", "m[on]tagnais, [om]ble, p[ont]" }, { "ɑ̃", "[an], [en], j[am]bon, s[ang], t[emps]" },
 
