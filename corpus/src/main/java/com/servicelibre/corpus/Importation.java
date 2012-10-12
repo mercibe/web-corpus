@@ -3,7 +3,6 @@ package com.servicelibre.corpus;
 import java.io.File;
 import java.util.List;
 
-import org.apache.batik.anim.SetAnimation;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

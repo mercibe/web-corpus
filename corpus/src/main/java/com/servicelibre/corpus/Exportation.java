@@ -77,7 +77,7 @@ public class Exportation {
 
 		ajouteCorpusDocMetadonnées(root, corpus);
 
-		ajouteCorpusCatégorieListes(root);
+		ajouteCorpusCatégorieListes(root, corpus);
 
 		try {
 			// affiche(doc, false);
@@ -208,9 +208,9 @@ public class Exportation {
 		logger.info("Fin de l'exportation des prononciations");
 	}
 
-	private void ajouteCorpusCatégorieListes(Element root) {
+	private void ajouteCorpusCatégorieListes(Element root, Corpus corpus) {
 
-		List<CatégorieListe> catégorieListes = catégorieListeRepo.findAll(new Sort("ordre"));
+		List<CatégorieListe> catégorieListes = catégorieListeRepo.findByCorpus(corpus, new Sort("ordre"));
 
 		Element catégorieListesElem = root.addElement("catégorieListes");
 		for (CatégorieListe catégorieListe : catégorieListes) {
