@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -34,9 +35,9 @@ public class Mot implements Comparable<Mot> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	// // Liste primaire
-	// @OneToOne
-	// private Liste liste;
+	// Liste primaire
+	@ManyToOne(optional = true)
+	private Liste listePartitionPrimaire;
 
 	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
@@ -233,5 +234,15 @@ public class Mot implements Comparable<Mot> {
 	public void setMotPrononciations(Set<MotPrononciation> motPrononciations) {
 		this.motPrononciations = motPrononciations;
 	}
+
+	public Liste getListePartitionPrimaire() {
+		return listePartitionPrimaire;
+	}
+
+	public void setListePartitionPrimaire(Liste listePartitionPrimaire) {
+		this.listePartitionPrimaire = listePartitionPrimaire;
+	}
+	
+	
 
 }

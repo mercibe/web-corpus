@@ -10,9 +10,14 @@
 	<window border="none" width="100%" height="100%">
 		<zscript><![CDATA[
 	com.servicelibre.entities.corpus.Corpus corpus = com.servicelibre.controller.ServiceLocator.getCorpusService().getCorpus();
+	com.servicelibre.entities.ui.Paramètre titreParam =  com.servicelibre.controller.ServiceLocator.getParamètreRepo().findByNom("titre");
+	if(titreParam == null) {
+	   titreParam = new com.servicelibre.entities.ui.Paramètre("titre","Gestion de corpus en ligne!");
+	}
+	
 ]]></zscript>
 		<div align="center" style="margin-top:10px;">
-			<label sclass="titre1" value="Gestion de corpus en ligne" />
+			<label sclass="titre1" value="${titreParam.valeur}" />
 		</div>
 
 		<div align="center">

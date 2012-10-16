@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.OrderBy;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -15,8 +16,7 @@ public interface ListeRepository extends CrudRepository<Liste, Long> {
 
 	Liste findByNom(String nom);
 
-	@OrderBy("ordre")
-	List<Liste> findByCatégorie(CatégorieListe catégorieListe);
+	List<Liste> findByCatégorie(CatégorieListe catégorieListe, Sort sort);
 
 	// List<Liste> findByCorpus(Corpus corpus);
 	// List<Liste> findByCorpus(Corpus corpus, Sort sort);

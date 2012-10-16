@@ -36,6 +36,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
+import org.zkoss.zul.Span;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanel;
@@ -451,7 +452,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 				item.setLabel(kv.getValue().toString());
 			}
 		});
-
+		
 		if (nomFiltre.getItemCount() > 0) {
 			nomFiltre.setSelectedIndex(0);
 		}

@@ -39,6 +39,7 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
@@ -390,9 +391,9 @@ public class ListeCtrl extends CorpusCtrl {
 				row.appendChild(new Label(mot.getNombre()));
 				row.appendChild(new Label(mot.getCatgramPrésicion()));
 				// FIXME
-				// Liste liste = mot.getListe();
-				// row.appendChild(new Label(liste != null ? liste.getNom() : ""));
-				// row.appendChild(new Label());
+				Liste liste = mot.getListePartitionPrimaire();
+				row.appendChild(new Label(liste != null ? liste.getNom() : ""));
+				row.appendChild(new Label());
 
 			}
 		});

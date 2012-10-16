@@ -54,7 +54,7 @@
 			<tabbox id="tb" width="295px" height="575px"
 				mold="accordion">
 				<tabs>
-					<tab label="Filtre" />
+					<tab label="Filtres" />
 					<tab label="Historique des recherches" />
 					<tab label="Panier des mots" />
 				</tabs>
@@ -70,8 +70,8 @@
 								readonly="true" buttonVisible="true" autodrop="true">
 								<bandpopup vflex="min" hflex="min">
 									<vbox style="margin:0px;">
-										<listbox id="nomFiltre"
-											style="width:140px;" mold="paging" pageSize="999"
+										<listbox id="nomFiltre" width="400px;"
+											 mold="paging" pageSize="999"
 											onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);" />
 									</vbox>
 								</bandpopup>
@@ -218,7 +218,7 @@
 							label="Précision" sort="auto(catgramPrésicion, lemme)"
 							visible="true" />
 						<column id="colonneListe" label="Liste"
-							sort="auto(liste, lemme)" visible="false" />
+							sort="auto(liste, lemme)" visible="true" />
 					</columns>
 					<rows />
 				</grid>

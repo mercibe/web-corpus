@@ -56,7 +56,7 @@
 			<tabbox id="tb" width="295px" height="575px"
 				mold="accordion">
 				<tabs>
-					<tab label="Filtre" />
+					<tab label="Filtres" />
 					<tab label="Historique des recherches" />
 					<tab label="Panier des contextes" />
 				</tabs>

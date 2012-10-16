@@ -47,7 +47,7 @@ public class ListeFiltreManager extends FiltreManager {
 	catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
 	catgramClésValeurs.add(new DefaultKeyValue("conj.", "conjonction"));
 	catgramClésValeurs.add(new DefaultKeyValue("dét.", "déterminant"));
-	catgramClésValeurs.add(new DefaultKeyValue("interj.", "interjection"));
+//	catgramClésValeurs.add(new DefaultKeyValue("interj.", "interjection"));
 	catgramClésValeurs.add(new DefaultKeyValue("n.", "nom"));
 	catgramClésValeurs.add(new DefaultKeyValue("prép.", "préposition"));
 	catgramClésValeurs.add(new DefaultKeyValue("pron.", "pronom"));
@@ -57,24 +57,27 @@ public class ListeFiltreManager extends FiltreManager {
 	// Ajout de la liste des genres
 	List<DefaultKeyValue> genreClésValeurs = new ArrayList<DefaultKeyValue>(2);
 	// genreClésValeurs.add(keyValueVide);
-	genreClésValeurs.add(new DefaultKeyValue("f.", "féminin"));
-	genreClésValeurs.add(new DefaultKeyValue("m.", "masculin"));
+	genreClésValeurs.add(new DefaultKeyValue("f.", "Féminin"));
+	genreClésValeurs.add(new DefaultKeyValue("m.", "Masculin"));
 	filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs));
 
 	// Ajout de la liste des nombres
 	List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
 	// nombreClésValeurs.add(keyValueVide);
-	nombreClésValeurs.add(new DefaultKeyValue("inv.", "invariable"));
-	nombreClésValeurs.add(new DefaultKeyValue("pl.", "pluriel"));
+	nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
+	nombreClésValeurs.add(new DefaultKeyValue("pl.", "Pluriel"));
 	filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
 
 	// Ajout de la liste RO
 	List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
 	// roClésValeurs.add(keyValueVide);
-	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "graphies rectifiées"));
+	// FIXME
+	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Effacement de l'accent circonflexe (à faire)"));
+	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Déplacement du tréma (à faire)"));
+	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Soudure de mots (à faire)"));
 	// roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE,
 	// "graphies traditionnelles"));
-	filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe", roClésValeurs));
+	filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs));
 
     }
 

@@ -374,7 +374,7 @@ public class CorpusService {
 
 	// FIXME
 	public List<Liste> getCatégorieListeListes(CatégorieListe catégorieListe) {
-		return listeRepository.findByCatégorie(catégorieListe);
+		return listeRepository.findByCatégorie(catégorieListe, new Sort("ordre"));
 	}
 
 }

@@ -7,6 +7,7 @@ import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.ui.OngletRepository;
+import com.servicelibre.repositories.ui.ParamètreRepository;
 import com.servicelibre.zk.controller.ContexteFiltreManager;
 import com.servicelibre.zk.controller.FiltreManager;
 
@@ -26,6 +27,9 @@ public class ServiceLocator {
 		return (OngletRepository) ctx.getBean("ongletRepository");
 	}
 
+	public static ParamètreRepository getParamètreRepo() {
+		return (ParamètreRepository) ctx.getBean("paramètreRepository");
+	}
 	
 	public static ListeRepository getListeRepo() {
 		return (ListeRepository) ctx.getBean("listeRepository");

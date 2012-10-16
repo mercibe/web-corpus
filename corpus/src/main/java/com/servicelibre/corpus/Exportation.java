@@ -221,7 +221,7 @@ public class Exportation {
 
 			// Ajout des listes
 			Element listesElem = catégorieListeElem.addElement("listes");
-			List<Liste> listes = listeRepo.findByCatégorie(catégorieListe);
+			List<Liste> listes = listeRepo.findByCatégorie(catégorieListe, new Sort("ordre"));
 			for (Liste liste : listes) {
 				Element listeElem = listesElem.addElement("liste");
 				listeElem.addElement("nom").addText(liste.getNom());

@@ -34,6 +34,9 @@ public class Liste implements Comparable<Liste> {
 	@Column
 	Integer ordre;
 
+//	@OneToMany(mappedBy = "listePartitionPrimaire")
+//	private List<Mot> mots = new ArrayList<Mot>();
+	
 	@OneToMany(mappedBy = "liste", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
