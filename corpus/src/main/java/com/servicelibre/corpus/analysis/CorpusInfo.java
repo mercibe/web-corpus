@@ -26,7 +26,7 @@ import java.util.List;
 import com.servicelibre.corpus.metadata.Metadata;
 
 /**
- * Contenueur de métainformation sur un corpus textuel:
+ * Conteneur de métainformation sur un corpus textuel:
  * - métadonnées du corpus
  * - liste des documents qui composent le corpus
  * - résultats d'une analyse lexicale: information sur les mots et lemmes (fréquences, etc.)

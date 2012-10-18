@@ -40,15 +40,17 @@ public class MysqlPersistenceManager extends JDBCPersitenceManager
             String documentTableName = getTableNameWithPrefix(DOCUMENT_TABLENAME);
 
             //TODO générer dynamiquement la création sur base des métadonnées de corpusInfo
+//
+//            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY,"
+//                    + "titre TEXT NOT NULL," + "categorie varchar(255) DEFAULT NULL," + "chapitre TEXT DEFAULT NULL,"
+//                    + "auteur varchar(255) NOT NULL," + "difficulte smallint DEFAULT NULL,"
+//                    + "cycles varchar(64) DEFAULT NULL) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
 
-            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY,"
-                    + "titre TEXT NOT NULL," + "categorie varchar(255) DEFAULT NULL," + "chapitre TEXT DEFAULT NULL,"
-                    + "auteur varchar(255) NOT NULL," + "difficulte smallint DEFAULT NULL,"
-                    + "cycles varchar(64) DEFAULT NULL) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
-
+            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
+            
             // TODO création des index
-            this.jdbcTemplate.execute("CREATE INDEX document_cycles_idx ON " + documentTableName + "(cycles)");
-            this.jdbcTemplate.execute("CREATE INDEX document_categorie_idx ON " + documentTableName + "(categorie)");
+//            this.jdbcTemplate.execute("CREATE INDEX document_cycles_idx ON " + documentTableName + "(cycles)");
+//            this.jdbcTemplate.execute("CREATE INDEX document_categorie_idx ON " + documentTableName + "(categorie)");
         }
         else if (tableName.equalsIgnoreCase(getTableNameWithPrefix(MOT_TABLENAME)))
         {
@@ -56,9 +58,9 @@ public class MysqlPersistenceManager extends JDBCPersitenceManager
             String motTableName = getTableNameWithPrefix(MOT_TABLENAME);
 
             this.jdbcTemplate.execute("CREATE TABLE " + motTableName + "( doc_id VARCHAR(255),"
-                    + "mot VARCHAR(255) DEFAULT NULL," + "freqmot DOUBLE DEFAULT NULL,"
-                    + "lemme VARCHAR(255) DEFAULT NULL," + "freqlemme DOUBLE DEFAULT NULL,"
-                    + "catgram VARCHAR(255) DEFAULT NULL," + "note VARCHAR(255) DEFAULT NULL,"
+                    + "mot VARCHAR(100) DEFAULT NULL," + "freqmot DOUBLE DEFAULT NULL,"
+                    + "lemme VARCHAR(100) DEFAULT NULL," + "freqlemme DOUBLE DEFAULT NULL,"
+                    + "catgram VARCHAR(100) DEFAULT NULL," + "note VARCHAR(255) DEFAULT NULL,"
                     + "motgram VARCHAR(5) DEFAULT NULL," + "freqmotprecision VARCHAR(255) DEFAULT NULL, " + "freqlemmeprecision VARCHAR(255) DEFAULT NULL, "
                     + " FOREIGN KEY (doc_id) REFERENCES " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id)) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
 

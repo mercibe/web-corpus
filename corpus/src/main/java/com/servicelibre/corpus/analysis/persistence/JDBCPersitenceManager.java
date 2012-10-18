@@ -144,7 +144,8 @@ public abstract class JDBCPersitenceManager {
 			// TODO affreux « workaround » pour sauver temporairement
 			// généralisation
 			if (metaCols.size() != colonnes.length) {
-				sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id, titre, auteur) " + " VALUES(:doc_id, :titre, :auteur)";
+				//sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id, titre, auteur) " + " VALUES(:doc_id, :titre, :auteur)";
+				sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id) " + " VALUES(:doc_id)";
 			}
 
 			try {
