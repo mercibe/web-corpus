@@ -48,8 +48,8 @@
 		<lucene.version>3.3.0</lucene.version>
 		<logback.version>0.9.26</logback.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<spring.version>3.1.0.RELEASE</spring.version>
-		<spring-security.version>3.1.0.RELEASE</spring-security.version>
+		<spring.version>3.1.2.RELEASE</spring.version>
+		<spring-security.version>3.1.2.RELEASE</spring-security.version>
 		<poi-version>3.5-FINAL</poi-version>
 		<ooo-version>3.1.0</ooo-version>
 	</properties>
