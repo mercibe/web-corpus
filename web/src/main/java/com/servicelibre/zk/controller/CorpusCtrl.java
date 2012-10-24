@@ -17,7 +17,9 @@ import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Column;
@@ -73,6 +75,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Button boutonRecherche;
 
 	Button effacerRecherche;
+	Bandbox nomFiltreBandbox;
 
 	Listbox nomFiltre; // autowire car même type/ID que le composant dans la
 	// page ZUL
@@ -152,9 +155,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	/**
 	 * Ajout d'une nouvelle valeur (condition) au filtre courant
 	 * 
-	 * @param event
 	 */
-	public void onClick$boutonAjoutFiltre(Event event) {
+	public void ajoutFiltre() {
 
 		// Y a-t-il encore des valeurs disponibles pour le filtre courant ?
 		if (valeurFiltre.getItemCount() > 0 && valeurFiltre.getSelectedCount() > 0) {
@@ -452,9 +454,22 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 				item.setLabel(kv.getValue().toString());
 			}
 		});
+
+		valeurFiltre.addEventListener("onSelect", new EventListener() {
+			
+			@Override
+			public void onEvent(Event event) throws Exception {
+				//SelectEvent e = (SelectEvent) event;
+				ajoutFiltre();
+			}
+		});
+		
 		
 		if (nomFiltre.getItemCount() > 0) {
 			nomFiltre.setSelectedIndex(0);
+			DefaultKeyValue item = (DefaultKeyValue) nomFiltre.getModel().getElementAt(0);
+			nomFiltreBandbox.setText(item.getValue().toString());
+			
 		}
 
 		// DefaultKeyValue

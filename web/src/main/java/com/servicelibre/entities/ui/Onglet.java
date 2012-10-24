@@ -39,6 +39,9 @@ public class Onglet {
 
 	@Column
 	int ordre;
+	
+	@Column
+	Boolean visible;
 
 
 	public Onglet() {
@@ -106,6 +109,14 @@ public class Onglet {
 
 	public void setIdComposant(String idComposant) {
 		this.idComposant = idComposant;
+	}
+
+	public Boolean getVisible() {
+		return visible;
+	}
+
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
 	}
 	
 

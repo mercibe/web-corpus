@@ -39,9 +39,12 @@
 
 				<button id="boutonRecherche" label="Recherche" />
 
-				<button id="effacerRecherche"
-					image="/images/effacer-2-16x16.png" width="32px"
-					orient="horizontal" tooltiptext="réinitialiser la recherche" />
+				<button id="effacerRecherche" label="Réinitialiser la recherche"
+					 tooltiptext="Réinitialiser la recherche" />
+					 <!--
+					 image="/images/effacer-2-16x16.png" width="32px"
+					 orient="horizontal" 
+					  -->
 
 			</hbox>
 
@@ -103,17 +106,6 @@
 							</bandbox>
 						</hbox>
 
-						<div align="center" style="margin-top:10px;">
-							<button id="boutonAjoutFiltre"
-								image="/images/flècheBleueBas-16x16.png"
-								hoverImage="/images/flècheVerteBas-16x16.png" width="70px"
-								orient="horizontal" dir="reverse"
-								tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs" />
-							<button id="boutonEffacerFiltre"
-								image="/images/effacer-2-16x16.png" width="32px"
-								orient="horizontal"
-								tooltiptext="supprimer tous les filtres actifs" />
-						</div>
 
 						<grid id="gridFiltreActif" fixedLayout="true"
 							style="margin-top:10px; border:0px"
@@ -125,6 +117,18 @@
 							<columns />
 							<rows />
 						</grid>
+						
+						<div align="center" style="margin-top:10px;">
+<!-- 							<button id="boutonAjoutFiltre" -->
+<!-- 								image="/images/flècheBleueBas-16x16.png" -->
+<!-- 								hoverImage="/images/flècheVerteBas-16x16.png" width="70px" -->
+<!-- 								orient="horizontal" dir="reverse" -->
+<!-- 								tooltiptext="ajouter les valeurs sélectionnées du filtre aux filtres actifs" /> -->
+							<button id="boutonEffacerFiltre" label="Supprimer les filtres actifs"
+								tooltiptext="supprimer tous les filtres actifs" />
+<!-- 								image="/images/effacer-2-16x16.png" width="32px" -->
+<!-- 								orient="horizontal" -->
+						</div>
 
 						<popup id="popupHistorique"
 							style="padding:0px; margin:0px;">

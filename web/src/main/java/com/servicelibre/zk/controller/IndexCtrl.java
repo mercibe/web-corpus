@@ -69,15 +69,29 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 		
 		// Récupération des onglets à afficher
 		List<Onglet> onglets = (List<Onglet>) ongletRepo.findAll(new Sort("ordre"));
+		
+		// Il faut sélectionner le premier onglet (tab) visible
+		boolean premierOngletVisibleSélectionné = false;
+		
 		for (Onglet onglet : onglets) {
+			
+			Boolean visible = onglet.getVisible();
+			
 			// Créer le Tab (onglet)
 			Tab newTab = new Tab();
+			newTab.setVisible(visible);
 			newTab.setId(onglet.getIdComposant() + "Tab");
 			newTab.setLabel(onglet.getNom());
 			newTab.setParent(corpusTabs);
 			
+			if(!premierOngletVisibleSélectionné && visible)	{
+				newTab.setSelected(visible);
+				premierOngletVisibleSélectionné = true;
+			}
+			
 			// Créer le TabPanel (contenu de l'onglet)
 			Tabpanel newTabpanel = new Tabpanel();
+			newTabpanel.setVisible(visible);
 			newTabpanel.setId(onglet.getIdComposant() + "Tabpanel" );
 			newTabpanel.setHeight("100%");
 			
@@ -86,6 +100,8 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 				Iframe newIframe = new Iframe(onglet.getSrc());
 				newIframe.setId(onglet.getIdComposant() + "Iframe");
 				newIframe.setHeight("100%");
+				newIframe.setWidth("100%");
+				newIframe.setVisible(visible);
 				newIframe.setParent(newTabpanel);
 				System.out.println("Création de l'iframe pour le composant " + onglet.getIdComposant());
 			}
@@ -94,6 +110,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 				newInclude.setId(onglet.getIdComposant() + "Include");
 				newInclude.setHeight("100%");
 				newInclude.setParent(newTabpanel);
+				newInclude.setVisible(visible);
 				System.out.println("Création de l'include pour le composant " + onglet.getIdComposant());
 			}
 			
