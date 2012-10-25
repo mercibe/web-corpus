@@ -38,6 +38,9 @@ public class CatégorieListe {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "catégorie", orphanRemoval = true)
 	List<Liste> listes = new ArrayList<Liste>();
+	
+	@Column(nullable=false)
+	Boolean publique = true;
 
 	public CatégorieListe() {
 		super();
@@ -102,6 +105,15 @@ public class CatégorieListe {
 
 	public void setCorpus(Corpus corpus) {
 		this.corpus = corpus;
+	}
+
+	
+	public Boolean getPublique() {
+		return publique;
+	}
+
+	public void setPublique(Boolean publique) {
+		this.publique = publique;
 	}
 
 	@Override

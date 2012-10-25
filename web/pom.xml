@@ -351,6 +351,13 @@
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkspring-core</artifactId>
 			<version>3.1.1</version>
+			<!-- http://stackoverflow.com/questions/3126276/splitter-blows-up-on-simple-pattern -->
+			<exclusions>
+				<exclusion>
+					<artifactId>google-collections</artifactId>
+					<groupId>com.google.collections</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

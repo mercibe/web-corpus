@@ -127,7 +127,6 @@
 				<constructor-arg value="${java.io.tmpdir}/listes_thématiques.csv" />
 			</bean>
 		</property>
-		<property name="partitionPrimaire" value="false"/>
 	</bean>
 
 
@@ -139,7 +138,6 @@
 				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/thématiques/listes_lettreMuette.csv" />
 			</bean>
 		</property>
-		<property name="partitionPrimaire" value="false"/>
 	</bean>
 
 	<bean id="listeMotsComposés" class="com.servicelibre.entities.corpus.Liste">
@@ -150,7 +148,6 @@
 				<constructor-arg value="/home/mercibe/Dropbox/ServiceLibre/contrats/2011-01-MELS-EnvRech/listes/thématiques/liste_motComposes.csv" />
 			</bean>
 		</property>
-		<property name="partitionPrimaire" value="false"/>
 	</bean>
 
 

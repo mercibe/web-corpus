@@ -39,6 +39,8 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.manager.Filtre;
+import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
 import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.repositories.corpus.ListeRepository;
@@ -187,7 +189,7 @@ public class ListeCtrl extends CorpusCtrl {
 		logger.info(recherche.getDescriptionChaîne());
 
 		switch (recherche.cible) {
-		case GRAPHIE:
+		case GRAPHIE:			
 			mots = motRepository.findByGraphie(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		case PRONONCIATION:
@@ -351,6 +353,7 @@ public class ListeCtrl extends CorpusCtrl {
 			@Override
 			public void render(Row row, Object model) throws Exception {
 				Mot mot = (Mot) model;
+				
 
 				StringBuilder motPlus = new StringBuilder(mot.getMot());
 
@@ -390,10 +393,11 @@ public class ListeCtrl extends CorpusCtrl {
 				row.appendChild(new Label(mot.getGenre()));
 				row.appendChild(new Label(mot.getNombre()));
 				row.appendChild(new Label(mot.getCatgramPrésicion()));
-				// FIXME
+
 				Liste liste = mot.getListePartitionPrimaire();
-				row.appendChild(new Label(liste != null ? liste.getNom() : ""));
-				row.appendChild(new Label());
+				row.appendChild(new Html(liste != null ? liste.getNom() : ""));
+				//row.appendChild(new Label(liste != null ? liste.getNom() : ""));
+				//row.appendChild(new Label());
 
 			}
 		});

@@ -20,65 +20,68 @@ import com.servicelibre.entities.corpus.Liste;
  */
 public class ListeFiltreManager extends FiltreManager {
 
-    @Override
-    public void init() {
+	@Override
+	public void init() {
 
-	// Création des filtres pour toutes les catégories de liste
-	// Récupération des catégories de liste
-	for (CatégorieListe catégorie : corpusService.getCatégorieListes()) {
-	    // Récupération de l'ensembles des listes de la catégorie donnée
-	    List<Liste> listes = corpusService.getCatégorieListeListes(catégorie);
-	    List<DefaultKeyValue> listesClésValeurs = new ArrayList<DefaultKeyValue>(listes.size() + 1);
-	    for(Liste liste : listes)
-	    {
-		listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
-	    }
-	    filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name() + "_" + catégorie.getNom(), catégorie.getNom(), listesClésValeurs));
+		// Création des filtres pour toutes les catégories de liste
+		// Récupération des catégories de liste
+		for (CatégorieListe catégorie : corpusService.getCatégorieListes()) {
+			if (catégorie.getPublique()) {
+				// Récupération de l'ensembles des listes de la catégorie donnée
+				List<Liste> listes = corpusService.getCatégorieListeListes(catégorie);
+				List<DefaultKeyValue> listesClésValeurs = new ArrayList<DefaultKeyValue>(listes.size() + 1);
+				for (Liste liste : listes) {
+					if (liste.getPublique()) {
+						listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
+					}
+				}
+				filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name() + "_" + catégorie.getNom(), catégorie.getNom(), listesClésValeurs));
+			}
+		}
+
+		//
+
+		// Ajout de la liste des catgram
+		// TODO select distinct catgram from mot; et rechercher description dans
+		// service catgram
+		List<DefaultKeyValue> catgramClésValeurs = new ArrayList<DefaultKeyValue>(4);
+		// catgramClésValeurs.add(keyValueVide);
+		catgramClésValeurs.add(new DefaultKeyValue("adj.", "adjectif"));
+		catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
+		catgramClésValeurs.add(new DefaultKeyValue("conj.", "conjonction"));
+		catgramClésValeurs.add(new DefaultKeyValue("dét.", "déterminant"));
+		// catgramClésValeurs.add(new DefaultKeyValue("interj.", "interjection"));
+		catgramClésValeurs.add(new DefaultKeyValue("n.", "nom"));
+		catgramClésValeurs.add(new DefaultKeyValue("prép.", "préposition"));
+		catgramClésValeurs.add(new DefaultKeyValue("pron.", "pronom"));
+		catgramClésValeurs.add(new DefaultKeyValue("v.", "verbe"));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs));
+
+		// Ajout de la liste des genres
+		List<DefaultKeyValue> genreClésValeurs = new ArrayList<DefaultKeyValue>(2);
+		// genreClésValeurs.add(keyValueVide);
+		genreClésValeurs.add(new DefaultKeyValue("f.", "Féminin"));
+		genreClésValeurs.add(new DefaultKeyValue("m.", "Masculin"));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs));
+
+		// Ajout de la liste des nombres
+		List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
+		// nombreClésValeurs.add(keyValueVide);
+		nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
+		nombreClésValeurs.add(new DefaultKeyValue("pl.", "Pluriel"));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
+
+		// Ajout de la liste RO
+		List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
+		// roClésValeurs.add(keyValueVide);
+		// FIXME
+		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Effacement de l'accent circonflexe (à faire)"));
+		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Déplacement du tréma (à faire)"));
+		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Soudure de mots (à faire)"));
+		// roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE,
+		// "graphies traditionnelles"));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs));
+
 	}
-
-//	
-
-	// Ajout de la liste des catgram
-	// TODO select distinct catgram from mot; et rechercher description dans
-	// service catgram
-	List<DefaultKeyValue> catgramClésValeurs = new ArrayList<DefaultKeyValue>(4);
-	// catgramClésValeurs.add(keyValueVide);
-	catgramClésValeurs.add(new DefaultKeyValue("adj.", "adjectif"));
-	catgramClésValeurs.add(new DefaultKeyValue("adv.", "adverbe"));
-	catgramClésValeurs.add(new DefaultKeyValue("conj.", "conjonction"));
-	catgramClésValeurs.add(new DefaultKeyValue("dét.", "déterminant"));
-//	catgramClésValeurs.add(new DefaultKeyValue("interj.", "interjection"));
-	catgramClésValeurs.add(new DefaultKeyValue("n.", "nom"));
-	catgramClésValeurs.add(new DefaultKeyValue("prép.", "préposition"));
-	catgramClésValeurs.add(new DefaultKeyValue("pron.", "pronom"));
-	catgramClésValeurs.add(new DefaultKeyValue("v.", "verbe"));
-	filtres.add(new Filtre(FiltreRecherche.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs));
-
-	// Ajout de la liste des genres
-	List<DefaultKeyValue> genreClésValeurs = new ArrayList<DefaultKeyValue>(2);
-	// genreClésValeurs.add(keyValueVide);
-	genreClésValeurs.add(new DefaultKeyValue("f.", "Féminin"));
-	genreClésValeurs.add(new DefaultKeyValue("m.", "Masculin"));
-	filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs));
-
-	// Ajout de la liste des nombres
-	List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
-	// nombreClésValeurs.add(keyValueVide);
-	nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
-	nombreClésValeurs.add(new DefaultKeyValue("pl.", "Pluriel"));
-	filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
-
-	// Ajout de la liste RO
-	List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
-	// roClésValeurs.add(keyValueVide);
-	// FIXME
-	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Effacement de l'accent circonflexe (à faire)"));
-	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Déplacement du tréma (à faire)"));
-	roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Soudure de mots (à faire)"));
-	// roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE,
-	// "graphies traditionnelles"));
-	filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs));
-
-    }
 
 }

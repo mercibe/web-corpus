@@ -9,6 +9,17 @@
 
 	<window id="listeWindow" border="none"
 		apply="com.servicelibre.zk.controller.ListeCtrl">
+		
+		
+		<zscript>
+		  <![CDATA[
+			com.servicelibre.entities.ui.Paramètre colonneListeParam =  com.servicelibre.controller.ServiceLocator.getParamètreRepo().findByNom("colonneListe");
+			if(colonneListeParam == null) {
+				colonneListeParam = new com.servicelibre.entities.ui.Paramètre("colonneListe","Liste");
+			}
+		   ]]>
+		</zscript>
+		
 		<groupbox>
 
 			<caption>Recherche</caption>
@@ -36,8 +47,8 @@
 				</textbox>
 
 				<button id="boutonRecherche" label="Recherche" />
-				<button id="effacerRecherche" label="Réinitialiser la recherche"
-					 tooltiptext="Réinitialiser la recherche" />
+				<button id="effacerRecherche" label="Réinitialise la recherche"
+					 tooltiptext="Réinitialise la recherche" />
 <!-- 					 image="/images/effacer-2-16x16.png" width="32px" -->
 <!-- 					orient="horizontal" -->
 			</hbox>
@@ -204,7 +215,7 @@
 					height="550px" width="700px" emptyMessage="Aucun mot trouvé.">
 
 					<columns sizable="true" menupopup="editPopup">
-						<column width="290px" id="mot" label="Mot"
+						<column width="250px" id="mot" label="Mot"
 							sortDirection="ascending" sort="auto" />
 						<column width="100px" id="colonnePrononciation"
 							label="Phonétique" sort="auto(prononciationsString,lemme)"
@@ -221,8 +232,8 @@
 						<column width="70px" id="colonnePrécision"
 							label="Précision" sort="auto(catgramPrésicion, lemme)"
 							visible="true" />
-						<column id="colonneListe" label="Liste"
-							sort="auto(liste, lemme)" visible="true" />
+						<column id="colonneListe" label="${colonneListeParam.valeur}"
+							sort="auto(listePartitionPrimaire, lemme)" visible="true" />
 					</columns>
 					<rows />
 				</grid>

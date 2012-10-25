@@ -44,8 +44,8 @@ public class Liste implements Comparable<Liste> {
 	@JoinColumn(name = "catégorie_id", nullable=false)
 	CatégorieListe catégorie;
 
-	@Column
-	Boolean partitionPrimaire = true;
+	@Column(nullable=false)
+	Boolean publique = true;
 	
 	@Transient
 	File fichierSource;
@@ -138,16 +138,6 @@ public class Liste implements Comparable<Liste> {
 		return this.getNom().compareTo(o.getNom());
 	}
 
-	
-	
-	public Boolean isPartitionPrimaire() {
-		return partitionPrimaire;
-	}
-
-	public void setPartitionPrimaire(Boolean partitionPrimaire) {
-		this.partitionPrimaire = partitionPrimaire;
-	}
-
 	public CatégorieListe getCatégorie() {
 		return catégorie;
 	}
@@ -159,6 +149,17 @@ public class Liste implements Comparable<Liste> {
 	public void setCatégorieListe(CatégorieListe catégorie) {
 		this.catégorie = catégorie;
 	}
+
+	public Boolean getPublique() {
+		return publique;
+	}
+
+	public void setPublique(Boolean publique) {
+		this.publique = publique;
+	}
+	
+	
+	
 	// public void setCatégorieListe(CatégorieListe catégorie) {
 	// if (this.catégorie != catégorie) {
 	// if (this.catégorie != null) {

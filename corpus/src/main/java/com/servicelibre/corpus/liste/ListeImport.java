@@ -185,8 +185,6 @@ public class ListeImport {
 				liste = listeRepository.save(liste);
 			}
 
-			liste.setPartitionPrimaire(liste.isPartitionPrimaire());
-
 			listesCache.put(liste.getNom(), dbListe);
 
 			return liste;
@@ -195,7 +193,6 @@ public class ListeImport {
 			// récupération des champs transient éventuels
 			dbListe.setFichierSource(liste.getFichierSource());
 			dbListe.setFichierEncoding(liste.getFichierEncoding());
-			dbListe.setPartitionPrimaire(liste.isPartitionPrimaire());
 			return dbListe;
 		}
 

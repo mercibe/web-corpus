@@ -2,22 +2,17 @@ package com.servicelibre.zk.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Page;
-import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
@@ -26,11 +21,11 @@ import org.zkoss.zul.Column;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Group;
-import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Html;
 import org.zkoss.zul.Image;
-import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Popup;
@@ -38,10 +33,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
-import org.zkoss.zul.Span;
-import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabbox;
-import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
@@ -50,11 +42,8 @@ import org.zkoss.zul.Window;
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
-import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.LigatureService;
-import com.servicelibre.entities.ui.Onglet;
-import com.servicelibre.repositories.ui.OngletRepository;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheExécution;
 
@@ -66,7 +55,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	private static final long serialVersionUID = -5225701427150774798L;
 
 	protected final static LigatureService ligatureService = new LigatureService();
-	
+
 	SimpleDateFormat df_historique = new SimpleDateFormat("HH:mm:ss");
 
 	Textbox cherche; // autowire car même type/ID que le composant dans la page
@@ -107,7 +96,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Image exportationXls;
 
 	List<RechercheExécution> historiqueRecherche = new ArrayList<RechercheExécution>(10);
-	
+
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
 	public void onOK$cherche(Event event) {
@@ -171,7 +160,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 			// Quelles sont les valeurs à ajouter?
 			for (@SuppressWarnings("unchecked")
 			Iterator<Listitem> it = (Iterator<Listitem>) valeurFiltre.getSelectedItems().iterator(); it.hasNext();) {
-				ajouteValeurAuFiltre(it.next(), filtre);
+				ajouteValeurAuFiltre(it.next(), filtre);				
 			}
 
 			filtreActifModel.addFiltre(filtre);
@@ -206,18 +195,21 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		// Il faut comparer des pommes avec des pommes... s'asurer que de la
 		// String HTML on passe bien vers le bon format Java
 		// booléen?
+		//String label = filtreValeurActuel.getLabel();
+		String label = filtreValeurActuel.getAttribute("label").toString();
+		
 		if (valeurString.equalsIgnoreCase("true") || valeurString.equalsIgnoreCase("false")) {
-			valeurs.add(new DefaultKeyValue(new Boolean(valeurString), filtreValeurActuel.getLabel()));
+			valeurs.add(new DefaultKeyValue(new Boolean(valeurString), label));
 		}
 		// Tous les nombres sont convertis en Long. La couche JPA Criterai fera
 		// automatiquement les cast nécessaires.
 		// nombre ?
 		else if (valeurString.matches("\\d+")) {
-			valeurs.add(new DefaultKeyValue(Long.parseLong(valeurString), filtreValeurActuel.getLabel()));
+			valeurs.add(new DefaultKeyValue(Long.parseLong(valeurString), label));
 		}
 		// String par défaut
 		else {
-			valeurs.add(new DefaultKeyValue(valeurString, filtreValeurActuel.getLabel()));
+			valeurs.add(new DefaultKeyValue(valeurString, label));
 		}
 
 	}
@@ -327,9 +319,6 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		historiqueRecherchesGrid = getHistoriqueRecherchesGrid();
 
-		System.out.println("COUCOU - historiqueRecherchesGrid = " + historiqueRecherchesGrid);
-		System.out.println("COUCOU - this.historiqueRecherche = " + this.historiqueRecherche);
-		
 		historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
 		historiqueRecherchesGrid.setRowRenderer(new RowRenderer() {
 
@@ -373,9 +362,10 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 					public void onEvent(Event arg0) throws Exception {
 
 						popupHistorique.open(popupHistorique);
-						
-						descriptionRechercheHistorique.setValue("Recherche " + rx.recherche.getDescriptionChaîne() + (rx.recherche.isFiltrée()?" "+rx.recherche.getDescriptionPortéeFiltre():""));
-						
+
+						descriptionRechercheHistorique.setValue("Recherche " + rx.recherche.getDescriptionChaîne()
+								+ (rx.recherche.isFiltrée() ? " " + rx.recherche.getDescriptionPortéeFiltre() : ""));
+
 						FiltreRecherche filtres = rx.recherche.getFiltres();
 						gridFiltreHistorique.setModel(new SimpleGroupsModel(filtres.getFiltreValeurs(), filtres.getFiltreGroupes()));
 
@@ -451,25 +441,32 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 			public void render(Listitem item, Object keyValue) throws Exception {
 				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
 				item.setValue(kv.getKey());
-				item.setLabel(kv.getValue().toString());
+				String fragmentHTML = kv.getValue().toString();
+				item.setAttribute("label",fragmentHTML);
+				
+				Listcell lc = new Listcell();
+				Html html = new Html(fragmentHTML);
+				
+				html.setParent(lc);
+				lc.setParent(item);
+				
 			}
 		});
 
 		valeurFiltre.addEventListener("onSelect", new EventListener() {
-			
+
 			@Override
 			public void onEvent(Event event) throws Exception {
-				//SelectEvent e = (SelectEvent) event;
+				// SelectEvent e = (SelectEvent) event;
 				ajoutFiltre();
 			}
 		});
-		
-		
+
 		if (nomFiltre.getItemCount() > 0) {
 			nomFiltre.setSelectedIndex(0);
 			DefaultKeyValue item = (DefaultKeyValue) nomFiltre.getModel().getElementAt(0);
 			nomFiltreBandbox.setText(item.getValue().toString());
-			
+
 		}
 
 		// DefaultKeyValue
@@ -529,8 +526,6 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		caractèresSpéciaux.setVisible(true);
 
 	}
-
-	
 
 	protected void initialiseClavierCaractèresSpéciaux() {
 		String[][] caractères = { { "à", "à" }, { "â", "â" }, { "é", "é" }, { "è", "è" }, { "ê", "ê" }, { "ë", "ë" }, { "ï", "ï" }, { "î", "î" }, { "ô", "ô" },
@@ -619,9 +614,10 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 			Cell cell = new Cell();
 			cell.setParent(row);
 
-			final Label label = new Label(cv.getValue().toString());
-			label.setAttribute("key", cv.getKey());
-			label.setParent(cell);
+			//final Label label = new Label(cv.getValue().toString());
+			final Html htmlLabel = new Html(cv.getValue().toString());
+			htmlLabel.setAttribute("key", cv.getKey());
+			htmlLabel.setParent(cell);
 
 			// Ajouter bouton « supprimer » si pas un groupe
 			if (!(row instanceof Group)) {
@@ -631,7 +627,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 					supprimeBtn.setMold("os");
 					supprimeBtn.setParent(row);
 					supprimeBtn.setImage("/images/enlever-10x10.png");
-					supprimeBtn.setTooltiptext("retirer « " + label.getValue() + " » des filtres actifs");
+					//FIXME en passant par un popup/tooltip?
+					//supprimeBtn.setTooltiptext("retirer « " + htmlLabel.getContent() + " » des filtres actifs");					
+					supprimeBtn.setTooltiptext("retirer des filtres actifs");
 					supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener() {
 
 						@Override
@@ -640,10 +638,11 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 							if (currentRow != null) {
 
 								Cell cell = (Cell) currentRow.getFirstChild();
-								Label labelValeur = (Label) cell.getFirstChild();
-								Label labelGroupe = (Label) currentRow.getGroup().getFirstChild().getFirstChild();
 
-								filtreActifModel.removeFiltre(labelGroupe.getAttribute("key").toString(), labelValeur.getAttribute("key"));
+								Html htmlLabelValeur = (Html) cell.getFirstChild();
+								Html htmlLabelGroupe = (Html) currentRow.getGroup().getFirstChild().getFirstChild();
+
+								filtreActifModel.removeFiltre(htmlLabelGroupe.getAttribute("key").toString(), htmlLabelValeur.getAttribute("key"));
 
 								gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
 
@@ -655,13 +654,12 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 							}
 						}
 					});
-				}
-				else {
+				} else {
 					cell.setColspan(2);
 				}
 			} else {
 				cell.setColspan(2);
-				((Label) cell.getFirstChild()).setSclass("groupe");
+				((Html) cell.getFirstChild()).setSclass("groupe");
 			}
 
 		}

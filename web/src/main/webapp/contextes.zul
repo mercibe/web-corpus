@@ -39,8 +39,8 @@
 
 				<button id="boutonRecherche" label="Recherche" />
 
-				<button id="effacerRecherche" label="Réinitialiser la recherche"
-					 tooltiptext="Réinitialiser la recherche" />
+				<button id="effacerRecherche" label="Réinitialise la recherche"
+					 tooltiptext="Réinitialise la recherche" />
 					 <!--
 					 image="/images/effacer-2-16x16.png" width="32px"
 					 orient="horizontal" 
