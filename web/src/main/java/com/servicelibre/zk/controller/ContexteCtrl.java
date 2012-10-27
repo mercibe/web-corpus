@@ -27,11 +27,7 @@ import org.zkoss.zul.A;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.RowRenderer;
-import org.zkoss.zul.Span;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
@@ -44,6 +40,7 @@ import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
 import com.servicelibre.corpus.service.PhraseService;
+import com.servicelibre.zk.controller.renderer.ContexteRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
 
@@ -320,47 +317,11 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		contextesGrid.setModel(new ListModelList(exécuterRecherche(getRecherche(), false).getContextes()));
 
-		contextesGrid.setRowRenderer(new RowRenderer() {
-
-			@Override
-			public void render(Row row, Object model) throws Exception {
-
-				final Contexte contexte = getContexteInitial((Contexte) model);
-
-				Span ctxSpan = new Span();
-				ctxSpan.appendChild(new Label(contexte.texteAvant));
-
-				Label mot = new Label(contexte.mot);
-				mot.setTooltiptext(contexte.getId());
-				mot.setSclass("mot");
-
-				mot.addEventListener(Events.ON_CLICK, new EventListener() {
-
-					@Override
-					public void onEvent(Event arg0) throws Exception {
-						// Label l = (Label) arg0.getTarget();
-						créeEtAfficheOngletInfoContexte(contexte);
-					}
-
-				});
-
-				// mot.setHeight("20px");
-				ctxSpan.appendChild(mot);
-
-				ctxSpan.appendChild(new Label(contexte.texteAprès));
-
-				row.appendChild(ctxSpan);
-
-				// row.appendChild(new Label(contexte.texteAvant + contexte.mot
-				// + contexte.texteAprès));
-
-			}
-
-		});
+		contextesGrid.setRowRenderer(new ContexteRowRenderer(this));
 
 	}
 
-	private Contexte getContexteInitial(Contexte contexte) {
+	public Contexte getContexteInitial(Contexte contexte) {
 
 		if (phraseComplète) {
 			contexte = phraseService.getContextePhraseComplète(contexte);
@@ -435,7 +396,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	}
 
-	private void créeEtAfficheOngletInfoContexte(Contexte contexte) {
+	public void créeEtAfficheOngletInfoContexte(Contexte contexte) {
 
 		// Vérifier si contexte déjà ouvert
 		Tab infoContexteTab = getTabDéjàOuvert(contexte.getId());
@@ -722,7 +683,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	@Override
-	protected void chargerRecherche(Recherche recherche) {
+	public void chargerRecherche(Recherche recherche) {
 		RechercheContexte r = (RechercheContexte) recherche;
 
 		// Cible : rien à faire - toujours CONTEXTE

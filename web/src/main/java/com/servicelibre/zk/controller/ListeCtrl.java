@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -34,19 +33,15 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.manager.Filtre;
-import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
-import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom.Condition;
+import com.servicelibre.zk.controller.renderer.ListeMotRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheMot;
 
@@ -189,7 +184,7 @@ public class ListeCtrl extends CorpusCtrl {
 		logger.info(recherche.getDescriptionChaîne());
 
 		switch (recherche.cible) {
-		case GRAPHIE:			
+		case GRAPHIE:
 			mots = motRepository.findByGraphie(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		case PRONONCIATION:
@@ -257,7 +252,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
-		
+
 		super.doAfterCompose(comp);
 
 		initialiseChamps();
@@ -281,8 +276,8 @@ public class ListeCtrl extends CorpusCtrl {
 				{ "ɔ̃", "m[on]tagnais, [om]ble, p[ont]" }, { "ɑ̃", "[an], [en], j[am]bon, s[ang], t[emps]" },
 
 				{ "p", "[p]aix, sa[p]in, cége[p]" }, { "t", "[t]oit, [th]é, pa[t]in, a[tt]aché, fourche[tt]e" },
-				{ "k", "[c]o[q], [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" }, { "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" },
-				{ "g", "[g]a[g], al[gu]e, [gu]ide" }, { "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" },
+				{ "k", "[c]o[q], [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" },
+				{ "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" }, { "g", "[g]a[g], al[gu]e, [gu]ide" }, { "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" },
 				{ "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" }, { "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" },
 				{ "v", "[v]ille, ca[v]ité, dra[v]e" }, { "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
 				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" }, { "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" },
@@ -348,66 +343,14 @@ public class ListeCtrl extends CorpusCtrl {
 
 		infoRésultats.setValue(getInfoRésultat(recherche, modelList.size()));
 
-		motsGrid.setRowRenderer(new RowRenderer() {
-
-			@Override
-			public void render(Row row, Object model) throws Exception {
-				Mot mot = (Mot) model;
-				
-
-				StringBuilder motPlus = new StringBuilder(mot.getMot());
-
-				Label or = new Label("");
-				if (mot.isRo()) {
-					or.setValue("*");
-					or.setStyle("text-align:center");
-					or.setTooltiptext("orthographe rectifiée");
-					motPlus.append(" (OR) ⇔ ").append(mot.getAutreGraphie());
-				} else if (mot.getAutreGraphie() != null && !mot.getAutreGraphie().isEmpty()) {
-					motPlus.append(" ⇔ ").append(mot.getAutreGraphie()).append(" (OR)");
-				}
-
-				Label motLabel = new Label(motPlus.toString());
-				motLabel.setAttribute("mot", mot.getMot());
-
-				motLabel.setSclass("mot");
-
-				motLabel.addEventListener(Events.ON_CLICK, new EventListener() {
-
-					@Override
-					public void onEvent(Event event) throws Exception {
-						Label label = (Label) event.getTarget();
-						afficheContexte(label.getAttribute("mot").toString());
-					}
-				});
-
-				Label prononcLabel = new Label(mot.getPrononciationsString());
-				prononcLabel.setSclass("apiCrochet");
-
-				row.appendChild(motLabel);
-				row.appendChild(prononcLabel);
-
-				row.appendChild(or);
-
-				row.appendChild(new Label(mot.getCatgram()));
-				row.appendChild(new Label(mot.getGenre()));
-				row.appendChild(new Label(mot.getNombre()));
-				row.appendChild(new Label(mot.getCatgramPrésicion()));
-
-				Liste liste = mot.getListePartitionPrimaire();
-				row.appendChild(new Html(liste != null ? liste.getNom() : ""));
-				//row.appendChild(new Label(liste != null ? liste.getNom() : ""));
-				//row.appendChild(new Label());
-
-			}
-		});
+		motsGrid.setRowRenderer(new ListeMotRowRenderer(this));
 
 		// Enregistrement événement pour lien vers contextes
 		motColumn = (Column) motsGrid.getColumns().getFellow("mot");
 
 	}
 
-	private void afficheContexte(String lemme) {
+	public void afficheContexte(String lemme) {
 
 		logger.debug("Afficher les contextes de « {} »", lemme);
 
@@ -593,7 +536,7 @@ public class ListeCtrl extends CorpusCtrl {
 	}
 
 	@Override
-	protected void chargerRecherche(Recherche recherche) {
+	public void chargerRecherche(Recherche recherche) {
 
 		RechercheMot r = (RechercheMot) recherche;
 

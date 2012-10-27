@@ -228,10 +228,10 @@
 						<column width="50px" id="colonneGenre"
 							label="Genre" sort="auto(genre, lemme)" />
 						<column width="60px" id="colonneNombre"
-							label="Nombre" sort="auto(nombre, lemme)" visible="true" />
+							label="Nombre" sort="auto(nombre, lemme)" visible="false" />
 						<column width="70px" id="colonnePrécision"
 							label="Précision" sort="auto(catgramPrésicion, lemme)"
-							visible="true" />
+							visible="false" />
 						<column id="colonneListe" label="${colonneListeParam.valeur}"
 							sort="auto(listePartitionPrimaire, lemme)" visible="true" />
 					</columns>

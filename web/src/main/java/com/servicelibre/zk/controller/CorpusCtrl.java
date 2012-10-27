@@ -16,11 +16,9 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Cell;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
-import org.zkoss.zul.Group;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Label;
@@ -29,8 +27,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Popup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
 import org.zkoss.zul.Tabbox;
@@ -44,6 +40,8 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.LigatureService;
+import com.servicelibre.zk.controller.renderer.FiltreGridRowRenderer;
+import com.servicelibre.zk.controller.renderer.HistoriqueRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheExécution;
 
@@ -76,7 +74,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	Button boutonEffacerFiltre;
 
-	Grid gridFiltreActif;// autowire car même type/ID que le composant dans la
+	public Grid gridFiltreActif;// autowire car même type/ID que le composant dans la
 	// page ZUL
 
 	Grid historiqueRecherchesGrid;
@@ -84,9 +82,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Label infoRésultats;
 
 	// Composants de l'historique de recherche
-	Popup popupHistorique;
-	Label descriptionRechercheHistorique;
-	Grid gridFiltreHistorique;
+	public Popup popupHistorique;
+	public Label descriptionRechercheHistorique;
+	public Grid gridFiltreHistorique;
 
 	protected Window webCorpusWindow;
 
@@ -126,14 +124,14 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	/**
 	 * Permet de remplir les choix de filtres/valeurs possibles
 	 */
-	FiltreManager filtreManager;
+	public FiltreManager filtreManager;
 
 	/**
 	 * Filtre qui sera passé au MotManager pour filtrer les mots à retourner. Ce
 	 * filtre sert également comme Model (GroupModel) pour le Grid qui affiche
 	 * le filtre en construction par l'utilisateur.
 	 */
-	FiltreRecherche filtreActifModel = new FiltreRecherche();
+	public FiltreRecherche filtreActifModel = new FiltreRecherche();
 
 	CorpusService corpusService = ServiceLocator.getCorpusService();
 
@@ -160,7 +158,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 			// Quelles sont les valeurs à ajouter?
 			for (@SuppressWarnings("unchecked")
 			Iterator<Listitem> it = (Iterator<Listitem>) valeurFiltre.getSelectedItems().iterator(); it.hasNext();) {
-				ajouteValeurAuFiltre(it.next(), filtre);				
+				ajouteValeurAuFiltre(it.next(), filtre);
 			}
 
 			filtreActifModel.addFiltre(filtre);
@@ -195,9 +193,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		// Il faut comparer des pommes avec des pommes... s'asurer que de la
 		// String HTML on passe bien vers le bon format Java
 		// booléen?
-		//String label = filtreValeurActuel.getLabel();
+		// String label = filtreValeurActuel.getLabel();
 		String label = filtreValeurActuel.getAttribute("label").toString();
-		
+
 		if (valeurString.equalsIgnoreCase("true") || valeurString.equalsIgnoreCase("false")) {
 			valeurs.add(new DefaultKeyValue(new Boolean(valeurString), label));
 		}
@@ -271,7 +269,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		actualiseValeursFiltreCourant();
 	}
 
-	private void actualiseValeursFiltreCourant() {
+	public void actualiseValeursFiltreCourant() {
 
 		Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
 
@@ -320,101 +318,8 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		historiqueRecherchesGrid = getHistoriqueRecherchesGrid();
 
 		historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
-		historiqueRecherchesGrid.setRowRenderer(new RowRenderer() {
+		historiqueRecherchesGrid.setRowRenderer(new HistoriqueRowRenderer(this));
 
-			@Override
-			public void render(Row row, Object model) throws Exception {
-
-				final RechercheExécution rx = (RechercheExécution) model;
-
-				// Sauvegarde de l'objet recherche dans les attribut de la ligne
-				row.setAttribute("recherche", rx.recherche);
-
-				final Row currentRow = row;
-
-				// Ajout de la cellule avec la chaîne+précision
-				Cell cell = new Cell();
-				cell.setParent(row);
-
-				String chaîneEtPrécision = rx.recherche.getChaîneEtPrécision();
-				final Label labelDescription = new Label(chaîneEtPrécision);
-				labelDescription.setParent(cell);
-
-				// Info filtre
-				cell = new Cell();
-				cell.setParent(row);
-
-				int nombreConditions = rx.recherche.getNombreConditions();
-				if (nombreConditions > 0) {
-					final Label filtreDescription = new Label(nombreConditions + " filtre" + (nombreConditions > 1 ? "s" : ""));
-					filtreDescription.setParent(cell);
-				}
-
-				// Ajout d'un bouton Information
-				final Button informationBtn = new Button();
-				informationBtn.setParent(row);
-				informationBtn.setMold("os");
-				informationBtn.setImage("/images/information-16x16.png");
-				informationBtn.setTooltiptext("Cliquer pour avoir plus d'information sur la recherche");
-				informationBtn.addEventListener(Events.ON_CLICK, new EventListener() {
-
-					@Override
-					public void onEvent(Event arg0) throws Exception {
-
-						popupHistorique.open(popupHistorique);
-
-						descriptionRechercheHistorique.setValue("Recherche " + rx.recherche.getDescriptionChaîne()
-								+ (rx.recherche.isFiltrée() ? " " + rx.recherche.getDescriptionPortéeFiltre() : ""));
-
-						FiltreRecherche filtres = rx.recherche.getFiltres();
-						gridFiltreHistorique.setModel(new SimpleGroupsModel(filtres.getFiltreValeurs(), filtres.getFiltreGroupes()));
-
-					}
-				});
-
-				FiltreGridRowRenderer fgrr = new FiltreGridRowRenderer();
-				fgrr.setBoutonSupprimer(false);
-				gridFiltreHistorique.setRowRenderer(fgrr);
-
-				// Ajout du bouton Exécuter
-				final Button exécuterBtn = new Button();
-				exécuterBtn.setParent(row);
-				exécuterBtn.setMold("os");
-				exécuterBtn.setImage("/images/exécuter-16x16.png");
-				exécuterBtn.setTooltiptext("exécuter la recherche");
-				exécuterBtn.addEventListener(Events.ON_CLICK, new EventListener() {
-
-					@Override
-					public void onEvent(Event arg0) throws Exception {
-
-						System.err.println("Exécution de la requête");
-						chargerRecherche((Recherche) currentRow.getAttribute("recherche"));
-						chercheEtAffiche(false);
-
-					}
-				});
-
-				// long tempsÉcoulé = System.currentTimeMillis() -
-				// rx.dateExécution.getTime();
-				//
-				// String ilya = String.format("%d min, %d sec",
-				// TimeUnit.MILLISECONDS.toMinutes(tempsÉcoulé),
-				// TimeUnit.MILLISECONDS.toSeconds(tempsÉcoulé) -
-				// TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(tempsÉcoulé))
-				// );
-
-				// final Label labelDate = new
-				// Label(df_historique.format(rx.dateExécution));
-				// labelDate.setAttribute("recherche", rx.recherche);
-				// labelDate.setParent(cell);
-				//
-				// cell = new Cell();
-				// cell.setParent(row);
-				// final Label labelNb = new Label(rx.nbRésultats + "");
-				// labelNb.setParent(cell);
-
-			}
-		});
 	}
 
 	protected abstract Grid getHistoriqueRecherchesGrid();
@@ -442,14 +347,14 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
 				item.setValue(kv.getKey());
 				String fragmentHTML = kv.getValue().toString();
-				item.setAttribute("label",fragmentHTML);
-				
+				item.setAttribute("label", fragmentHTML);
+
 				Listcell lc = new Listcell();
 				Html html = new Html(fragmentHTML);
-				
+
 				html.setParent(lc);
 				lc.setParent(item);
-				
+
 			}
 		});
 
@@ -475,7 +380,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		gridFiltreActif.setModel(new SimpleGroupsModel(data, heads));
 
-		FiltreGridRowRenderer fgrr = new FiltreGridRowRenderer();
+		FiltreGridRowRenderer fgrr = new FiltreGridRowRenderer(this);
 
 		gridFiltreActif.setRowRenderer(fgrr);
 
@@ -580,7 +485,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		return guillemetsOK.replaceAll("\n", "\u2028");
 	}
 
-	protected abstract void chargerRecherche(Recherche recherche);
+	public abstract void chargerRecherche(Recherche recherche);
 
 	protected void ajouterRechercheHistorique(Recherche recherche, int nbRésultats) {
 
@@ -594,79 +499,6 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		// mettre à jour le modèle
 		historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
-
-	}
-
-	/*
-	 * INNER CLASSES
-	 */
-
-	protected class FiltreGridRowRenderer implements RowRenderer {
-
-		protected boolean boutonSupprimer = true;
-
-		@Override
-		public void render(Row row, Object model) throws Exception {
-			DefaultKeyValue cv = (DefaultKeyValue) model;
-
-			final Row currentRow = row;
-
-			Cell cell = new Cell();
-			cell.setParent(row);
-
-			//final Label label = new Label(cv.getValue().toString());
-			final Html htmlLabel = new Html(cv.getValue().toString());
-			htmlLabel.setAttribute("key", cv.getKey());
-			htmlLabel.setParent(cell);
-
-			// Ajouter bouton « supprimer » si pas un groupe
-			if (!(row instanceof Group)) {
-
-				if (boutonSupprimer) {
-					final Button supprimeBtn = new Button();
-					supprimeBtn.setMold("os");
-					supprimeBtn.setParent(row);
-					supprimeBtn.setImage("/images/enlever-10x10.png");
-					//FIXME en passant par un popup/tooltip?
-					//supprimeBtn.setTooltiptext("retirer « " + htmlLabel.getContent() + " » des filtres actifs");					
-					supprimeBtn.setTooltiptext("retirer des filtres actifs");
-					supprimeBtn.addEventListener(Events.ON_CLICK, new EventListener() {
-
-						@Override
-						public void onEvent(Event arg0) throws Exception {
-
-							if (currentRow != null) {
-
-								Cell cell = (Cell) currentRow.getFirstChild();
-
-								Html htmlLabelValeur = (Html) cell.getFirstChild();
-								Html htmlLabelGroupe = (Html) currentRow.getGroup().getFirstChild().getFirstChild();
-
-								filtreActifModel.removeFiltre(htmlLabelGroupe.getAttribute("key").toString(), htmlLabelValeur.getAttribute("key"));
-
-								gridFiltreActif.setModel(new SimpleGroupsModel(filtreActifModel.getFiltreValeurs(), filtreActifModel.getFiltreGroupes()));
-
-								filtreManager.setFiltreActif(filtreActifModel);
-
-								actualiseValeursFiltreCourant();
-
-								chercheEtAffiche(true);
-							}
-						}
-					});
-				} else {
-					cell.setColspan(2);
-				}
-			} else {
-				cell.setColspan(2);
-				((Html) cell.getFirstChild()).setSclass("groupe");
-			}
-
-		}
-
-		public void setBoutonSupprimer(boolean boutonSupprimer) {
-			this.boutonSupprimer = boutonSupprimer;
-		}
 
 	}
 
