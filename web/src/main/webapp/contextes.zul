@@ -155,14 +155,14 @@
 						<include id="historiqueRechercheInclude"
 							src="/historiqueRecherches.zul" />
 					</tabpanel>
-					<tabpanel>
+	<!-- 				<tabpanel> -->
 						<!-- ************************* -->
 						<!-- Panier des contextes      -->
 						<!-- ************************* -->
 
-						<include id="panierContextesInclude"
-							src="/panierContextes.zul" />
-					</tabpanel>
+		<!--				<include id="panierContextesInclude" -->
+		<!--					src="/panierContextes.zul" /> -->
+		<!--			</tabpanel> -->
 				</tabpanels>
 			</tabbox>
 

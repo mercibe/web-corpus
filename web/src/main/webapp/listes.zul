@@ -166,14 +166,14 @@
 							src="/historiqueRecherches.zul" />
 					</tabpanel>
 
-					<tabpanel>
+<!-- 					<tabpanel>									 -->
 						<!-- ************************* -->
 						<!--      Panier des mots      -->
 						<!-- ************************* -->
 
-						<include id="panierMotsInclude"
-							src="/panierMots.zul" />
-					</tabpanel>
+<!--						<include id="panierMotsInclude"-->
+<!--							src="/panierMots.zul" />-->
+<!--					</tabpanel>-->
 				</tabpanels>
 			</tabbox>
 

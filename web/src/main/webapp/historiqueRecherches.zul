@@ -11,7 +11,7 @@
 					<rows />
 				</grid>
 				<div align="center">
-				<button  id="boutonEffacerHistorique" image="/images/effacer-2-16x16.png"
-	                    width="32px" orient="horizontal" tooltiptext="vider l'historique de recherche"/> 
+				<button  id="boutonEffacerHistorique" 
+	                   label="Vider l'historique" tooltiptext="Vider l'historique des recherches"/> 
 				</div>
 </vbox>
