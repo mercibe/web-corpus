@@ -78,6 +78,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	// page ZUL
 
 	Grid historiqueRecherchesGrid;
+	Button boutonEffacerHistorique;
 
 	Label infoRésultats;
 
@@ -319,6 +320,16 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 		historiqueRecherchesGrid.setModel(new SimpleListModel(this.historiqueRecherche));
 		historiqueRecherchesGrid.setRowRenderer(new HistoriqueRowRenderer(this));
+
+		boutonEffacerHistorique = (Button) historiqueRecherchesGrid.getFellow("boutonEffacerHistorique");
+		boutonEffacerHistorique.addEventListener("onClick", new EventListener() {
+
+			@Override
+			public void onEvent(Event arg0) throws Exception {
+				historiqueRecherche.clear();
+				historiqueRecherchesGrid.setModel(new SimpleListModel(historiqueRecherche));
+			}
+		});
 
 	}
 

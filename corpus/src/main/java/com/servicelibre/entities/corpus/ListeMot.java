@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,29 +18,26 @@ import javax.persistence.UniqueConstraint;
  * Association d'un mot à une liste
  * 
  * @author benoitm
- *
+ * 
  */
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"liste_id", "mot_id"}))
-public class ListeMot
-{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int Id;
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "liste_id", "mot_id" }))
+public class ListeMot {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	int Id;
 
-    
-    @ManyToOne(optional = false)
-    Mot mot;
-    
-    @ManyToOne(optional = false)
-    Liste liste;
-    
+	@ManyToOne(optional = false)
+	Mot mot;
+
+	@ManyToOne(optional = false)
+	Liste liste;
+
 	@OneToMany(mappedBy = "listeMot", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Contexte> contextes = new ArrayList<Contexte>();
 
-    
-    @Column
-    String note;
+	@Column
+	String note;
 
 	public ListeMot() {
 		super();
@@ -94,6 +90,4 @@ public class ListeMot
 		this.note = note;
 	}
 
-	
-    
 }

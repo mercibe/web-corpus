@@ -36,18 +36,31 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	// private static Logger logger = LoggerFactory.getLogger(IndexCtrl.class);
 
 	Tabs corpusTabs;
-	Tabpanels corpusTabpanels; 
+	Tabpanels corpusTabpanels;
 
 	Toolbarbutton boutonFermerTousLesOnglets;
 
 	public void onClick$boutonFermerTousLesOnglets(Event event) {
-		// Fermer tous les onglets fermables
+		// Fermer tous les onglets visibles et fermables
 		Tab tab = (Tab) corpusTabs.getLastChild();
 		while (tab.isClosable()) {
-			tab.close();
-			tab = (Tab) corpusTabs.getLastChild();
+			if (tab.isVisible()) {
+				tab.close();
+				tab = (Tab) corpusTabs.getLastChild();
+			}
 		}
-		((Tab) corpusTabs.getFirstChild()).setSelected(true);
+
+		// Sélectionner le premier enfant visible
+		@SuppressWarnings("unchecked")
+		List<Tab> tabs = (List<Tab>) corpusTabs.getChildren();
+		for (Tab tabEnfant : tabs) {
+			if (tabEnfant.isVisible()) {
+				tabEnfant.setSelected(true);
+				break;
+			}
+		}
+
+		boutonFermerTousLesOnglets.setVisible(false);
 
 	}
 
@@ -56,7 +69,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -66,37 +79,37 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	public void initOnglets() {
 
 		OngletRepository ongletRepo = ServiceLocator.getOngletRepo();
-		
+
 		// Récupération des onglets à afficher
 		List<Onglet> onglets = (List<Onglet>) ongletRepo.findAll(new Sort("ordre"));
-		
+
 		// Il faut sélectionner le premier onglet (tab) visible
 		boolean premierOngletVisibleSélectionné = false;
-		
+
 		for (Onglet onglet : onglets) {
-			
+
 			Boolean visible = onglet.getVisible();
-			
+
 			// Créer le Tab (onglet)
 			Tab newTab = new Tab();
 			newTab.setVisible(visible);
 			newTab.setId(onglet.getIdComposant() + "Tab");
 			newTab.setLabel(onglet.getNom());
 			newTab.setParent(corpusTabs);
-			
-			if(!premierOngletVisibleSélectionné && visible)	{
+
+			if (!premierOngletVisibleSélectionné && visible) {
 				newTab.setSelected(visible);
 				premierOngletVisibleSélectionné = true;
 			}
-			
+
 			// Créer le TabPanel (contenu de l'onglet)
 			Tabpanel newTabpanel = new Tabpanel();
 			newTabpanel.setVisible(visible);
-			newTabpanel.setId(onglet.getIdComposant() + "Tabpanel" );
+			newTabpanel.setId(onglet.getIdComposant() + "Tabpanel");
 			newTabpanel.setHeight("100%");
-			
+
 			// Include ou Iframe?
-			if(onglet.isIframe()) {
+			if (onglet.isIframe()) {
 				Iframe newIframe = new Iframe(onglet.getSrc());
 				newIframe.setId(onglet.getIdComposant() + "Iframe");
 				newIframe.setHeight("100%");
@@ -104,8 +117,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 				newIframe.setVisible(visible);
 				newIframe.setParent(newTabpanel);
 				System.out.println("Création de l'iframe pour le composant " + onglet.getIdComposant());
-			}
-			else {
+			} else {
 				Include newInclude = new Include(onglet.getSrc());
 				newInclude.setId(onglet.getIdComposant() + "Include");
 				newInclude.setHeight("100%");
@@ -113,7 +125,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 				newInclude.setVisible(visible);
 				System.out.println("Création de l'include pour le composant " + onglet.getIdComposant());
 			}
-			
+
 			newTabpanel.setParent(corpusTabpanels);
 		}
 	}

@@ -10,7 +10,6 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
 
-	<!-- Pour ZK -->
 	<http security="none" pattern="/zkau/**"/>
 	
 	<http use-expressions="true" auto-config="true">
@@ -20,8 +19,10 @@
 		<intercept-url pattern="/css/**" access="permitAll" />
 
 	
-		<intercept-url pattern="/admin/**" access="hasRole('ADMINISTRATEUR')" />
-		<intercept-url pattern="/**" access="isAuthenticated()" />
+		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMINISTRATEUR')" />
+		<intercept-url pattern="/index.zul" access="hasRole('ROLE_UTILISATEUR')" />
+		<intercept-url pattern="/contextes.zul" access="hasRole('ROLE_UTILISATEUR')" />
+		<intercept-url pattern="/**" access="hasRole('ROLE_UTILISATEUR')" />
 		<form-login login-page="/authentification.zul"
 			default-target-url="/index.zul" authentication-failure-url="/authentification.zul?erreur_authentification=1"
 			always-use-default-target="true" />
@@ -29,13 +30,16 @@
 
 	</http>
 	
+	<!-- Pour ZK -->
+	
 
 	<authentication-manager>
 		<authentication-provider>
 			<user-service>
 				<user name="admin" password="54321"
-					authorities="ROLE_ADMINISTRATEUR,ROLE_UTILISATEUR" />
+					authorities="ROLE_ADMINISTRATEUR, ROLE_UTILISATEUR" />
 				<user name="corpus" password="12345" authorities="ROLE_UTILISATEUR" />
+				<user name="beta" password="2468" authorities="ROLE_UTILISATEUR, ROLE_BETA" />				
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>

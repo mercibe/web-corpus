@@ -28,7 +28,7 @@
 		</tabs>
 		
 		<toolbar>
-	        <toolbarbutton id="boutonFermerTousLesOnglets" image="/images/fermerOnglet.png" tooltiptext="fermer tous les onglets"/>
+	        <toolbarbutton visible="false" id="boutonFermerTousLesOnglets" image="/images/fermerOnglet.png" tooltiptext="Fermer tous les onglets de contexte"/>
     	</toolbar>
 		
 		

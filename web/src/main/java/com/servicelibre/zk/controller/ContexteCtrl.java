@@ -3,10 +3,14 @@ package com.servicelibre.zk.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -16,6 +20,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.zkoss.spring.security.SecurityUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
@@ -419,8 +428,15 @@ public class ContexteCtrl extends CorpusCtrl {
 						tabPrécédent.setSelected(true);
 					}
 
+					// vérifier si bouton fermer tous les onglets doit être masqué
+					afficheOuMasqueBoutonFermerTousLesOnglets(-1);
+
 				}
+
 			});
+
+			// vérifier si bouton fermer tous les onglets doit être affiché
+			afficheOuMasqueBoutonFermerTousLesOnglets(0);
 
 			// Ajouter panel
 			Tabpanel tabpanel = new Tabpanel();
@@ -483,6 +499,29 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	}
 
+	private void afficheOuMasqueBoutonFermerTousLesOnglets(int incrément) {
+
+		// incrément: un onglet en cours de fermeture (traitement du ON_CLOSE) existe encore => il faut le décompter
+
+		Component boutonFermerTousLesOnglets = corpusTabs.getFellow("boutonFermerTousLesOnglets");
+
+		// Y a-t-il au moins un onglet fermable visible ouvert?
+		@SuppressWarnings("unchecked")
+		List<Tab> children = corpusTabs.getChildren();
+
+		int cptVisibleFermable = 0;
+
+		for (Tab tab : children) {
+			if (tab.isClosable() && tab.isVisible()) {
+				cptVisibleFermable++;
+			}
+		}
+
+		// afficher ou masquer le bouton
+		boutonFermerTousLesOnglets.setVisible(cptVisibleFermable + incrément > 0 ? true : false);
+
+	}
+
 	// private List<Metadata> traduitMétadonnées(List<Metadata> docMétadonnées)
 	// {
 	//
@@ -533,10 +572,19 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		infoRésultats.setValue(getInfoRésultat(contexteSetCourant));
 
-		if (contexteSetCourant.getContextes().size() > 0) {
-			cooccurrentLien.setVisible(true);
-		} else {
-			cooccurrentLien.setVisible(false);
+
+		// SecurityContext ssctx = (SecurityContext) desktop.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+		// Collection<? extends GrantedAuthority> authorities = ssctx.getAuthentication().getAuthorities();
+		// for (GrantedAuthority grantedAuthority : authorities) {
+		// System.out.println("auth: " + grantedAuthority);
+		// }
+
+		if (cooccurrentLien != null) {
+			if (contexteSetCourant.getContextes().size() > 0) {
+				cooccurrentLien.setVisible(true);
+			} else {
+				cooccurrentLien.setVisible(false);
+			}
 		}
 
 		// mettre à jour les informations sur les résultats
