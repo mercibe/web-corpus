@@ -1,10 +1,8 @@
 package security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,42 +32,43 @@ public class AuthenticationProviderTest {
 
 	@Autowired
 	UtilisateurRôleRepository utilisateurRôleRepo;
-	
+
 	@Autowired
 	RôleRepository rôleRepo;
-	
-//	@Rule
-//	public ExpectedException exception = ExpectedException.none();
 
-	
-	@Test(expected=BadCredentialsException.class)
+	// @Rule
+	// public ExpectedException exception = ExpectedException.none();
+
+	@Test(expected = BadCredentialsException.class)
 	public void authentification() {
 		// créer un bean « encoder » , class=StandardPasswordEncoder
 		// authentication-manager/authentication-provider/password-encoder-ref="encoder"
 		StandardPasswordEncoder spe = new StandardPasswordEncoder();
-		
-		
+
 		// Création d'un utilisateur
 		String rawPassword = "qwerty";
 		
+		System.out.println(rawPassword + " = " + spe.encode(rawPassword));
+
 		Utilisateur u = new Utilisateur("corpus", "", "", "", spe.encode(rawPassword));
 		u = utilisateurRepo.save(u);
 		Rôle rôle = new Rôle("ROLE_UTILISATEUR");
 		rôle = rôleRepo.save(rôle);
-		UtilisateurRôle utilisateurRôle = new UtilisateurRôle(u,rôle,"");
+		UtilisateurRôle utilisateurRôle = new UtilisateurRôle(u, rôle, "");
 		utilisateurRôleRepo.save(utilisateurRôle);
-		
+
 		Utilisateur findByPseudo = utilisateurRepo.findByPseudo("corpus");
-		
+
 		System.out.println(findByPseudo.getId() + " - " + findByPseudo.getPseudo());
 
-		Authentication authentification = corpusJpaAuthentificationProvider.authenticate(new UsernamePasswordAuthenticationToken(findByPseudo.getPseudo(), rawPassword));
+		Authentication authentification = corpusJpaAuthentificationProvider.authenticate(new UsernamePasswordAuthenticationToken(findByPseudo.getPseudo(),
+				rawPassword));
 
 		assertTrue(authentification.isAuthenticated());
-		
-		//exception.expect(BadCredentialsException.class);
+
+		// exception.expect(BadCredentialsException.class);
 		authentification = corpusJpaAuthentificationProvider.authenticate(new UsernamePasswordAuthenticationToken(findByPseudo.getPseudo(), "54321"));
-		
+
 	}
 
 }

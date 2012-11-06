@@ -32,15 +32,16 @@
 	
 	<!-- Pour ZK -->
 	
+	<beans:bean id="corpusJpaAuthentificationProvider" class="com.servicelibre.sécurité.CorpusJpaAuthentificationProvider"/>
 
 	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="admin" password="54321"
-					authorities="ROLE_ADMINISTRATEUR, ROLE_UTILISATEUR" />
-				<user name="corpus" password="12345" authorities="ROLE_UTILISATEUR" />
-				<user name="beta" password="2468" authorities="ROLE_UTILISATEUR, ROLE_BETA" />				
-			</user-service>
+		<authentication-provider ref="corpusJpaAuthentificationProvider">
+<!-- 			<user-service> -->
+<!-- 				<user name="admin" password="54321" -->
+<!-- 					authorities="ROLE_ADMINISTRATEUR, ROLE_UTILISATEUR" /> -->
+<!-- 				<user name="corpus" password="12345" authorities="ROLE_UTILISATEUR" /> -->
+<!-- 				<user name="beta" password="2468" authorities="ROLE_UTILISATEUR, ROLE_BETA" />				 -->
+<!-- 			</user-service> -->
 		</authentication-provider>
 	</authentication-manager>
 

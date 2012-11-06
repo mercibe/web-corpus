@@ -1,0 +1,16 @@
+<?page id="adminPage" title="Web corpus - Administration" contentType="text/html;charset=UTF-8"?>
+
+<?variable-resolver class="com.servicelibre.zk.controller.AdminCtrl"?>
+
+<zk>
+
+	<!-- http://books.zkoss.org/wiki/ZK_Developer's_Reference/Performance_Tips/Listbox,_Grid_and_Tree_for_Huge_Data/Turn_on_Render_on_Demand -->
+	<custom-attributes org.zkoss.zul.grid.rod="true" scope="page" />
+
+	<window id="adminWindow" border="none"
+		apply="com.servicelibre.zk.controller.AdminCtrl">
+		
+		
+
+	</window>
+</zk>

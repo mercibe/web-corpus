@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import com.servicelibre.entities.ui.Utilisateur;
@@ -30,27 +32,29 @@ public class CorpusJpaAuthentificationProvider implements AuthenticationProvider
 		// Rechercher l'utilisateur dans la DB
 		Utilisateur findByPseudo = utilisateurRepo.findByPseudo(authentification.getName());
 
-		String rawPassword = authentification.getCredentials().toString();
+		if (findByPseudo == null) {
+			throw new BadCredentialsException("Nom d'utilisateur ou mot de passe invalide.");
+		}
 
-		boolean authentifié = spe.matches(rawPassword, findByPseudo.getMotDePasse());
+		boolean authentifié = spe.matches(authentification.getCredentials().toString(), findByPseudo.getMotDePasse());
 
-		System.out.println(rawPassword + " ?= " + findByPseudo.getMotDePasse() + " => " + authentifié);
+		if (!authentifié) {
+			throw new BadCredentialsException("Nom d'utilisateur ou mot de passe invalide.");
+		}
 
 		// convertir findByPseudo.getUtilisateurRôles()
 		List<GrantedAuthority> rôles = new ArrayList<GrantedAuthority>();
 		for (UtilisateurRôle r : findByPseudo.getUtilisateurRôles()) {
 			String nomRôle = r.getRôle().getNom();
-			System.out.println("ajout du rôle: " + nomRôle);
 			rôles.add(new SimpleGrantedAuthority(nomRôle));
 		}
 
-		
-		
-		if(!authentifié) {
-			throw new BadCredentialsException("Mot de passe invalide.");
-		}
-		
-		return new UsernamePasswordAuthenticationToken(authentification.getPrincipal(), authentification.getCredentials(), rôles);
+		// Construction d'un objet contenant de l'infrmation sur l'utilisateur authentifié
+		UserDetails userDetails = new User(authentification.getName(), authentification.getCredentials().toString(), rôles);
+
+		// L'appel de se constructeur avec la liste de GrantedAuthority (rôle) fait en sorte que l'utilisateur
+		// est considéré comme authentifié.
+		return new UsernamePasswordAuthenticationToken(userDetails, authentification.getCredentials(), rôles);
 
 	}
 

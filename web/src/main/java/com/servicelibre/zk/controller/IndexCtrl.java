@@ -1,8 +1,12 @@
 package com.servicelibre.zk.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
@@ -18,6 +22,7 @@ import org.zkoss.zul.Toolbarbutton;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.entities.ui.Onglet;
+import com.servicelibre.entities.ui.Rôle;
 import com.servicelibre.repositories.ui.OngletRepository;
 
 /**
@@ -34,6 +39,10 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	private static final long serialVersionUID = -3190337135508498208L;
 
 	// private static Logger logger = LoggerFactory.getLogger(IndexCtrl.class);
+	// Collection<? extends GrantedAuthority> authorities = ssctx.getAuthentication().getAuthorities();
+	// for (GrantedAuthority grantedAuthority : authorities) {
+	// System.out.println("auth: " + grantedAuthority);
+	// }
 
 	Tabs corpusTabs;
 	Tabpanels corpusTabpanels;
@@ -80,6 +89,10 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 
 		OngletRepository ongletRepo = ServiceLocator.getOngletRepo();
 
+		//TODO faire un SpringSecurityHelper (celui de ZK semble ne pas fonctionner correctement)
+		SecurityContext ssctx = (SecurityContext) desktop.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+		Collection<? extends GrantedAuthority> authorities =  ssctx.getAuthentication().getAuthorities();
+
 		// Récupération des onglets à afficher
 		List<Onglet> onglets = (List<Onglet>) ongletRepo.findAll(new Sort("ordre"));
 
@@ -88,7 +101,21 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 
 		for (Onglet onglet : onglets) {
 
+			// L'onglet est-il visible?
 			Boolean visible = onglet.getVisible();
+
+			// L'utilisateur courant fait-il partie du rôle auquel est éventuellement limité cet onglet?
+			Rôle rôlePourVoirOnglet = onglet.getRôle();
+			boolean autorisé = false;
+			if (rôlePourVoirOnglet != null) {
+				if (authorities.contains(new SimpleGrantedAuthority(rôlePourVoirOnglet.getNom()))) {
+					autorisé = true;
+				}
+			} else {
+				autorisé = true;
+			}
+
+			visible = visible && autorisé;
 
 			// Créer le Tab (onglet)
 			Tab newTab = new Tab();

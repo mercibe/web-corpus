@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -18,7 +19,7 @@ public class Onglet {
 
 	@Column
 	String idComposant;
-	
+
 	@Column
 	String nom;
 
@@ -30,7 +31,7 @@ public class Onglet {
 	 */
 	@Column
 	String src;
-	
+
 	/**
 	 * Inclure la ressource (ZUL) ou insérer dans un iframe (« n'importe quoi »)
 	 */
@@ -39,10 +40,12 @@ public class Onglet {
 
 	@Column
 	int ordre;
-	
+
 	@Column
 	Boolean visible;
 
+	@ManyToOne(optional = true)
+	Rôle rôle;
 
 	public Onglet() {
 		super();
@@ -53,7 +56,6 @@ public class Onglet {
 		this.nom = nom;
 		this.description = description;
 	}
-
 
 	public long getId() {
 		return id;
@@ -118,6 +120,13 @@ public class Onglet {
 	public void setVisible(Boolean visible) {
 		this.visible = visible;
 	}
-	
+
+	public Rôle getRôle() {
+		return rôle;
+	}
+
+	public void setRôle(Rôle rôle) {
+		this.rôle = rôle;
+	}
 
 }
