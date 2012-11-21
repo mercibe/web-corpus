@@ -23,7 +23,7 @@ public class ContexteRowRenderer implements RowRenderer {
 	}
 
 	@Override
-	public void render(Row row, Object model) throws Exception {
+	public void render(Row row, Object model , int index) throws Exception {
 
 		final Contexte contexte = contexteCtrl.getContexteInitial((Contexte) model);
 

@@ -13,5 +13,11 @@
 		<automatic-timeout />
 		<timeout-uri></timeout-uri>
 	</session-config>
+	
+
+<library-property>
+    <name>org.zkoss.util.logging.config.file</name>
+    <value>/home/mercibe/src/servicelibre/web-corpus/web/target/classes/zk-log.properties</value>
+</library-property>
 
 </zk>

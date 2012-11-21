@@ -343,7 +343,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		nomFiltre.setItemRenderer(new ListitemRenderer() {
 
 			@Override
-			public void render(Listitem item, Object keyValue) throws Exception {
+			public void render(Listitem item, Object keyValue, int index) throws Exception {
 				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
 				item.setValue(kv.getKey());
 				item.setLabel(kv.getValue().toString());
@@ -354,7 +354,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		valeurFiltre.setItemRenderer(new ListitemRenderer() {
 
 			@Override
-			public void render(Listitem item, Object keyValue) throws Exception {
+			public void render(Listitem item, Object keyValue, int index) throws Exception {
 				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
 				item.setValue(kv.getKey());
 				String fragmentHTML = kv.getValue().toString();

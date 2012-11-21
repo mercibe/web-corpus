@@ -26,7 +26,7 @@ public class FiltreGridRowRenderer implements RowRenderer {
 		}
 
 		@Override
-		public void render(Row row, Object model) throws Exception {
+		public void render(Row row, Object model, int index) throws Exception {
 			DefaultKeyValue cv = (DefaultKeyValue) model;
 
 			final Row currentRow = row;

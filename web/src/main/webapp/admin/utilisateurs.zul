@@ -1,0 +1,82 @@
+<?page id="adminPageUtilisateur" title="Web corpus - Administration - Utilisateurs" contentType="text/html;charset=UTF-8"?>
+
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk>
+
+	<window id="adminUtilisateursWindow" title="Utilisateurs" border="none" width="100%" height="100%" style="text-align:center;font-weight:bold;"
+			apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.servicelibre.zk.viewmodel.UtilisateurVM')" 
+	>
+		
+		
+			<vbox hflex="true">
+				  <listbox model="@load(vm.utilisateurs)" selectedItem="@bind(vm.sélectionné)" hflex="true" height="210px">
+					<!--  mold="paging" pageSize="5" -->
+					<listhead sizable="true">
+						<listheader label="Id" width="40px" sort="auto(id)"/>
+						<listheader label="Prénom" align="center" width="140px" sort="auto(prénom,nom)"/>				
+						<listheader label="Nom" align="center" width="140px" sort="auto(nom,prénom)"/>
+						<listheader label="Pseudo" align="center" width="100px" sort="auto(pseudo)"/>
+						<listheader label="Courriel" align="center" width="250px" sort="auto(courriel)"/>
+					</listhead>				  
+					  <template name="model" var="item">
+						  <listitem>
+						  	<listcell label="@bind(item.id)"/>
+						  	<listcell label="@bind(item.prénom)"/>
+						  	<listcell label="@bind(item.nom)"/>
+						  	<listcell label="@bind(item.pseudo)"/>
+						  	<listcell label="@bind(item.courriel)"/>
+						  </listitem>
+					  </template>
+				  </listbox>
+				<toolbar>
+					<button label="Ajouter" onClick="@command('ajouterUtilisateur')" />
+					<button label="Enregistrer" onClick="@command('enregistrerUtilisateur')" disabled="@bind(empty vm.sélectionné)" />
+					<!-- affiche la fenêtre de confirmation lorsque l'item sélectionné va être sauver -->
+					<button label="Supprimer" onClick="@command(empty vm.sélectionné.id?'supprimerUtilisateur':'confirmerSuppression')" disabled="@load(empty vm.sélectionné)" />
+					
+				</toolbar>
+				<groupbox visible="@load(not empty vm.sélectionné)" hflex="true" mold="3d">
+					<grid hflex="true" >
+						<columns>
+							<column width="120px"/>
+							<column/>
+						</columns>
+						<rows>
+							<row>Id <label value="@load(vm.sélectionné.id)"/></row>
+							<row>Prénom <textbox value="@load(vm.sélectionné.prénom) @save(vm.sélectionné.prénom,before='enregistrerUtilisateur')"/></row>
+							<row>Nom <textbox value="@load(vm.sélectionné.nom) @save(vm.sélectionné.nom,before='enregistrerUtilisateur')"/></row>
+							<row>Pseudo <textbox value="@load(vm.sélectionné.pseudo) @save(vm.sélectionné.pseudo,before='enregistrerUtilisateur')"/></row>
+							<row>Courriel<textbox value="@load(vm.sélectionné.courriel) @save(vm.sélectionné.courriel,before='enregistrerUtilisateur')"/></row>
+							<row>Mot de passe<textbox type="password" value="@load(vm.sélectionné.motDePasse) @save(vm.sélectionné.motDePasse,before='enregistrerUtilisateur')"/></row>
+						</rows>
+					</grid>
+				</groupbox>				  
+			</vbox>
+
+	<window title="Confirmation" mode="modal" border="normal" width="400px" visible="@load(not empty vm.messageSuppression)">
+		<vbox hflex="true">
+			<hlayout height="50px">
+				<image src="~./zul/img/msgbox/question-btn.png"/>
+				<label value="@load(vm.messageSuppression)"/>
+			</hlayout>
+			<hbox pack="center" hflex="true">
+				<button label="Supprimer" onClick="@command('supprimerUtilisateur')"/>
+				<button label="Annuler" onClick="@command('annulerSuppression')"/>
+			</hbox>
+		</vbox>
+	</window>
+
+		
+		<!-- 
+		http://books.zkoss.org/wiki/Small_Talks/2011/November/MVVM_in_ZK_6_-_Design_CRUD_page_by_MVVM_pattern
+		http://books.zkoss.org/wiki/Small_Talks/2012/February/MVVM_in_ZK6:_Work_with_Spring
+		Utiliser annnotation pour variableResolver plutôt que convention de nom? 
+		cf. 
+		http://books.zkoss.org/wiki/ZK_Getting_Started/Learn_ZK_in_10_Minutes
+		http://books.zkoss.org/wiki/ZK_Getting_Started/Get_ZK_Up_and_Running_with_MVVM
+		 -->
+		
+
+	</window>
+</zk>

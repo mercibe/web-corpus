@@ -26,7 +26,7 @@ public class ListeMotRowRenderer implements RowRenderer {
 	}
 
 	@Override
-	public void render(Row row, Object model) throws Exception {
+	public void render(Row row, Object model, int index) throws Exception {
 		Mot mot = (Mot) model;
 
 		StringBuilder motPlus = new StringBuilder(mot.getMot());

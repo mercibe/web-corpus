@@ -1,0 +1,23 @@
+<?page id="adminPage" title="Web corpus - Administration" contentType="text/html;charset=UTF-8"?>
+
+<zk>
+
+	<window id="adminRôlesWindow" border="none" width="100%" height="100%">
+		
+		
+			<div>
+				  <textbox value="rôles include ZUL"></textbox>
+			</div>
+		
+		<!-- 
+		http://books.zkoss.org/wiki/Small_Talks/2011/November/MVVM_in_ZK_6_-_Design_CRUD_page_by_MVVM_pattern
+		http://books.zkoss.org/wiki/Small_Talks/2012/February/MVVM_in_ZK6:_Work_with_Spring
+		Utiliser annnotation pour variableResolver plutôt que convention de nom? 
+		cf. 
+		http://books.zkoss.org/wiki/ZK_Getting_Started/Learn_ZK_in_10_Minutes
+		http://books.zkoss.org/wiki/ZK_Getting_Started/Get_ZK_Up_and_Running_with_MVVM
+		 -->
+		
+
+	</window>
+</zk>

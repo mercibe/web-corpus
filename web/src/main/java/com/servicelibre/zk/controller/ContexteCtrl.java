@@ -507,11 +507,12 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		// Y a-t-il au moins un onglet fermable visible ouvert?
 		@SuppressWarnings("unchecked")
-		List<Tab> children = corpusTabs.getChildren();
+		List<Component> children = corpusTabs.getChildren();
 
 		int cptVisibleFermable = 0;
 
-		for (Tab tab : children) {
+		for (Component comp : children) {
+			Tab tab = (Tab) comp;
 			if (tab.isClosable() && tab.isVisible()) {
 				cptVisibleFermable++;
 			}
@@ -553,8 +554,9 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	private Tab getTabDéjàOuvert(String id) {
 		@SuppressWarnings("unchecked")
-		List<Tab> children = corpusTabs.getChildren();
-		for (Tab tab : children) {
+		List<Component> children = corpusTabs.getChildren();
+		for (Component comp : children) {
+			Tab tab = (Tab) comp;
 			if (tab.getId().equals(id)) {
 				return tab;
 			}

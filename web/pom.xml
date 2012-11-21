@@ -19,6 +19,8 @@
 	<description>Application web de gestion de corpus textuels</description>
 
 	<properties>
+		<zk.version>6.5.0</zk.version>
+<!-- 		<zk.version>5.0.11</zk.version> -->
 	</properties>
 
 	<organization>
@@ -335,24 +337,29 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zk</artifactId>
-			<version>5.0.9</version>
+			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>
-			<version>5.0.9</version>
+			<version>${zk.version}</version>
 		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.zkoss.zk</groupId> -->
+<!-- 			<artifactId>zkbind</artifactId> -->
+<!-- 			<version>${zk.version}</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.zkoss.theme</groupId>
-			<artifactId>breeze</artifactId>
-			<version>5.0.11</version>
+			<artifactId>zktheme</artifactId>
+			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkspring-core</artifactId>
 			<version>3.1.1</version>
-			<!-- http://stackoverflow.com/questions/3126276/splitter-blows-up-on-simple-pattern -->
 			<exclusions>
+			<!-- http://stackoverflow.com/questions/3126276/splitter-blows-up-on-simple-pattern -->
 				<exclusion>
 					<artifactId>google-collections</artifactId>
 					<groupId>com.google.collections</groupId>
@@ -363,7 +370,7 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkex</artifactId>
-			<version>5.0.9</version>
+			<version>${zk.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -371,7 +378,7 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus</artifactId>
-			<version>5.0.9</version>
+			<version>${zk.version}</version>
 		</dependency>
 
 		<!-- Logging -->

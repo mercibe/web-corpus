@@ -3,13 +3,55 @@
 <?variable-resolver class="com.servicelibre.zk.controller.AdminCtrl"?>
 
 <zk>
-
-	<!-- http://books.zkoss.org/wiki/ZK_Developer's_Reference/Performance_Tips/Listbox,_Grid_and_Tree_for_Huge_Data/Turn_on_Render_on_Demand -->
-	<custom-attributes org.zkoss.zul.grid.rod="true" scope="page" />
-
 	<window id="adminWindow" border="none"
-		apply="com.servicelibre.zk.controller.AdminCtrl">
+		apply="com.servicelibre.zk.controller.AdminCtrl" width="100%" height="100%">
 		
+	<zscript><![CDATA[  
+        public void affiche(String src){
+            adminUtilisateursInclude.setSrc(src);
+        }
+    ]]>
+    </zscript>
+
+
+		
+		<borderlayout width="100%" height="100%">
+		
+			<west title="Modules de gestion" size="25%" maxsize="250" splittable="true" collapsible="true">
+			  <div vflex="1" style="background:#f2f2f2;">
+				<listbox id="adminModules">
+				  <listhead>
+				    <listheader/>
+				  </listhead>
+				  <listitem selected="true"><listcell label="Utilisateurs" onClick='affiche("admin/utilisateurs.zul")'/></listitem>
+				  <listitem><listcell label="Rôles" onClick='affiche("admin/rôles.zul")'/></listitem>
+				  <listitem><listcell label="Attribution des rôles"/></listitem>				  
+				</listbox>
+			  </div>	
+			</west>
+		
+			
+			<center autoscroll="true" border="none" style="">
+				<include id="adminUtilisateursInclude" src="admin/utilisateurs.zul"/>				
+			</center>
+			
+			<east border="none">
+		
+			</east>
+		
+		</borderlayout>
+		
+		
+		
+		
+		<!-- 
+		http://books.zkoss.org/wiki/Small_Talks/2011/November/MVVM_in_ZK_6_-_Design_CRUD_page_by_MVVM_pattern
+		http://books.zkoss.org/wiki/Small_Talks/2012/February/MVVM_in_ZK6:_Work_with_Spring
+		Utiliser annnotation pour variableResolver plutôt que convention de nom? 
+		cf. 
+		http://books.zkoss.org/wiki/ZK_Getting_Started/Learn_ZK_in_10_Minutes
+		http://books.zkoss.org/wiki/ZK_Getting_Started/Get_ZK_Up_and_Running_with_MVVM
+		 -->
 		
 
 	</window>

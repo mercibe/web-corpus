@@ -61,10 +61,10 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 
 		// Sélectionner le premier enfant visible
 		@SuppressWarnings("unchecked")
-		List<Tab> tabs = (List<Tab>) corpusTabs.getChildren();
-		for (Tab tabEnfant : tabs) {
+		List<Component> tabs = (List<Component>) corpusTabs.getChildren();
+		for (Component tabEnfant : tabs) {
 			if (tabEnfant.isVisible()) {
-				tabEnfant.setSelected(true);
+				((Tab)tabEnfant).setSelected(true);
 				break;
 			}
 		}
