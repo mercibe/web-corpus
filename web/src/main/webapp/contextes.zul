@@ -73,36 +73,22 @@
 							<bandbox id="nomFiltreBandbox" width="145px"
 								readonly="true" buttonVisible="true" autodrop="true">
 								<bandpopup vflex="min" hflex="min">
-									<vbox style="margin:0px;">
-										<listbox id="nomFiltre"
-											style="width:140px;" mold="paging" pageSize="999"
-											onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.setOpen(false);" />
-									</vbox>
+										<listbox width="200px" id="nomFiltre"											
+											onClick="nomFiltreBandbox.setValue(nomFiltre.getSelectedItem().getLabel());nomFiltreBandbox.close();" />
 								</bandpopup>
 							</bandbox>
 
 							<bandbox width="135px" readonly="true"
 								buttonVisible="true" autodrop="true">
-								<bandpopup vflex="min" hflex="min">
-									<vbox style="margin:0px;">
-
-										<!-- 								
-											mold paging + pageSize sinon bug avec mold select => 20 premiers listitem OK, les suivants = blancs...
-											Documenter et envoyer à ZK 
-											Pas possible de reproduire dans sandbox avec création statique de listitem.  
-											Essayer d'isoler cas avec ajout des listitems via Java
-										-->
-
-										<listbox width="400px"
-											checkmark="true" id="valeurFiltre" multiple="true"
-											mold="paging" pageSize="999">
+								<bandpopup vflex="min" hflex="min" style="overflow: auto;" >
+										<listbox width="400px" height="350px" 
+											checkmark="true" id="valeurFiltre" multiple="true">
 											<listhead>
 												<listheader>
 													Tout sélectionner
 												</listheader>
 											</listhead>
 										</listbox>
-									</vbox>
 								</bandpopup>
 							</bandbox>
 						</hbox>
