@@ -5,7 +5,8 @@
 <zk>
 
 	<window id="adminUtilisateursWindow" title="Utilisateurs" border="none" width="100%" height="100%" style="text-align:center;font-weight:bold;"
-			apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.servicelibre.zk.viewmodel.UtilisateurVM')" 
+			apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.servicelibre.zk.viewmodel.UtilisateurVM')"
+			validationMessages="@id('vmsgs')" 
 	>
 		
 		
@@ -40,18 +41,50 @@
 					<grid hflex="true" >
 						<columns>
 							<column width="120px"/>
-							<column/>
+							<column width="120px"/>
+							<column width="300px"/>
 						</columns>
 						<rows>
-							<row>Id <label value="@load(vm.sélectionné.id)"/></row>
-							<row>Prénom <textbox value="@load(vm.sélectionné.prénom) @save(vm.sélectionné.prénom,before='enregistrerUtilisateur')"/></row>
-							<row>Nom <textbox value="@load(vm.sélectionné.nom) @save(vm.sélectionné.nom,before='enregistrerUtilisateur')"/></row>
-							<row>Pseudo <textbox value="@load(vm.sélectionné.pseudo) @save(vm.sélectionné.pseudo,before='enregistrerUtilisateur')"/></row>
-							<row>Courriel<textbox value="@load(vm.sélectionné.courriel) @save(vm.sélectionné.courriel,before='enregistrerUtilisateur')"/></row>
-							<row>Mot de passe<textbox type="password" value="@load(vm.sélectionné.motDePasse) @save(vm.sélectionné.motDePasse,before='enregistrerUtilisateur')"/></row>
+							<row>
+								<label value="Id"/>
+								<textbox readonly="true" value="@load(vm.sélectionné.id) @save(vm.sélectionné.id,before='enregistrerUtilisateur')"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
+							</row>
+
+							<row>
+								<label value="Prénom"/>
+								<textbox id="prénomId" value="@load(vm.sélectionné.prénom) @save(vm.sélectionné.prénom,before='enregistrerUtilisateur') @validator(vm.nonVideValidator, nomChamp='le prénom')"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
+							</row>
+
+							<row>
+								<label value="Nom"/>
+								<textbox value="@load(vm.sélectionné.nom) @save(vm.sélectionné.nom,before='enregistrerUtilisateur') @validator(vm.nonVideValidator, nomChamp='le nom')"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
+							</row>
+								
+							<row>
+								<label value="Pseudo"/>
+								<textbox value="@load(vm.sélectionné.pseudo) @save(vm.sélectionné.pseudo,before='enregistrerUtilisateur') @validator(vm.pseudoValidator)"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
+								</row>
+							
+							<row>
+								<label value="Courriel"/>
+								<textbox value="@load(vm.sélectionné.courriel) @save(vm.sélectionné.courriel,before='enregistrerUtilisateur')"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
+							</row>
+							
+							<row>
+								<label value="Mot de passe"/>
+								<textbox type="password" value="@load(vm.sélectionné.motDePasse) @save(vm.sélectionné.motDePasse,before='enregistrerUtilisateur')"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>	
+							</row>
+							
 						</rows>
 					</grid>
-				</groupbox>				  
+				</groupbox>
+<!-- 				<label value="@bind(vmsgs[prénomId])" style="color:red"/>				   -->
 			</vbox>
 
 	<window title="Confirmation" mode="modal" border="normal" width="400px" visible="@load(not empty vm.messageSuppression)">

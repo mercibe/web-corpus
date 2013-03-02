@@ -4,10 +4,12 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
+import org.zkoss.bind.Validator;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.spring.SpringUtil;
@@ -19,6 +21,9 @@ import com.servicelibre.repositories.ui.UtilisateurRepository;
 public class UtilisateurVM {
 
 	private static final Logger logger = LoggerFactory.getLogger(UtilisateurVM.class); 
+	
+	private Validator nonVideValidator = new NonVideValidator();
+	private Validator pseudoValidator = new PseudoValidator();
 	
 	ListModelList<Utilisateur> utilisateurs;
 	
@@ -87,7 +92,12 @@ public class UtilisateurVM {
 		}
 		
 		logger.info("Enregistrement de l'utilisateur {}", sélectionné);
-		getUtilisateurRepo().save(sélectionné);
+		
+		try {
+			sélectionné = getUtilisateurRepo().save(sélectionné);
+		} catch (DataIntegrityViolationException e) {
+			logger.info("Un utilisateur avec le pseudo {} ou le courriel {} existe déjà.", sélectionné.getPseudo(), sélectionné.getCourriel());
+		}
 		
 		// TODO valider ou gérer DataIntegrityViolationException (pseudo identique)
 		
@@ -116,5 +126,26 @@ public class UtilisateurVM {
 	public void annulerSuppression(){
 		messageSuppression = null;
 	}
+
+
+	public Validator getNonVideValidator() {
+		return nonVideValidator;
+	}
+
+
+	public void setNonVideValidator(Validator nonVideValidator) {
+		this.nonVideValidator = nonVideValidator;
+	}
+
+
+	public Validator getPseudoValidator() {
+		return pseudoValidator;
+	}
+
+
+	public void setPseudoValidator(Validator pseudoValidator) {
+		this.pseudoValidator = pseudoValidator;
+	}
+	
 	
 }

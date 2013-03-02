@@ -15,4 +15,6 @@ public interface UtilisateurRepository extends CrudRepository<Utilisateur, Long>
 
 	Collection<? extends Utilisateur> findAll(Sort sort);
 
+	Utilisateur findByPseudoAndIdNot(String pseudo, Long id);
+
 }
