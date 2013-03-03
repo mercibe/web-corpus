@@ -19,7 +19,7 @@
 	<description>Application web de gestion de corpus textuels</description>
 
 	<properties>
-		<zk.version>6.5.0</zk.version>
+		<zk.version>6.5.1.1</zk.version>
 <!-- 		<zk.version>5.0.11</zk.version> -->
 	</properties>
 

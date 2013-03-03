@@ -14,7 +14,7 @@
 				  <listbox model="@load(vm.utilisateurs)" selectedItem="@bind(vm.sélectionné)" hflex="true" height="210px">
 					<!--  mold="paging" pageSize="5" -->
 					<listhead sizable="true">
-						<listheader label="Id" width="40px" sort="auto(id)"/>
+						<listheader label="Id" width="40px" sort="auto(id)" visible="false"/>
 						<listheader label="Prénom" align="center" width="140px" sort="auto(prénom,nom)"/>				
 						<listheader label="Nom" align="center" width="140px" sort="auto(nom,prénom)"/>
 						<listheader label="Pseudo" align="center" width="100px" sort="auto(pseudo)"/>
@@ -22,7 +22,7 @@
 					</listhead>				  
 					  <template name="model" var="item">
 						  <listitem>
-						  	<listcell label="@bind(item.id)"/>
+						  	<listcell label="@bind(item.id)" visible="false"/>
 						  	<listcell label="@bind(item.prénom)"/>
 						  	<listcell label="@bind(item.nom)"/>
 						  	<listcell label="@bind(item.pseudo)"/>
@@ -32,12 +32,14 @@
 				  </listbox>
 				<toolbar>
 					<button label="Ajouter" onClick="@command('ajouterUtilisateur')" />
-					<button label="Enregistrer" onClick="@command('enregistrerUtilisateur')" disabled="@bind(empty vm.sélectionné)" />
+					<button label="Modifier" onClick="@command('modifierUtilisateur')" disabled="@load(empty vm.sélectionné)"/>
+					<button label="Enregistrer" onClick="@command('enregistrerUtilisateur')" disabled="@load(empty vm.mode)" />
 					<!-- affiche la fenêtre de confirmation lorsque l'item sélectionné va être sauver -->
 					<button label="Supprimer" onClick="@command(empty vm.sélectionné.id?'supprimerUtilisateur':'confirmerSuppression')" disabled="@load(empty vm.sélectionné)" />
+					<button label="Annuler" onClick="@command('annulerModification')" visible="@load(not empty vm.mode)"/>
 					
 				</toolbar>
-				<groupbox visible="@load(not empty vm.sélectionné)" hflex="true" mold="3d">
+				<groupbox visible="@load(not empty vm.mode)" hflex="true" mold="3d">
 					<grid hflex="true" >
 						<columns>
 							<column width="120px"/>
@@ -45,7 +47,7 @@
 							<column width="300px"/>
 						</columns>
 						<rows>
-							<row>
+							<row visible="false">
 								<label value="Id"/>
 								<textbox readonly="true" value="@load(vm.sélectionné.id) @save(vm.sélectionné.id,before='enregistrerUtilisateur')"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
@@ -71,13 +73,13 @@
 							
 							<row>
 								<label value="Courriel"/>
-								<textbox value="@load(vm.sélectionné.courriel) @save(vm.sélectionné.courriel,before='enregistrerUtilisateur')"/>
+								<textbox value="@load(vm.sélectionné.courriel) @save(vm.sélectionné.courriel,before='enregistrerUtilisateur') @validator(vm.courrielValidator)"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
 							</row>
 							
 							<row>
 								<label value="Mot de passe"/>
-								<textbox type="password" value="@load(vm.sélectionné.motDePasse) @save(vm.sélectionné.motDePasse,before='enregistrerUtilisateur')"/>
+								<textbox type="password" value="@load(vm.sélectionné.motDePasse) @save(vm.sélectionné.motDePasse,before='enregistrerUtilisateur') @validator(vm.motDePasseValidator)"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>	
 							</row>
 							

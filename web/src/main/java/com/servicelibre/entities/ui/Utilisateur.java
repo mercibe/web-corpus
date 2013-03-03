@@ -1,5 +1,6 @@
 package com.servicelibre.entities.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -37,7 +38,7 @@ public class Utilisateur {
 	String motDePasse;
 
 	@OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.EAGER)
-	List<UtilisateurRôle> utilisateurRôles;
+	List<UtilisateurRôle> utilisateurRôles = new ArrayList<UtilisateurRôle>();
 
 	public Utilisateur() {
 		super();
