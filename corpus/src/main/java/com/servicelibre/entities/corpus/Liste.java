@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class Liste implements Comparable<Liste> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+	long id;
 
 	@Column
 	String nom;
@@ -34,19 +35,19 @@ public class Liste implements Comparable<Liste> {
 	@Column
 	Integer ordre;
 
-//	@OneToMany(mappedBy = "listePartitionPrimaire")
-//	private List<Mot> mots = new ArrayList<Mot>();
-	
-	@OneToMany(mappedBy = "liste", cascade = CascadeType.ALL, orphanRemoval = true)
+	// @OneToMany(mappedBy = "listePartitionPrimaire")
+	// private List<Mot> mots = new ArrayList<Mot>();
+
+	@OneToMany(mappedBy = "liste", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
 	@ManyToOne
-	@JoinColumn(name = "catégorie_id", nullable=false)
+	@JoinColumn(name = "catégorie_id", nullable = false)
 	CatégorieListe catégorie;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	Boolean publique = true;
-	
+
 	@Transient
 	File fichierSource;
 
@@ -72,7 +73,7 @@ public class Liste implements Comparable<Liste> {
 		this.id = id;
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -157,9 +158,7 @@ public class Liste implements Comparable<Liste> {
 	public void setPublique(Boolean publique) {
 		this.publique = publique;
 	}
-	
-	
-	
+
 	// public void setCatégorieListe(CatégorieListe catégorie) {
 	// if (this.catégorie != catégorie) {
 	// if (this.catégorie != null) {

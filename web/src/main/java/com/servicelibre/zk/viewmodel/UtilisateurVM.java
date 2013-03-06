@@ -1,8 +1,6 @@
 package com.servicelibre.zk.viewmodel;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zul.ListModelList;
 
-import com.servicelibre.entities.ui.Rôle;
 import com.servicelibre.entities.ui.Utilisateur;
 import com.servicelibre.entities.ui.UtilisateurRôle;
 import com.servicelibre.repositories.ui.RôleRepository;

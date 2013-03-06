@@ -1,8 +1,7 @@
 package com.servicelibre.repositories.corpus;
 
+import java.util.Collection;
 import java.util.List;
-
-import javax.persistence.OrderBy;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +25,7 @@ public interface ListeRepository extends CrudRepository<Liste, Long> {
 
 	@Query("select l from Liste l where l.catégorie.corpus.id = :corpus_id order by l.ordre, l.nom")
 	List<Liste> findByCorpusId(@Param("corpus_id") int corpus_id);
+	
+	Collection<? extends Liste> findAll(Sort sort);
 
 }

@@ -18,21 +18,49 @@
 		<borderlayout width="100%" height="100%">
 		
 			<west title="Modules de gestion" size="25%" maxsize="250" splittable="true" collapsible="true">
-			  <div vflex="1" style="background:#f2f2f2;">
-				<listbox id="adminModules">
-				  <listhead>
-				    <listheader/>
-				  </listhead>
-				  <listitem selected="true"><listcell label="Utilisateurs" onClick='affiche("admin/utilisateurs.zul")'/></listitem>
-				  <listitem><listcell label="Rôles" onClick='affiche("admin/rôles.zul")'/></listitem>
-				  <listitem><listcell label="Attribution des rôles"/></listitem>				  
-				</listbox>
-			  </div>	
+			
+			<tabbox id="tb" width="100%" height="100%"
+				mold="accordion">
+				<tabs>
+					<tab label="Listes et mots" />
+					<tab label="Gestion des utilisateurs" />
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+					   <div style="background:#f2f2f2;">
+						<listbox id="moduleListe">
+						  <listhead>
+						    <listheader/>
+						  </listhead>
+						  <listitem selected="true"><listcell label="Listes et mots" onClick='affiche("admin/listesEtMots.zul")'/></listitem>
+						</listbox>
+					  </div>	
+					
+					</tabpanel>					
+					<tabpanel>
+					   <div style="background:#f2f2f2;">
+						<listbox id="moduleUtilisateur">
+						  <listhead>
+						    <listheader/>
+						  </listhead>
+						  <listitem><listcell label="Utilisateurs" onClick='affiche("admin/utilisateurs.zul")'/></listitem>
+						  <listitem><listcell label="Rôles" onClick='affiche("admin/rôles.zul")'/></listitem>
+						  <listitem><listcell label="Attribution des rôles"/></listitem>				  
+						</listbox>
+					  </div>	
+					
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
+			
+			
+			
+			  
 			</west>
 		
 			
 			<center autoscroll="true" border="none" style="">
-				<include id="adminUtilisateursInclude" src="admin/utilisateurs.zul"/>				
+				<include id="adminUtilisateursInclude" src="admin/listesEtMots.zul"/>				
 			</center>
 			
 			<east border="none">

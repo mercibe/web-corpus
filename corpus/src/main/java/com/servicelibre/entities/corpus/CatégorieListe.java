@@ -1,7 +1,9 @@
 package com.servicelibre.entities.corpus;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,11 +19,13 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "corpus_id", "nom" }))
-public class CatégorieListe {
+public class CatégorieListe implements Comparable<CatégorieListe>{
 
+	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+	long id;
 
 	@Column
 	String nom;
@@ -59,11 +63,11 @@ public class CatégorieListe {
 		this.corpus = corpus;
 	}
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -120,5 +124,43 @@ public class CatégorieListe {
 	public String toString() {
 		return "CatégorieListe [id=" + id + ", nom=" + nom + ", description=" + description + "]";
 	}
+
+	@Override
+	public int compareTo(CatégorieListe autreCatégorieListe) {
+		return collator.compare(this.nom, autreCatégorieListe.nom);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((corpus == null) ? 0 : corpus.hashCode());
+		result = prime * result + ((nom == null) ? 0 : nom.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CatégorieListe other = (CatégorieListe) obj;
+		if (corpus == null) {
+			if (other.corpus != null)
+				return false;
+		} else if (!corpus.equals(other.corpus))
+			return false;
+		if (nom == null) {
+			if (other.nom != null)
+				return false;
+		} else if (!nom.equals(other.nom))
+			return false;
+		return true;
+	}
+	
+	
 
 }
