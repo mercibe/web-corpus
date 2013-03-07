@@ -16,7 +16,7 @@ public interface MotRepository extends CrudRepository<Mot, Long>, MotRepositoryC
 	 * "sourire";2 "jeune";2 "rose";2 "intérieur";2
 	 */
 	List<Mot> findByMot(String mot);
-
+	
 	List<Mot> findAll();
 
 	// @Query("select l from Liste l left join l.listeMots lm  where lm.mot = :mot and l.partitionPrimaire is true")

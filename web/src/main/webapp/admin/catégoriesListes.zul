@@ -4,18 +4,17 @@
 
 <zk>
 
-	<window id="adminListesEtMotsWindow" title="Listes et mots" border="none" width="100%" height="100%" style="text-align:center;font-weight:bold;"
-			apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.servicelibre.zk.viewmodel.ListesEtMotsVM')"
+	<window id="adminCatégoriesListesWindow" title="Catégories de liste" border="none" width="100%" height="100%" style="text-align:center;font-weight:bold;"
+			apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.servicelibre.zk.viewmodel.CatégoriesListesVM')"
 			validationMessages="@id('vmsgs')" 
 	>
 		
 		
 			<vbox hflex="true">
-				  <listbox model="@load(vm.listes)" selectedItem="@bind(vm.listeSélectionné)" hflex="true" height="210px">
+				  <listbox model="@load(vm.catégoriesListes)" selectedItem="@bind(vm.catégorieListeSélectionné)" hflex="true" height="210px">
 					<!--  mold="paging" pageSize="5" -->
 					<listhead sizable="true">
 						<listheader label="Id" width="40px" sort="auto(id)" visible="false"/>
-						<listheader label="Catégorie" width="100px" sort="auto(catégorie)"/>
 						<listheader label="Ordre" width="40px" sort="auto(ordre)"/>
 						<listheader label="Nom" align="center" width="240px" sort="auto(nom)"/>
 						<listheader label="Description" align="center" width="300px" sort="auto(description)"/>
@@ -23,7 +22,6 @@
 					  <template name="model" var="item">
 						  <listitem>
 						  	<listcell label="@bind(item.id)" visible="false"/>
-						  	<listcell label="@bind(item.catégorie.nom)"/>
 						  	<listcell label="@bind(item.ordre)"/>
 						  	<listcell label="@bind(item.nom)"/>
 						  	<listcell label="@bind(item.description)"/>
@@ -31,11 +29,11 @@
 					  </template>
 				  </listbox>
 				<toolbar>
-					<button label="Ajouter" onClick="@command('ajouterListe')" />
-					<button label="Modifier" onClick="@command('modifierListe')" disabled="@load(empty vm.listeSélectionné)"/>
-					<button label="Enregistrer" onClick="@command('enregistrerListe')" disabled="@load(empty vm.mode)" />
+					<button label="Ajouter" onClick="@command('ajouterCatégorieListe')" />
+					<button label="Modifier" onClick="@command('modifierCatégorieListe')" disabled="@load(empty vm.catégorieListeSélectionné)"/>
+					<button label="Enregistrer" onClick="@command('enregistrerCatégorieListe')" disabled="@load(empty vm.mode)" />
 					<!-- affiche la fenêtre de confirmation lorsque l'item sélectionné va être sauver -->
-					<button label="Supprimer" onClick="@command(empty vm.listeSélectionné.id?'supprimerListe':'confirmerSuppression')" disabled="@load(empty vm.listeSélectionné)" />
+					<button label="Supprimer" onClick="@command(empty vm.catégorieListeSélectionné.id?'supprimerCatégorieListe':'confirmerSuppression')" disabled="@load(empty vm.catégorieListeSélectionné)" />
 					<button label="Annuler" onClick="@command('annulerModification')" visible="@load(not empty vm.mode)"/>
 					
 				</toolbar>
@@ -49,59 +47,31 @@
 						<rows>
 							<row visible="true">
 								<label value="Id"/>
-								<textbox readonly="true" value="@load(vm.listeSélectionné.id) @save(vm.listeSélectionné.id,before='enregistrerListe')"/>
-								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
-							</row>
-
-							<row>
-								<label value="Catégorie (filtre)"/>
-								<listbox model="@load(vm.catégories)" selectedItem="@bind(vm.listeSélectionné.catégorie)" mold="select">
-									<template name="model">
-										  <listitem value="@load(each) @save(vm.listeSélectionné.catégorie,before='enregistrerListe')" label="@load(each.nom)" />
-									  </template>
-								</listbox>								
+								<textbox readonly="true" value="@load(vm.catégorieListeSélectionné.id) @save(vm.catégorieListeSélectionné.id,before='enregistrerCatégorieListe')"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
 							</row>
 
 							<row>
 								<label value="Ordre"/>
-								<textbox value="@load(vm.listeSélectionné.ordre) @save(vm.listeSélectionné.ordre,before='enregistrerListe') @validator(vm.nonVideValidator, nomChamp='lordre')"/>
+								<textbox value="@load(vm.catégorieListeSélectionné.ordre) @save(vm.catégorieListeSélectionné.ordre,before='enregistrerCatégorieListe') @validator(vm.nonVideValidator, nomChamp='lordre')"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
 							</row>
 
 							<row>
 								<label value="Nom"/>
-								<textbox value="@load(vm.listeSélectionné.nom) @save(vm.listeSélectionné.nom,before='enregistrerListe') @validator(vm.nonVideValidator, nomChamp='le nom')" width="100%"/>
+								<textbox value="@load(vm.catégorieListeSélectionné.nom) @save(vm.catégorieListeSélectionné.nom,before='enregistrerCatégorieListe') @validator(vm.nonVideValidator, nomChamp='le nom')" width="100%"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
 							</row>
 
 							<row>
 								<label value="Description"/>
-								<textbox value="@load(vm.listeSélectionné.description) @save(vm.listeSélectionné.description,before='enregistrerListe') @validator(vm.nonVideValidator, nomChamp='la description')" width="100%"/>
+								<textbox value="@load(vm.catégorieListeSélectionné.description) @save(vm.catégorieListeSélectionné.description,before='enregistrerCatégorieListe') @validator(vm.nonVideValidator, nomChamp='la description')" width="100%"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
 							</row>
-
 
 						</rows>
 					</grid>
 				</groupbox>
-				
- 			    <listbox model="@load(vm.mots)" selectedItem="@bind(vm.motSélectionné)" hflex="true" height="210px">
-					<listhead sizable="true">
-						<listheader label="Id" width="40px" sort="auto(id)" visible="false"/>
-						<listheader label="Mot" width="100px" sort="auto(mot)"/>
-					</listhead>				  
-					  <template name="model" var="item">
-						  <listitem>
-						  	<listcell label="@bind(item.id)" visible="false"/>
-						  	<listcell label="@bind(item.mot)"/>
-						  </listitem>
-					  </template>
-				  </listbox>
-				
-				
-				
-				
 			</vbox>
 
 	<window title="Confirmation" mode="modal" border="normal" width="400px" visible="@load(not empty vm.messageSuppression)">
@@ -111,7 +81,7 @@
 				<label value="@load(vm.messageSuppression)"/>
 			</hlayout>
 			<hbox pack="center" hflex="true">
-				<button label="Supprimer" onClick="@command('supprimerListe')"/>
+				<button label="Supprimer" onClick="@command('supprimerCatégorieListe')"/>
 				<button label="Annuler" onClick="@command('annulerSuppression')"/>
 			</hbox>
 		</vbox>

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.Mot;
 
 public interface ListeRepository extends CrudRepository<Liste, Long> {
 
@@ -27,5 +28,8 @@ public interface ListeRepository extends CrudRepository<Liste, Long> {
 	List<Liste> findByCorpusId(@Param("corpus_id") int corpus_id);
 	
 	Collection<? extends Liste> findAll(Sort sort);
-
+	
+	@Query("select lm.mot from ListeMot lm where lm.liste = :liste order by lm.mot.mot")
+	List<Mot> getMotsByListe(@Param("liste") Liste liste);
+	
 }

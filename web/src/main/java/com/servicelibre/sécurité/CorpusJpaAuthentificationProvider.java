@@ -49,7 +49,7 @@ public class CorpusJpaAuthentificationProvider implements AuthenticationProvider
 			rôles.add(new SimpleGrantedAuthority(nomRôle));
 		}
 
-		// Construction d'un objet contenant de l'infrmation sur l'utilisateur authentifié
+		// Construction d'un objet contenant de l'information sur l'utilisateur authentifié
 		UserDetails userDetails = new User(authentification.getName(), authentification.getCredentials().toString(), rôles);
 
 		// L'appel de se constructeur avec la liste de GrantedAuthority (rôle) fait en sorte que l'utilisateur

@@ -1,6 +1,7 @@
 package com.servicelibre.zk.viewmodel;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +17,16 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zul.ListModelList;
 
+import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Corpus;
 import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.ListeMot;
+import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
+import com.servicelibre.repositories.corpus.MotRepository;
 
 public class ListesEtMotsVM {
 
@@ -28,8 +35,10 @@ public class ListesEtMotsVM {
 	private Validator nonVideValidator = new NonVideValidator();
 
 	ListModelList<Liste> listes;
+	ListModelList<Mot> mots;
 
 	Liste listeSélectionné;
+	Mot motSélectionné;
 
 	ListModelList<CatégorieListe> catégories;
 
@@ -38,6 +47,7 @@ public class ListesEtMotsVM {
 
 	ListeRepository listeRepo;
 	CatégorieListeRepository catégorieListeRepo;
+	ListeMotRepository listeMotRepo;
 
 
 	String messageSuppression;
@@ -65,6 +75,13 @@ public class ListesEtMotsVM {
 			catégorieListeRepo = (CatégorieListeRepository) SpringUtil.getBean("catégorieListeRepository", CatégorieListeRepository.class);
 		}
 		return catégorieListeRepo;
+	}
+	
+	private ListeMotRepository getListeMotRepo() {
+		if (listeMotRepo == null) {
+			listeMotRepo = (ListeMotRepository) SpringUtil.getBean("listeMotRepository", ListeMotRepository.class);
+		}
+		return listeMotRepo;
 	}
 
 	public Liste getListeSélectionné() {
@@ -196,6 +213,26 @@ public class ListesEtMotsVM {
 
 	public void setNonVideValidator(Validator nonVideValidator) {
 		this.nonVideValidator = nonVideValidator;
+	}
+	
+	
+	public ListModelList<Mot> getMots() {
+		if (mots == null) {
+			mots = new ListModelList<Mot>((Collection<? extends Mot>) getListeRepo().getMotsByListe(listeSélectionné));
+		}
+		return mots;
+	}
+
+	public void setMots(ListModelList<Mot> mots) {
+		this.mots = mots;
+	}
+
+	public Mot getMotSélectionné() {
+		return motSélectionné;
+	}
+
+	public void setMotSélectionné(Mot motSélectionné) {
+		this.motSélectionné = motSélectionné;
 	}
 
 	public String getMode() {

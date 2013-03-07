@@ -33,6 +33,7 @@
 						    <listheader/>
 						  </listhead>
 						  <listitem selected="true"><listcell label="Listes et mots" onClick='affiche("admin/listesEtMots.zul")'/></listitem>
+						  <listitem><listcell label="Catégories de liste (filtres)" onClick='affiche("admin/catégoriesListes.zul")'/></listitem>
 						</listbox>
 					  </div>	
 					
@@ -45,7 +46,7 @@
 						  </listhead>
 						  <listitem><listcell label="Utilisateurs" onClick='affiche("admin/utilisateurs.zul")'/></listitem>
 						  <listitem><listcell label="Rôles" onClick='affiche("admin/rôles.zul")'/></listitem>
-						  <listitem><listcell label="Attribution des rôles"/></listitem>				  
+						  <listitem><listcell label="Attribution des rôles"  onClick='affiche("admin/attributionRôles.zul")'/></listitem>				  
 						</listbox>
 					  </div>	
 					

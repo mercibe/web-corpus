@@ -159,17 +159,4 @@ public class Liste implements Comparable<Liste> {
 		this.publique = publique;
 	}
 
-	// public void setCatégorieListe(CatégorieListe catégorie) {
-	// if (this.catégorie != catégorie) {
-	// if (this.catégorie != null) {
-	// this.catégorie.enleverListe(this);
-	// }
-	// this.catégorie = catégorie;
-	// if (catégorie != null) {
-	// catégorie.ajouterListe(this);
-	// }
-	// }
-	//
-	// }
-
 }
