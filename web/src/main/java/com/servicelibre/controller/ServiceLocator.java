@@ -4,6 +4,8 @@ import org.springframework.context.ApplicationContext;
 import org.zkoss.spring.SpringUtil;
 
 import com.servicelibre.corpus.service.CorpusService;
+import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.ui.OngletRepository;
@@ -53,6 +55,14 @@ public class ServiceLocator {
 
 	public static CorpusService getFormeService() {
 		return (CorpusService) ctx.getBean("formeService");
+	}
+
+	public static CatégorieListeRepository getCatégorieListeRepo() {
+		return (CatégorieListeRepository) ctx.getBean("catégorieListeRepository");
+	}
+
+	public static ListeMotRepository getListeMotRepo() {
+		return (ListeMotRepository) ctx.getBean("listeMotRepository");
 	}
 
 }

@@ -3,10 +3,6 @@ package com.servicelibre.repositories.corpus;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.NamedNativeQuery;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Liste;
-import com.servicelibre.entities.corpus.Mot;
 
 public interface ListeRepository extends CrudRepository<Liste, Long> {
 
@@ -30,10 +25,10 @@ public interface ListeRepository extends CrudRepository<Liste, Long> {
 
 	@Query("select l from Liste l where l.catégorie.corpus.id = :corpus_id order by l.ordre, l.nom")
 	List<Liste> findByCorpusId(@Param("corpus_id") int corpus_id);
-	
+
 	Collection<? extends Liste> findAll(Sort sort);
-	
-	//@Query("select m FROM Mot m JOIN FETCH m.listeMots lm JOIN FETCH m.motPrononciations mp WHERE lm.liste = :liste order by lm.mot.mot")
-	//List<Mot> tutu(long liste_id);
-	
+
+	// @Query("select m FROM Mot m JOIN FETCH m.listeMots lm JOIN FETCH m.motPrononciations mp WHERE lm.liste = :liste order by lm.mot.mot")
+	// List<Mot> tutu(long liste_id);
+
 }

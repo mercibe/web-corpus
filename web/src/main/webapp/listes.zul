@@ -1,4 +1,5 @@
 <?page id="listePage" title="Web corpus - Listes" contentType="text/html;charset=UTF-8"?>
+<?taglib uri="http://www.zkoss.org/zkspring/security" prefix="sec"?>
 
 <?variable-resolver class="com.servicelibre.zk.controller.ListeCtrl"?>
 
@@ -201,6 +202,13 @@
 					height="550px" width="700px" emptyMessage="Aucun mot trouvé.">
 
 					<columns sizable="true" menupopup="editPopup">
+					
+						<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
+							<column width="40px">
+<!-- 								<checkbox id="sélectionnerTout" label=""></checkbox> -->
+							</column>
+						</zk>
+					
 						<column width="250px" id="mot" label="Mot"
 							sortDirection="ascending" sort="auto" />
 						<column width="100px" id="colonnePrononciation"
@@ -223,6 +231,31 @@
 					</columns>
 					<rows />
 				</grid>
+				
+				<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
+					<hbox>
+						 <combobox id="actionCombobox" readonly="true"
+							width="185px">
+							<comboitem label="Ajouter les mots sélectionnés à une liste existante"
+								value="AJOUTER_À_LA_LISTE"/>
+							<comboitem label="Créer un nouvelle liste avec les mots sélectionnés"
+								value="CRÉER_NOUVELLE_LISTE" />								
+							<comboitem label="Supprimer les mots sélectionnés"
+								value="SUPPRIMER_LES_MOTS" />
+						</combobox>
+						
+						<combobox id="catégoriesListeCombobox" readonly="true"
+							width="185px" visible="false">
+						</combobox>
+
+						<combobox id="listesCombobox" readonly="true"
+							width="185px" visible="false">
+						</combobox>
+						
+						<button id="actionButton" label="OK"/>
+					</hbox>
+					
+				</zk>
 			</vbox>
 		</hbox>
 

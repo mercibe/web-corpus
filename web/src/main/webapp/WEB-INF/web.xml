@@ -37,7 +37,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-
 	<!-- Configuration ZK -->
 	
 	<listener>

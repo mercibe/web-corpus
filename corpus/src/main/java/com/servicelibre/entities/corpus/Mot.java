@@ -15,9 +15,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -94,11 +94,15 @@ public class Mot implements Comparable<Mot> {
 	@Column
 	String note;
 
+	@Transient
+	public boolean sélectionné;
+
 	public Mot() {
 		super();
 	}
 
-	public Mot(String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro, String note) {
+	public Mot(String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro,
+			String note) {
 		super();
 		this.mot = mot;
 		this.lemme = lemme;
@@ -113,8 +117,9 @@ public class Mot implements Comparable<Mot> {
 
 	@Override
 	public String toString() {
-		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", estUnLemme=" + estUnLemme + ", prononciations=" + motPrononciations + ", catgram="
-				+ catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro + ", note=" + note + "]";
+		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", estUnLemme=" + estUnLemme + ", prononciations="
+				+ motPrononciations + ", catgram=" + catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion="
+				+ catgramPrésicion + ", ro=" + ro + ", note=" + note + "]";
 	}
 
 	public long getId() {
@@ -243,7 +248,17 @@ public class Mot implements Comparable<Mot> {
 	public void setListePartitionPrimaire(Liste listePartitionPrimaire) {
 		this.listePartitionPrimaire = listePartitionPrimaire;
 	}
-	
-	
+
+	public boolean isSélectionné() {
+		return sélectionné;
+	}
+
+	public void setSélectionné(boolean sélectionné) {
+		this.sélectionné = sélectionné;
+	}
+
+	public Boolean getEstUnLemme() {
+		return estUnLemme;
+	}
 
 }

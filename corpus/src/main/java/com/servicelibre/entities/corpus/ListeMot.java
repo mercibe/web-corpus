@@ -25,7 +25,7 @@ import javax.persistence.UniqueConstraint;
 public class ListeMot {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int Id;
+	long Id;
 
 	@ManyToOne(optional = false)
 	Mot mot;
@@ -50,11 +50,11 @@ public class ListeMot {
 		this.note = "";
 	}
 
-	public int getId() {
+	public long getId() {
 		return Id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		Id = id;
 	}
 

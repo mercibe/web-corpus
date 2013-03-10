@@ -1,8 +1,7 @@
 package com.servicelibre.zk.viewmodel;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,7 @@ import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom;
+import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
 
 public class ListesEtMotsVM {
 
@@ -40,7 +40,7 @@ public class ListesEtMotsVM {
 	private Validator nonVideValidator = new NonVideValidator();
 
 	Corpus corpus = ServiceLocator.getCorpusService().getCorpus();
-	
+
 	ListModelList<Liste> listes;
 	ListModelList<Mot> mots;
 
@@ -49,7 +49,6 @@ public class ListesEtMotsVM {
 
 	ListModelList<CatégorieListe> catégories;
 
-
 	String mode = null;
 
 	ListeRepository listeRepo;
@@ -57,15 +56,16 @@ public class ListesEtMotsVM {
 	ListeMotRepository listeMotRepo;
 	MotRepository motRepo;
 
-
 	String messageSuppression;
+	String messageSuppressionMots;
 
 	StandardPasswordEncoder encodeur = new StandardPasswordEncoder();
 
 	public ListModelList<Liste> getListes() {
 		if (listes == null) {
 			listes = new ListModelList<Liste>((Collection<? extends Liste>) getListeRepo().findAll(
-					new Sort(new Order(Direction.ASC, "Catégorie.ordre"), new Order(Direction.ASC, "ordre"), new Order(Direction.ASC, "nom"))));
+					new Sort(new Order(Direction.ASC, "Catégorie.ordre"), new Order(Direction.ASC, "ordre"),
+							new Order(Direction.ASC, "nom"))));
 		}
 		return listes;
 	}
@@ -84,14 +84,14 @@ public class ListesEtMotsVM {
 		}
 		return catégorieListeRepo;
 	}
-	
+
 	private ListeMotRepository getListeMotRepo() {
 		if (listeMotRepo == null) {
 			listeMotRepo = (ListeMotRepository) SpringUtil.getBean("listeMotRepository", ListeMotRepository.class);
 		}
 		return listeMotRepo;
 	}
-	
+
 	private MotRepository getMotRepo() {
 		if (motRepo == null) {
 			motRepo = (MotRepository) SpringUtil.getBean("motRepository", MotRepository.class);
@@ -131,11 +131,11 @@ public class ListesEtMotsVM {
 		mode = "ajout";
 	}
 
-	@NotifyChange({"mode"})
+	@NotifyChange({ "mode" })
 	@Command
 	public void modifierListe() {
 		mode = "modification";
-		logger.debug("Catégorie courante: {}", listeSélectionné.getCatégorie() );
+		logger.debug("Catégorie courante: {}", listeSélectionné.getCatégorie());
 	}
 
 	@NotifyChange({ "mode", "listes" })
@@ -213,7 +213,8 @@ public class ListesEtMotsVM {
 	@NotifyChange("messageSuppression")
 	@Command
 	public void confirmerSuppression() {
-		messageSuppression = "Voulez-vous vraiment supprimer la liste " + listeSélectionné.getNom() + " ?" + " (" + listeSélectionné.getId() + ")";
+		messageSuppression = "Voulez-vous vraiment supprimer la liste " + listeSélectionné.getNom() + " ?" + " ("
+				+ listeSélectionné.getId() + ")";
 	}
 
 	@NotifyChange("messageSuppression")
@@ -229,24 +230,62 @@ public class ListesEtMotsVM {
 	public void setNonVideValidator(Validator nonVideValidator) {
 		this.nonVideValidator = nonVideValidator;
 	}
-	
+
 	@NotifyChange("mots")
 	@Command
 	public ListModelList<Mot> getMots() {
 		logger.debug("MISE à JOUR DES MOTS pour la liste {}", listeSélectionné);
 		if (listeSélectionné != null && listeSélectionné.getId() != 0) {
-			
+
 			FiltreRecherche f = new FiltreRecherche();
 
-			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(), listeSélectionné.getCatégorie().getNom(), new Long[] { listeSélectionné.getId()}));
-			mots = new ListModelList<Mot>((Collection<? extends Mot>)getMotRepo().findByGraphie("", MotRepositoryCustom.Condition.COMMENCE_PAR, f));
-			
-		}
-		else {
+			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(), listeSélectionné.getCatégorie()
+					.getNom(), new Long[] { listeSélectionné.getId() }));
+			mots = new ListModelList<Mot>((Collection<? extends Mot>) getMotRepo().findByGraphie("",
+					MotRepositoryCustom.Condition.COMMENCE_PAR, f));
+
+		} else {
 			mots = new ListModelList<Mot>();
 		}
+		
+		
 		return mots;
 	}
+
+	@NotifyChange({"mots", "messageSuppressionMots"})
+	@Command
+	@Transactional
+	public void retirerMotsSélectionnésDeLaListe() {
+		logger.debug("Retirer les mots sélectionnés de la liste...");
+		
+		listeSélectionné = listeRepo.findOne(listeSélectionné.getId());
+
+		Iterator<Mot> it = mots.iterator();
+		while (it.hasNext()) {
+			Mot next = it.next();
+			if (next.sélectionné) {
+				logger.debug("retirer {}...", next);
+				ListeMot àSupprimer = getListeMotRepo().findByListeAndMot(listeSélectionné, next);
+				listeMotRepo.delete(àSupprimer.getId());
+			}
+		}
+		
+		messageSuppressionMots = null;
+
+	}
+	
+	@NotifyChange("messageSuppressionMots")
+	@Command
+	public void confirmerSuppressionMots() {
+		messageSuppressionMots = "Voulez-vous vraiment supprimer ces mots de la liste ?";
+	}
+	
+	@NotifyChange("messageSuppressionMots")
+	@Command
+	public void annulerSuppressionMots() {
+		messageSuppressionMots = null;
+	}
+
 
 	public void setMots(ListModelList<Mot> mots) {
 		this.mots = mots;
@@ -280,4 +319,14 @@ public class ListesEtMotsVM {
 		this.listeRepo = listeRepo;
 	}
 
+	public String getMessageSuppressionMots() {
+		return messageSuppressionMots;
+	}
+
+	public void setMessageSuppressionMots(String messageSuppressionMots) {
+		this.messageSuppressionMots = messageSuppressionMots;
+	}
+
+	
+	
 }

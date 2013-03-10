@@ -15,6 +15,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Page;
@@ -22,21 +26,29 @@ import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.entities.corpus.CatégorieListe;
+import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.entities.corpus.ListeMot;
 import com.servicelibre.entities.corpus.Mot;
+import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom;
@@ -59,6 +71,11 @@ public class ListeCtrl extends CorpusCtrl {
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
 
+	Combobox actionCombobox;
+	Combobox catégoriesListeCombobox;
+	Combobox listesCombobox;
+	Button actionButton;
+
 	Grid motsGrid; // autowire car même type/ID que le composant dans la page
 	// ZUL
 	Column mot;
@@ -68,13 +85,110 @@ public class ListeCtrl extends CorpusCtrl {
 	Column colonnePrononciation;
 	Menuitem menuitemPrononciation;
 
+	CatégorieListeRepository catégorieListeRepo = ServiceLocator.getCatégorieListeRepo();
+
 	ListeRepository listeRepo = ServiceLocator.getListeRepo();
 
 	MotRepository motRepository = ServiceLocator.getMotRepo();
 
+	ListeMotRepository listeMotRepo = ServiceLocator.getListeMotRepo();
+
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private Column motColumn;
+
+	public void onClick$actionButton() {
+		Comboitem selectedItem = actionCombobox.getSelectedItem();
+		if (selectedItem != null) {
+			String action = selectedItem.getValue();
+			Liste listeSélectionnée = listesCombobox.getSelectedItem().getValue();
+			logger.debug(" exécuter l'action demandée : {}", action);
+
+			ListModel<Mot> mots = motsGrid.getModel();
+			for (int i = 0; i < mots.getSize(); i++) {
+				Mot mot = mots.getElementAt(i);
+				if (mot.sélectionné) {
+					logger.debug("{} => {} - {}", new Object[] { action, mot, listeSélectionnée });
+					ListeMot lm = new ListeMot(mot, listeSélectionnée);
+
+					// FIXME qui si mot s'y trouve déjà ?
+					try {
+						lm = listeMotRepo.save(lm);
+
+						// TODO conserver la liste des mots ajoutés pour présenter un beau rapport final?
+
+					} catch (DataIntegrityViolationException e) {
+						logger.info("Le mot {} est déjà dans la liste {}", mot, listeSélectionnée);
+						// TODO conserver la liste de ces mots pour présenter un beau rapport final?
+					}
+
+					// Mise à jour du modèle
+					mot.sélectionné = false;
+				}
+			}
+			// Rafraîchir les données (page courante)
+			motsGrid.setModel(mots);
+		}
+	}
+
+	public void onSelect$actionCombobox() {
+
+		Comboitem selectedItem = actionCombobox.getSelectedItem();
+		if (selectedItem != null) {
+
+			String action = selectedItem.getValue();
+
+			// Afficher ou masquer les combobox de sélection de catérogies et listes
+			if (action.equals("AJOUTER_À_LA_LISTE")) {
+				catégoriesListeCombobox.setVisible(true);
+				listesCombobox.setVisible(true);
+
+				if (catégoriesListeCombobox.getItemCount() == 0) {
+					logger.debug("Remplir les catégories de listes si pas déjà fait");
+					List<CatégorieListe> catégoriesListes = catégorieListeRepo.findAll(new Sort(new Order(Direction.ASC, "ordre"),
+							new Order(Direction.ASC, "nom")));
+					for (CatégorieListe catégorieListe : catégoriesListes) {
+						Comboitem ci = new Comboitem(catégorieListe.getNom());
+						ci.setValue(catégorieListe);
+						catégoriesListeCombobox.appendChild(ci);
+					}
+					catégoriesListeCombobox.setSelectedIndex(0);
+					onSelect$catégoriesListeCombobox();
+				}
+
+			} else {
+				catégoriesListeCombobox.setVisible(false);
+				listesCombobox.setVisible(false);
+			}
+
+		}
+	}
+
+	public void onSelect$catégoriesListeCombobox() {
+
+		Comboitem selectedItem = catégoriesListeCombobox.getSelectedItem();
+		if (selectedItem != null) {
+			logger.debug("rafraîchir les listes pour la catégorie {}", selectedItem.getValue());
+
+			// Vide les valeurs actuelles
+			listesCombobox.getChildren().clear();
+
+			// Récupération des listes de la catégorie de liste sélectionnée
+			CatégorieListe catégorieSélectionnée = (CatégorieListe) catégoriesListeCombobox.getSelectedItem().getValue();
+			List<Liste> listesCourantes = listeRepo.findByCatégorie(catégorieSélectionnée, new Sort(new Order(Direction.ASC, "ordre"),
+					new Order(Direction.ASC, "nom")));
+
+			for (Liste listeCourante : listesCourantes) {
+				Comboitem ci = new Comboitem(listeCourante.getNom());
+				ci.setValue(listeCourante);
+				listesCombobox.appendChild(ci);
+			}
+			// Se positionner sur la première liste de la catégorie si cette catégorie en contient au moins une!
+			if (listesCourantes.size() > 0) {
+				listesCombobox.setSelectedIndex(0);
+			}
+		}
+	}
 
 	public void onOK$liste(Event event) {
 		chercheEtAffiche(true);
@@ -182,17 +296,18 @@ public class ListeCtrl extends CorpusCtrl {
 		List<Mot> mots = new ArrayList<Mot>();
 
 		logger.info(recherche.getDescriptionChaîne());
-		logger.debug("MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne) = " + MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne));
+		logger.debug("MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne) = "
+				+ MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne));
 		logger.debug("filtres: " + recherche.filtres);
-		
 
 		switch (recherche.cible) {
 		case GRAPHIE:
-			mots = motRepository.findByGraphie(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
+			mots = motRepository.findByGraphie(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne),
+					recherche.filtres);
 			break;
 		case PRONONCIATION:
-			mots = motRepository
-					.findByPrononciation(recherche.getChaîne(), MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
+			mots = motRepository.findByPrononciation(recherche.getChaîne(),
+					MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne), recherche.filtres);
 			break;
 		default:
 			logger.error("Cible invalide pour une recherche de mots: " + recherche.cible);
@@ -269,26 +384,30 @@ public class ListeCtrl extends CorpusCtrl {
 	private void initialiseClavierPhonétique() {
 
 		String[][] apiLettres = { { "i", "ép[i], [î]le, l[y]s, out[il]" }, { "i:", "j[ea]n, tw[ee]d" }, { "y", "[hu]tte, b[u]lle, f[ût]" },
-				{ "u", "[ou]rs, t[ou]ndra, p[ouls]" }, { "u:", "slow f[oo]d, p[oo]l" }, { "e", "(e fermé) [é]rable, p[é]ch[er], ch[ez], hock[ey]" },
-				{ "ø", "(eu fermé) j[eu], heu]r[eux], bl[eu]et" }, { "o", "(o fermé) [au]t[o], c[ô]té, b[eau], sir[op]" },
-				{ "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" }, { "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
-				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" }, { "ɔ", "(o ouvert) [o]béir, [au]t[o]cht[o]ne, p[o]rt" },
-				{ "ə", "(e caduc, ou muet) m[e]ner, crén[e]lage" }, { "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" },
-				{ "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "(a postérieur) là-b[as], p[â]te, cip[a]ille, pyjam[a]" },
+				{ "u", "[ou]rs, t[ou]ndra, p[ouls]" }, { "u:", "slow f[oo]d, p[oo]l" },
+				{ "e", "(e fermé) [é]rable, p[é]ch[er], ch[ez], hock[ey]" }, { "ø", "(eu fermé) j[eu], heu]r[eux], bl[eu]et" },
+				{ "o", "(o fermé) [au]t[o], c[ô]té, b[eau], sir[op]" }, { "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" },
+				{ "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
+				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" },
+				{ "ɔ", "(o ouvert) [o]béir, [au]t[o]cht[o]ne, p[o]rt" }, { "ə", "(e caduc, ou muet) m[e]ner, crén[e]lage" },
+				{ "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" }, { "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" },
+				{ "ɑ", "(a postérieur) là-b[as], p[â]te, cip[a]ille, pyjam[a]" },
 				{ "ɛ̃", "br[in], [im]pair, [in]di[en], cert[ain], fr[ein]" }, { "œ̃", "[un], l[un]di, br[un], parf[um]" },
 				{ "ɔ̃", "m[on]tagnais, [om]ble, p[ont]" }, { "ɑ̃", "[an], [en], j[am]bon, s[ang], t[emps]" },
 
 				{ "p", "[p]aix, sa[p]in, cége[p]" }, { "t", "[t]oit, [th]é, pa[t]in, a[tt]aché, fourche[tt]e" },
 				{ "k", "[c]o[q], [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" },
-				{ "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" }, { "g", "[g]a[g], al[gu]e, [gu]ide" }, { "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" },
-				{ "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" }, { "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" },
-				{ "v", "[v]ille, ca[v]ité, dra[v]e" }, { "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
-				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" }, { "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" },
-				{ "n", "[n]ordet, ante[nn]e, caba[n]e" }, { "ɲ", "bei[gn]e, campa[gn]e" },
+				{ "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" }, { "g", "[g]a[g], al[gu]e, [gu]ide" },
+				{ "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" }, { "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" },
+				{ "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" }, { "v", "[v]ille, ca[v]ité, dra[v]e" },
+				{ "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
+				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" },
+				{ "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" }, { "n", "[n]ordet, ante[nn]e, caba[n]e" }, { "ɲ", "bei[gn]e, campa[gn]e" },
 				{ "ŋ", "big ba[ng], campi[ng], flame[n]co, bi[n]go, pi[ng] po[ng]" },
 				{ "'", "les [h]aches, un [h]uit, la [ou]ananiche, les [u]nes (sans élision ni liaison)" },
 
-				{ "j", "r[i]en, pa[y]er, écureu[il], fi[ll]e, [y]ogourt" }, { "ɥ", "l[u]i, [hu]issier, t[u]ile" }, { "w", "l[ou]er, [ou]ate, [w]att, b[o]is" }, };
+				{ "j", "r[i]en, pa[y]er, écureu[il], fi[ll]e, [y]ogourt" }, { "ɥ", "l[u]i, [hu]issier, t[u]ile" },
+				{ "w", "l[ou]er, [ou]ate, [w]att, b[o]is" }, };
 
 		int idCpt = 1;
 		for (String[] apiLettreInfo : apiLettres) {
@@ -327,7 +446,8 @@ public class ListeCtrl extends CorpusCtrl {
 	private String getHtml(String string) {
 
 		// FIXME faire en une opération!
-		return string.replaceAll("\\[([a-zâàëèéêïîôûüùç]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "").replaceAll("\\]", "");
+		return string.replaceAll("\\[([a-zâàëèéêïîôûüùç]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "")
+				.replaceAll("\\]", "");
 	}
 
 	private void initialiseChamps() {
@@ -535,7 +655,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@Override
 	protected Grid getHistoriqueRecherchesGrid() {
-		return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/listeInclude/listeWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
+		return (Grid) Path
+				.getComponent("//webCorpusPage/webCorpusWindow/listeInclude/listeWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
 	}
 
 	@Override

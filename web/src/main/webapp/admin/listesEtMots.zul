@@ -86,9 +86,10 @@
 					</grid>
 				</groupbox>
 				
- 			    <listbox id="motsListbox" model="@load(vm.mots)" hflex="true" height="430px" mold="paging" pageSize="12" visible="@load(empty vm.mode)">
+ 			    <listbox id="motsListbox" model="@load(vm.mots)" hflex="true" height="400px" mold="paging" pageSize="12" visible="@load(empty vm.mode)">
 					<listhead sizable="true">
 						<listheader label="Id" width="40px" visible="false"/>
+						<listheader label="" width="40px"/>
 						<listheader label="Mot" width="100px" sortDirection="ascending" sort="auto"/>
 						<listheader label="Classe de mot" width="100px"/>
 						<listheader label="Genre" width="50px"/>
@@ -98,6 +99,9 @@
 					  <template name="model" var="item">
 						  <listitem>
 						  	<listcell label="@bind(item.id)" visible="false"/>
+						  	<listcell>
+						  		<checkbox value="@bind(item.sélectionné)" checked="@bind(item.sélectionné)"/>
+						  	</listcell>
 						  	<listcell label="@bind(item.mot)"/>
 						  	<listcell label="@bind(item.catgram)"/>
 						  	<listcell label="@bind(item.genre)"/>
@@ -106,6 +110,9 @@
 						  </listitem>
 					  </template>
 				  </listbox>
+				  <hbox>
+				  		<button id="actionButton" label="Retirer les mots sélectionnés de la la liste" onClick="@command('confirmerSuppressionMots')" visible="@load(empty vm.mode)"/>
+				  </hbox>
 			</vbox>
 
 	<window title="Confirmation" mode="modal" border="normal" width="400px" visible="@load(not empty vm.messageSuppression)">
@@ -120,6 +127,19 @@
 			</hbox>
 		</vbox>
 	</window>
+	
+	<window title="Confirmation" mode="modal" border="normal" width="420px" visible="@load(not empty vm.messageSuppressionMots)">
+		<vbox hflex="true">
+			<hlayout height="50px">
+				<image src="~./zul/img/msgbox/question-btn.png"/>
+				<label value="@load(vm.messageSuppressionMots)"/>
+			</hlayout>
+			<hbox pack="center" hflex="true">
+				<button label="Supprimer" onClick="@command('retirerMotsSélectionnésDeLaListe')"/>
+				<button label="Annuler" onClick="@command('annulerSuppressionMots')"/>
+			</hbox>
+		</vbox>
+	</window>	
 
 		
 		<!-- 

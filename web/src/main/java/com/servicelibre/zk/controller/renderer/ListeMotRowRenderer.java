@@ -2,9 +2,11 @@ package com.servicelibre.zk.controller.renderer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zkoss.spring.security.SecurityUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
@@ -20,15 +22,38 @@ public class ListeMotRowRenderer implements RowRenderer {
 
 	protected ListeCtrl listeCtrl;
 
+	private boolean checkbox;
+
 	public ListeMotRowRenderer(ListeCtrl listeCtrl) {
 		super();
 		this.listeCtrl = listeCtrl;
+		this.checkbox = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
 	}
 
 	@Override
 	public void render(Row row, Object model, int index) throws Exception {
-		Mot mot = (Mot) model;
+		
+		final Mot mot = (Mot) model;
 
+		
+		// Doit-on afficher une checkbox? (mot sélectionnable)
+		if(checkbox) {
+			final Checkbox cb = new Checkbox();
+			cb.setValue(mot.getId());
+			cb.setChecked(mot.sélectionné);
+			
+			cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
+
+				@Override
+				public void onEvent(Event arg0) throws Exception {
+					mot.sélectionné = cb.isChecked();
+				}
+			});
+			
+			row.appendChild(cb);
+		}
+		
+		
 		StringBuilder motPlus = new StringBuilder(mot.getMot());
 
 		Label or = new Label("");
