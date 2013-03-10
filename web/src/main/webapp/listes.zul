@@ -197,7 +197,7 @@
 					</div>
 				</hbox>
 
-				<grid id="motsGrid" mold="paging" pageSize="20"
+				<grid id="motsGrid" mold="paging" pageSize="16"
 					height="550px" width="700px" emptyMessage="Aucun mot trouvé.">
 
 					<columns sizable="true" menupopup="editPopup">

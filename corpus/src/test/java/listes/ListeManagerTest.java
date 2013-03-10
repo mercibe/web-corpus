@@ -123,10 +123,8 @@ public class ListeManagerTest implements ApplicationContextAware
     @Ignore
     public void testContenuDB()
     {
-    	System.out.println("Recherche de la liste ************************* " + listeTest1.getNom());
         Liste liste_test_1 = listeRepo.findByNom(listeTest1.getNom());
         assertEquals(50, liste_test_1.getListeMots().size());
-System.out.println("Recherche de la liste ************************* " + listeTest1.getId());
         liste_test_1 = listeRepo.findOne(listeTest1.getId());
         assertEquals(50, liste_test_1.getListeMots().size());
     }

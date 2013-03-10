@@ -119,7 +119,7 @@ public class Exportation {
 			}
 
 			motElem.addElement("catgram_precision").addText(mot.getCatgramPrésicion());
-			motElem.addElement("islemme").setText(Boolean.toString(mot.isLemme()));
+			motElem.addElement("islemme").setText(Boolean.toString(mot.isEstUnLemme()));
 
 			Element nombreElem = motElem.addElement("nombre");
 			if (mot.getNombre() != null) {

@@ -2,6 +2,7 @@ package com.servicelibre.zk.viewmodel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,9 @@ import org.zkoss.spring.SpringUtil;
 import org.zkoss.zul.ListModelList;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.manager.Filtre;
+import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Corpus;
 import com.servicelibre.entities.corpus.Liste;
@@ -27,6 +31,7 @@ import com.servicelibre.repositories.corpus.CatégorieListeRepository;
 import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom;
 
 public class ListesEtMotsVM {
 
@@ -34,6 +39,8 @@ public class ListesEtMotsVM {
 
 	private Validator nonVideValidator = new NonVideValidator();
 
+	Corpus corpus = ServiceLocator.getCorpusService().getCorpus();
+	
 	ListModelList<Liste> listes;
 	ListModelList<Mot> mots;
 
@@ -48,6 +55,7 @@ public class ListesEtMotsVM {
 	ListeRepository listeRepo;
 	CatégorieListeRepository catégorieListeRepo;
 	ListeMotRepository listeMotRepo;
+	MotRepository motRepo;
 
 
 	String messageSuppression;
@@ -83,6 +91,13 @@ public class ListesEtMotsVM {
 		}
 		return listeMotRepo;
 	}
+	
+	private MotRepository getMotRepo() {
+		if (motRepo == null) {
+			motRepo = (MotRepository) SpringUtil.getBean("motRepository", MotRepository.class);
+		}
+		return motRepo;
+	}
 
 	public Liste getListeSélectionné() {
 		return listeSélectionné;
@@ -107,7 +122,7 @@ public class ListesEtMotsVM {
 		return listeRepo;
 	}
 
-	@NotifyChange({ "listeSélectionné", "listes", "mode", "catégorieCourante" })
+	@NotifyChange({ "listeSélectionné", "listes", "mode", "catégorieCourante", "mots" })
 	@Command
 	public void ajouterListe() {
 		Liste liste = new Liste();
@@ -215,10 +230,20 @@ public class ListesEtMotsVM {
 		this.nonVideValidator = nonVideValidator;
 	}
 	
-	
+	@NotifyChange("mots")
+	@Command
 	public ListModelList<Mot> getMots() {
-		if (mots == null) {
-			mots = new ListModelList<Mot>((Collection<? extends Mot>) getListeRepo().getMotsByListe(listeSélectionné));
+		logger.debug("MISE à JOUR DES MOTS pour la liste {}", listeSélectionné);
+		if (listeSélectionné != null && listeSélectionné.getId() != 0) {
+			
+			FiltreRecherche f = new FiltreRecherche();
+
+			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(), listeSélectionné.getCatégorie().getNom(), new Long[] { listeSélectionné.getId()}));
+			mots = new ListModelList<Mot>((Collection<? extends Mot>)getMotRepo().findByGraphie("", MotRepositoryCustom.Condition.COMMENCE_PAR, f));
+			
+		}
+		else {
+			mots = new ListModelList<Mot>();
 		}
 		return mots;
 	}

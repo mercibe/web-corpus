@@ -229,7 +229,7 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 					modeleMot.setAutreGraphie(autresGraphies[i]);
 				}
 
-				modeleMot.isLemme = mot.equals(lemme);
+				modeleMot.estUnLemme = mot.equals(lemme);
 				
 				mots.add(modeleMot);
 
@@ -252,7 +252,7 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 			modeleMot.setNombre("");
 			modeleMot.setRo(ro);
 
-			modeleMot.isLemme = true;
+			modeleMot.estUnLemme = true;
 			
 			mots.add(modeleMot);
 

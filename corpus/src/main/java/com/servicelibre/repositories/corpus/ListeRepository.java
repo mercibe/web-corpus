@@ -3,6 +3,10 @@ package com.servicelibre.repositories.corpus;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.NamedNativeQuery;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -29,7 +33,7 @@ public interface ListeRepository extends CrudRepository<Liste, Long> {
 	
 	Collection<? extends Liste> findAll(Sort sort);
 	
-	@Query("select lm.mot from ListeMot lm where lm.liste = :liste order by lm.mot.mot")
-	List<Mot> getMotsByListe(@Param("liste") Liste liste);
+	//@Query("select m FROM Mot m JOIN FETCH m.listeMots lm JOIN FETCH m.motPrononciations mp WHERE lm.liste = :liste order by lm.mot.mot")
+	//List<Mot> tutu(long liste_id);
 	
 }

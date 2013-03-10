@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -65,7 +66,7 @@ public class Mot implements Comparable<Mot> {
 	boolean ro;
 
 	@Column
-	public boolean isLemme;
+	public Boolean estUnLemme;
 
 	@Column(nullable = false)
 	String catgram;
@@ -101,7 +102,7 @@ public class Mot implements Comparable<Mot> {
 		super();
 		this.mot = mot;
 		this.lemme = lemme;
-		this.isLemme = isLemme;
+		this.estUnLemme = isLemme;
 		this.catgram = catgram;
 		this.genre = genre;
 		this.nombre = nombre;
@@ -112,7 +113,7 @@ public class Mot implements Comparable<Mot> {
 
 	@Override
 	public String toString() {
-		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", isLemme=" + isLemme + ", prononciations=" + motPrononciations + ", catgram="
+		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", estUnLemme=" + estUnLemme + ", prononciations=" + motPrononciations + ", catgram="
 				+ catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrésicion + ", ro=" + ro + ", note=" + note + "]";
 	}
 
@@ -206,12 +207,12 @@ public class Mot implements Comparable<Mot> {
 		return autreGraphie;
 	}
 
-	public boolean isLemme() {
-		return isLemme;
+	public Boolean isEstUnLemme() {
+		return estUnLemme;
 	}
 
-	public void setLemme(boolean isLemme) {
-		this.isLemme = isLemme;
+	public void setEstUnLemme(Boolean isLemme) {
+		this.estUnLemme = isLemme;
 	}
 
 	@Override

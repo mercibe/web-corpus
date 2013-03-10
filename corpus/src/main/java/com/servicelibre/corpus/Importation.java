@@ -226,13 +226,13 @@ public class Importation {
 
 			if (mot == null) {
 				logger.info("Mot {} introuvable dans la base de données. Ajout du nouveau mot.", mot);
-				mot = new Mot(motString, lemme, Boolean.parseBoolean(motElem.elementText("isLemme")), catgram, genre, "", "", false, "");
+				mot = new Mot(motString, lemme, Boolean.parseBoolean(motElem.elementText("estUnLemme")), catgram, genre, "", "", false, "");
 
 			}
 			else {
 				logger.debug("Le mot {} existe déjà.  Mise à jour des données.", mot);
 			}
-			mot.setLemme(Boolean.parseBoolean(motElem.elementText("isLemme")));
+			mot.setEstUnLemme(Boolean.parseBoolean(motElem.elementText("estUnLemme")));
 			mot.setGenre(genre);
 			mot.setAutreGraphie(motElem.elementText("autreGraphie"));
 			mot.setCatgramPrésicion(motElem.elementText("catgramPrésicion"));

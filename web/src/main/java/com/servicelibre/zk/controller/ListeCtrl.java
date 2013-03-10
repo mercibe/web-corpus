@@ -182,6 +182,9 @@ public class ListeCtrl extends CorpusCtrl {
 		List<Mot> mots = new ArrayList<Mot>();
 
 		logger.info(recherche.getDescriptionChaîne());
+		logger.debug("MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne) = " + MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne));
+		logger.debug("filtres: " + recherche.filtres);
+		
 
 		switch (recherche.cible) {
 		case GRAPHIE:

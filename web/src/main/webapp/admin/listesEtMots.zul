@@ -11,7 +11,7 @@
 		
 		
 			<vbox hflex="true">
-				  <listbox model="@load(vm.listes)" selectedItem="@bind(vm.listeSélectionné)" hflex="true" height="210px">
+				  <listbox model="@load(vm.listes)" selectedItem="@bind(vm.listeSélectionné)" hflex="true" height="210px" onSelect="@command('getMots')">
 					<!--  mold="paging" pageSize="5" -->
 					<listhead sizable="true">
 						<listheader label="Id" width="40px" sort="auto(id)" visible="false"/>
@@ -86,22 +86,26 @@
 					</grid>
 				</groupbox>
 				
- 			    <listbox model="@load(vm.mots)" selectedItem="@bind(vm.motSélectionné)" hflex="true" height="210px">
+ 			    <listbox id="motsListbox" model="@load(vm.mots)" hflex="true" height="430px" mold="paging" pageSize="12" visible="@load(empty vm.mode)">
 					<listhead sizable="true">
-						<listheader label="Id" width="40px" sort="auto(id)" visible="false"/>
-						<listheader label="Mot" width="100px" sort="auto(mot)"/>
+						<listheader label="Id" width="40px" visible="false"/>
+						<listheader label="Mot" width="100px" sortDirection="ascending" sort="auto"/>
+						<listheader label="Classe de mot" width="100px"/>
+						<listheader label="Genre" width="50px"/>
+						<listheader label="Nombre" width="60px"/>
+						<listheader label="Précision" width="70px"/>
 					</listhead>				  
 					  <template name="model" var="item">
 						  <listitem>
 						  	<listcell label="@bind(item.id)" visible="false"/>
 						  	<listcell label="@bind(item.mot)"/>
+						  	<listcell label="@bind(item.catgram)"/>
+						  	<listcell label="@bind(item.genre)"/>
+						  	<listcell label="@bind(item.nombre)"/>
+						  	<listcell label="@bind(item.catgramPrésicion)"/>
 						  </listitem>
 					  </template>
 				  </listbox>
-				
-				
-				
-				
 			</vbox>
 
 	<window title="Confirmation" mode="modal" border="normal" width="400px" visible="@load(not empty vm.messageSuppression)">
