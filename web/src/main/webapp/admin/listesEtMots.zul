@@ -31,7 +31,7 @@
 					  </template>
 				  </listbox>
 				<toolbar>
-					<button label="Ajouter" onClick="@command('ajouterListe')" />
+					<button label="Ajouter" onClick="@command('ajouterListe')" disabled="@load(not empty vm.mode)"/>
 					<button label="Modifier" onClick="@command('modifierListe')" disabled="@load(empty vm.listeSélectionné)"/>
 					<button label="Enregistrer" onClick="@command('enregistrerListe')" disabled="@load(empty vm.mode)" />
 					<!-- affiche la fenêtre de confirmation lorsque l'item sélectionné va être sauver -->
@@ -89,7 +89,9 @@
  			    <listbox id="motsListbox" model="@load(vm.mots)" hflex="true" height="400px" mold="paging" pageSize="12" visible="@load(empty vm.mode)">
 					<listhead sizable="true">
 						<listheader label="Id" width="40px" visible="false"/>
-						<listheader label="" width="40px"/>
+						<listheader label="" width="40px">
+<!-- 								<checkbox id="sélectionnerTout" label="" onCheck="@command('sélectionnerTout')"/> -->
+						</listheader>
 						<listheader label="Mot" width="100px" sortDirection="ascending" sort="auto"/>
 						<listheader label="Classe de mot" width="100px"/>
 						<listheader label="Genre" width="50px"/>

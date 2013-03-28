@@ -247,45 +247,50 @@ public class ListesEtMotsVM {
 		} else {
 			mots = new ListModelList<Mot>();
 		}
-		
-		
+
 		return mots;
 	}
 
-	@NotifyChange({"mots", "messageSuppressionMots"})
+	@NotifyChange({ "mots", "messageSuppressionMots" })
 	@Command
 	@Transactional
 	public void retirerMotsSélectionnésDeLaListe() {
 		logger.debug("Retirer les mots sélectionnés de la liste...");
-		
+
 		listeSélectionné = listeRepo.findOne(listeSélectionné.getId());
 
-		Iterator<Mot> it = mots.iterator();
-		while (it.hasNext()) {
-			Mot next = it.next();
-			if (next.sélectionné) {
-				logger.debug("retirer {}...", next);
-				ListeMot àSupprimer = getListeMotRepo().findByListeAndMot(listeSélectionné, next);
+		for (Mot mot : mots) {
+			if (mot.sélectionné) {
+				logger.debug("retirer {}...", mot);
+				ListeMot àSupprimer = getListeMotRepo().findByListeAndMot(listeSélectionné, mot);
 				listeMotRepo.delete(àSupprimer.getId());
 			}
 		}
-		
+
 		messageSuppressionMots = null;
 
 	}
-	
+
 	@NotifyChange("messageSuppressionMots")
 	@Command
 	public void confirmerSuppressionMots() {
 		messageSuppressionMots = "Voulez-vous vraiment supprimer ces mots de la liste ?";
 	}
-	
+
 	@NotifyChange("messageSuppressionMots")
 	@Command
 	public void annulerSuppressionMots() {
 		messageSuppressionMots = null;
 	}
 
+//	@NotifyChange({ "mots" })
+//	@Command
+//	public void sélectionnerTout() {
+//		
+//		for (Mot mot : mots) {
+//			mot.setSélectionné(true);
+//		}
+//	}
 
 	public void setMots(ListModelList<Mot> mots) {
 		this.mots = mots;
@@ -327,6 +332,4 @@ public class ListesEtMotsVM {
 		this.messageSuppressionMots = messageSuppressionMots;
 	}
 
-	
-	
 }

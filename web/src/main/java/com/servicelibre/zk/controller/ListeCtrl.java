@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
@@ -39,6 +42,7 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Menuitem;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.Window;
 
@@ -101,34 +105,48 @@ public class ListeCtrl extends CorpusCtrl {
 		Comboitem selectedItem = actionCombobox.getSelectedItem();
 		if (selectedItem != null) {
 			String action = selectedItem.getValue();
-			Liste listeSélectionnée = listesCombobox.getSelectedItem().getValue();
 			logger.debug(" exécuter l'action demandée : {}", action);
 
-			ListModel<Mot> mots = motsGrid.getModel();
-			for (int i = 0; i < mots.getSize(); i++) {
-				Mot mot = mots.getElementAt(i);
-				if (mot.sélectionné) {
-					logger.debug("{} => {} - {}", new Object[] { action, mot, listeSélectionnée });
-					ListeMot lm = new ListeMot(mot, listeSélectionnée);
-
-					// FIXME qui si mot s'y trouve déjà ?
-					try {
-						lm = listeMotRepo.save(lm);
-
-						// TODO conserver la liste des mots ajoutés pour présenter un beau rapport final?
-
-					} catch (DataIntegrityViolationException e) {
-						logger.info("Le mot {} est déjà dans la liste {}", mot, listeSélectionnée);
-						// TODO conserver la liste de ces mots pour présenter un beau rapport final?
-					}
-
-					// Mise à jour du modèle
-					mot.sélectionné = false;
-				}
+			if(action.equals("AJOUTER_À_LA_LISTE")) {
+				
+				ajouterMotsSélectionnésÀUneListeExistante();
 			}
-			// Rafraîchir les données (page courante)
-			motsGrid.setModel(mots);
+			else {
+			   Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
+			}
+			
 		}
+	}
+
+	private void ajouterMotsSélectionnésÀUneListeExistante() {
+
+		Comboitem actionItem = listesCombobox.getSelectedItem();
+		Liste listeSélectionnée = actionItem.getValue();
+
+		ListModel<Mot> mots = motsGrid.getModel();
+		for (int i = 0; i < mots.getSize(); i++) {
+			Mot mot = mots.getElementAt(i);
+			if (mot.sélectionné) {
+				logger.debug("{} => {} - {}", new Object[] { "ajouter mots sélectionnés à une liste existante", mot, listeSélectionnée });
+				ListeMot lm = new ListeMot(mot, listeSélectionnée);
+				
+				try {
+					lm = listeMotRepo.save(lm);
+					
+					// TODO conserver la liste des mots ajoutés pour présenter un beau rapport final?
+					
+				} catch (DataIntegrityViolationException e) {
+					// Le mot existe déjà dans cette liste
+					logger.info("Le mot {} est déjà dans la liste {}", mot, listeSélectionnée);
+					// TODO conserver la liste de ces mots pour présenter un beau rapport final?
+				}
+				
+				// Mise à jour du modèle
+				mot.sélectionné = false;
+			}
+		}
+		// Rafraîchir les données (page courante)
+		motsGrid.setModel(mots);
 	}
 
 	public void onSelect$actionCombobox() {
@@ -172,6 +190,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 			// Vide les valeurs actuelles
 			listesCombobox.getChildren().clear();
+			listesCombobox.setText("");
 
 			// Récupération des listes de la catégorie de liste sélectionnée
 			CatégorieListe catégorieSélectionnée = (CatégorieListe) catégoriesListeCombobox.getSelectedItem().getValue();
@@ -454,6 +473,14 @@ public class ListeCtrl extends CorpusCtrl {
 		Page webCorpusPage = desktop.getPage("webCorpusPage");
 		webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
 
+		if(actionCombobox != null)
+		{
+			actionCombobox.setText("Choisir une action...");
+			//actionCombobox.setSelectedIndex(0);
+			//Events.postEvent("onSelect",actionCombobox, null);
+			
+		}
+		
 	}
 
 	private void initialiseMotsGrid() {

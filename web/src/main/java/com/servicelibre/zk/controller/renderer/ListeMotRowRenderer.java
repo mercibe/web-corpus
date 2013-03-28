@@ -28,6 +28,7 @@ public class ListeMotRowRenderer implements RowRenderer {
 		super();
 		this.listeCtrl = listeCtrl;
 		this.checkbox = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
+		logger.debug("this.checkbox = " + this.checkbox);
 	}
 
 	@Override

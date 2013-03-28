@@ -147,7 +147,6 @@
 								<include>system-context.xml</include>
 								<include>webcorpus-servlet-context.xml</include>
 								<include>application-security.xml</include>
-								<include>${pom.webxml.spring-security.users}</include>
 								<include>web.xml</include>
 							</includes>
 						</resource>
@@ -251,6 +250,12 @@
 			<groupId>com.servicelibre</groupId>
 			<artifactId>corpus</artifactId>
 			<version>0.6.0-SNAPSHOT</version>
+			<exclusions>
+			  <exclusion>
+			  		<groupId>org.acegisecurity</groupId>
+					<artifactId>acegi-security</artifactId>
+			  </exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -453,14 +458,12 @@
 			</activation>
 			<properties>
 				<pom.jpa.showSql>true</pom.jpa.showSql>
-				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-memory.xml</pom.webxml.spring-security.users>
 			</properties>
 		</profile>
 		<profile>
 			<id>prod</id>
 			<properties>
 				<pom.jpa.showSql>false</pom.jpa.showSql>
-				<pom.webxml.spring-security.users>/WEB-INF/applicationContext-security-jdbc.xml</pom.webxml.spring-security.users>
 			</properties>
 		</profile>
 	</profiles>

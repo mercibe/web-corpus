@@ -235,11 +235,11 @@
 				<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
 					<hbox>
 						 <combobox id="actionCombobox" readonly="true"
-							width="185px">
+							width="300px">
 							<comboitem label="Ajouter les mots sélectionnés à une liste existante"
 								value="AJOUTER_À_LA_LISTE"/>
-							<comboitem label="Créer un nouvelle liste avec les mots sélectionnés"
-								value="CRÉER_NOUVELLE_LISTE" />								
+<!-- 							<comboitem label="Créer un nouvelle liste avec les mots sélectionnés" -->
+<!-- 								value="CRÉER_NOUVELLE_LISTE" />								 -->
 							<comboitem label="Supprimer les mots sélectionnés"
 								value="SUPPRIMER_LES_MOTS" />
 						</combobox>
@@ -249,7 +249,7 @@
 						</combobox>
 
 						<combobox id="listesCombobox" readonly="true"
-							width="185px" visible="false">
+							width="165px" visible="false">
 						</combobox>
 						
 						<button id="actionButton" label="OK"/>

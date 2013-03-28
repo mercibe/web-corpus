@@ -29,7 +29,7 @@
 					  </template>
 				  </listbox>
 				<toolbar>
-					<button label="Ajouter" onClick="@command('ajouterCatégorieListe')" />
+					<button label="Ajouter" onClick="@command('ajouterCatégorieListe')" disabled="@load(not empty vm.mode)"/>
 					<button label="Modifier" onClick="@command('modifierCatégorieListe')" disabled="@load(empty vm.catégorieListeSélectionné)"/>
 					<button label="Enregistrer" onClick="@command('enregistrerCatégorieListe')" disabled="@load(empty vm.mode)" />
 					<!-- affiche la fenêtre de confirmation lorsque l'item sélectionné va être sauver -->

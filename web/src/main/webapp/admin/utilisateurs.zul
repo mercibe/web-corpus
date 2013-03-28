@@ -31,7 +31,7 @@
 					  </template>
 				  </listbox>
 				<toolbar>
-					<button label="Ajouter" onClick="@command('ajouterUtilisateur')" />
+					<button label="Ajouter" onClick="@command('ajouterUtilisateur')" disabled="@load(not empty vm.mode)"/>
 					<button label="Modifier" onClick="@command('modifierUtilisateur')" disabled="@load(empty vm.sélectionné)"/>
 					<button label="Enregistrer" onClick="@command('enregistrerUtilisateur')" disabled="@load(empty vm.mode)" />
 					<!-- affiche la fenêtre de confirmation lorsque l'item sélectionné va être sauver -->
