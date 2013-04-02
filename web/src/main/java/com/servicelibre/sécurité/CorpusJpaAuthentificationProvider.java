@@ -15,9 +15,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-import com.servicelibre.entities.ui.Utilisateur;
-import com.servicelibre.entities.ui.UtilisateurRôle;
-import com.servicelibre.repositories.ui.UtilisateurRepository;
+import com.servicelibre.entities.corpus.Utilisateur;
+import com.servicelibre.entities.corpus.UtilisateurRôle;
+import com.servicelibre.repositories.corpus.UtilisateurRepository;
 
 public class CorpusJpaAuthentificationProvider implements AuthenticationProvider {
 

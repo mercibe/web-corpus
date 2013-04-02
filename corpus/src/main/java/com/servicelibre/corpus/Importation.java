@@ -235,7 +235,7 @@ public class Importation {
 			mot.setEstUnLemme(Boolean.parseBoolean(motElem.elementText("estUnLemme")));
 			mot.setGenre(genre);
 			mot.setAutreGraphie(motElem.elementText("autreGraphie"));
-			mot.setCatgramPrésicion(motElem.elementText("catgramPrésicion"));
+			mot.setCatgramPrécision(motElem.elementText("catgramPrésicion"));
 			mot.setNombre(motElem.elementText("nombre"));
 			mot.setNote(motElem.elementText("note"));
 			mot.setRo(Boolean.parseBoolean(motElem.elementText("ro")));

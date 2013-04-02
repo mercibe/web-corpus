@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.servicelibre.entities.corpus.Rôle;
+
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "idComposant"))
 public class Onglet {

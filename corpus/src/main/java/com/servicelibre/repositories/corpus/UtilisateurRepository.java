@@ -1,11 +1,11 @@
-package com.servicelibre.repositories.ui;
+package com.servicelibre.repositories.corpus;
 
 import java.util.Collection;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
 
-import com.servicelibre.entities.ui.Utilisateur;
+import com.servicelibre.entities.corpus.Utilisateur;
 
 public interface UtilisateurRepository extends CrudRepository<Utilisateur, Long> {
 

@@ -1,8 +1,8 @@
-package com.servicelibre.repositories.ui;
+package com.servicelibre.repositories.corpus;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.servicelibre.entities.ui.Rôle;
+import com.servicelibre.entities.corpus.Rôle;
 
 public interface RôleRepository extends CrudRepository<Rôle, Long> {
 

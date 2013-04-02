@@ -16,11 +16,11 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zul.ListModelList;
 
-import com.servicelibre.entities.ui.Utilisateur;
-import com.servicelibre.entities.ui.UtilisateurRôle;
-import com.servicelibre.repositories.ui.RôleRepository;
-import com.servicelibre.repositories.ui.UtilisateurRepository;
-import com.servicelibre.repositories.ui.UtilisateurRôleRepository;
+import com.servicelibre.entities.corpus.Utilisateur;
+import com.servicelibre.entities.corpus.UtilisateurRôle;
+import com.servicelibre.repositories.corpus.RôleRepository;
+import com.servicelibre.repositories.corpus.UtilisateurRepository;
+import com.servicelibre.repositories.corpus.UtilisateurRôleRepository;
 
 public class UtilisateurVM {
 

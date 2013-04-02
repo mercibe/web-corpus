@@ -187,7 +187,7 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 
 				Mot modeleMot = new Mot();
 				modeleMot.setNombre("");
-				modeleMot.setCatgramPrésicion("");
+				modeleMot.setCatgramPrécision("");
 				modeleMot.setNote("");
 
 				modeleMot.setMot(mot);
@@ -222,7 +222,7 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 				modeleMot.setCatgram(classe);
 				modeleMot.setGenre(genre);
 				modeleMot.setNombre(nombre);
-				modeleMot.setCatgramPrésicion(catgramPrécision);
+				modeleMot.setCatgramPrécision(catgramPrécision);
 				modeleMot.setRo(ro);
 
 				if (autresGraphies != null && autresGraphies.length > i) {
@@ -241,13 +241,13 @@ public class LigneMtlMotSplitter implements LigneSplitter {
 			Mot modeleMot = new Mot();
 
 			modeleMot.setNombre("");
-			modeleMot.setCatgramPrésicion("");
+			modeleMot.setCatgramPrécision("");
 			modeleMot.setNote("");
 			modeleMot.setMot(mot);
 			modeleMot.setLemme(mot);
 			classe = "v.";
 			modeleMot.setCatgram(classe);
-			modeleMot.setCatgramPrésicion("pron.");
+			modeleMot.setCatgramPrécision("pron.");
 			modeleMot.setGenre("");
 			modeleMot.setNombre("");
 			modeleMot.setRo(ro);

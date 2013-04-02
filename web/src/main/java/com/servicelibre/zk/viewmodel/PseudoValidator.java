@@ -7,8 +7,8 @@ import org.zkoss.bind.ValidationContext;
 import org.zkoss.bind.validator.AbstractValidator;
 import org.zkoss.spring.SpringUtil;
 
-import com.servicelibre.entities.ui.Utilisateur;
-import com.servicelibre.repositories.ui.UtilisateurRepository;
+import com.servicelibre.entities.corpus.Utilisateur;
+import com.servicelibre.repositories.corpus.UtilisateurRepository;
 
 public class PseudoValidator extends AbstractValidator {
 

@@ -92,7 +92,7 @@ public class ListeMotRowRenderer implements RowRenderer {
 		row.appendChild(new Label(mot.getCatgram()));
 		row.appendChild(new Label(mot.getGenre()));
 		row.appendChild(new Label(mot.getNombre()));
-		row.appendChild(new Label(mot.getCatgramPrésicion()));
+		row.appendChild(new Label(mot.getCatgramPrécision()));
 
 		Liste liste = mot.getListePartitionPrimaire();
 		Html html = new Html(liste != null ? liste.getNom() : "");

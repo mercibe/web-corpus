@@ -1,4 +1,4 @@
-package com.servicelibre.entities.ui;
+package com.servicelibre.entities.corpus;
 
 import java.util.List;
 
@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.servicelibre.entities.corpus.UtilisateurRôle;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "nom"))

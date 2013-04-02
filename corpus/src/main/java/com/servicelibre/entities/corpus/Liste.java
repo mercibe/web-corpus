@@ -22,141 +22,152 @@ import javax.persistence.UniqueConstraint;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "catégorie_id", "nom" }))
 public class Liste implements Comparable<Liste> {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
 
-	@Column
-	String nom;
+    @Column
+    String nom;
 
-	@Column
-	String description;
+    @Column
+    String description;
 
-	@Column
-	Integer ordre;
+    @Column
+    Integer ordre;
 
-	// @OneToMany(mappedBy = "listePartitionPrimaire")
-	// private List<Mot> mots = new ArrayList<Mot>();
+    // @OneToMany(mappedBy = "listePartitionPrimaire")
+    // private List<Mot> mots = new ArrayList<Mot>();
 
-	@OneToMany(mappedBy = "liste", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
+    @OneToMany(mappedBy = "liste", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
-	@ManyToOne
-	@JoinColumn(name = "catégorie_id", nullable = false)
-	CatégorieListe catégorie;
+    @ManyToOne
+    @JoinColumn(name = "catégorie_id", nullable = false)
+    CatégorieListe catégorie;
 
-	@Column(nullable = false)
-	Boolean publique = true;
+    @ManyToOne
+    Utilisateur utilisateur;
 
-	@Transient
-	File fichierSource;
+    @Column(nullable = false)
+    Boolean publique = true;
 
-	@Transient
-	String fichierEncoding = "UTF-8";
+    @Transient
+    File fichierSource;
 
-	public Liste() {
-		super();
-	}
+    @Transient
+    String fichierEncoding = "UTF-8";
 
-	public Liste(String nom, String description) {
-		this(nom, description, null);
-	}
+    public Liste() {
+	super();
+    }
 
-	public Liste(String nom, String description, CatégorieListe catégorie) {
-		super();
-		this.nom = nom;
-		this.description = description;
-		this.catégorie = catégorie;
-	}
+    public Liste(String nom, String description) {
+	this(nom, description, null);
+    }
 
-	public Liste(long id) {
-		this.id = id;
-	}
+    public Liste(String nom, String description, CatégorieListe catégorie) {
+	super();
+	this.nom = nom;
+	this.description = description;
+	this.catégorie = catégorie;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public Liste(long id) {
+	this.id = id;
+    }
 
-	public String getNom() {
-		return nom;
-	}
+    public long getId() {
+	return id;
+    }
 
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
+    public String getNom() {
+	return nom;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setNom(String nom) {
+	this.nom = nom;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+	return description;
+    }
 
-	public List<ListeMot> getListeMots() {
-		return listeMots;
-	}
+    public void setDescription(String description) {
+	this.description = description;
+    }
 
-	public void setListeMots(List<ListeMot> listeMots) {
-		this.listeMots = listeMots;
-	}
+    public List<ListeMot> getListeMots() {
+	return listeMots;
+    }
 
-	@Override
-	public String toString() {
-		return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + "]";
-	}
+    public void setListeMots(List<ListeMot> listeMots) {
+	this.listeMots = listeMots;
+    }
 
-	public File getFichierSource() {
-		return fichierSource;
-	}
+    @Override
+    public String toString() {
+	return "Liste [id=" + id + ", nom=" + nom + ", description=" + description + "]";
+    }
 
-	public void setFichierSource(File fichierSource) {
-		this.fichierSource = fichierSource;
-	}
+    public File getFichierSource() {
+	return fichierSource;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public void setFichierSource(File fichierSource) {
+	this.fichierSource = fichierSource;
+    }
 
-	public Integer getOrdre() {
-		return ordre;
-	}
+    public void setId(long id) {
+	this.id = id;
+    }
 
-	public void setOrdre(Integer ordre) {
-		this.ordre = ordre;
-	}
+    public Integer getOrdre() {
+	return ordre;
+    }
 
-	public String getFichierEncoding() {
-		return fichierEncoding;
-	}
+    public void setOrdre(Integer ordre) {
+	this.ordre = ordre;
+    }
 
-	public void setFichierEncoding(String fichierEncoding) {
-		this.fichierEncoding = fichierEncoding;
-	}
+    public String getFichierEncoding() {
+	return fichierEncoding;
+    }
 
-	@Override
-	public int compareTo(Liste o) {
-		return this.getNom().compareTo(o.getNom());
-	}
+    public void setFichierEncoding(String fichierEncoding) {
+	this.fichierEncoding = fichierEncoding;
+    }
 
-	public CatégorieListe getCatégorie() {
-		return catégorie;
-	}
+    @Override
+    public int compareTo(Liste o) {
+	return this.getNom().compareTo(o.getNom());
+    }
 
-	public void setCatégorie(CatégorieListe catégorie) {
-		this.catégorie = catégorie;
-	}
+    public CatégorieListe getCatégorie() {
+	return catégorie;
+    }
 
-	public void setCatégorieListe(CatégorieListe catégorie) {
-		this.catégorie = catégorie;
-	}
+    public void setCatégorie(CatégorieListe catégorie) {
+	this.catégorie = catégorie;
+    }
 
-	public Boolean getPublique() {
-		return publique;
-	}
+    public void setCatégorieListe(CatégorieListe catégorie) {
+	this.catégorie = catégorie;
+    }
 
-	public void setPublique(Boolean publique) {
-		this.publique = publique;
-	}
+    public Boolean getPublique() {
+	return publique;
+    }
+
+    public void setPublique(Boolean publique) {
+	this.publique = publique;
+    }
+
+    public Utilisateur getUtilisateur() {
+	return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+	this.utilisateur = utilisateur;
+    }
 
 }

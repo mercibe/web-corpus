@@ -118,7 +118,7 @@ public class Exportation {
 				autreGraphieElem.addText(mot.getAutreGraphie());
 			}
 
-			motElem.addElement("catgram_precision").addText(mot.getCatgramPrésicion());
+			motElem.addElement("catgram_precision").addText(mot.getCatgramPrécision());
 			motElem.addElement("islemme").setText(Boolean.toString(mot.isEstUnLemme()));
 
 			Element nombreElem = motElem.addElement("nombre");

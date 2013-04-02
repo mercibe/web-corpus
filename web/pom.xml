@@ -19,7 +19,7 @@
 	<description>Application web de gestion de corpus textuels</description>
 
 	<properties>
-		<zk.version>6.5.1.1</zk.version>
+		<zk.version>6.5.2</zk.version>
 <!-- 		<zk.version>5.0.11</zk.version> -->
 	</properties>
 
@@ -362,7 +362,7 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkspring-core</artifactId>
-			<version>3.1.1</version>
+			<version>3.0</version>
 			<exclusions>
 			<!-- http://stackoverflow.com/questions/3126276/splitter-blows-up-on-simple-pattern -->
 				<exclusion>
@@ -422,7 +422,7 @@
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkspring-security</artifactId>
-			<version>3.1.1</version>
+			<version>3.0</version>
 		</dependency>
 
 

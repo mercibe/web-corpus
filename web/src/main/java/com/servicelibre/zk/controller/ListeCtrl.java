@@ -579,7 +579,7 @@ public class ListeCtrl extends CorpusCtrl {
 			csv.append(ajouteGuillemetsCsv(mot.getCatgram())).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(mot.getGenre())).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(mot.getNombre())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrésicion())).append("\n");
+			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrécision())).append("\n");
 			// FIXME
 			// csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
 
@@ -653,7 +653,7 @@ public class ListeCtrl extends CorpusCtrl {
 			cell.setCellValue(createHelper.createRichTextString(mot.getNombre()));
 
 			cell = row.createCell(6);
-			cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrésicion()));
+			cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrécision()));
 
 			// FIXME
 			// cell = row.createCell(7);

@@ -184,7 +184,7 @@
 			<!--   Colonne résultats  -->
 			<!-- ******************** -->
 
-			<vbox height="645px" width="700px">
+			<vbox height="645px" width="700px" style="margin-left:4px;">
 
 				<hbox>
 					<div align="left" width="680px">
@@ -224,7 +224,7 @@
 						<column width="60px" id="colonneNombre"
 							label="Nombre" sort="auto(nombre, lemme)" visible="false" />
 						<column width="70px" id="colonnePrécision"
-							label="Précision" sort="auto(catgramPrésicion, lemme)"
+							label="Précision" sort="auto(catgramPrécision, lemme)"
 							visible="false" />
 						<column id="colonneListe" label="${colonneListeParam.valeur}"
 							sort="auto(listePartitionPrimaire, lemme)" visible="true" />

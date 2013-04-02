@@ -1,4 +1,4 @@
-package com.servicelibre.entities.ui;
+package com.servicelibre.entities.corpus;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
 
 @Entity
 public class UtilisateurRôle {

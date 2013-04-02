@@ -1,0 +1,24 @@
+<?page id="ficheMotPage" title="Web corpus - fiche mot" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="ficheMotWindow" border="none" width="100%" height="100%">
+		<div align="center" style="margin:10px;">
+			<label sclass="titre3"
+				value="Fiche du mot «&#xA0;${requestScope.mot.mot}&#xA0;»" />
+		</div>
+	
+		<div align="center" style="margin:10px;">
+			<textbox value="${requestScope.mot.mot}" readonly="true"/>
+			<textbox value="${requestScope.mot.lemme}" readonly="true"/>
+			<textbox value="${requestScope.mot.catgram}" readonly="true"/>
+			<textbox value="${requestScope.mot.genre}" readonly="true"/>
+			<textbox value="${requestScope.mot.nombre}" readonly="true"/>
+			<textbox value="${requestScope.mot.catgramPrécision}" readonly="true"/>
+			
+			<checkbox label="Lemme" checked="${requestScope.mot.estUnLemme}" disabled="true"/>
+			<checkbox label="RO" checked="${requestScope.mot.ro}" disabled="true"/>
+			<textbox value="${requestScope.mot.autreGraphie}" readonly="true"/>
+			
+			<textbox id="noteTextbox" multiline="true" cols="80" rows="10" disabled="true"/>
+		</div>
+	</window>
+</zk>

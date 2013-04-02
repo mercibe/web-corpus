@@ -97,6 +97,7 @@
 						<listheader label="Genre" width="50px"/>
 						<listheader label="Nombre" width="60px"/>
 						<listheader label="Précision" width="70px"/>
+						<listheader label="" width="150px"/>
 					</listhead>				  
 					  <template name="model" var="item">
 						  <listitem>
@@ -108,12 +109,14 @@
 						  	<listcell label="@bind(item.catgram)"/>
 						  	<listcell label="@bind(item.genre)"/>
 						  	<listcell label="@bind(item.nombre)"/>
-						  	<listcell label="@bind(item.catgramPrésicion)"/>
+						  	<listcell label="@bind(item.catgramPrécision)"/>
+						  	<listcell label="..." onClick="@command('afficherFicheMot', mot=item)"/>
 						  </listitem>
 					  </template>
 				  </listbox>
 				  <hbox>
 				  		<button id="actionButton" label="Retirer les mots sélectionnés de la la liste" onClick="@command('confirmerSuppressionMots')" visible="@load(empty vm.mode)"/>
+				  		<button id="ajouterMotButton" label="Ajouter un nouveau mot" onClick="@command('ajouterMot')" visible="@load(empty vm.mode)"/>
 				  </hbox>
 			</vbox>
 

@@ -7,10 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-
 @Entity
-public class Contexte
-{
+public class Contexte {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int Id;
@@ -20,53 +18,63 @@ public class Contexte
 
     @ManyToOne(optional = false)
     ListeMot typeContexte;
-    
+
     @Column
     String documentId;
-    
+
     @Column
     String note;
 
-	public int getId() {
-		return Id;
-	}
+    @ManyToOne
+    Utilisateur utilisateur;
 
-	public void setId(int id) {
-		Id = id;
-	}
+    public int getId() {
+	return Id;
+    }
 
-	public ListeMot getListeMot() {
-		return listeMot;
-	}
+    public void setId(int id) {
+	Id = id;
+    }
 
-	public void setListeMot(ListeMot listeMot) {
-		this.listeMot = listeMot;
-	}
+    public ListeMot getListeMot() {
+	return listeMot;
+    }
 
-	public ListeMot getTypeContexte() {
-		return typeContexte;
-	}
+    public void setListeMot(ListeMot listeMot) {
+	this.listeMot = listeMot;
+    }
 
-	public void setTypeContexte(ListeMot typeContexte) {
-		this.typeContexte = typeContexte;
-	}
+    public ListeMot getTypeContexte() {
+	return typeContexte;
+    }
 
-	public String getDocumentId() {
-		return documentId;
-	}
+    public void setTypeContexte(ListeMot typeContexte) {
+	this.typeContexte = typeContexte;
+    }
 
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
-	}
+    public String getDocumentId() {
+	return documentId;
+    }
 
-	public String getNote() {
-		return note;
-	}
+    public void setDocumentId(String documentId) {
+	this.documentId = documentId;
+    }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+    public String getNote() {
+	return note;
+    }
 
-    
+    public void setNote(String note) {
+	this.note = note;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
+    }
+
     
 }
