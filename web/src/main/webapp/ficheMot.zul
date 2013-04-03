@@ -7,9 +7,9 @@
 				value="" />
 		</div>
 
-		<div align="center" style="margin:10px;" width="100%">
+		<div align="center" style="margin:10px;margin-left: auto;margin-right: auto;" width="50%">
 
-			<grid hflex="true" width="100%">
+			<grid id="formulaireGrid" hflex="true" width="100%" visible="true">
 				<columns>
 					<column width="120px" />
 					<column width="200px" />
@@ -101,11 +101,13 @@
 				</rows>
 			</grid>
 		
-			<button id="modifierButton" label="Modifier"/>
-			<button id="enregistrerButton" label="Enregistrer les modifications" disabled="true"/>
-			<button id="supprimerButton" label="Supprimer"/>
-			<button id="annulerButton" label="Annuler"/>
-		
 		</div>
+		
+			<div id="bouttonDiv" align="center" style="margin:10px;" width="100%">
+				<button id="modifierButton" label="Modifier"/>
+				<button id="enregistrerButton" label="Enregistrer les modifications" disabled="true"/>
+				<button id="supprimerButton" label="Supprimer"/>
+				<button id="annulerButton" label="Annuler" disabled="true"/>
+			</div>
 	</window>
 </zk>

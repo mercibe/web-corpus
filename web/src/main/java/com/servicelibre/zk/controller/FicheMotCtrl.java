@@ -10,8 +10,11 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Div;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Messagebox.ClickEvent;
 import org.zkoss.zul.Textbox;
@@ -31,6 +34,9 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 
 	Label titreFicheLabel;
 
+	Grid formulaireGrid;
+	Div bouttonDiv;
+	
 	Textbox motTextbox;
 	Textbox lemmeTextbox;
 	Textbox autreGraphieTextbox;
@@ -68,6 +74,8 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 		} else {
 			initialiseValeurs(mot);
 		}
+		
+		formulaireGrid.setVisible(true);
 
 	}
 
@@ -157,6 +165,7 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 		roCheckbox.setDisabled(interdit);
 
 		enregistrerButton.setDisabled(interdit);
+		annulerButton.setDisabled(interdit);
 		modifierButton.setDisabled(!interdit);
 	}
 
@@ -180,10 +189,27 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 
 		mot.setMot(motTextbox.getValue());
 		mot.setLemme(lemmeTextbox.getValue());
-		mot.setCatgram((String) catgramListbox.getSelectedItem().getValue());
-		mot.setGenre((String) genreListbox.getSelectedItem().getValue());
-		mot.setCatgramPrécision((String) catgramPrécisionListbox.getSelectedItem().getValue());
-		mot.setNombre((String) nombreListbox.getSelectedItem().getValue());
+
+		Listitem catgramItem = catgramListbox.getSelectedItem();
+		if (catgramItem != null) {
+			mot.setCatgram((String) catgramItem.getValue());
+		}
+
+		Listitem genreItem = genreListbox.getSelectedItem();
+		if (genreItem != null) {
+			mot.setGenre((String) genreItem.getValue());
+		}
+
+		Listitem catgramPrécisionItem = catgramPrécisionListbox.getSelectedItem();
+		if (catgramPrécisionItem != null) {
+			mot.setCatgramPrécision((String) catgramPrécisionItem.getValue());
+		}
+
+		Listitem nombreItem = nombreListbox.getSelectedItem();
+		if (nombreItem != null) {
+			mot.setNombre((String) nombreItem.getValue());
+		}
+
 		mot.setEstUnLemme(estUnLemmeCheckbox.isChecked());
 		mot.setRo(roCheckbox.isChecked());
 		mot.setAutreGraphie(autreGraphieTextbox.getValue());
@@ -202,25 +228,29 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 
 	public void onClick$supprimerButton() {
 
-		Messagebox.show("Supprimer le mot " + mot.getMot() + " ?", "Suppression d'un mot", new Messagebox.Button[]{Messagebox.Button.OK, Messagebox.Button.CANCEL}, Messagebox.QUESTION,
-				new EventListener<ClickEvent>() {
-					public void onEvent(ClickEvent e) {
-						switch (e.getButton()) {
-						case OK: // OK is clicked
-							logger.debug("Suppression du mot {}", mot);
-							motRepo.delete(mot);
-							// TODO fermer l'onglet (afficher confirmation?)
-							break;
-						case CANCEL:
-							// Annuler
-							logger.debug("Annuler la suppression du mot {}", mot);
-							break;
-						default:
-							// Ignore
-							logger.debug("Ignorer la suppression du mot {}", mot);
-						}
-					}
-				});
+		final String motÀSupprimer = mot.getMot();
+		Messagebox.show("Supprimer le mot " + motÀSupprimer + " ?", "Suppression d'un mot", new Messagebox.Button[] { Messagebox.Button.OK,
+				Messagebox.Button.CANCEL }, Messagebox.QUESTION, new EventListener<ClickEvent>() {
+			public void onEvent(ClickEvent e) {
+				switch (e.getButton()) {
+				case OK: // OK is clicked
+					logger.debug("Suppression du mot {}", mot);
+					motRepo.delete(mot);
+					// TODO fermer l'onglet (afficher confirmation?)
+					formulaireGrid.setVisible(false);
+					titreFicheLabel.setValue("Le mot « " + motÀSupprimer + " » a été supprimé.");
+					bouttonDiv.setVisible(false);
+					break;
+				case CANCEL:
+					// Annuler
+					logger.debug("Annuler la suppression du mot {}", mot);
+					break;
+				default:
+					// Ignore
+					logger.debug("Ignorer la suppression du mot {}", mot);
+				}
+			}
+		});
 
 	}
 

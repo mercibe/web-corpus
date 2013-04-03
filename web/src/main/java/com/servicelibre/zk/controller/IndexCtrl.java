@@ -96,6 +96,13 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	ÉDITION, AFFICHAGE, CRÉATION
     }
 
+    public void fermeOngletMot() {
+    	Tab motTab = (Tab) corpusTabs.getFellowIfAny(MOT_TAB_ID);
+    	if (motTab != null) {
+    		motTab.clone();
+    	}
+    }
+    
     public void ouvreOngletMot(Mode mode, Mot mot) {
 	logger.debug("Ouvrir l'onglet mot en mode {} {}", mode, mot);
 

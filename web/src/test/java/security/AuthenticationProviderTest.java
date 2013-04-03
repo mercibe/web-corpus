@@ -12,12 +12,12 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.servicelibre.entities.ui.Rôle;
-import com.servicelibre.entities.ui.Utilisateur;
-import com.servicelibre.entities.ui.UtilisateurRôle;
-import com.servicelibre.repositories.ui.RôleRepository;
-import com.servicelibre.repositories.ui.UtilisateurRepository;
-import com.servicelibre.repositories.ui.UtilisateurRôleRepository;
+import com.servicelibre.entities.corpus.Rôle;
+import com.servicelibre.entities.corpus.Utilisateur;
+import com.servicelibre.entities.corpus.UtilisateurRôle;
+import com.servicelibre.repositories.corpus.RôleRepository;
+import com.servicelibre.repositories.corpus.UtilisateurRepository;
+import com.servicelibre.repositories.corpus.UtilisateurRôleRepository;
 import com.servicelibre.sécurité.CorpusJpaAuthentificationProvider;
 
 @ContextConfiguration
