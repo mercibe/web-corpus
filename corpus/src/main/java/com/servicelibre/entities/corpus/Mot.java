@@ -30,247 +30,247 @@ import javax.persistence.UniqueConstraint;
  */
 public class Mot implements Comparable<Mot> {
 
-    static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
+	static Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    // Liste primaire
-    @ManyToOne(optional = true)
-    private Liste listePartitionPrimaire;
+	// Liste primaire
+	@ManyToOne(optional = true)
+	private Liste listePartitionPrimaire;
 
-    @OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ListeMot> listeMots = new ArrayList<ListeMot>();
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
-    // Utilisation d'un Set pour permettre le chargement EAGER et éviter
-    // javax.persistence.PersistenceException: org.hibernate.HibernateException:
-    // cannot simultaneously fetch multiple
-    // bags cf.
-    // http://blog.eyallupu.com/2010/06/hibernate-exception-simultaneously.html
-    @OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<MotPrononciation> motPrononciations = new HashSet<MotPrononciation>();
+	// Utilisation d'un Set pour permettre le chargement EAGER et éviter
+	// javax.persistence.PersistenceException: org.hibernate.HibernateException:
+	// cannot simultaneously fetch multiple
+	// bags cf.
+	// http://blog.eyallupu.com/2010/06/hibernate-exception-simultaneously.html
+	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private Set<MotPrononciation> motPrononciations = new HashSet<MotPrononciation>();
 
-    @Column(nullable = false)
-    String mot;
+	@Column(nullable = false)
+	String mot;
 
-    /**
-     * Graphie alternative. Si la graphie du mot est rectifiée (ro = true), ce
-     * champ contient la graphie traditionnelle. Si la graphie du mot est
-     * traditionnelle, ce champ contient la graphie rectifiée.
-     */
-    @Column
-    String autreGraphie;
+	/**
+	 * Graphie alternative. Si la graphie du mot est rectifiée (ro = true), ce
+	 * champ contient la graphie traditionnelle. Si la graphie du mot est
+	 * traditionnelle, ce champ contient la graphie rectifiée.
+	 */
+	@Column
+	String autreGraphie;
 
-    @Column
-    public String lemme;
+	@Column
+	public String lemme;
 
-    @Column
-    boolean ro;
+	@Column
+	Boolean ro;
 
-    @Column
-    public Boolean estUnLemme;
+	@Column
+	public Boolean estUnLemme;
 
-    @Column(nullable = false)
-    String catgram;
+	@Column(nullable = false)
+	String catgram;
 
-    /**
-     * Genre du mot: m., f., épicène
-     */
-    @Column
-    String genre;
+	/**
+	 * Genre du mot: m., f., épicène
+	 */
+	@Column
+	String genre;
 
-    /**
-     * Nombre du mot: sing., pl., inv.
-     */
-    @Column
-    String nombre;
+	/**
+	 * Nombre du mot: sing., pl., inv.
+	 */
+	@Column
+	String nombre;
 
-    /**
-     * Information additionnelles sur la classe du mot (et donc du lemme
-     * également) Transitivité du verbe (tr. dir., tr. indir. ou intr.) Mais
-     * aussi: pron., impers., etc.
-     */
-    @Column(name = "catgram_precision")
-    String catgramPrécision;
+	/**
+	 * Information additionnelles sur la classe du mot (et donc du lemme
+	 * également) Transitivité du verbe (tr. dir., tr. indir. ou intr.) Mais
+	 * aussi: pron., impers., etc.
+	 */
+	@Column(name = "catgram_precision")
+	String catgramPrécision;
 
-    @Column
-    String note;
+	@Column
+	String note;
 
-    @ManyToOne
-    Utilisateur utilisateur;
+	@ManyToOne
+	Utilisateur utilisateur;
 
-    @Transient
-    public boolean sélectionné;
+	@Transient
+	public boolean sélectionné;
 
-    public Mot() {
-	super();
-    }
-
-    public Mot(String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro, String note) {
-	super();
-	this.mot = mot;
-	this.lemme = lemme;
-	this.estUnLemme = isLemme;
-	this.catgram = catgram;
-	this.genre = genre;
-	this.nombre = nombre;
-	this.catgramPrécision = catgramPrécision;
-	this.ro = ro;
-	this.note = note;
-    }
-
-    @Override
-    public String toString() {
-	return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", estUnLemme=" + estUnLemme + ", prononciations=" + motPrononciations + ", catgram="
-		+ catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrécision + ", ro=" + ro + ", note=" + note + "]";
-    }
-
-    public long getId() {
-	return id;
-    }
-
-    public void setId(long id) {
-	this.id = id;
-    }
-
-    public String getMot() {
-	return mot;
-    }
-
-    public void setMot(String mot) {
-	this.mot = mot;
-    }
-
-    public String getCatgram() {
-	return catgram;
-    }
-
-    public void setCatgram(String catgram) {
-	this.catgram = catgram;
-    }
-
-    public String getGenre() {
-	return genre;
-    }
-
-    public void setGenre(String genre) {
-	this.genre = genre;
-    }
-
-    public String getNombre() {
-	return nombre;
-    }
-
-    public void setNombre(String nombre) {
-	this.nombre = nombre;
-    }
-
-    public String getCatgramPrécision() {
-	return catgramPrécision;
-    }
-
-    public void setCatgramPrécision(String catgramPrécision) {
-	this.catgramPrécision = catgramPrécision;
-    }
-
-    public boolean isRo() {
-	return ro;
-    }
-
-    public void setRo(boolean ro) {
-	this.ro = ro;
-    }
-
-    public void setAutreGraphie(String autreGraphie) {
-	this.autreGraphie = autreGraphie;
-    }
-
-    public String getNote() {
-	return note;
-    }
-
-    public void setNote(String note) {
-	this.note = note;
-    }
-
-    public String getPrononciationsString() {
-	StringBuilder prononcs = new StringBuilder();
-	String sep = "";
-	for (MotPrononciation mp : motPrononciations) {
-	    prononcs.append(sep).append("[").append(mp.getPrononciation().prononciation).append("]");
-	    sep = ", ";
+	public Mot() {
+		super();
 	}
-	return prononcs.toString();
-    }
 
-    public String getLemme() {
-	return lemme;
-    }
+	public Mot(String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro, String note) {
+		super();
+		this.mot = mot;
+		this.lemme = lemme;
+		this.estUnLemme = isLemme;
+		this.catgram = catgram;
+		this.genre = genre;
+		this.nombre = nombre;
+		this.catgramPrécision = catgramPrécision;
+		this.ro = ro;
+		this.note = note;
+	}
 
-    public void setLemme(String lemme) {
-	this.lemme = lemme;
-    }
+	@Override
+	public String toString() {
+		return "Mot [id=" + id + ", mot=" + mot + ", lemme=" + lemme + ", estUnLemme=" + estUnLemme + ", prononciations=" + motPrononciations + ", catgram="
+				+ catgram + ", genre=" + genre + ", nombre=" + nombre + ", catgramPrésicion=" + catgramPrécision + ", ro=" + ro + ", note=" + note + "]";
+	}
 
-    public String getAutreGraphie() {
-	return autreGraphie;
-    }
+	public long getId() {
+		return id;
+	}
 
-    public Boolean isEstUnLemme() {
-	return estUnLemme;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public void setEstUnLemme(Boolean isLemme) {
-	this.estUnLemme = isLemme;
-    }
+	public String getMot() {
+		return mot;
+	}
 
-    @Override
-    public int compareTo(Mot autreMot) {
-	return collator.compare(this.lemme, autreMot.lemme);
-    }
+	public void setMot(String mot) {
+		this.mot = mot;
+	}
 
-    public List<ListeMot> getListeMots() {
-	return listeMots;
-    }
+	public String getCatgram() {
+		return catgram;
+	}
 
-    public void setListeMots(List<ListeMot> listeMots) {
-	this.listeMots = listeMots;
-    }
+	public void setCatgram(String catgram) {
+		this.catgram = catgram;
+	}
 
-    public Set<MotPrononciation> getMotPrononciations() {
-	return motPrononciations;
-    }
+	public String getGenre() {
+		return genre;
+	}
 
-    public void setMotPrononciations(Set<MotPrononciation> motPrononciations) {
-	this.motPrononciations = motPrononciations;
-    }
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
 
-    public Liste getListePartitionPrimaire() {
-	return listePartitionPrimaire;
-    }
+	public String getNombre() {
+		return nombre;
+	}
 
-    public void setListePartitionPrimaire(Liste listePartitionPrimaire) {
-	this.listePartitionPrimaire = listePartitionPrimaire;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    public boolean isSélectionné() {
-	return sélectionné;
-    }
+	public String getCatgramPrécision() {
+		return catgramPrécision;
+	}
 
-    public void setSélectionné(boolean sélectionné) {
-	this.sélectionné = sélectionné;
-    }
+	public void setCatgramPrécision(String catgramPrécision) {
+		this.catgramPrécision = catgramPrécision;
+	}
 
-    public Boolean getEstUnLemme() {
-	return estUnLemme;
-    }
+	public Boolean isRo() {
+		return ro==null?false:ro;
+	}
 
-    public Utilisateur getUtilisateur() {
-	return utilisateur;
-    }
+	public void setRo(Boolean ro) {
+		this.ro = ro;
+	}
 
-    public void setUtilisateur(Utilisateur utilisateur) {
-	this.utilisateur = utilisateur;
-    }
+	public void setAutreGraphie(String autreGraphie) {
+		this.autreGraphie = autreGraphie;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public String getPrononciationsString() {
+		StringBuilder prononcs = new StringBuilder();
+		String sep = "";
+		for (MotPrononciation mp : motPrononciations) {
+			prononcs.append(sep).append("[").append(mp.getPrononciation().prononciation).append("]");
+			sep = ", ";
+		}
+		return prononcs.toString();
+	}
+
+	public String getLemme() {
+		return lemme;
+	}
+
+	public void setLemme(String lemme) {
+		this.lemme = lemme;
+	}
+
+	public String getAutreGraphie() {
+		return autreGraphie;
+	}
+
+	public Boolean isEstUnLemme() {
+		return estUnLemme==null?false:estUnLemme;
+	}
+
+	public void setEstUnLemme(Boolean isLemme) {
+		this.estUnLemme = isLemme;
+	}
+
+	@Override
+	public int compareTo(Mot autreMot) {
+		return collator.compare(this.lemme, autreMot.lemme);
+	}
+
+	public List<ListeMot> getListeMots() {
+		return listeMots;
+	}
+
+	public void setListeMots(List<ListeMot> listeMots) {
+		this.listeMots = listeMots;
+	}
+
+	public Set<MotPrononciation> getMotPrononciations() {
+		return motPrononciations;
+	}
+
+	public void setMotPrononciations(Set<MotPrononciation> motPrononciations) {
+		this.motPrononciations = motPrononciations;
+	}
+
+	public Liste getListePartitionPrimaire() {
+		return listePartitionPrimaire;
+	}
+
+	public void setListePartitionPrimaire(Liste listePartitionPrimaire) {
+		this.listePartitionPrimaire = listePartitionPrimaire;
+	}
+
+	public boolean isSélectionné() {
+		return sélectionné;
+	}
+
+	public void setSélectionné(boolean sélectionné) {
+		this.sélectionné = sélectionné;
+	}
+
+	public Boolean getEstUnLemme() {
+		return estUnLemme==null?false:estUnLemme;
+	}
+
+	public Utilisateur getUtilisateur() {
+		return utilisateur;
+	}
+
+	public void setUtilisateur(Utilisateur utilisateur) {
+		this.utilisateur = utilisateur;
+	}
 
 }
