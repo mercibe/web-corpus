@@ -57,7 +57,7 @@
 								<label value="Catégorie (filtre)"/>
 								<listbox model="@load(vm.catégories)" selectedItem="@bind(vm.listeSélectionné.catégorie)" mold="select">
 									<template name="model">
-										  <listitem value="@load(each) @save(vm.listeSélectionné.catégorie,before='enregistrerListe')" label="@load(each.nom)" />
+										  <listitem value="@load(each)"  label="@load(each.nom)" />
 									  </template>
 								</listbox>								
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
