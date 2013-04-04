@@ -109,7 +109,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	// création ou récupération de l'onglet mot
 	Tab motTab = getMotTab(mot);
 	if (mot != null) {
-	    motTab.setLabel(mode + " : " + mot.getMot());
+	    motTab.setLabel("Fiche du mot  « " + mot.getMot() + " »");
 	} else if (mode == Mode.CRÉATION) {
 	    motTab.setLabel("Nouveau mot");
 	}

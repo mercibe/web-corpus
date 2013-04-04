@@ -57,7 +57,7 @@
 
 		<hbox width="100%" height="100%" style="margin-top:20px;">
 
-			<tabbox id="tb" width="295px" height="575px"
+			<tabbox id="tb" width="295px" height="565px"
 				mold="accordion">
 				<tabs>
 					<tab label="Filtres" />
@@ -177,10 +177,14 @@
 				</hbox>
 
 				<grid id="contextesGrid" mold="paging" pageSize="15"
-					height="550px" width="700px"
+					height="540px" width="700px"
 					emptyMessage="Aucun contexte trouvé.">
 
 					<columns sizable="true">
+
+						<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
+							<column width="40px"/>
+						</zk>
 
 						<column hflex="3" id="contexte"
 							label="Contexte" />
@@ -188,6 +192,31 @@
 					</columns>
 					<rows />
 				</grid>
+				
+				<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
+					<hbox>
+						 <combobox id="actionCombobox" readonly="true"
+							width="280px">
+							<comboitem label="Ajouter les contextes sélectionnés au mot"
+								value="AJOUTER_AU_MOT"/>
+						</combobox>
+						
+						<combobox id="motsCombobox" readonly="true"
+							width="120px" visible="true">
+						</combobox>
+
+						<label value="de la liste"/>
+					
+						<combobox id="listesCombobox" readonly="true"
+							width="165px" visible="true">
+						</combobox>
+						
+						<button id="actionButton" label="OK"/>
+					</hbox>
+					
+				</zk>
+				
+				
 			</vbox>
 
 		</hbox>

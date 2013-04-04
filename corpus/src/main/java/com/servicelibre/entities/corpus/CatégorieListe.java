@@ -48,6 +48,9 @@ public class CatégorieListe implements Comparable<CatégorieListe> {
 
     @Column(nullable = false)
     Boolean publique = true;
+    
+    @Column(nullable = false)
+    Boolean partition = false;
 
     public CatégorieListe() {
 	super();
@@ -128,6 +131,14 @@ public class CatégorieListe implements Comparable<CatégorieListe> {
 
     public void setUtilisateur(Utilisateur utilisateur) {
 	this.utilisateur = utilisateur;
+    }
+    
+    public Boolean getPartition() {
+        return partition;
+    }
+
+    public void setPartition(Boolean partition) {
+        this.partition = partition;
     }
 
     @Override

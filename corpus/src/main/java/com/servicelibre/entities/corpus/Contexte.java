@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -12,12 +13,16 @@ public class Contexte {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int Id;
+    
+    @Lob 
+    @Column
+    String contexte;
 
     @ManyToOne(optional = false)
     ListeMot listeMot;
 
     @ManyToOne(optional = false)
-    ListeMot typeContexte;
+    TypeContexte typeContexte;
 
     @Column
     String documentId;
@@ -44,11 +49,11 @@ public class Contexte {
 	this.listeMot = listeMot;
     }
 
-    public ListeMot getTypeContexte() {
+    public TypeContexte getTypeContexte() {
 	return typeContexte;
     }
 
-    public void setTypeContexte(ListeMot typeContexte) {
+    public void setTypeContexte(TypeContexte typeContexte) {
 	this.typeContexte = typeContexte;
     }
 

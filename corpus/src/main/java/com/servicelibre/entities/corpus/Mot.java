@@ -36,7 +36,7 @@ public class Mot implements Comparable<Mot> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	// Liste primaire
+	// Liste primaire (normalement une partition)
 	@ManyToOne(optional = true)
 	private Liste listePartitionPrimaire;
 

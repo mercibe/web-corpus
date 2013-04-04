@@ -15,9 +15,10 @@
 					<!--  mold="paging" pageSize="5" -->
 					<listhead sizable="true">
 						<listheader label="Id" width="40px" sort="auto(id)" visible="false"/>
-						<listheader label="Ordre" width="40px" sort="auto(ordre)"/>
+						<listheader label="Ordre" width="45px" align="center" sort="auto(ordre)"/>
 						<listheader label="Nom" align="center" width="240px" sort="auto(nom)"/>
 						<listheader label="Description" align="center" width="300px" sort="auto(description)"/>
+						<listheader label="Partition" align="center"  sort="auto(partition)"/>
 					</listhead>				  
 					  <template name="model" var="item">
 						  <listitem>
@@ -25,6 +26,7 @@
 						  	<listcell label="@bind(item.ordre)"/>
 						  	<listcell label="@bind(item.nom)"/>
 						  	<listcell label="@bind(item.description)"/>
+						  	<listcell><checkbox checked="@bind(item.partition)" disabled="true"/> </listcell>
 						  </listitem>
 					  </template>
 				  </listbox>
@@ -66,6 +68,12 @@
 							<row>
 								<label value="Description"/>
 								<textbox value="@load(vm.catégorieListeSélectionné.description) @save(vm.catégorieListeSélectionné.description,before='enregistrerCatégorieListe') @validator(vm.nonVideValidator, nomChamp='la description')" width="100%"/>
+								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
+							</row>
+							
+							<row>
+								<label value="Partition"/>
+								<checkbox checked="@load(vm.catégorieListeSélectionné.partition) @save(vm.catégorieListeSélectionné.partition,before='enregistrerCatégorieListe')" width="100%"/>
 								<label value="@bind(vmsgs[self.previousSibling])" style="color:red"/>
 							</row>
 

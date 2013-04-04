@@ -10,6 +10,7 @@ public class Contexte {
 	public String texteAvant;
 	public String mot;
 	public String texteAprès;
+	public boolean sélectionné;
 	private List<Metadata> docMétadonnées = new ArrayList<Metadata>();
 	public String id;
 	private Contexte contexteSource;

@@ -33,10 +33,13 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.A;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.ListModelList;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
@@ -86,6 +89,33 @@ public class ContexteCtrl extends CorpusCtrl {
 	private ContexteSet contexteSetCourant;
 
 	private boolean phraseComplète;
+	
+	Combobox actionCombobox;
+	Button actionButton;
+	
+	public void onClick$actionButton() {
+		Comboitem selectedItem = actionCombobox.getSelectedItem();
+		if (selectedItem != null) {
+			String action = selectedItem.getValue();
+			logger.debug(" exécuter l'action demandée : {}", action);
+
+			if(action.equals("AJOUTER_AU_MOT")) {
+				
+				ajouterContextesSélectionnésAuMotDUneListeExistante();
+			}
+			else {
+			   Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
+			}
+			
+		}
+	}
+
+
+	private void ajouterContextesSélectionnésAuMotDUneListeExistante() {
+	    Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
+	    
+	}
+
 
 	public void onOK$liste(Event event) {
 		chercheEtAffiche(true);
@@ -333,7 +363,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	public Contexte getContexteInitial(Contexte contexte) {
 
 		if (phraseComplète) {
-			contexte = phraseService.getContextePhraseComplète(contexte);
+		    contexte = phraseService.getContextePhraseComplète(contexte);
 		}
 		return contexte;
 	}

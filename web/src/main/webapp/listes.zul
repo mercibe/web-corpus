@@ -228,6 +228,11 @@
 							visible="false" />
 						<column id="colonneListe" label="${colonneListeParam.valeur}"
 							sort="auto(listePartitionPrimaire, lemme)" visible="true" />
+						
+						<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
+							<column id="colonneFicheMot" label="" visible="true" />
+						</zk>
+						
 					</columns>
 					<rows />
 				</grid>
