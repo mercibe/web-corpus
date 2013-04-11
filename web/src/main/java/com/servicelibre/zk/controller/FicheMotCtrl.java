@@ -132,7 +132,12 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 	// On vide les partitions actuelles
 	partitionListbox.getItems().clear();
 
-	Long motPartitionId = mot.getListePartitionPrimaire().getId();
+	Liste listePartitionPrimaire = mot.getListePartitionPrimaire();
+	Long motPartitionId = 0L;
+	if(listePartitionPrimaire != null) {	    
+	    motPartitionId = listePartitionPrimaire.getId();
+	}
+	
 	List<Liste> partitions = listeRepo.getPartitions();
 
 	// ajout d'un item vide pour ne pas forcer la saisie d'une partition
@@ -259,7 +264,7 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 	    Liste nouvelleListePrimaire = (Liste) partitionItem.getValue();
 
 	    // Si différente de l'actuelle (nouvelle), ajuster ListeMot
-	    if (ancienneListePrimaire.getId() != nouvelleListePrimaire.getId()) {
+	    if (ancienneListePrimaire == null || ancienneListePrimaire.getId() != nouvelleListePrimaire.getId()) {
 		mot.setListePartitionPrimaire(nouvelleListePrimaire);
 
 		// Retire le mot de l'ancienne liste et ajoute dans la nouvelle

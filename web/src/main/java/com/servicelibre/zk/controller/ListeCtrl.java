@@ -47,6 +47,7 @@ import org.zkoss.zul.Popup;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.ListeMot;
@@ -628,9 +629,15 @@ public class ListeCtrl extends CorpusCtrl {
 		// Récupération des données / lignes
 		@SuppressWarnings("unchecked")
 		List<Mot> mots = (List<Mot>) motsGrid.getModel();
-
+		boolean exportationPartielle = false;
 		for (Mot mot : mots) {
-
+		    if(mot.sélectionné) {
+			exportationPartielle = true;
+			break;
+		    }
+		}
+		for (Mot mot : mots) {
+		    if(!exportationPartielle || mot.sélectionné) {	
 			row = sheet.createRow(rowCpt++);
 
 			org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
@@ -660,7 +667,7 @@ public class ListeCtrl extends CorpusCtrl {
 			// Liste liste = motRepository.findListePrimaire(mot);
 			// cell.setCellValue(createHelper.createRichTextString(liste != null ? liste.getNom() : ""));
 			// cell.setCellValue(createHelper.createRichTextString(""));
-
+		    }
 		}
 
 		for (int i = 0; i <= colCpt; i++) {

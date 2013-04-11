@@ -659,12 +659,21 @@ public class ContexteCtrl extends CorpusCtrl {
 		// Récupération des données
 		@SuppressWarnings("unchecked")
 		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
+		boolean exportationPartielle = false;
 		for (Contexte contexte : contextes) {
+		    if(contexte.sélectionné) {
+			exportationPartielle = true;
+			break;
+		    }
+		}
+		for (Contexte contexte : contextes) {
+		    if(!exportationPartielle || contexte.sélectionné) {			
 			Contexte contextePhraseComplète = getContexteInitial(contexte);
 			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.getPhrase().phrase)).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAvant)).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.mot)).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAprès)).append("\n");
+		    }
 
 		}
 		Filedownload.save(csv.toString().getBytes(), "text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
@@ -712,8 +721,16 @@ public class ContexteCtrl extends CorpusCtrl {
 		// Récupération des données
 		@SuppressWarnings("unchecked")
 		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
+		
+		boolean exportationPartielle = false;
 		for (Contexte contexte : contextes) {
-
+		    if(contexte.sélectionné) {
+			exportationPartielle = true;
+			break;
+		    }
+		}
+		for (Contexte contexte : contextes) {
+		    if(!exportationPartielle || contexte.sélectionné) {	
 			Contexte contextePhraseComplète = getContexteInitial(contexte);
 
 			row = sheet.createRow(rowCpt++);
@@ -733,6 +750,7 @@ public class ContexteCtrl extends CorpusCtrl {
 			// cell = row.createCell(3);
 			// cell.setCellStyle(ligneCellStyle);
 			// cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAprès));
+		    }
 		}
 
 		for (int i = 0; i <= colCpt; i++) {
