@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -23,7 +21,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.event.Event;
@@ -47,7 +44,6 @@ import org.zkoss.zul.Popup;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
-import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.ListeMot;
@@ -108,14 +104,13 @@ public class ListeCtrl extends CorpusCtrl {
 			String action = selectedItem.getValue();
 			logger.debug(" exécuter l'action demandée : {}", action);
 
-			if(action.equals("AJOUTER_À_LA_LISTE")) {
-				
+			if (action.equals("AJOUTER_À_LA_LISTE")) {
+
 				ajouterMotsSélectionnésÀUneListeExistante();
+			} else {
+				Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
 			}
-			else {
-			   Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
-			}
-			
+
 		}
 	}
 
@@ -130,18 +125,18 @@ public class ListeCtrl extends CorpusCtrl {
 			if (mot.sélectionné) {
 				logger.debug("{} => {} - {}", new Object[] { "ajouter mots sélectionnés à une liste existante", mot, listeSélectionnée });
 				ListeMot lm = new ListeMot(mot, listeSélectionnée);
-				
+
 				try {
 					lm = listeMotRepo.save(lm);
-					
+
 					// TODO conserver la liste des mots ajoutés pour présenter un beau rapport final?
-					
+
 				} catch (DataIntegrityViolationException e) {
 					// Le mot existe déjà dans cette liste
 					logger.info("Le mot {} est déjà dans la liste {}", mot, listeSélectionnée);
 					// TODO conserver la liste de ces mots pour présenter un beau rapport final?
 				}
-				
+
 				// Mise à jour du modèle
 				mot.sélectionné = false;
 			}
@@ -474,14 +469,13 @@ public class ListeCtrl extends CorpusCtrl {
 		Page webCorpusPage = desktop.getPage("webCorpusPage");
 		webCorpusWindow = (Window) webCorpusPage.getFellow("webCorpusWindow");
 
-		if(actionCombobox != null)
-		{
+		if (actionCombobox != null) {
 			actionCombobox.setText("Choisir une action...");
-			//actionCombobox.setSelectedIndex(0);
-			//Events.postEvent("onSelect",actionCombobox, null);
-			
+			// actionCombobox.setSelectedIndex(0);
+			// Events.postEvent("onSelect",actionCombobox, null);
+
 		}
-		
+
 	}
 
 	private void initialiseMotsGrid() {
@@ -621,53 +615,62 @@ public class ListeCtrl extends CorpusCtrl {
 		org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
 		for (Object column : motsGrid.getColumns().getChildren()) {
 			String label = ((Column) column).getLabel();
-			org.apache.poi.ss.usermodel.Cell cell = row.createCell(colCpt++);
-			cell.setCellStyle(entêteCellStyle);
-			cell.setCellValue(createHelper.createRichTextString(label));
+			if (label != null && !label.isEmpty()) {
+				org.apache.poi.ss.usermodel.Cell cell = row.createCell(colCpt++);
+				cell.setCellStyle(entêteCellStyle);
+				cell.setCellValue(createHelper.createRichTextString(label));
+			}
 		}
 
 		// Récupération des données / lignes
 		@SuppressWarnings("unchecked")
 		List<Mot> mots = (List<Mot>) motsGrid.getModel();
 		boolean exportationPartielle = false;
+		// Si un mot au moins sélectionné => sélection partielle
 		for (Mot mot : mots) {
-		    if(mot.sélectionné) {
-			exportationPartielle = true;
-			break;
-		    }
+			if (mot.sélectionné) {
+				exportationPartielle = true;
+				break;
+			}
 		}
 		for (Mot mot : mots) {
-		    if(!exportationPartielle || mot.sélectionné) {	
-			row = sheet.createRow(rowCpt++);
+			if (!exportationPartielle || mot.sélectionné) {
+				row = sheet.createRow(rowCpt++);
 
-			org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
-			cell.setCellValue(createHelper.createRichTextString(mot.getMot()));
+				org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
+				cell.setCellValue(createHelper.createRichTextString(mot.getMot()));
 
-			cell = row.createCell(1);
-			cell.setCellStyle(apiCellsStyle);
-			cell.setCellValue(createHelper.createRichTextString(mot.getPrononciationsString()));
+				cell = row.createCell(1);
+				cell.setCellStyle(apiCellsStyle);
+				cell.setCellValue(createHelper.createRichTextString(mot.getPrononciationsString() != null ? mot.getPrononciationsString()
+						: ""));
 
-			cell = row.createCell(2);
-			cell.setCellValue(createHelper.createRichTextString(mot.isRo() ? "*" : ""));
+				cell = row.createCell(2);
+				cell.setCellValue(createHelper.createRichTextString(mot.isRo() ? "*" : ""));
 
-			cell = row.createCell(3);
-			cell.setCellValue(createHelper.createRichTextString(mot.getCatgram()));
+				cell = row.createCell(3);
+				cell.setCellValue(createHelper.createRichTextString(mot.getCatgram()));
 
-			cell = row.createCell(4);
-			cell.setCellValue(createHelper.createRichTextString(mot.getGenre()));
+				cell = row.createCell(4);
+				cell.setCellValue(createHelper.createRichTextString(mot.getGenre() != null ? mot.getGenre() : ""));
 
-			cell = row.createCell(5);
-			cell.setCellValue(createHelper.createRichTextString(mot.getNombre()));
+				cell = row.createCell(5);
+				cell.setCellValue(createHelper.createRichTextString(mot.getNombre() != null ? mot.getNombre() : ""));
 
-			cell = row.createCell(6);
-			cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrécision()));
+				cell = row.createCell(6);
+				cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrécision() != null ? mot.getCatgramPrécision() : ""));
 
-			// FIXME
-			// cell = row.createCell(7);
-			// Liste liste = motRepository.findListePrimaire(mot);
-			// cell.setCellValue(createHelper.createRichTextString(liste != null ? liste.getNom() : ""));
-			// cell.setCellValue(createHelper.createRichTextString(""));
-		    }
+				cell = row.createCell(7);
+				Liste liste = mot.getListePartitionPrimaire();
+				String nomListePartitionPrimaire = "";
+				if (liste != null) {
+					// TODO nettoyer HTML du nom de la liste (première étape: supprimer toutes les balises)
+					// http://apache-poi.1045710.n5.nabble.com/SHow-HTML-text-in-one-of-the-excel-cell-td2312138.html
+					// http://jericho.htmlparser.net/docs/index.html
+					nomListePartitionPrimaire = liste.getNom().replaceAll("<(.|\n)*?>", "");
+				}
+				cell.setCellValue(createHelper.createRichTextString(nomListePartitionPrimaire != null ? nomListePartitionPrimaire : ""));
+			}
 		}
 
 		for (int i = 0; i <= colCpt; i++) {
