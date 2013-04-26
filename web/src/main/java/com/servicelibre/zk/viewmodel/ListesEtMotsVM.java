@@ -1,7 +1,16 @@
 package com.servicelibre.zk.viewmodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,7 +24,10 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Path;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
@@ -286,6 +298,73 @@ public class ListesEtMotsVM {
     @Command
     public void ajouterMot() {
 	 getIndexCtrl().ouvreOngletMot(Mode.CRÉATION, null);
+    }
+    
+    @Command
+    @Transactional
+    public void importerMots(@BindingParam("ev") UploadEvent v) {
+    	logger.debug("Événement {} ", v);
+    	logger.debug("Média {}", v.getMedia());
+    	
+    	Media fichierXls = v.getMedia();
+    	
+    	// TODO valider qu'il s'agit bien d'un fichier XLS
+    	// Lecture du fichier
+
+    	// Supprimer tous les mots de la liste actuelle
+    	getListeMotRepo().deleteByListe(listeSélectionné);
+    	
+    	try {
+    		
+			Workbook wb = new HSSFWorkbook(new ByteArrayInputStream(fichierXls.getByteData()));
+			
+			Sheet sheet = wb.getSheet("mots");
+			
+			int rowIdx = 1;
+			int motGraphieIdx = 0;
+			int catgramIdx = 3;
+			
+			Row row = sheet.getRow(rowIdx);
+			Cell cell = row.getCell(motGraphieIdx);
+			String motÀImporter = cell==null?"":cell.getStringCellValue();
+			
+			while(!motÀImporter.trim().isEmpty()) {
+				
+				String catgram = row.getCell(catgramIdx).getStringCellValue();
+				
+				// Retrouver le mot
+				// FIXME tenir compte également du genre au besoin
+				List<Mot> mots = motRepo.findByMotAndCatgram(motÀImporter, catgram);
+				if(mots.size() == 1) {
+					// TODO Lier ce mot à la liste courante
+					logger.debug("Le mot {} va être ajouté à la liste {}", motÀImporter, listeSélectionné.getId());
+					ListeMot lm = new ListeMot(mots.get(0), listeSélectionné);
+					listeMotRepo.save(lm);
+				}
+				else if(mots.size() > 1) {
+					// erreur / ambiguité.  Quel mot associer à la liste?
+					// TODO conserver le ou les mots problématiques et afficher un rapport à la fin de l'importation
+					logger.error("Le mot {} correspond à plusieurs mot dans la BD dans la BD", motÀImporter, mots);
+				}
+				else {
+					// TODO créer le mot???
+					logger.warn("Le mot {} est introuvable dans la BD", motÀImporter);
+				}
+				
+				// Associer à la liste courante
+				
+				rowIdx++;
+				row = sheet.getRow(rowIdx);
+				cell = row.getCell(motGraphieIdx);
+				motÀImporter = cell==null?"":cell.getStringCellValue();
+			}
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     }
     
     @Command

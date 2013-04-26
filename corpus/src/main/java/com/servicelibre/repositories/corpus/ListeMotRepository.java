@@ -2,7 +2,9 @@ package com.servicelibre.repositories.corpus;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.entities.corpus.Liste;
@@ -17,5 +19,8 @@ public interface ListeMotRepository extends CrudRepository<ListeMot, Long> {
 	ListeMot findByListeAndMot(Liste liste, Mot mot);
 	
 	List<ListeMot> findAll();
+	
+	@Query("delete from ListeMot lm where lm.liste=:liste")
+	void deleteByListe(@Param("liste")Liste liste);
 	
 }

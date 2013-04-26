@@ -117,6 +117,7 @@
 				  <hbox>
 				  		<button id="actionButton" label="Retirer les mots sélectionnés de la liste" onClick="@command('confirmerSuppressionMots')" visible="@load(empty vm.mode)"/>
 				  		<button id="ajouterMotButton" label="Ajouter un nouveau mot" onClick="@command('ajouterMot')" visible="@load(empty vm.mode)"/>
+				  		<button id="importerMotsButton" upload="true,maxsize=2048" label="Importer des mots" onUpload="@command('importerMots', ev=event)" visible="@load(empty vm.mode)"/>
 				  </hbox>
 			</vbox>
 
