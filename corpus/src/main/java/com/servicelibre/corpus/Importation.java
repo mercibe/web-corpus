@@ -1,7 +1,9 @@
 package com.servicelibre.corpus;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.dom4j.Document;
@@ -12,6 +14,7 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import com.beust.jcommander.JCommander;
 import com.servicelibre.entities.corpus.CatégorieListe;
@@ -33,6 +36,10 @@ public class Importation {
 
 	private static Logger logger = LoggerFactory.getLogger(Importation.class);
 
+	public enum Mode {
+		MAJ, REMPLACE_TOUT
+	}
+
 	ApplicationContext context;
 
 	CorpusRepository corpusRepo;
@@ -48,7 +55,7 @@ public class Importation {
 		super();
 		setContext(new ClassPathXmlApplicationContext(new String[] { "application-context.xml", "system-context.xml" }));
 	}
-	
+
 	public Importation(ApplicationContext context) {
 		setContext(context);
 	}
@@ -196,11 +203,18 @@ public class Importation {
 		return corpus;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void importeMots(File motsFichier) {
+	/**
+	 * Importe une liste de mots
+	 * Note: toutes les listes primaires spécifiées éventuellement pour les mots doivent exister dans le système avant d'exécuter l'importation.
+	 * @param motsFichier
+	 * @param mode
+	 */
+	public void importeMots(File motsFichier, Mode mode) {
 
 		// Charger le document XML
 		SAXReader reader = new SAXReader();
+
+		Map<String, Liste> cacheListePartitionPrimaire = new HashMap<String, Liste>(10);
 
 		Document document = DocumentHelper.createDocument();
 		try {
@@ -211,43 +225,94 @@ public class Importation {
 			return;
 		}
 
-		logger.info("Démarrage de l'importation des mots({})");
+		if (mode == Mode.REMPLACE_TOUT) {
+			motRepo.deleteAll();
+		}
 
 		// Vérifier l'existence du mot. Si existe: mettre à jour les autres champs. Sinon, ajouter
 		List<Element> motElems = (List<Element>) document.selectNodes("/mots/mot");
+		int nbMotsÀImporter = motElems.size();
+		int nbMotsImportés = 0;
+
+		logger.info("Démarrage de l'importation des mots({})", nbMotsÀImporter);
+
 		for (Element motElem : motElems) {
 
-			// Recherche le mot dans la DB
-			String lemme = motElem.elementText("lemme");
-			String motString = motElem.elementText("mot");
+			String lemme = motElem.elementText("lemmeGraphie");
+			String motString = motElem.elementText("motGraphie");
 			String catgram = motElem.elementText("catgram");
 			String genre = motElem.elementText("genre");
-			Mot mot = motRepo.findByLemmeAndMotAndCatgramAndGenre(lemme, motString, catgram, genre);
+			Mot mot = null;
 
-			if (mot == null) {
-				logger.info("Mot {} introuvable dans la base de données. Ajout du nouveau mot.", mot);
+			if (mode == Mode.MAJ) {
+				// Recherche le mot dans la DB
+				mot = motRepo.findByLemmeAndMotAndCatgramAndGenre(lemme, motString, catgram, genre);
+
+				if (mot == null) {
+					logger.info("Mot {} introuvable dans la base de données. Ajout du nouveau mot.", mot);
+					mot = new Mot(motString, lemme, Boolean.parseBoolean(motElem.elementText("estUnLemme")), catgram, genre, "", "", false, "");
+
+				} else {
+					logger.debug("Le mot {} existe déjà.  Mise à jour des données.", mot);
+				}
+			} else {
 				mot = new Mot(motString, lemme, Boolean.parseBoolean(motElem.elementText("estUnLemme")), catgram, genre, "", "", false, "");
+			}
 
-			}
-			else {
-				logger.debug("Le mot {} existe déjà.  Mise à jour des données.", mot);
-			}
+			mot.setCatgramAffichage(motElem.elementText("catgramAffichage"));
 			mot.setEstUnLemme(Boolean.parseBoolean(motElem.elementText("estUnLemme")));
 			mot.setGenre(genre);
-			mot.setAutreGraphie(motElem.elementText("autreGraphie"));
+			mot.setAutreGraphie(motElem.elementText("motAutreGraphie"));
 			mot.setCatgramPrécision(motElem.elementText("catgramPrésicion"));
+			mot.setMotNote(motElem.elementText("motNote"));
+			mot.setLemmeNote(motElem.elementText("lemmeNote"));
 			mot.setNombre(motElem.elementText("nombre"));
 			mot.setNote(motElem.elementText("note"));
-			mot.setRo(Boolean.parseBoolean(motElem.elementText("ro")));
+			mot.setRo(Boolean.parseBoolean(motElem.elementText("estGraphieRO")));
 
-			mot = motRepo.save(mot);
-			
+			// Rechercher la liste de partition primaire éventuelle (+ mise en cache)
+			String nomPartition = motElem.elementText("partition");
+			if (nomPartition != null) {
+				// est-elle en cache?
+				Liste listePartitionPrimaire = cacheListePartitionPrimaire.get(nomPartition);
+				if (listePartitionPrimaire == null) {
+					listePartitionPrimaire = listeRepo.findByNom(nomPartition);
+					
+					// TODO: la créer si elle n'existe pas?  Créer éventuellemet une catégorie de liste de partitionement? Quid sélecion du corpus?
+					cacheListePartitionPrimaire.put(nomPartition, listePartitionPrimaire);
+				}
+				mot.setListePartitionPrimaire(listePartitionPrimaire);
+			}
+
+			try {
+				mot = motRepo.save(mot);
+				
+
+				if (mot.getListePartitionPrimaire() != null) {
+					listeMotRepo.save(new ListeMot(mot, mot.getListePartitionPrimaire()));
+				}
+
+				nbMotsImportés++;
+				if (nbMotsImportés % 100 == 0) {
+					logger.info("Progression de l'importation: {}/{}", nbMotsImportés, nbMotsÀImporter);
+				}
+				
+			} catch (DataIntegrityViolationException e) {
+				logger.error("Le mot {} existe déjà!", mot.getMot());
+			}
+
 
 			// Ajout des prononciations + lien avec mot (motPrononciation)
 
 		}
 
-		logger.info("Fin de l'importation des mots");
+		logger.info("Fin de l'importation des {} mots.", nbMotsÀImporter);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void importeMots(File motsFichier) {
+		importeMots(motsFichier, Mode.MAJ);
 	}
 
 	private void importePrononciations(File prononciationsFichier) {
@@ -275,7 +340,7 @@ public class Importation {
 		}
 
 		if (cmd.motsFichier != null) {
-			importation.importeMots(cmd.motsFichier);
+			importation.importeMots(cmd.motsFichier, cmd.modeImportation);
 		}
 
 		if (cmd.prononciationsFichier != null) {
@@ -289,9 +354,9 @@ public class Importation {
 	}
 
 	public void setContext(ApplicationContext context) {
-		
+
 		this.context = context;
-		
+
 		corpusRepo = (CorpusRepository) context.getBean("corpusRepository");
 		catégorieListeRepo = (CatégorieListeRepository) context.getBean("catégorieListeRepository");
 		listeRepo = (ListeRepository) context.getBean("listeRepository");
@@ -301,7 +366,7 @@ public class Importation {
 
 		motRepo = (MotRepository) context.getBean("motRepository");
 		prononciationRepo = (PrononciationRepository) context.getBean("prononciationRepository");
-		
+
 	}
 
 	public CorpusRepository getCorpusRepo() {
@@ -368,6 +433,4 @@ public class Importation {
 		this.prononciationRepo = prononciationRepo;
 	}
 
-	
-	
 }

@@ -108,30 +108,47 @@ public class Exportation {
 
 			Element motElem = root.addElement("mot");
 
-			motElem.addElement("lemme").addText(mot.getLemme());
-			motElem.addElement("mot").addText(mot.getMot());
-			motElem.addElement("catgram").addText(mot.getCatgram());
-			motElem.addElement("genre").addText(mot.getGenre());
-
-			Element autreGraphieElem = motElem.addElement("autregraphie");
+			motElem.addElement("motGraphie").addText(mot.getMot());
+			motElem.addElement("estGraphieRO").addText(Boolean.toString(mot.isRo()));
+			Element autreGraphieElem = motElem.addElement("motAutreGraphie");
 			if (mot.getAutreGraphie() != null) {
 				autreGraphieElem.addText(mot.getAutreGraphie());
 			}
 
+			motElem.addElement("lemmeGraphie").addText(mot.getLemme());
+			motElem.addElement("estUnLemme").addText(Boolean.toString(mot.getEstUnLemme()));
+
+			String lemmeNote = mot.getLemmeNote();
+			if (lemmeNote != null) {
+				motElem.addElement("lemmeNote").addText(lemmeNote);
+			}
+
+			String motNote = mot.getMotNote();
+			if (motNote != null) {
+				motElem.addElement("motNote").addText(motNote);
+			}
+
+			motElem.addElement("catgramAffichage").addText(mot.getCatgramAffichage());
+
+			motElem.addElement("catgram").addText(mot.getCatgram());
+			motElem.addElement("genre").addText(mot.getGenre());
+
 			motElem.addElement("catgram_precision").addText(mot.getCatgramPrécision());
-			motElem.addElement("islemme").setText(Boolean.toString(mot.isEstUnLemme()));
 
-			Element nombreElem = motElem.addElement("nombre");
-			if (mot.getNombre() != null) {
-				nombreElem.addText(mot.getNombre());
+			String nombre = mot.getNombre();
+			if (nombre != null) {
+				motElem.addElement("nombre").addText(nombre);
 			}
 
-			Element noteElem = motElem.addElement("note");
-			if (mot.getNote() != null) {
-				noteElem.addText(mot.getNote());
+			String note = mot.getNote();
+			if (note != null) {
+				motElem.addElement("note").addText(note);
 			}
 
-			motElem.addElement("ro").addText(Boolean.toString(mot.isRo()));
+			Liste listePartitionPrimaire = mot.getListePartitionPrimaire();
+			if (listePartitionPrimaire != null) {
+				motElem.addElement("partition").addCDATA(listePartitionPrimaire.getNom());
+			}
 
 			// Ajout des prononciations
 			Element prononciationsElem = motElem.addElement("prononciations");
@@ -261,10 +278,9 @@ public class Exportation {
 		for (DocMetadata docMetadata : métadonnéesDoc) {
 			Element docmétadonnéeElem = docmétadonnéesElem.addElement("docmetadonnée");
 			docmétadonnéeElem.addElement("nom").addText(docMetadata.getNom());
-			
+
 			Element descriptionElem = docmétadonnéeElem.addElement("description");
-			if(docMetadata.getDescription() != null)
-			{
+			if (docMetadata.getDescription() != null) {
 				descriptionElem.addText(docMetadata.getDescription());
 			}
 			docmétadonnéeElem.addElement("filtre").addText(Boolean.toString(docMetadata.isFiltre()));

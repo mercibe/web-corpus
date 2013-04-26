@@ -99,7 +99,7 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 
 	motTextbox.setValue(mot.getMot());
 	lemmeTextbox.setValue(mot.getLemme());
-	estUnLemmeCheckbox.setChecked(mot.isEstUnLemme());
+	estUnLemmeCheckbox.setChecked(mot.getEstUnLemme());
 
 	roCheckbox.setChecked(mot.isRo());
 	autreGraphieTextbox.setValue(mot.getAutreGraphie());

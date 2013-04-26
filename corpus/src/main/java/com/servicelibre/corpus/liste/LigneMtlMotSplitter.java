@@ -14,8 +14,12 @@ import com.servicelibre.entities.corpus.Mot;
  * 
  * Exemple d'entrées -----------------
  * 
- * malade \t \t adj. vite \t \t adv. comme \t \t conj.. deux \t \t dét. auto \t
- * \t n.f. bars \t \t n.m.
+ * malade \t \t adj. 
+ * vite \t \t adv. 
+ * comme \t \t conj.. 
+ * deux \t \t dét. 
+ * auto \t \t n.f. 
+ * bars \t \t n.m.
  * 
  * Virgule dans première colonne: soit verbe pronominal, soit graphie
  * alternative, soit forme féminine d'un nom (=> double catgram) baseball,

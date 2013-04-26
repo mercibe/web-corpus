@@ -36,6 +36,7 @@ public class Mot implements Comparable<Mot> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	// TODO devrait être propre à un corpus donné, une List<CorpusMotListePrimaire>
 	// Liste primaire (normalement une partition)
 	@ManyToOne(optional = true)
 	private Liste listePartitionPrimaire;
@@ -72,6 +73,9 @@ public class Mot implements Comparable<Mot> {
 	public Boolean estUnLemme;
 
 	@Column(nullable = false)
+	String catgramAffichage;
+	
+	@Column(nullable = false)
 	String catgram;
 
 	/**
@@ -91,9 +95,15 @@ public class Mot implements Comparable<Mot> {
 	 * également) Transitivité du verbe (tr. dir., tr. indir. ou intr.) Mais
 	 * aussi: pron., impers., etc.
 	 */
-	@Column(name = "catgram_precision")
+	@Column
 	String catgramPrécision;
 
+	@Column
+	String lemmeNote;
+	
+	@Column
+	String motNote;
+	
 	@Column
 	String note;
 
@@ -107,7 +117,7 @@ public class Mot implements Comparable<Mot> {
 		super();
 	}
 
-	public Mot(String mot, String lemme, boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro, String note) {
+	public Mot(String mot, String lemme, Boolean isLemme, String catgram, String genre, String nombre, String catgramPrécision, boolean ro, String note) {
 		super();
 		this.mot = mot;
 		this.lemme = lemme;
@@ -216,8 +226,8 @@ public class Mot implements Comparable<Mot> {
 		return autreGraphie;
 	}
 
-	public Boolean isEstUnLemme() {
-		return estUnLemme==null?false:estUnLemme;
+	public Boolean getEstUnLemme() {
+		return this.estUnLemme;
 	}
 
 	public void setEstUnLemme(Boolean isLemme) {
@@ -261,10 +271,6 @@ public class Mot implements Comparable<Mot> {
 		this.sélectionné = sélectionné;
 	}
 
-	public Boolean getEstUnLemme() {
-		return estUnLemme==null?false:estUnLemme;
-	}
-
 	public Utilisateur getUtilisateur() {
 		return utilisateur;
 	}
@@ -272,5 +278,31 @@ public class Mot implements Comparable<Mot> {
 	public void setUtilisateur(Utilisateur utilisateur) {
 		this.utilisateur = utilisateur;
 	}
+
+	public String getLemmeNote() {
+		return lemmeNote;
+	}
+
+	public void setLemmeNote(String lemmeNote) {
+		this.lemmeNote = lemmeNote;
+	}
+
+	public String getMotNote() {
+		return motNote;
+	}
+
+	public void setMotNote(String motNote) {
+		this.motNote = motNote;
+	}
+
+	public String getCatgramAffichage() {
+		return catgramAffichage;
+	}
+
+	public void setCatgramAffichage(String catgramAffichage) {
+		this.catgramAffichage = catgramAffichage;
+	}
+
+	
 
 }

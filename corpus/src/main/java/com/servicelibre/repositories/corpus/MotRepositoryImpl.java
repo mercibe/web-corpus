@@ -53,7 +53,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 	}
 
 	@Override
-	@Transactional
+	//@Transactional
 	public int ajoutePrononciation(String forme, String phonétique) {
 
 		int liaisonCpt = 0;
@@ -72,9 +72,14 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		// Rechercher le/les éventuels mot/forme associés et lier
 		List<Mot> mots = motRepository.findByMot(forme);
 		for (Mot mot : mots) {
-			MotPrononciation motPrononciation = motPrononciationRepo.save(new MotPrononciation(mot, prononciation));
-			logger.debug("liaison de la prononciation {} à la forme {}", motPrononciation.getPrononciation(), forme);
-			liaisonCpt++;
+			MotPrononciation motPrononciation = new MotPrononciation(mot, prononciation);
+			try {
+				motPrononciation = motPrononciationRepo.save(motPrononciation);
+				//logger.debug("liaison de la prononciation {} à la forme {}", motPrononciation.getPrononciation(), forme);
+				liaisonCpt++;
+			} catch (org.springframework.dao.DataIntegrityViolationException e) {
+				logger.error("Le prononciation du mot {} exite déjà.", mot);
+			}
 		}
 
 		return liaisonCpt;
@@ -162,14 +167,13 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 			// exactement au nom de la colonne dans la DB / modèle
 			// Sinon, NPE!
 
-
 			In<Object> in = null;
 			if (filtre.nom.replaceAll("_.*", "").equals("liste")) {
 
 				if (filtre.nom.startsWith("liste_")) {
-					
+
 					in = inClauses.get(filtre.nom);
-					
+
 					if (in == null) {
 						// Il faut ajouter un critère sur la « liste », (collection des listes
 						// auxquelles appartiennent le mot = étiquettes associées au mot)
@@ -190,7 +194,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 			} else {
 
 				Path<Object> path = motRacine.get(filtre.nom);
-				
+
 				in = inClauses.get(filtre.nom);
 
 				if (in == null) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.Parameter;
+import com.servicelibre.corpus.Importation.Mode;
 
 public class ImportationLigneCommande {
 
@@ -19,6 +20,9 @@ public class ImportationLigneCommande {
 
 	@Parameter(names = "-mi", description = "nom du fichier qui contient les mots à importer", converter = FileConverter.class)
 	File motsFichier;
+
+	@Parameter(names = "-mode", description = "mode d'importation: MAJ ou REMPLACE_TOUT")
+	Mode modeImportation;
 
 	@Parameter(names = "-pi", description = "nom du fichier qui contient les prononciations à importer", converter = FileConverter.class)
 	File prononciationsFichier;
