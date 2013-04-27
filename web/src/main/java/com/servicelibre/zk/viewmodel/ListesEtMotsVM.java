@@ -3,8 +3,11 @@ package com.servicelibre.zk.viewmodel;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -73,6 +76,7 @@ public class ListesEtMotsVM {
 
     String messageSuppression;
     String messageSuppressionMots;
+    String messageRapportImportation;
 
     StandardPasswordEncoder encodeur = new StandardPasswordEncoder();
 
@@ -160,6 +164,7 @@ public class ListesEtMotsVM {
 	mode = null;
     }
 
+    
     @NotifyChange({ "listeSélectionné", "listes", "mode" })
     @Command
     @Transactional
@@ -300,11 +305,25 @@ public class ListesEtMotsVM {
 	 getIndexCtrl().ouvreOngletMot(Mode.CRÉATION, null);
     }
     
+    @NotifyChange("messageRapportImportation")
     @Command
+    public void fermerRapportImportation() {
+	messageRapportImportation = null;
+    }
+    
+    enum TypeRapport {FAIT, ERREUR, MOT_INCONNU};
+    
+    @Command
+    @NotifyChange({"mots","messageRapportImportation"})
     @Transactional
     public void importerMots(@BindingParam("ev") UploadEvent v) {
     	logger.debug("Événement {} ", v);
     	logger.debug("Média {}", v.getMedia());
+    
+    	Map<TypeRapport,List<String>> rapports = new HashMap<ListesEtMotsVM.TypeRapport, List<String>>(3);
+    	List<String> rapportFait = new ArrayList<String>();
+    	List<String> rapportErreur = new ArrayList<String>();
+    	List<String> rapportMotInconnu = new ArrayList<String>();
     	
     	Media fichierXls = v.getMedia();
     	
@@ -340,24 +359,36 @@ public class ListesEtMotsVM {
 					logger.debug("Le mot {} va être ajouté à la liste {}", motÀImporter, listeSélectionné.getId());
 					ListeMot lm = new ListeMot(mots.get(0), listeSélectionné);
 					listeMotRepo.save(lm);
+					rapportFait.add(motÀImporter);
 				}
 				else if(mots.size() > 1) {
 					// erreur / ambiguité.  Quel mot associer à la liste?
 					// TODO conserver le ou les mots problématiques et afficher un rapport à la fin de l'importation
-					logger.error("Le mot {} correspond à plusieurs mot dans la BD dans la BD", motÀImporter, mots);
+					logger.error("Le mot {} correspond à plusieurs mot dans la BD", motÀImporter, mots);
+					rapportErreur.add(motÀImporter + "\t correspond à plusieurs mot dans la BD");
 				}
 				else {
 					// TODO créer le mot???
 					logger.warn("Le mot {} est introuvable dans la BD", motÀImporter);
+					rapportMotInconnu.add(motÀImporter + "\t" + "introuvable dans la B");
 				}
 				
 				// Associer à la liste courante
 				
 				rowIdx++;
 				row = sheet.getRow(rowIdx);
+				if(row == null) {
+				    break;
+				}
 				cell = row.getCell(motGraphieIdx);
 				motÀImporter = cell==null?"":cell.getStringCellValue();
 			}
+			
+			rapports.put(TypeRapport.FAIT, rapportFait);
+			rapports.put(TypeRapport.MOT_INCONNU, rapportMotInconnu);
+			rapports.put(TypeRapport.ERREUR, rapportErreur);
+			
+			messageRapportImportation = getRapportImportationString(rapports);
 			
 			
 		} catch (IOException e) {
@@ -367,6 +398,18 @@ public class ListesEtMotsVM {
     	
     }
     
+    private String getRapportImportationString(Map<TypeRapport, List<String>> rapports) {
+	StringBuilder sb = new StringBuilder();
+	
+	sb.append("Mots importés: ").append(rapports.get(TypeRapport.FAIT).size()).append("\n");
+	
+	sb.append("Mots inconnus: ").append(rapports.get(TypeRapport.MOT_INCONNU).size()).append("\n");
+	
+	sb.append("Erreurs: ").append(rapports.get(TypeRapport.ERREUR).size());
+	
+	return sb.toString();
+    }
+
     @Command
     public void afficherFicheMot(@BindingParam("mot")Mot mot) {
 	 getIndexCtrl().ouvreOngletMot(Mode.AFFICHAGE, mot);
@@ -438,5 +481,14 @@ public class ListesEtMotsVM {
     public void setMessageSuppressionMots(String messageSuppressionMots) {
 	this.messageSuppressionMots = messageSuppressionMots;
     }
+
+    public String getMessageRapportImportation() {
+        return messageRapportImportation;
+    }
+
+    public void setMessageRapportImportation(String messageRapportImportation) {
+        this.messageRapportImportation = messageRapportImportation;
+    }
+    
 
 }
