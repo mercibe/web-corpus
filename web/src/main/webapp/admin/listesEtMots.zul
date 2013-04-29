@@ -147,11 +147,11 @@
 		</vbox>
 	</window>	
 	
-	<window title="Rapport importation" mode="modal" border="normal" width="420px" visible="@load(not empty vm.messageRapportImportation)">
-		<vbox hflex="true">
-			<hlayout height="50px">
+	<window title="Rapport importation" mode="modal" border="normal" height="200px" width="420px" visible="@load(not empty vm.messageRapportImportation)">
+		<vbox hflex="true" sizedByContent="true">
+			<hlayout height="150px">
 <!-- 				<image src="~./zul/img/msgbox/information.png"/> -->
-					<textbox rows="10" multiline="true" value="@load(vm.messageRapportImportation)"></textbox>
+					<textbox rows="10" height="100px"  width="400px" multiline="true" value="@load(vm.messageRapportImportation)"></textbox>
 			</hlayout>
 			<hbox pack="center" hflex="true">
 				<button label="OK" onClick="@command('fermerRapportImportation')"/>
