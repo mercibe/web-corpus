@@ -1,7 +1,14 @@
 package com.servicelibre.corpus.prononciation;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -31,43 +38,64 @@ public class PrononciationImport {
 	@Autowired
 	MotRepository motRepository;
 
+	public int execute(Reader in) {
+
+		BufferedReader reader = new BufferedReader(in);
+		String ligne = "";
+
+		try {
+
+			int prononciationCpt = 0;
+			int liaisonCpt = 0;
+			
+			while ((ligne = reader.readLine()) != null) {
+				String[] cols = ligne.split(SÉPARATEUR);
+
+				liaisonCpt += motRepository.ajoutePrononciation(cols[0], cols[1]);
+
+				prononciationCpt++;
+
+				if (prononciationCpt % 1000 == 0) {
+					logger.info("{} prononciations déjà importées...", prononciationCpt);
+				}
+				
+			}
+			
+			logger.info("{} prononciations ont été ajoutées à la table des prononciations. {} liaisons avec des mots.", prononciationCpt, liaisonCpt);
+			
+		} catch (IOException e) {
+			logger.error("Erreur lors de la lecture de la liste des prononciations",  e);
+		}
+
+		return 0;
+	}
+
 	public int execute(File fichierSource) {
 
 		logger.info("Exécution de l'importation des prononciations");
 
 		// Chargement du fichier en liste de lignes
 		if (fichierSource != null && fichierSource.exists()) {
-
-			try {
-				List<String> lignes = FileUtils.readLines(fichierSource);
-
-				int prononciationCpt = 0;
-				int liaisonCpt = 0;
-
-				for (String ligne : lignes) {
-
-					String[] cols = ligne.split(SÉPARATEUR);
-
-					liaisonCpt += motRepository.ajoutePrononciation(cols[0], cols[1]);
-
-					prononciationCpt++;
-
-					if (prononciationCpt % 1000 == 0) {
-						logger.info("{} prononciations déjà importées...", prononciationCpt);
-					}
+				
+				try {
+					return execute(new FileReader(fichierSource));
+				} catch (FileNotFoundException e) {
+					logger.error("Erreur lors de la lecture de la liste des prononciations {}", fichierSource, e);
 				}
-
-				logger.info("{} prononciations ont été ajoutées à la table des prononciations. {} liaisons avec des mots.", prononciationCpt, liaisonCpt);
-
-			} catch (IOException e) {
-				logger.error("Erreur lors de la lecture de la liste des mots {}", fichierSource, e);
-			}
 
 		} else {
 			logger.error("Fichier null ou inexistant: {}", fichierSource);
 		}
 
 		return 0;
+	}
+
+	public MotRepository getMotRepository() {
+		return motRepository;
+	}
+
+	public void setMotRepository(MotRepository motRepository) {
+		this.motRepository = motRepository;
 	}
 
 }

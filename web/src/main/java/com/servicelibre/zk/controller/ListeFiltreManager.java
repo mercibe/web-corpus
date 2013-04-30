@@ -62,6 +62,7 @@ public class ListeFiltreManager extends FiltreManager {
 		// genreClésValeurs.add(keyValueVide);
 		genreClésValeurs.add(new DefaultKeyValue("f.", "Féminin"));
 		genreClésValeurs.add(new DefaultKeyValue("m.", "Masculin"));
+		genreClésValeurs.add(new DefaultKeyValue("m. ou f.", "Masculin ou féminin"));
 		filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs));
 
 		// Ajout de la liste des nombres

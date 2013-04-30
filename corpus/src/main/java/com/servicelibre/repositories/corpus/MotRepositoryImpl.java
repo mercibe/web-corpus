@@ -205,6 +205,11 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 				for (DefaultKeyValue kv : filtre.keyValues) {
 					in.value(kv.getKey());
 				}
+				
+				if(filtre.nom.equals("genre")) {
+					logger.debug("ajouter m. ou f. à la liste des valeurs");
+					in.value("m. ou f.");
+				}
 			}
 
 		}

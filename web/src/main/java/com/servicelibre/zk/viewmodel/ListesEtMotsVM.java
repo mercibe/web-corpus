@@ -35,9 +35,11 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.Importation;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.manager.FiltreRecherche.CléFiltre;
+import com.servicelibre.corpus.prononciation.PrononciationImport;
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Corpus;
 import com.servicelibre.entities.corpus.Liste;
@@ -316,7 +318,7 @@ public class ListesEtMotsVM {
 	enum TypeRapport {
 		FAIT, ERREUR, MOT_INCONNU
 	};
-
+	
 	@Command
 	@NotifyChange({ "mots", "messageRapportImportation" })
 	@Transactional
@@ -324,22 +326,38 @@ public class ListesEtMotsVM {
 		logger.debug("Événement {} ", v);
 		logger.debug("Média {}", v.getMedia());
 
+
+		Media fichierTéléversé = v.getMedia();
+
+
+		if(fichierTéléversé.getName().endsWith("xml")) {
+			logger.debug("Traiter l'importation d'un fichier de mots au format XML");
+			Importation importation = new Importation(ServiceLocator.getApplicationContext());
+			
+			importation.importeMots(fichierTéléversé.getReaderData(), com.servicelibre.corpus.Importation.Mode.REMPLACE_TOUT);
+		}
+		else {
+			// TODO valider qu'il s'agit bien d'un fichier XLS
+			Map<TypeRapport, List<String>> rapports = importationXls(fichierTéléversé);
+		}
+		
+		
+
+	}
+
+	private Map<TypeRapport, List<String>> importationXls(Media fichierTéléversé) {
 		Map<TypeRapport, List<String>> rapports = new HashMap<ListesEtMotsVM.TypeRapport, List<String>>(3);
 		List<String> rapportFait = new ArrayList<String>();
 		List<String> rapportErreur = new ArrayList<String>();
 		List<String> rapportMotInconnu = new ArrayList<String>();
-
-		Media fichierXls = v.getMedia();
-
-		// TODO valider qu'il s'agit bien d'un fichier XLS
-		// Lecture du fichier
-
+		
 		// Supprimer tous les mots de la liste actuelle
 		getListeMotRepo().deleteByListe(listeSélectionné);
 
 		try {
 
-			Workbook wb = new HSSFWorkbook(new ByteArrayInputStream(fichierXls.getByteData()));
+			// Lecture du fichier
+			Workbook wb = new HSSFWorkbook(new ByteArrayInputStream(fichierTéléversé.getByteData()));
 
 			Sheet sheet = wb.getSheet("mots");
 
@@ -354,12 +372,14 @@ public class ListesEtMotsVM {
 
 			while (!motÀImporter.isEmpty()) {
 
-				String catgram = row.getCell(catgramIdx).getStringCellValue().trim();
-				String genre = row.getCell(genreIdx).getStringCellValue().trim();
+				Cell catgramCell = row.getCell(catgramIdx);
+				String catgram = (catgramCell == null?"":catgramCell.getStringCellValue().trim());
+				Cell genreCell = row.getCell(genreIdx);
+				String genre = (genreCell == null? "" : genreCell.getStringCellValue().trim());
 
 				// Retrouver le mot
-				// FIXME tenir compte également du genre au besoin
-				//Est-ce un nom?
+				// tenir compte également du genre au besoin
+				// Est-ce un nom?
 				List<Mot> mots = null;
 				if(catgram.equals("n.")) {
 					mots = motRepo.findByMotAndCatgramAndGenre(motÀImporter, catgram, genre);
@@ -383,7 +403,7 @@ public class ListesEtMotsVM {
 				} else {
 					// TODO créer le mot???
 					logger.warn("Le mot {} est introuvable dans la BD", motÀImporter);
-					rapportMotInconnu.add(motÀImporter + "\t" + "introuvable dans la B");
+					rapportMotInconnu.add(motÀImporter + "\t" + "introuvable dans la BD");
 				}
 
 				// Associer à la liste courante
@@ -407,9 +427,34 @@ public class ListesEtMotsVM {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		return rapports;
 	}
 
+	@Command
+	@NotifyChange({ "mots", "messageRapportImportation" })
+	@Transactional
+	public void importerPrononciations(@BindingParam("ev") UploadEvent v) {
+		logger.debug("Événement {} ", v);
+		logger.debug("Média {}", v.getMedia());
+
+		Media fichierTéléversé = v.getMedia();
+
+		//Map<TypeRapport, List<String>> rapports = 
+
+		if(fichierTéléversé.getName().endsWith("txt")) {
+			// TODO valider qu'il s'agit bien d'un fichier TXT de prononciations!!!
+			logger.debug("Traiter l'importation d'un fichier de prononciations au format TXT");
+			PrononciationImport pi = new PrononciationImport();
+			pi.setMotRepository(getMotRepo());
+			pi.execute(fichierTéléversé.getReaderData());
+		}
+		
+		
+
+	}
+	
+	
 	private String getRapportImportationString(Map<TypeRapport, List<String>> rapports) {
 		StringBuilder sb = new StringBuilder();
 

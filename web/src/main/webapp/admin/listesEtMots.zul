@@ -117,7 +117,8 @@
 				  <hbox>
 				  		<button id="actionButton" label="Retirer les mots sélectionnés de la liste" onClick="@command('confirmerSuppressionMots')" visible="@load(empty vm.mode)"/>
 				  		<button id="ajouterMotButton" label="Ajouter un nouveau mot" onClick="@command('ajouterMot')" visible="@load(empty vm.mode)"/>
-				  		<button id="importerMotsButton" upload="true,maxsize=2048" label="Importer des mots" onUpload="@command('importerMots', ev=event)" visible="@load(empty vm.mode)"/>
+				  		<button id="importerMotsButton" upload="true,maxsize=5096" label="Importer des mots" onUpload="@command('importerMots', ev=event)" visible="@load(empty vm.mode)"/>
+				  		<button id="importerPrononciationsButton" upload="true,maxsize=5096" label="Importer des prononciations" onUpload="@command('importerPrononciations', ev=event)" visible="@load(empty vm.mode)"/>
 				  </hbox>
 			</vbox>
 
@@ -147,11 +148,11 @@
 		</vbox>
 	</window>	
 	
-	<window title="Rapport importation" mode="modal" border="normal" height="200px" width="420px" visible="@load(not empty vm.messageRapportImportation)">
+	<window title="Rapport importation" mode="modal" border="normal" height="250px" width="420px" visible="@load(not empty vm.messageRapportImportation)">
 		<vbox hflex="true" sizedByContent="true">
-			<hlayout height="150px">
+			<hlayout>
 <!-- 				<image src="~./zul/img/msgbox/information.png"/> -->
-					<textbox rows="10" height="100px"  width="400px" multiline="true" value="@load(vm.messageRapportImportation)"></textbox>
+					<textbox rows="10" width="400px" multiline="true" value="@load(vm.messageRapportImportation)"></textbox>
 			</hlayout>
 			<hbox pack="center" hflex="true">
 				<button label="OK" onClick="@command('fermerRapportImportation')"/>

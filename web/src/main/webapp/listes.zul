@@ -219,7 +219,7 @@
 							visible="false" />
 						<column width="100px" id="colonneClasse"
 							label="Classe de mot" sort="auto(catgram,genre,lemme)" />
-						<column width="50px" id="colonneGenre"
+						<column width="60px" id="colonneGenre"
 							label="Genre" sort="auto(genre, lemme)" />
 						<column width="60px" id="colonneNombre"
 							label="Nombre" sort="auto(nombre, lemme)" visible="false" />

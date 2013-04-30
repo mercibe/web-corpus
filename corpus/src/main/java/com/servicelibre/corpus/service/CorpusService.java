@@ -111,7 +111,6 @@ public class CorpusService {
 			String tmpDir = System.getProperty("java.io.tmpdir") + File.separatorChar + "index-" + corpusIdString;
 			corpusParDéfaut = new Corpus(corpusIdString, "Corpus de démarrage", tmpDir, "com.servicelibre.corpus.analysis.FrenchAnalyzer",
 					"org.apache.lucene.analysis.standard.StandardAnalyzer");
-			// FIXME s'assurer qu'un seul corpus par défaut existe!
 			corpusParDéfaut.setParDéfaut(true);
 			logger.info("Création du nouveau corpus " + corpusParDéfaut);
 			corpusParDéfaut = corpusRepo.save(corpusParDéfaut);

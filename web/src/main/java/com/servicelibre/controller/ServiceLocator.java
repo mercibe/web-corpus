@@ -64,5 +64,9 @@ public class ServiceLocator {
 	public static ListeMotRepository getListeMotRepo() {
 		return (ListeMotRepository) ctx.getBean("listeMotRepository");
 	}
+	
+	public static ApplicationContext getApplicationContext() {
+		return ctx;
+	}
 
 }

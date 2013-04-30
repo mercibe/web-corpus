@@ -1,6 +1,11 @@
 package com.servicelibre.corpus;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,24 +208,31 @@ public class Importation {
 		return corpus;
 	}
 
+	public void importeMots(File motsFichier, Mode mode) {
+		try {
+			importeMots(new FileReader(motsFichier), mode);
+		} catch (FileNotFoundException e) {
+			logger.error("Problème lors de la lecture du fichier de données des mots {}: {}", motsFichier, e.getMessage());
+		}
+	}
+	
 	/**
 	 * Importe une liste de mots
 	 * Note: toutes les listes primaires spécifiées éventuellement pour les mots doivent exister dans le système avant d'exécuter l'importation.
-	 * @param motsFichier
+	 * @param reader
 	 * @param mode
 	 */
-	public void importeMots(File motsFichier, Mode mode) {
+	public void importeMots(Reader reader, Mode mode) {
 
 		// Charger le document XML
-		SAXReader reader = new SAXReader();
-
+		SAXReader saxReader = new SAXReader();
 		Map<String, Liste> cacheListePartitionPrimaire = new HashMap<String, Liste>(10);
 
 		Document document = DocumentHelper.createDocument();
 		try {
-			document = reader.read(motsFichier);
+			document = saxReader.read(reader);
 		} catch (DocumentException e) {
-			logger.error("Problème lors de la lecture du fichier de données des mots {}: {}", motsFichier, e.getMessage());
+			logger.error("Problème lors de la lecture du flux de données des mots: {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		}
