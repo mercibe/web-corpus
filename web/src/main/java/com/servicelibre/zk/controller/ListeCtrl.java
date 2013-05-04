@@ -398,31 +398,31 @@ public class ListeCtrl extends CorpusCtrl {
 
 	private void initialiseClavierPhonétique() {
 
-		String[][] apiLettres = { { "i", "ép[i], [î]le, l[y]s, out[il]" }, { "i:", "j[ea]n, tw[ee]d" }, { "y", "[hu]tte, b[u]lle, f[ût]" },
-				{ "u", "[ou]rs, t[ou]ndra, p[ouls]" }, { "u:", "slow f[oo]d, p[oo]l" },
-				{ "e", "(e fermé) [é]rable, p[é]ch[er], ch[ez], hock[ey]" }, { "ø", "(eu fermé) j[eu], heu]r[eux], bl[eu]et" },
-				{ "o", "(o fermé) [au]t[o], c[ô]té, b[eau], sir[op]" }, { "ɛ", "(e ouvert) [ai]mer, épin[e]tte, acc[ès]" },
-				{ "ɛ:", "bl[ê]me, c[ai]sse, g[è]ne, m[è]tre, par[aî]tre, pr[e]sse" },
-				{ "œ", "(eu ouvert) n[eu]f, [oeu]f, bonh[eu]r, gold[e]n, jok[e]r" },
-				{ "ɔ", "(o ouvert) [o]béir, [au]t[o]cht[o]ne, p[o]rt" }, { "ə", "(e caduc, ou muet) m[e]ner, crén[e]lage" },
-				{ "ə̠", "f[e]nouil, caf[e]tière, just[e]ment" }, { "a", "(a antérieur) [à], cl[a]v[a]rd[a]ge, p[a]tte" },
-				{ "ɑ", "(a postérieur) là-b[as], p[â]te, cip[a]ille, pyjam[a]" },
-				{ "ɛ̃", "br[in], [im]pair, [in]di[en], cert[ain], fr[ein]" }, { "œ̃", "[un], l[un]di, br[un], parf[um]" },
-				{ "ɔ̃", "m[on]tagnais, [om]ble, p[ont]" }, { "ɑ̃", "[an], [en], j[am]bon, s[ang], t[emps]" },
+		String[][] apiLettres = { { "i", "ép[i], [î]le, l[y]s, out[i]l" }, { "i:", "j[ea]n, tw[ee]d" }, { "y", "b[u]lle, déb[u]t, h[u]tte" },
+				{ "u", "[ou]rs, p[ou]ls, t[ou]j[ou]rs" }, { "u:", "slow f[oo]d, p[oo]l" },
+				{ "e", "ch[ez], [é]rable, hock[ey], p[é]ch[er]" }, { "ø", "bl[eu]et, h[eu]r[eux], j[eu]" },
+				{ "o", "[au]t[o], b[eau], c[ô]té, sir[o]p" }, { "ɛ", "acc[è]s, [ai]mer, épin[e]tte" },
+				{ "ɛ:", "bl[ê]me, c[ai]sse, m[è]tre, pr[e]sse" },
+				{ "œ", "bonh[eu]r, jok[e]r, [oeu]f" },
+				{ "ɔ", "h[o]mme, [o]béir, p[o]rt" }, { "ə", "méd[e]cin, m[e]ner" },
+				{ "ə̠", "caf[e]tière, f[e]nouil, just[e]ment" }, { "a", "[à], cl[a]v[a]rd[a]ge, p[a]tte" },
+				{ "ɑ", "là-b[as], p[â]te, pyjam[a]" },
+				{ "ɛ̃", "cert[ain], fr[ein], [im]pair, [in]di[en]" }, { "œ̃", "br[un], l[un]di, parf[um], [un]" },
+				{ "ɔ̃", "m[on]tagnais, [om]bre, p[on]t" }, { "ɑ̃", "[an], [en], j[am]bon, s[an]g, t[em]ps" },
 
-				{ "p", "[p]aix, sa[p]in, cége[p]" }, { "t", "[t]oit, [th]é, pa[t]in, a[tt]aché, fourche[tt]e" },
-				{ "k", "[c]o[q], [ch]rome, be[c], dis[qu]e, [k]aya[k]" }, { "b", "[b]oréal, ta[b]lée, sno[b]" },
-				{ "d", "[d]anse, che[dd]ar, bala[d]e, ble[d]" }, { "g", "[g]a[g], al[gu]e, [gu]ide" },
-				{ "f", "[f]leuve, al[ph]abet, e[ff]ort, boeu[f]" }, { "s", "[s]our[c]il, [c]inq, for[c]e, moca[ss]in, gla[ç]on" },
-				{ "ʃ", "[ch]alet, [sch]éma, é[ch]elle, brun[ch]" }, { "v", "[v]ille, ca[v]ité, dra[v]e" },
-				{ "z", "mai[s]on, [z]énith, di[x]ième, bri[s]e" }, { "ʒ", "[j]eudi, [g]iboulée, nei[g]e" },
-				{ "l", "[l]aine, a[l]coo[l], pe[ll]e" }, { "ʀ", "[r]ang, cou[rr]iel, fini[r]" },
-				{ "m", "[m]itaine, fe[mm]e, alu[m]iniu[m]" }, { "n", "[n]ordet, ante[nn]e, caba[n]e" }, { "ɲ", "bei[gn]e, campa[gn]e" },
-				{ "ŋ", "big ba[ng], campi[ng], flame[n]co, bi[n]go, pi[ng] po[ng]" },
-				{ "'", "les [h]aches, un [h]uit, la [ou]ananiche, les [u]nes (sans élision ni liaison)" },
+				{ "p", "cége[p], [p]aix, sa[p]in" }, { "t", "fourche[tt]e, pa[t]in, [th]é, [t]oit" },
+				{ "k", "be[c], [ch]rome, [c]o[q], dis[qu]e, [k]aya[k]" }, { "b", "[b]ain, sno[b], ta[b]le" },
+				{ "d", "bala[d]e, che[dd]ar, [d]anse" }, { "g", "al[gu]e, [g]a[g], [gu]ide" },
+				{ "f", "al[ph]abet, boeu[f], e[ff]ort, [f]leuve" }, { "s", "[c]inq, for[c]e, gla[ç]on, moca[ss]in, [s]our[c]il" },
+				{ "ʃ", "brun[ch], [ch]alet, é[ch]elle, [sch]éma" }, { "v", "ca[v]ité, gra[v]e, [v]ille" },
+				{ "z", "bri[s]e, di[x]ième, mai[s]on, [z]énith" }, { "ʒ", "[g]enou, [j]eudi, nei[g]e" },
+				{ "l", "a[l]coo[l], [l]aine, pe[ll]e" }, { "ʀ", "cou[rr]iel, fini[r], [r]ang" },
+				{ "m", "alu[m]iniu[m], fe[mm]e, [m]itaine" }, { "n", "ante[nn]e, caba[n]e, [n]ord" }, { "ɲ", "bei[gn]e, campa[gn]e" },
+				{ "ŋ", "bi[n]go, campi[ng], pi[ng] po[ng]" },
+				{ "'", "sans élision ni liaison : les haches, les huit, le ouaouaron" },
 
-				{ "j", "r[i]en, pa[y]er, écureu[il], fi[ll]e, [y]ogourt" }, { "ɥ", "l[u]i, [hu]issier, t[u]ile" },
-				{ "w", "l[ou]er, [ou]ate, [w]att, b[o]is" }, };
+				{ "j", "écureu[il], fi[ll]e, pa[y]er, r[i]en, [y]ogourt" }, { "ɥ", "app[u]i, c[u]isse, t[u]ile" },
+				{ "w", "b[o]is, j[ou]er, [ou]ate, [w]att" }, };
 
 		int idCpt = 1;
 		for (String[] apiLettreInfo : apiLettres) {
