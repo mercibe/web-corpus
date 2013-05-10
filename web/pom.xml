@@ -315,6 +315,12 @@
 			<artifactId>spring-security-web</artifactId>
 			<type>jar</type>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+				  <groupId>org.springframework</groupId>
+  				  <artifactId>spring-tx</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -417,6 +423,12 @@
 			<artifactId>spring-security-taglibs</artifactId>
 			<type>jar</type>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+				  <groupId>org.springframework</groupId>
+  				  <artifactId>spring-tx</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 
 		<dependency>

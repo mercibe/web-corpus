@@ -13,12 +13,15 @@ public interface MotRepositoryCustom {
 
 
 	public int ajoutePrononciation(String forme, String phonétique);
+	
+	void ajoutePrononciation(Mot mot, String phonétique);
 
 	List<Mot> findByGraphie(String graphie, Condition condition);
 
 	List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres);
 
 	List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres);
+
 	
 
 }

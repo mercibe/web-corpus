@@ -86,7 +86,7 @@
 					</grid>
 				</groupbox>
 				
- 			    <listbox id="motsListbox" model="@load(vm.mots)" hflex="true" height="400px" mold="paging" pageSize="12" visible="@load(empty vm.mode)">
+ 			    <listbox id="motsListbox" model="@load(vm.mots)" hflex="true" height="375px" mold="paging" pageSize="12" visible="@load(empty vm.mode)">
 					<listhead sizable="true">
 						<listheader label="Id" width="40px" visible="false"/>
 						<listheader label="" width="40px">
@@ -117,8 +117,11 @@
 				  <hbox>
 				  		<button id="actionButton" label="Retirer les mots sélectionnés de la liste" onClick="@command('confirmerSuppressionMots')" visible="@load(empty vm.mode)"/>
 				  		<button id="ajouterMotButton" label="Ajouter un nouveau mot" onClick="@command('ajouterMot')" visible="@load(empty vm.mode)"/>
-				  		<button id="importerMotsButton" upload="true,maxsize=5096" label="Importer des mots" onUpload="@command('importerMots', ev=event)" visible="@load(empty vm.mode)"/>
-				  		<button id="importerPrononciationsButton" upload="true,maxsize=5096" label="Importer des prononciations" onUpload="@command('importerPrononciations', ev=event)" visible="@load(empty vm.mode)"/>
+				  </hbox>
+				  <hbox>
+			  		<button id="importerMotsButton" upload="true,maxsize=5096" label="Importer des mots" onUpload="@command('importerMots', ev=event)" visible="@load(empty vm.mode)"/>
+			  		<button id="importerPrononciationsButton" upload="true,maxsize=5096" label="Importer des prononciations" onUpload="@command('importerPrononciations', ev=event)" visible="@load(empty vm.mode)"/>				  		
+				  	<button id="exporterTousLesMotsButton" label="Exporter tous les mots (XML)" onClick="@command('exporterTousLesMots')" visible="@load(empty vm.mode)"/>
 				  </hbox>
 			</vbox>
 

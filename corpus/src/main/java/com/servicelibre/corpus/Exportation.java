@@ -90,7 +90,7 @@ public class Exportation {
 
 	}
 
-	private void exporteMots(File motsFichier) {
+	public void exporteMots(File motsFichier) {
 
 		List<Mot> mots = motRepo.findAll();
 
@@ -116,7 +116,11 @@ public class Exportation {
 			}
 
 			motElem.addElement("lemmeGraphie").addText(mot.getLemme());
-			motElem.addElement("estUnLemme").addText(Boolean.toString(mot.getEstUnLemme()));
+
+			Boolean estUnLemme = mot.getEstUnLemme();
+			if (estUnLemme != null) {
+				motElem.addElement("estUnLemme").addText(Boolean.toString(estUnLemme));
+			}
 
 			String lemmeNote = mot.getLemmeNote();
 			if (lemmeNote != null) {
@@ -131,9 +135,16 @@ public class Exportation {
 			motElem.addElement("catgramAffichage").addText(mot.getCatgramAffichage());
 
 			motElem.addElement("catgram").addText(mot.getCatgram());
-			motElem.addElement("genre").addText(mot.getGenre());
 
-			motElem.addElement("catgram_precision").addText(mot.getCatgramPrécision());
+			String genre = mot.getGenre();
+			if (genre != null) {
+				motElem.addElement("genre").addText(genre);
+			}
+
+			String catgramPrécision = mot.getCatgramPrécision();
+			if (catgramPrécision != null) {
+				motElem.addElement("catgram_precision").addText(catgramPrécision);
+			}
 
 			String nombre = mot.getNombre();
 			if (nombre != null) {

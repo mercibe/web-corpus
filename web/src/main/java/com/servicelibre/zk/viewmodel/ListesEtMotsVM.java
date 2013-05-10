@@ -1,10 +1,12 @@
 package com.servicelibre.zk.viewmodel;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +31,13 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.Path;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.Exportation;
 import com.servicelibre.corpus.Importation;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
@@ -308,6 +311,28 @@ public class ListesEtMotsVM {
 	public void ajouterMot() {
 		getIndexCtrl().ouvreOngletMot(Mode.CRÉATION, null);
 	}
+	
+	@Command
+	public void exporterTousLesMots() {
+		Exportation exp = new Exportation();
+		
+		try {
+			//Date maintenant = new Date();
+			//SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-hhmmss");
+			
+			File temp = File.createTempFile("mots", ".xml");
+			exp.exporteMots(temp);
+			
+			// envoyer à l'usager
+			// http://www.ietf.org/rfc/rfc3023.txt
+			Filedownload.save(temp,"application/xml");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	@NotifyChange("messageRapportImportation")
 	@Command
@@ -381,7 +406,7 @@ public class ListesEtMotsVM {
 				// tenir compte également du genre au besoin
 				// Est-ce un nom?
 				List<Mot> mots = null;
-				if(catgram.equals("n.")) {
+				if(catgram.equals("n.") || catgram.equals("adj.")) {
 					mots = motRepo.findByMotAndCatgramAndGenre(motÀImporter, catgram, genre);
 				}
 				else {
@@ -398,7 +423,7 @@ public class ListesEtMotsVM {
 				} else if (mots.size() > 1) {
 					// erreur / ambiguité. Quel mot associer à la liste?
 					// TODO conserver le ou les mots problématiques et afficher un rapport à la fin de l'importation
-					logger.error("Le mot {} correspond à plusieurs mot dans la BD", motÀImporter, mots);
+					logger.error("Le mot {} correspond à plusieurs mots dans la BD", motÀImporter, mots);
 					rapportErreur.add(motÀImporter + "\t correspond à plusieurs mot dans la BD");
 				} else {
 					// TODO créer le mot???
@@ -421,7 +446,7 @@ public class ListesEtMotsVM {
 			rapports.put(TypeRapport.MOT_INCONNU, rapportMotInconnu);
 			rapports.put(TypeRapport.ERREUR, rapportErreur);
 
-			messageRapportImportation = getRapportImportationString(rapports);
+			messageRapportImportation = getRapportImportationString(fichierTéléversé.getName(),rapports);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -455,10 +480,10 @@ public class ListesEtMotsVM {
 	}
 	
 	
-	private String getRapportImportationString(Map<TypeRapport, List<String>> rapports) {
+	private String getRapportImportationString(String source, Map<TypeRapport, List<String>> rapports) {
 		StringBuilder sb = new StringBuilder();
-
-		sb.append("Mots importés: ").append(rapports.get(TypeRapport.FAIT).size()).append("\n");
+		sb.append("Source: ").append(source).append("\n\n");
+;		sb.append("Mots importés: ").append(rapports.get(TypeRapport.FAIT).size()).append("\n");
 
 		List<String> motsInconnus = rapports.get(TypeRapport.MOT_INCONNU);
 		if (motsInconnus.size() > 0) {

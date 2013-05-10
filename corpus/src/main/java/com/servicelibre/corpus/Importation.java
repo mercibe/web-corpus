@@ -313,8 +313,11 @@ public class Importation {
 				logger.error("Le mot {} existe déjà!", mot.getMot());
 			}
 
-
 			// Ajout des prononciations + lien avec mot (motPrononciation)
+			List<Element> prononciationElems = (List<Element>) motElem.selectNodes(".//prononciation");
+			for (Element prononciationElem : prononciationElems) {
+				motRepo.ajoutePrononciation(mot, prononciationElem.elementText("api"));
+			}
 
 		}
 

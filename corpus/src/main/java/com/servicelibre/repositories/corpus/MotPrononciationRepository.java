@@ -14,4 +14,6 @@ public interface MotPrononciationRepository extends CrudRepository<MotPrononciat
 
 	List<MotPrononciation> findByPrononciation(Prononciation prononciation);
 
+	MotPrononciation findByMotAndPrononciation(Mot mot, Prononciation prononciation);
+
 }

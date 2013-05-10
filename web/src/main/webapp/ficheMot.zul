@@ -7,7 +7,7 @@
 				value="" />
 		</div>
 
-		<div align="center" style="margin:10px;margin-left: auto;margin-right: auto;" width="50%">
+		<div align="center" style="margin:10px;margin-left: auto;margin-right: auto;" width="70%">
 
 			<grid id="formulaireGrid" hflex="true" width="100%" visible="true">
 				<columns>
@@ -22,10 +22,20 @@
 						<label id="motMessage" value=""	style="color:red" />
 					</row>
 					<row>
+						<label id="motNoteLabel" value="Note mot" />
+						<textbox id="motNoteTextbox" readonly="true" value="${requestScope.mot.motNote}" width="450px" />
+						<label id="motNoteMessage" value=""	style="color:red" />
+					</row>					
+					<row>
 						<label id="lemmeLabel" value="Lemme" />
 						<textbox id="lemmeTextbox" readonly="true" value="${requestScope.mot.lemme}" />
 						<label id="lemmeMessage" value=""	style="color:red" />
 					</row>
+					<row>
+						<label id="lemmeNoteLabel" value="Note lemme" />
+						<textbox id="lemmeNoteTextbox" readonly="true" value="${requestScope.mot.lemmeNote}" width="450px" />
+						<label id="lemmeNoteMessage" value=""	style="color:red" />
+					</row>					
 					<row>
 						<label id="catgramLabel" value="Classe de mot" />
 						<listbox id="catgramListbox" mold="select" disabled="true">
@@ -41,6 +51,11 @@
 						</listbox>						
 						<label id="catgramMessage" value=""	style="color:red" />
 					</row>
+					<row>
+						<label id="catgramAffichageLabel" value="Classe de mot (affichage)" />
+						<textbox id="catgramAffichageTextbox" readonly="true" value="${requestScope.mot.catgramAffichage}" />
+						<label id="catgramAffichageMessage" value=""	style="color:red" />
+					</row>						
 					<row>
 						<label id="genreLabel" value="Genre" />
 						<listbox id="genreListbox" mold="select" disabled="true">

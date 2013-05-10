@@ -84,6 +84,23 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 
 		return liaisonCpt;
 	}
+	
+	@Override
+	public void ajoutePrononciation(Mot mot, String phonétique) {
+
+		Prononciation prononciation = prononciationRepo.findByPrononciation(phonétique);
+		if (prononciation == null) {
+			prononciation = prononciationRepo.save(new Prononciation(phonétique));
+		}
+		
+		MotPrononciation motPrononciation = motPrononciationRepo.findByMotAndPrononciation(mot, prononciation);
+		if(motPrononciation == null) {
+			motPrononciation = new MotPrononciation(mot, prononciation);
+				motPrononciation = motPrononciationRepo.save(motPrononciation);
+		}
+
+	}
+	
 
 	@Override
 	public List<Mot> findByGraphie(String graphie, Condition condition) {
