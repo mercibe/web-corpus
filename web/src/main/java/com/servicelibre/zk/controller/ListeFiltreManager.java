@@ -76,11 +76,8 @@ public class ListeFiltreManager extends FiltreManager {
 		List<DefaultKeyValue> roClésValeurs = new ArrayList<DefaultKeyValue>(3);
 		// roClésValeurs.add(keyValueVide);
 		// FIXME
-		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Effacement de l'accent circonflexe (à faire)"));
-		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Déplacement du tréma (à faire)"));
-		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Soudure de mots (à faire)"));
-		// roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE,
-		// "graphies traditionnelles"));
+		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Nouvelles graphies"));
+		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "Graphies traditionnelles"));
 		filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs));
 
 	}

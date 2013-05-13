@@ -23,7 +23,7 @@ public class TypeContexte {
 	@Column
 	String description;
 
-	@OneToMany(mappedBy = "typeContexte", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "typeContexte", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
 	private List<Contexte> contextes = new ArrayList<Contexte>();
 
 	public int getId() {

@@ -52,12 +52,15 @@ public class CorpusManagerTest implements ApplicationContextAware {
 		DocMetadata docMetadataAuteur = new DocMetadata("Auteur", "L'auteur du document", "auteur", 10, corpus);
 		DocMetadata docMetadataDate = new DocMetadata("Date", "Date du document", "date", 20, corpus);
 		
+		docMetadataCatégorie = docMetadataRepo.save(docMetadataCatégorie);
+		docMetadataAuteur = docMetadataRepo.save(docMetadataAuteur);
+		docMetadataDate = docMetadataRepo.save(docMetadataDate);
+		
 		corpus.getMétadonnéesDoc().add(docMetadataCatégorie);
 		corpus.getMétadonnéesDoc().add(docMetadataAuteur);
 		corpus.getMétadonnéesDoc().add(docMetadataDate);
 		
-		//corpus = corpusRepo.save(corpus);
-		//docMetadataCatégorie = docMetadataRepo.save(docMetadataCatégorie);
+		corpus = corpusRepo.save(corpus);
 
 		List<DocMetadata> métadonnéesDoc = corpus.getMétadonnéesDoc();
 

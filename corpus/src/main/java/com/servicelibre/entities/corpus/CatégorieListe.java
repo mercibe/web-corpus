@@ -40,7 +40,7 @@ public class CatégorieListe implements Comparable<CatégorieListe> {
     @JoinColumn(name = "corpus_id")
     Corpus corpus;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "catégorie", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.REMOVE }, mappedBy = "catégorie", orphanRemoval = true)
     List<Liste> listes = new ArrayList<Liste>();
 
     @ManyToOne

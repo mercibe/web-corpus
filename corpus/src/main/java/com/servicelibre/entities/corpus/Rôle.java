@@ -28,7 +28,7 @@ public class Rôle {
 	@Column
 	String description;
 
-	@OneToMany(mappedBy = "rôle", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "rôle", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
 	List<UtilisateurRôle> utilisateurRôles;
 
 	public Rôle() {

@@ -33,7 +33,7 @@ public class ListeMot {
 	@ManyToOne(optional = false)
 	Liste liste;
 
-	@OneToMany(mappedBy = "listeMot", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "listeMot", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
 	private List<Contexte> contextes = new ArrayList<Contexte>();
 
 	@Column

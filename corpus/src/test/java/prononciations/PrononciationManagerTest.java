@@ -101,13 +101,15 @@ public class PrononciationManagerTest implements ApplicationContextAware
         List<MotPrononciation> motPrononcs = motPrononciationRepo.findByMot(mangerMot);
         assertNotNull(motPrononcs);
         assertEquals("Le mot « manger » n'a qu'une seule prononciation", 1, motPrononcs.size());
-        assertEquals("mɑ̃ʒe", motPrononcs.get(0).getPrononciation().prononciation);
+        MotPrononciation motPrononciation2 = motPrononcs.get(0);
+		assertEquals("mɑ̃ʒe", motPrononciation2.getPrononciation().prononciation);
 
         assertEquals("Le mot « manger » n'a qu'une seule prononciation", 1, mangerMot.getMotPrononciations().size());
         assertEquals("mɑ̃ʒe", mangerMot.getMotPrononciations().iterator().next().getPrononciation().prononciation);
 
         // suppression d'une prononciation
-        assertTrue(mangerMot.getMotPrononciations().remove(motPrononcs.get(0)));
+        assertTrue(mangerMot.getMotPrononciations().remove(motPrononciation2));
+        motPrononciationRepo.delete(motPrononciation2);
         assertEquals("Le mot « manger » n'a plus de prononciation", 0, mangerMot.getMotPrononciations().size());
 
         motPrononcs = motPrononciationRepo.findByMot(mangerMot);

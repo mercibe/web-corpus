@@ -41,7 +41,7 @@ public class Mot implements Comparable<Mot> {
 	@ManyToOne(optional = true)
 	private Liste listePartitionPrimaire;
 
-	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "mot", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
 	private List<ListeMot> listeMots = new ArrayList<ListeMot>();
 
 	// Utilisation d'un Set pour permettre le chargement EAGER et éviter
@@ -49,7 +49,7 @@ public class Mot implements Comparable<Mot> {
 	// cannot simultaneously fetch multiple
 	// bags cf.
 	// http://blog.eyallupu.com/2010/06/hibernate-exception-simultaneously.html
-	@OneToMany(mappedBy = "mot", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "mot", cascade = { CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<MotPrononciation> motPrononciations = new HashSet<MotPrononciation>();
 
 	@Column(nullable = false)

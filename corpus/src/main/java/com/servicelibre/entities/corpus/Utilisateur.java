@@ -37,19 +37,19 @@ public class Utilisateur {
     @Column
     String motDePasse;
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "utilisateur", cascade = { CascadeType.REMOVE }, orphanRemoval = true, fetch = FetchType.EAGER)
     Set<UtilisateurRôle> utilisateurRôles = new HashSet<UtilisateurRôle>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "utilisateur", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
     Set<CatégorieListe> catégorieListes = new HashSet<CatégorieListe>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "utilisateur", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
     Set<Liste> listes = new HashSet<Liste>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "utilisateur", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
     Set<Mot> mots = new HashSet<Mot>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "utilisateur", cascade = { CascadeType.REMOVE }, orphanRemoval = true)
     Set<Contexte> contextes = new HashSet<Contexte>();
 
     public Utilisateur() {
