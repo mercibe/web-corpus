@@ -20,7 +20,7 @@ import com.servicelibre.zk.controller.IndexCtrl;
 import com.servicelibre.zk.controller.IndexCtrl.Mode;
 import com.servicelibre.zk.controller.ListeCtrl;
 
-public class ListeMotRowRenderer implements RowRenderer {
+public class ListeMotRowRenderer implements RowRenderer<Object> {
 
     private static Logger logger = LoggerFactory.getLogger(ListeMotRowRenderer.class);
 
@@ -40,22 +40,19 @@ public class ListeMotRowRenderer implements RowRenderer {
 
 	final Mot mot = (Mot) model;
 
-	// Doit-on afficher une checkbox? (mot sélectionnable)
-	if (rôleAdmin) {
-	    final Checkbox cb = new Checkbox();
-	    cb.setValue(mot.getId());
-	    cb.setChecked(mot.sélectionné);
+	final Checkbox cb = new Checkbox();
+	cb.setValue(mot.getId());
+	cb.setChecked(mot.sélectionné);
 
-	    cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
+	cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
 
-		@Override
-		public void onEvent(Event arg0) throws Exception {
-		    mot.sélectionné = cb.isChecked();
-		}
-	    });
+	    @Override
+	    public void onEvent(Event arg0) throws Exception {
+		mot.sélectionné = cb.isChecked();
+	    }
+	});
 
-	    row.appendChild(cb);
-	}
+	row.appendChild(cb);
 
 	StringBuilder motPlus = new StringBuilder(mot.getMot());
 

@@ -182,9 +182,7 @@
 
 					<columns sizable="true">
 
-						<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
-							<column width="40px"/>
-						</zk>
+						<column width="40px"/>
 
 						<column hflex="3" id="contexte"
 							label="Contexte" />

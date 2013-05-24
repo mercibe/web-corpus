@@ -203,11 +203,9 @@
 
 					<columns sizable="true" menupopup="editPopup">
 					
-						<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
 							<column width="40px">
 <!-- 								<checkbox id="sélectionnerTout" label=""></checkbox> -->
 							</column>
-						</zk>
 					
 						<column width="250px" id="mot" label="Mot"
 							sortDirection="ascending" sort="auto" />

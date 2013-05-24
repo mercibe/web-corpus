@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
+import org.zkoss.spring.SpringUtil;
+import org.zkoss.spring.security.SecurityUtil;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
@@ -167,10 +169,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 
 	OngletRepository ongletRepo = ServiceLocator.getOngletRepo();
 
-	// TODO faire un SpringSecurityHelper (celui de ZK semble ne pas
-	// fonctionner correctement)
-	SecurityContext ssctx = (SecurityContext) desktop.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-	Collection<? extends GrantedAuthority> authorities = ssctx.getAuthentication().getAuthorities();
+	Collection<? extends GrantedAuthority> authorities = SecurityUtil.getAuthentication().getAuthorities();
 
 	// Récupération des onglets à afficher
 	List<Onglet> onglets = (List<Onglet>) ongletRepo.findAll(new Sort("ordre"));

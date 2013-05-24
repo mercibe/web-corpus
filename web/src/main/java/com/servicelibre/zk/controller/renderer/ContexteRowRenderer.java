@@ -13,71 +13,67 @@ import org.zkoss.zul.Span;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.zk.controller.ContexteCtrl;
 
-public class ContexteRowRenderer implements RowRenderer {
+public class ContexteRowRenderer implements RowRenderer<Object> {
 
-	// private static Logger logger = LoggerFactory.getLogger(ContexteRowRenderer.class);
+    // private static Logger logger =
+    // LoggerFactory.getLogger(ContexteRowRenderer.class);
 
-	protected ContexteCtrl contexteCtrl;
-	private boolean rôleAdmin;
+    protected ContexteCtrl contexteCtrl;
+    private boolean rôleAdmin;
 
-	public ContexteRowRenderer(ContexteCtrl contexteCtrl) {
-		super();
-		this.contexteCtrl = contexteCtrl;
-		this.rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
-	}
+    public ContexteRowRenderer(ContexteCtrl contexteCtrl) {
+	super();
+	this.contexteCtrl = contexteCtrl;
+	this.rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
+    }
 
-	@Override
-	public void render(Row row, Object model , int index) throws Exception {
+    @Override
+    public void render(Row row, Object model, int index) throws Exception {
 
-		final Contexte contexte = (Contexte) model;
-		final Contexte contexteInitial = contexteCtrl.getContexteInitial(contexte);
+	final Contexte contexte = (Contexte) model;
+	final Contexte contexteInitial = contexteCtrl.getContexteInitial(contexte);
 
-		// Doit-on afficher une checkbox? (mot sélectionnable)
-		if (rôleAdmin) {
-		    final Checkbox cb = new Checkbox();
-		    cb.setValue(contexteInitial);
-		    cb.setChecked(contexte.sélectionné);
+	final Checkbox cb = new Checkbox();
+	cb.setValue(contexteInitial);
+	cb.setChecked(contexte.sélectionné);
 
-		    cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
+	cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
 
-			@Override
-			public void onEvent(Event arg0) throws Exception {
-			    contexte.sélectionné = cb.isChecked();
-			}
-		    });
+	    @Override
+	    public void onEvent(Event arg0) throws Exception {
+		contexte.sélectionné = cb.isChecked();
+	    }
+	});
 
-		    row.appendChild(cb);
-		}
+	row.appendChild(cb);
 
-		
-		
-		Span ctxSpan = new Span();
-		ctxSpan.appendChild(new Label(contexteInitial.texteAvant));
+	Span ctxSpan = new Span();
+	ctxSpan.appendChild(new Label(contexteInitial.texteAvant));
 
-		Label mot = new Label(contexteInitial.mot);
-		mot.setTooltiptext(contexteInitial.getId());
-		mot.setSclass("mot");
+	Label mot = new Label(contexteInitial.mot);
+	mot.setTooltiptext(contexteInitial.getId());
+	mot.setSclass("mot");
 
-		mot.addEventListener(Events.ON_CLICK, new EventListener() {
+	mot.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
 
-			@Override
-			public void onEvent(Event arg0) throws Exception {
-				// Label l = (Label) arg0.getTarget();
-				contexteCtrl.créeEtAfficheOngletInfoContexte(contexteInitial);
-			}
+	    @Override
+	    public void onEvent(Event arg0) throws Exception {
+		// Label l = (Label) arg0.getTarget();
+		contexteCtrl.créeEtAfficheOngletInfoContexte(contexteInitial);
+	    }
 
-		});
+	});
 
-		// mot.setHeight("20px");
-		ctxSpan.appendChild(mot);
+	// mot.setHeight("20px");
+	ctxSpan.appendChild(mot);
 
-		ctxSpan.appendChild(new Label(contexteInitial.texteAprès));
+	ctxSpan.appendChild(new Label(contexteInitial.texteAprès));
 
-		row.appendChild(ctxSpan);
+	row.appendChild(ctxSpan);
 
-		// row.appendChild(new Label(contexte.texteAvant + contexte.mot
-		// + contexte.texteAprès));
+	// row.appendChild(new Label(contexte.texteAvant + contexte.mot
+	// + contexte.texteAprès));
 
-	}
+    }
 
 }
