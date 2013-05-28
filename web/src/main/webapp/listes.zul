@@ -27,19 +27,19 @@
 			<hbox style="margin-top:10px;">
 
 				<combobox id="gp" readonly="true" width="120px">
-					<comboitem label="mots" value="GRAPHIE" />
-					<comboitem label="prononciations"
+					<comboitem label="mot" value="GRAPHIE" />
+					<comboitem label="prononciation"
 						value="PRONONCIATION" />
 				</combobox>
 
 				<combobox id="condition" readonly="true"
 					width="185px">
-					<comboitem label="commencent par"
+					<comboitem label="commence par"
 						value="COMMENCE_PAR" />
-					<comboitem label="se terminent par"
+					<comboitem label="se termine par"
 						value="FINIT_PAR" />
-					<comboitem label="contiennent" value="CONTIENT" />
-					<comboitem label="correspondent exactement à"
+					<comboitem label="contient" value="CONTIENT" />
+					<comboitem label="correspond exactement à"
 						value="ENTIER" />
 				</combobox>
 
