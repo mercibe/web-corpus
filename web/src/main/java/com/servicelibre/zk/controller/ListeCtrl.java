@@ -59,6 +59,7 @@ import com.servicelibre.repositories.corpus.MotRepositoryCustom.Condition;
 import com.servicelibre.zk.controller.IndexCtrl.Mode;
 import com.servicelibre.zk.controller.renderer.ListeMotRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
+import com.servicelibre.zk.recherche.RechercheExécution;
 import com.servicelibre.zk.recherche.RechercheMot;
 
 /**
@@ -71,6 +72,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 	private static Logger logger = LoggerFactory.getLogger(ListeCtrl.class);
 
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+	
 	Combobox gp; // autowire car même type/ID que le composant dans la page ZUL
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
@@ -524,7 +527,7 @@ public class ListeCtrl extends CorpusCtrl {
 				{ "ɛ:", "bl[ê]me, c[ai]sse, m[è]tre, pr[e]sse" },
 				{ "œ", "bonh[eu]r, jok[e]r, [oeu]f" },
 				{ "ɔ", "h[o]mme, [o]béir, p[o]rt" },
-				{ "ə", "méd[e]cin, m[e]ner" },
+				{ "ə", "méd[e]cin, ach[e]ter" },
 				{ "ə̠", "caf[e]tière, f[e]nouil, just[e]ment" },
 				{ "a", "[à], cl[a]v[a]rd[a]ge, p[a]tte" },
 				{ "ɑ", "là-b[as], p[â]te, pyjam[a]" },
@@ -734,17 +737,45 @@ public class ListeCtrl extends CorpusCtrl {
 
 	// TODO générer un nom de fichier qui représente la recherche
 	private String getNomFichier() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
 		return sdf.format(new Date()) + "-mots";
 	}
+	
 
 	@Override
 	protected void exporterRésultatsXls() {
 		Workbook wb = new HSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
+		
 		// Création d'une nouvelle feuille de calcul
-		Sheet sheet = wb.createSheet("mots");
+		Sheet motsSheet = wb.createSheet("mots");
 
+		
+		// Création d'une nouvelle feuille de calcul
+		RechercheExécution rechercheExécution = this.historiqueRecherche.get(0);
+		Sheet descriptionSheet = wb.createSheet("description de la recherche");
+
+		org.apache.poi.ss.usermodel.Row descriptionRow = descriptionSheet.createRow(0);
+		descriptionRow.createCell(0).setCellValue(createHelper.createRichTextString("description"));
+		Recherche recherche = rechercheExécution.recherche;
+		// TODO ajouter la description des filtres de la recherche + migrer le tout vers une méthode de l'objet Recherche du genre recherche.getDescriptionRecherche()
+		descriptionRow.createCell(1).setCellValue(createHelper.createRichTextString(recherche.getDescriptionChaîne() + " " + recherche.getDescriptionPortéeFiltre()));
+
+		org.apache.poi.ss.usermodel.Row nbRésultatsRow = descriptionSheet.createRow(1);
+		nbRésultatsRow.createCell(0).setCellValue(createHelper.createRichTextString("nombre de mots trouvés"));
+		nbRésultatsRow.createCell(1).setCellValue(createHelper.createRichTextString(""+rechercheExécution.nbRésultats));
+		
+		org.apache.poi.ss.usermodel.Row dateExécutionRow = descriptionSheet.createRow(2);
+		dateExécutionRow.createCell(0).setCellValue(createHelper.createRichTextString("date de l'exécution"));
+		dateExécutionRow.createCell(1).setCellValue(createHelper.createRichTextString(sdf.format(rechercheExécution.dateExécution)));
+		
+		
+		
+		for (int i = 0; i <= 2; i++) {
+			descriptionSheet.autoSizeColumn(i);
+		}
+		
+		
+		
 		// Création des styles, font, etc. pour les cellules de la feuille de
 		// calcul
 		Font entêteFont = wb.createFont();
@@ -762,7 +793,7 @@ public class ListeCtrl extends CorpusCtrl {
 		int colCpt = 0;
 		int rowCpt = 0;
 
-		org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
+		org.apache.poi.ss.usermodel.Row row = motsSheet.createRow(rowCpt++);
 		for (Object column : motsGrid.getColumns().getChildren()) {
 			String label = ((Column) column).getLabel();
 			if (label != null && !label.isEmpty()) {
@@ -786,7 +817,7 @@ public class ListeCtrl extends CorpusCtrl {
 		}
 		for (Mot mot : mots) {
 			if (!exportationPartielle || mot.sélectionné) {
-				row = sheet.createRow(rowCpt++);
+				row = motsSheet.createRow(rowCpt++);
 
 				org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
 				cell.setCellValue(createHelper.createRichTextString(mot
@@ -837,7 +868,7 @@ public class ListeCtrl extends CorpusCtrl {
 		}
 
 		for (int i = 0; i <= colCpt; i++) {
-			sheet.autoSizeColumn(i);
+			motsSheet.autoSizeColumn(i);
 		}
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

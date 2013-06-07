@@ -87,7 +87,7 @@
 								</bandpopup>
 							</bandbox>
 
-							<bandbox width="135px" readonly="true"
+							<bandbox id="valeurFiltreBandbox"  width="135px" readonly="true"
 								buttonVisible="true" autodrop="true">
 								<bandpopup vflex="min" hflex="min" style="overflow: auto;" >
 										<listbox width="400px" height="350px" 

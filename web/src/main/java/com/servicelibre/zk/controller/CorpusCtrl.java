@@ -63,6 +63,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	Button effacerRecherche;
 	Bandbox nomFiltreBandbox;
+	Bandbox valeurFiltreBandbox;
 
 	Listbox nomFiltre; // autowire car même type/ID que le composant dans la
 	// page ZUL
@@ -94,7 +95,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Image exportationCsv;
 	Image exportationXls;
 
-	List<RechercheExécution> historiqueRecherche = new ArrayList<RechercheExécution>(10);
+	protected List<RechercheExécution> historiqueRecherche = new ArrayList<RechercheExécution>(10);
 
 	// Enregistrement des événements onOK (la touche ENTER) sur tous les
 	// composants de la recherche
@@ -246,6 +247,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	public void onSelect$nomFiltre(Event event) {
 		actualiseValeursFiltreCourant();
+		valeurFiltreBandbox.open();
 	}
 
 	// public void onSelect$valeurFiltre(Event event) {

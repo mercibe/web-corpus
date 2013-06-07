@@ -706,9 +706,11 @@ public class ContexteCtrl extends CorpusCtrl {
 		entêteCell.setCellStyle(entêteCellStyle);
 		entêteCell.setCellValue(createHelper.createRichTextString("Contexte"));
 
-		// entêteCell = row.createCell(colCpt++);
-		// entêteCell.setCellStyle(entêteCellStyle);
-		// entêteCell.setCellValue(createHelper.createRichTextString("Texte avant"));
+		// TODO scinder les métadonnées
+		entêteCell = row.createCell(colCpt++);
+		entêteCell.setCellStyle(entêteCellStyle);
+		entêteCell.setCellValue(createHelper.createRichTextString("Information sur la source"));
+		
 		//
 		// entêteCell = row.createCell(colCpt++);
 		// entêteCell.setCellStyle(entêteCellStyle);
@@ -739,9 +741,10 @@ public class ContexteCtrl extends CorpusCtrl {
 			cell.setCellStyle(ligneCellStyle);
 			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.getPhrase().phrase));
 
-			// cell = row.createCell(1);
-			// cell.setCellStyle(ligneCellStyle);
-			// cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAvant));
+			//TODO scinder les métadonnées
+			cell = row.createCell(1);
+			cell.setCellStyle(ligneCellStyle);
+			cell.setCellValue(createHelper.createRichTextString(""+contexte.getDocMétadonnéesPrimaires()));
 			//
 			// cell = row.createCell(2);
 			// cell.setCellStyle(ligneCellStyle);
