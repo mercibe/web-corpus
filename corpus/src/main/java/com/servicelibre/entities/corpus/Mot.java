@@ -21,7 +21,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "lemme", "mot", "catgram", "genre" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "lemme", "mot", "catgram", "genre", "nombre" }))
 /**
  * Cette classe représente un conteneur d'information pour un mot donné de la langue française.
  * 

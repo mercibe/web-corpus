@@ -224,7 +224,7 @@
 						<column width="70px" id="colonnePrécision"
 							label="Précision" sort="auto(catgramPrécision, lemme)"
 							visible="false" />
-						<column id="colonneListe" label="${colonneListeParam.valeur}"
+						<column width="150px" id="colonneListe" label="${colonneListeParam.valeur}"
 							sort="auto(listePartitionPrimaire, lemme)" visible="true" />
 						
 						<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">

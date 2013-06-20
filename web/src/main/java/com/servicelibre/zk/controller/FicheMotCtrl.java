@@ -242,8 +242,8 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 
 		boolean nouveauMot = mot.getId() == 0;
 
-		mot.setMot(motTextbox.getValue());
-		mot.setLemme(lemmeTextbox.getValue());
+		mot.setMot(motTextbox.getValue().trim());
+		mot.setLemme(lemmeTextbox.getValue().trim());
 		mot.setMotNote(motNoteTextbox.getValue());
 		mot.setLemmeNote(lemmeNoteTextbox.getValue());
 		mot.setCatgramAffichage(catgramAffichageTextbox.getValue());
@@ -273,7 +273,7 @@ public class FicheMotCtrl extends GenericForwardComposer implements VariableReso
 
 			mot.setEstUnLemme(estUnLemmeCheckbox.isChecked());
 			mot.setRo(roCheckbox.isChecked());
-			mot.setAutreGraphie(autreGraphieTextbox.getValue());
+			mot.setAutreGraphie(autreGraphieTextbox.getValue().trim());
 			mot.setNote(noteTextbox.getValue());
 			// doit être sauvé maintenant pour pouvoir créer l'association éventuelle listeMot ci-après
 			mot = motRepo.save(mot);

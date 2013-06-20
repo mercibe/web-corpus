@@ -1,5 +1,7 @@
 package com.servicelibre.zk.recherche;
 
+import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 
@@ -84,7 +86,41 @@ public abstract class Recherche {
 	public abstract Recherche getCopie();
 	
 	public String getDescriptionFiltre(){
-		return "";
+		StringBuilder sb = new StringBuilder();
+		
+		String sep = "";
+		
+		for (Filtre f : filtres.getFiltres()) {
+			
+			// Ajout du nom du filtre
+			sb.append(sep).append(f.description).append("\n");
+			
+			sep = "\n";
+			
+			// Ajout des valeurs actives du filtre
+			for(DefaultKeyValue kv :f.getKeyValues()) {
+				sb.append(sep).append("\t").append(kv.getValue());
+			}
+			
+			sb.append(sep);
+		}
+		
+		return sb.toString();
+	}
+	
+	public String getDescriptionTextuelle() {
+		return getDescriptionTextuelle(true);
+	}
+	
+	public String getDescriptionTextuelle(boolean majusculeInitiale) {
+		String description = getDescriptionChaîne() + " " + getDescriptionPortéeFiltre() + "\n\n" + getDescriptionFiltre();
+		if(majusculeInitiale)
+		{
+			return Character.toUpperCase(description.charAt(0)) + description.substring(1);
+		}
+		else {
+			return description;
+		}
 	}
 
 }

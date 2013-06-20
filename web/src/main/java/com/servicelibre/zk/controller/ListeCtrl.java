@@ -10,11 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -73,7 +76,7 @@ public class ListeCtrl extends CorpusCtrl {
 	private static Logger logger = LoggerFactory.getLogger(ListeCtrl.class);
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
-	
+
 	Combobox gp; // autowire car même type/ID que le composant dans la page ZUL
 	Combobox condition; // autowire car même type/ID que le composant dans la
 	// page ZUL
@@ -92,8 +95,7 @@ public class ListeCtrl extends CorpusCtrl {
 	Column colonnePrononciation;
 	Menuitem menuitemPrononciation;
 
-	CatégorieListeRepository catégorieListeRepo = ServiceLocator
-			.getCatégorieListeRepo();
+	CatégorieListeRepository catégorieListeRepo = ServiceLocator.getCatégorieListeRepo();
 
 	ListeRepository listeRepo = ServiceLocator.getListeRepo();
 
@@ -115,10 +117,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 				ajouterMotsSélectionnésÀUneListeExistante();
 			} else if (action.equals("AJOUTER_UN_MOT")) {
-				Window webCorpusWindow = (Window) Path
-						.getComponent("//webCorpusPage/webCorpusWindow");
-				IndexCtrl indexCtrl = (IndexCtrl) webCorpusWindow
-						.getAttribute("$composer");
+				Window webCorpusWindow = (Window) Path.getComponent("//webCorpusPage/webCorpusWindow");
+				IndexCtrl indexCtrl = (IndexCtrl) webCorpusWindow.getAttribute("$composer");
 				indexCtrl.ouvreOngletMot(Mode.CRÉATION, null);
 			} else {
 				supprimerMotsSélectionnés();
@@ -137,8 +137,7 @@ public class ListeCtrl extends CorpusCtrl {
 		for (int i = 0; i < mots.size(); i++) {
 			Mot mot = mots.get(i);
 			if (mot.sélectionné) {
-				logger.debug("{} => {}", new Object[] {
-						"supprimer le mot sélectionné", mot });
+				logger.debug("{} => {}", new Object[] { "supprimer le mot sélectionné", mot });
 				idxSupprimés.add(i);
 				motRepository.delete(mot);
 			}
@@ -163,9 +162,7 @@ public class ListeCtrl extends CorpusCtrl {
 		for (int i = 0; i < mots.getSize(); i++) {
 			Mot mot = mots.getElementAt(i);
 			if (mot.sélectionné) {
-				logger.debug("{} => {} - {}", new Object[] {
-						"ajouter mots sélectionnés à une liste existante", mot,
-						listeSélectionnée });
+				logger.debug("{} => {} - {}", new Object[] { "ajouter mots sélectionnés à une liste existante", mot, listeSélectionnée });
 				ListeMot lm = new ListeMot(mot, listeSélectionnée);
 
 				try {
@@ -176,8 +173,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 				} catch (DataIntegrityViolationException e) {
 					// Le mot existe déjà dans cette liste
-					logger.info("Le mot {} est déjà dans la liste {}", mot,
-							listeSélectionnée);
+					logger.info("Le mot {} est déjà dans la liste {}", mot, listeSélectionnée);
 					// TODO conserver la liste de ces mots pour présenter un
 					// beau rapport final?
 				}
@@ -205,10 +201,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 				if (catégoriesListeCombobox.getItemCount() == 0) {
 					logger.debug("Remplir les catégories de listes si pas déjà fait");
-					List<CatégorieListe> catégoriesListes = catégorieListeRepo
-							.findAll(new Sort(
-									new Order(Direction.ASC, "ordre"),
-									new Order(Direction.ASC, "nom")));
+					List<CatégorieListe> catégoriesListes = catégorieListeRepo.findAll(new Sort(new Order(Direction.ASC, "ordre"),
+							new Order(Direction.ASC, "nom")));
 					for (CatégorieListe catégorieListe : catégoriesListes) {
 						Comboitem ci = new Comboitem(catégorieListe.getNom());
 						ci.setValue(catégorieListe);
@@ -230,19 +224,16 @@ public class ListeCtrl extends CorpusCtrl {
 
 		Comboitem selectedItem = catégoriesListeCombobox.getSelectedItem();
 		if (selectedItem != null) {
-			logger.debug("rafraîchir les listes pour la catégorie {}",
-					selectedItem.getValue());
+			logger.debug("rafraîchir les listes pour la catégorie {}", selectedItem.getValue());
 
 			// Vide les valeurs actuelles
 			listesCombobox.getChildren().clear();
 			listesCombobox.setText("");
 
 			// Récupération des listes de la catégorie de liste sélectionnée
-			CatégorieListe catégorieSélectionnée = (CatégorieListe) catégoriesListeCombobox
-					.getSelectedItem().getValue();
-			List<Liste> listesCourantes = listeRepo.findByCatégorie(
-					catégorieSélectionnée, new Sort(new Order(Direction.ASC,
-							"ordre"), new Order(Direction.ASC, "nom")));
+			CatégorieListe catégorieSélectionnée = (CatégorieListe) catégoriesListeCombobox.getSelectedItem().getValue();
+			List<Liste> listesCourantes = listeRepo.findByCatégorie(catégorieSélectionnée, new Sort(new Order(Direction.ASC, "ordre"),
+					new Order(Direction.ASC, "nom")));
 
 			for (Liste listeCourante : listesCourantes) {
 				Comboitem ci = new Comboitem(listeCourante.getNom());
@@ -271,7 +262,13 @@ public class ListeCtrl extends CorpusCtrl {
 
 	public void onSelect$gp(Event event) {
 		ajustementsGraphiePrononciation();
+		condition.setFocus(true);
+		condition.open();
+	}
 
+	public void onSelect$condition(Event event) {
+		cherche.setFocus(true);
+		cherche.select();
 	}
 
 	private void ajustementsGraphiePrononciation() {
@@ -312,8 +309,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 		String filtresActifs = "";
 		if (nbConditions > 1) {
-			filtresActifs = ", filtrés par les " + nbConditions
-					+ " filtres actifs";
+			filtresActifs = ", filtrés par les " + nbConditions + " filtres actifs";
 		} else if (nbConditions == 1) {
 			filtresActifs = ", filtrés par le filtre actif";
 		}
@@ -326,8 +322,7 @@ public class ListeCtrl extends CorpusCtrl {
 			sb.append(nbTrouvés).append(" mots trouvés (");
 		}
 
-		sb.append(recherche.getDescriptionChaîne()).append(filtresActifs)
-				.append(").");
+		sb.append(recherche.getDescriptionChaîne()).append(filtresActifs).append(").");
 
 		return sb.toString();
 	}
@@ -360,43 +355,37 @@ public class ListeCtrl extends CorpusCtrl {
 	// return mots;
 	// }
 
-	public List<Mot> exécuterRecherche(Recherche recherche,
-			boolean ajouterHistorique) {
+	public List<Mot> exécuterRecherche(Recherche recherche, boolean ajouterHistorique) {
 
 		List<Mot> mots = new ArrayList<Mot>();
 
 		logger.info(recherche.getDescriptionChaîne());
-		Condition conditionChaîne = MotRepositoryCustom.Condition
-				.valueOf(recherche.précisionChaîne);
-		logger.debug("MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne) = "
-				+ conditionChaîne);
+		Condition conditionChaîne = MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne);
+		logger.debug("MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne) = " + conditionChaîne);
 		logger.debug("filtres: " + recherche.filtres);
 
 		String chaîne = recherche.getChaîne();
 		switch (recherche.cible) {
 		case GRAPHIE:
-			mots = motRepository.findByGraphie(chaîne,
-					conditionChaîne,
-					recherche.filtres);
+			mots = motRepository.findByGraphie(chaîne, conditionChaîne, recherche.filtres);
 			break;
 		case PRONONCIATION:
-			mots = motRepository.findByPrononciation(chaîne,
-					conditionChaîne,
-					recherche.filtres);
+			mots = motRepository.findByPrononciation(chaîne, conditionChaîne, recherche.filtres);
 
-			// Est-ce que la chaîne recherchée contient au moins un des caractères suivant non suivi du « combining tilde » ou du « : » ?
+			// Est-ce que la chaîne recherchée contient au moins un des caractères suivant non suivi du « combining
+			// tilde » ou du « : » ?
 			Pattern pattern = Pattern.compile("ɛ(?![\u0303:])|ɔ(?!\u0303)|ɑ(?!\u0303)");
 			Matcher matcher = pattern.matcher(chaîne);
 
-			// Filtrer les résultats si un des caractères problématiques non suivi d'un caractère combiné est détecté dans la chaîne 
+			// Filtrer les résultats si un des caractères problématiques non suivi d'un caractère combiné est détecté
+			// dans la chaîne
 			if (matcher.find()) {
-				mots = filtrePrononciations(chaîne,conditionChaîne, mots);
+				mots = filtrePrononciations(chaîne, conditionChaîne, mots);
 			}
 
 			break;
 		default:
-			logger.error("Cible invalide pour une recherche de mots: "
-					+ recherche.cible);
+			logger.error("Cible invalide pour une recherche de mots: " + recherche.cible);
 			break;
 		}
 
@@ -406,17 +395,18 @@ public class ListeCtrl extends CorpusCtrl {
 
 		return mots;
 	}
-	
+
 	private List<Mot> filtrePrononciations(String chaîne, Condition conditionChaîne, List<Mot> mots) {
-		
+
 		List<Mot> motsFiltrés = new ArrayList<Mot>(mots.size());
-		
+
 		// COMBINING TILDE (̃) http://www.fileformat.info/info/unicode/char/303/index.htm
-		
-		StringBuffer regexp = new StringBuffer(chaîne.replaceAll("(ɛ(?![\u0303:]))", "(ɛ(?![\u0303:]))").replaceAll("ɔ(?!\u0303)", "ɔ(?!\u0303)").replaceAll("ɑ(?!\u0303)", "ɑ(?!\u0303)"));
-		
+
+		StringBuffer regexp = new StringBuffer(chaîne.replaceAll("(ɛ(?![\u0303:]))", "(ɛ(?![\u0303:]))")
+				.replaceAll("ɔ(?!\u0303)", "ɔ(?!\u0303)").replaceAll("ɑ(?!\u0303)", "ɑ(?!\u0303)"));
+
 		// Convertir la chaîne en un pattern
-		switch(conditionChaîne) {
+		switch (conditionChaîne) {
 		case COMMENCE_PAR:
 			regexp.insert(0, "^\\[").append(".*");
 			break;
@@ -431,18 +421,18 @@ public class ListeCtrl extends CorpusCtrl {
 			break;
 		default:
 			break;
-		
+
 		}
-		
+
 		Pattern pattern = Pattern.compile(regexp.toString());
 		Matcher matcher;
-		
+
 		logger.debug("Ne conserver que les prononciations qui matchent {}", regexp.toString());
-		
+
 		for (Mot mot : mots) {
 			// FIXME: KO si prononciations multiples
 			matcher = pattern.matcher(mot.getPrononciationsString());
-			if(matcher.matches()) {
+			if (matcher.matches()) {
 				motsFiltrés.add(mot);
 			}
 		}
@@ -470,13 +460,11 @@ public class ListeCtrl extends CorpusCtrl {
 	}
 
 	private Recherche.Cible getCible() {
-		return Recherche.Cible.valueOf((String) gp.getItemAtIndex(
-				gp.getSelectedIndex()).getValue());
+		return Recherche.Cible.valueOf((String) gp.getItemAtIndex(gp.getSelectedIndex()).getValue());
 	}
 
 	private String getPrécisionChaîne() {
-		return (String) condition.getItemAtIndex(condition.getSelectedIndex())
-				.getValue();
+		return (String) condition.getItemAtIndex(condition.getSelectedIndex()).getValue();
 	}
 
 	/**
@@ -492,8 +480,7 @@ public class ListeCtrl extends CorpusCtrl {
 		String aChercher = getMotCherché();
 
 		if (!aChercher.isEmpty()) {
-			desc.append(" qui ").append(condition.getValue()).append(" « ")
-					.append(aChercher).append(" »");
+			desc.append(" qui ").append(condition.getValue()).append(" « ").append(aChercher).append(" »");
 		}
 
 		return desc.toString();
@@ -514,51 +501,27 @@ public class ListeCtrl extends CorpusCtrl {
 
 	private void initialiseClavierPhonétique() {
 
-		String[][] apiLettres = {
-				{ "i", "ép[i], [î]le, l[y]s, out[i]l" },
-				{ "i:", "j[ea]n, tw[ee]d" },
-				{ "y", "b[u]lle, déb[u]t, h[u]tte" },
-				{ "u", "[ou]rs, p[ou]ls, t[ou]j[ou]rs" },
-				{ "u:", "slow f[oo]d, p[oo]l" },
-				{ "e", "ch[ez], [é]rable, hock[ey], p[é]ch[er]" },
-				{ "ø", "bl[eu]et, h[eu]r[eux], j[eu]" },
-				{ "o", "[au]t[o], b[eau], c[ô]té, sir[o]p" },
-				{ "ɛ", "acc[è]s, [ai]mer, épin[e]tte" },
-				{ "ɛ:", "bl[ê]me, c[ai]sse, m[è]tre, pr[e]sse" },
-				{ "œ", "bonh[eu]r, jok[e]r, [oeu]f" },
-				{ "ɔ", "h[o]mme, [o]béir, p[o]rt" },
-				{ "ə", "méd[e]cin, ach[e]ter" },
-				{ "ə̠", "caf[e]tière, f[e]nouil, just[e]ment" },
-				{ "a", "[à], cl[a]v[a]rd[a]ge, p[a]tte" },
-				{ "ɑ", "là-b[as], p[â]te, pyjam[a]" },
-				{ "ɛ̃", "cert[ain], fr[ein], [im]pair, [in]di[en]" },
-				{ "œ̃", "br[un], l[un]di, parf[um], [un]" },
-				{ "ɔ̃", "m[on]tagnais, [om]bre, p[on]t" },
-				{ "ɑ̃", "[an], [en], j[am]bon, s[an]g, t[em]ps" },
+		String[][] apiLettres = { { "i", "ép[i], [î]le, l[y]s, out[i]l" }, { "i:", "j[ea]n, tw[ee]d" },
+				{ "y", "b[u]lle, déb[u]t, h[u]tte" }, { "u", "[ou]rs, p[ou]ls, t[ou]j[ou]rs" }, { "u:", "slow f[oo]d, p[oo]l" },
+				{ "e", "ch[ez], [é]rable, hock[ey], p[é]ch[er]" }, { "ø", "bl[eu]et, h[eu]r[eux], j[eu]" },
+				{ "o", "[au]t[o], b[eau], c[ô]té, sir[o]p" }, { "ɛ", "acc[è]s, [ai]mer, épin[e]tte" },
+				{ "ɛ:", "bl[ê]me, c[ai]sse, m[è]tre, pr[e]sse" }, { "œ", "bonh[eu]r, jok[e]r, [oeu]f" },
+				{ "ɔ", "h[o]mme, [o]béir, p[o]rt" }, { "ə", "méd[e]cin, ach[e]ter" }, { "ə̠", "caf[e]tière, f[e]nouil, just[e]ment" },
+				{ "a", "[à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "là-b[as], p[â]te, pyjam[a]" },
+				{ "ɛ̃", "cert[ain], fr[ein], [im]pair, [in]di[en]" }, { "œ̃", "br[un], l[un]di, parf[um], [un]" },
+				{ "ɔ̃", "m[on]tagnais, [om]bre, p[on]t" }, { "ɑ̃", "[an], [en], j[am]bon, s[an]g, t[em]ps" },
 
-				{ "p", "cége[p], [p]aix, sa[p]in" },
-				{ "t", "fourche[tt]e, pa[t]in, [th]é, [t]oit" },
-				{ "k", "be[c], [ch]rome, [c]o[q], dis[qu]e, [k]aya[k]" },
-				{ "b", "[b]ain, sno[b], ta[b]le" },
-				{ "d", "bala[d]e, che[dd]ar, [d]anse" },
-				{ "g", "al[gu]e, [g]a[g], [gu]ide" },
-				{ "f", "al[ph]abet, boeu[f], e[ff]ort, [f]leuve" },
-				{ "s", "[c]inq, for[c]e, gla[ç]on, moca[ss]in, [s]our[c]il" },
-				{ "ʃ", "brun[ch], [ch]alet, é[ch]elle, [sch]éma" },
-				{ "v", "ca[v]ité, gra[v]e, [v]ille" },
-				{ "z", "bri[s]e, di[x]ième, mai[s]on, [z]énith" },
-				{ "ʒ", "[g]enou, [j]eudi, nei[g]e" },
-				{ "l", "a[l]coo[l], [l]aine, pe[ll]e" },
-				{ "ʀ", "cou[rr]iel, fini[r], [r]ang" },
-				{ "m", "alu[m]iniu[m], fe[mm]e, [m]itaine" },
-				{ "n", "ante[nn]e, caba[n]e, [n]ord" },
-				{ "ɲ", "bei[gn]e, campa[gn]e" },
-				{ "ŋ", "bi[n]go, campi[ng], pi[ng] po[ng]" },
-				{ "'",
-						"sans élision ni liaison : les haches, les huit, le ouaouaron" },
+				{ "p", "cége[p], [p]aix, sa[p]in" }, { "t", "fourche[tt]e, pa[t]in, [th]é, [t]oit" },
+				{ "k", "be[c], [ch]rome, [c]o[q], dis[qu]e, [k]aya[k]" }, { "b", "[b]ain, sno[b], ta[b]le" },
+				{ "d", "bala[d]e, che[dd]ar, [d]anse" }, { "g", "al[gu]e, [g]a[g], [gu]ide" },
+				{ "f", "al[ph]abet, boeu[f], e[ff]ort, [f]leuve" }, { "s", "[c]inq, for[c]e, gla[ç]on, moca[ss]in, [s]our[c]il" },
+				{ "ʃ", "brun[ch], [ch]alet, é[ch]elle, [sch]éma" }, { "v", "ca[v]ité, gra[v]e, [v]ille" },
+				{ "z", "bri[s]e, di[x]ième, mai[s]on, [z]énith" }, { "ʒ", "[g]enou, [j]eudi, nei[g]e" },
+				{ "l", "a[l]coo[l], [l]aine, pe[ll]e" }, { "ʀ", "cou[rr]iel, fini[r], [r]ang" },
+				{ "m", "alu[m]iniu[m], fe[mm]e, [m]itaine" }, { "n", "ante[nn]e, caba[n]e, [n]ord" }, { "ɲ", "bei[gn]e, campa[gn]e" },
+				{ "ŋ", "bi[n]go, campi[ng], pi[ng] po[ng]" }, { "'", "sans élision ni liaison : les haches, les huit, le ouaouaron" },
 
-				{ "j", "écureu[il], fi[ll]e, pa[y]er, r[i]en, [y]ogourt" },
-				{ "ɥ", "app[u]i, c[u]isse, t[u]ile" },
+				{ "j", "écureu[il], fi[ll]e, pa[y]er, r[i]en, [y]ogourt" }, { "ɥ", "app[u]i, c[u]isse, t[u]ile" },
 				{ "w", "b[o]is, j[ou]er, [ou]ate, [w]att" }, };
 
 		int idCpt = 1;
@@ -575,8 +538,7 @@ public class ListeCtrl extends CorpusCtrl {
 			popup.setId("api_" + idCpt);
 			idCpt++;
 			popup.setParent(this.webCorpusWindow);
-			Html html = new Html("<div align=\"center\">"
-					+ getHtml(apiLettreInfo[1]) + "</div>");
+			Html html = new Html("<div align=\"center\">" + getHtml(apiLettreInfo[1]) + "</div>");
 			html.setParent(popup);
 
 			label.setTooltip(popup.getId() + ", position=after_start, delay=50");
@@ -599,10 +561,8 @@ public class ListeCtrl extends CorpusCtrl {
 	private String getHtml(String string) {
 
 		// FIXME faire en une opération!
-		return string
-				.replaceAll("\\[([a-zâàëèéêïîôûüùç]*)\\]",
-						"<span style=\"color:red\">$1</span>")
-				.replaceAll("\\[", "").replaceAll("\\]", "");
+		return string.replaceAll("\\[([a-zâàëèéêïîôûüùç]*)\\]", "<span style=\"color:red\">$1</span>").replaceAll("\\[", "")
+				.replaceAll("\\]", "");
 	}
 
 	private void initialiseChamps() {
@@ -622,8 +582,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 		Recherche recherche = getRecherche();
 
-		ListModelList modelList = new ListModelList(exécuterRecherche(
-				recherche, false));
+		ListModelList modelList = new ListModelList(exécuterRecherche(recherche, false));
 
 		motsGrid.setModel(modelList);
 
@@ -640,10 +599,8 @@ public class ListeCtrl extends CorpusCtrl {
 
 		logger.debug("Afficher les contextes de « {} »", lemme);
 
-		Include contexteInclude = (Include) webCorpusWindow
-				.getFellow("contexteInclude");
-		Window contexteWindow = (Window) contexteInclude
-				.getFellow("contexteWindow");
+		Include contexteInclude = (Include) webCorpusWindow.getFellow("contexteInclude");
+		Window contexteWindow = (Window) contexteInclude.getFellow("contexteWindow");
 
 		contexteWindow.setAttribute("lemme", lemme);
 		Events.sendEvent("onAfficheContexte", contexteWindow, lemme);
@@ -655,11 +612,9 @@ public class ListeCtrl extends CorpusCtrl {
 		@SuppressWarnings("unchecked")
 		List<Component> children = comp.getChildren();
 
-		System.out.println("Children of " + comp.getUuid() + "(" + comp.getId()
-				+ ")");
+		System.out.println("Children of " + comp.getUuid() + "(" + comp.getId() + ")");
 		for (Component component : children) {
-			System.out.println(component.getUuid() + "(" + component.getId()
-					+ ")");
+			System.out.println(component.getUuid() + "(" + component.getId() + ")");
 			displayChildren(component, sep + "\t");
 		}
 
@@ -669,8 +624,7 @@ public class ListeCtrl extends CorpusCtrl {
 	public void chercheEtAffiche(boolean ajouterHistorique) {
 
 		Recherche recherche = getRecherche();
-		ListModelList<Object> modelList = new ListModelList<Object>(
-				exécuterRecherche(recherche, ajouterHistorique));
+		ListModelList<Object> modelList = new ListModelList<Object>(exécuterRecherche(recherche, ajouterHistorique));
 
 		motsGrid.setModel(modelList);
 		motsGrid.getPaginal().setActivePage(0);
@@ -716,66 +670,29 @@ public class ListeCtrl extends CorpusCtrl {
 		List<Mot> mots = (List<Mot>) motsGrid.getModel();
 		for (Mot mot : mots) {
 			csv.append(ajouteGuillemetsCsv(mot.getMot())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getPrononciationsString()))
-					.append(séparateur);
-			csv.append("\"").append(mot.isRo() ? "*" : "").append("\"")
-					.append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getCatgram()))
-					.append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getPrononciationsString())).append(séparateur);
+			csv.append("\"").append(mot.isRo() ? "*" : "").append("\"").append(séparateur);
+			csv.append(ajouteGuillemetsCsv(mot.getCatgram())).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(mot.getGenre())).append(séparateur);
 			csv.append(ajouteGuillemetsCsv(mot.getNombre())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrécision())).append(
-					"\n");
+			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrécision())).append("\n");
 			// FIXME
 			// csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
 
 		}
-		Filedownload.save(csv.toString().getBytes(),
-				"text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier()
-						+ ".csv");
+		Filedownload.save(csv.toString().getBytes(), "text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
 	}
 
 	// TODO générer un nom de fichier qui représente la recherche
 	private String getNomFichier() {
 		return sdf.format(new Date()) + "-mots";
 	}
-	
 
 	@Override
 	protected void exporterRésultatsXls() {
 		Workbook wb = new HSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
-		
-		// Création d'une nouvelle feuille de calcul
-		Sheet motsSheet = wb.createSheet("mots");
 
-		
-		// Création d'une nouvelle feuille de calcul
-		RechercheExécution rechercheExécution = this.historiqueRecherche.get(0);
-		Sheet descriptionSheet = wb.createSheet("description de la recherche");
-
-		org.apache.poi.ss.usermodel.Row descriptionRow = descriptionSheet.createRow(0);
-		descriptionRow.createCell(0).setCellValue(createHelper.createRichTextString("description"));
-		Recherche recherche = rechercheExécution.recherche;
-		// TODO ajouter la description des filtres de la recherche + migrer le tout vers une méthode de l'objet Recherche du genre recherche.getDescriptionRecherche()
-		descriptionRow.createCell(1).setCellValue(createHelper.createRichTextString(recherche.getDescriptionChaîne() + " " + recherche.getDescriptionPortéeFiltre()));
-
-		org.apache.poi.ss.usermodel.Row nbRésultatsRow = descriptionSheet.createRow(1);
-		nbRésultatsRow.createCell(0).setCellValue(createHelper.createRichTextString("nombre de mots trouvés"));
-		nbRésultatsRow.createCell(1).setCellValue(createHelper.createRichTextString(""+rechercheExécution.nbRésultats));
-		
-		org.apache.poi.ss.usermodel.Row dateExécutionRow = descriptionSheet.createRow(2);
-		dateExécutionRow.createCell(0).setCellValue(createHelper.createRichTextString("date de l'exécution"));
-		dateExécutionRow.createCell(1).setCellValue(createHelper.createRichTextString(sdf.format(rechercheExécution.dateExécution)));
-		
-		
-		
-		for (int i = 0; i <= 2; i++) {
-			descriptionSheet.autoSizeColumn(i);
-		}
-		
-		
-		
 		// Création des styles, font, etc. pour les cellules de la feuille de
 		// calcul
 		Font entêteFont = wb.createFont();
@@ -789,20 +706,16 @@ public class ListeCtrl extends CorpusCtrl {
 		CellStyle apiCellsStyle = wb.createCellStyle();
 		apiCellsStyle.setFont(apiCellsFont);
 
-		// Création de la ligne d'entête
-		int colCpt = 0;
-		int rowCpt = 0;
-
-		org.apache.poi.ss.usermodel.Row row = motsSheet.createRow(rowCpt++);
-		for (Object column : motsGrid.getColumns().getChildren()) {
-			String label = ((Column) column).getLabel();
-			if (label != null && !label.isEmpty()) {
-				org.apache.poi.ss.usermodel.Cell cell = row
-						.createCell(colCpt++);
-				cell.setCellStyle(entêteCellStyle);
-				cell.setCellValue(createHelper.createRichTextString(label));
-			}
+		// Récupération de la description de la dernière recherche
+		RechercheExécution rechercheExécution = null;
+		if (this.historiqueRecherche.size() > 0) {
+			rechercheExécution = this.historiqueRecherche.get(0);
+		} else {
+			rechercheExécution = new RechercheExécution();
 		}
+
+		// Création d'une nouvelle feuille de calcul
+		Sheet motsSheet = wb.createSheet("mots");
 
 		// Récupération des données / lignes
 		@SuppressWarnings("unchecked")
@@ -815,40 +728,51 @@ public class ListeCtrl extends CorpusCtrl {
 				break;
 			}
 		}
+
+		insérerTitreRecherche(wb, createHelper, rechercheExécution, motsSheet, exportationPartielle);
+
+		// insérerFeuilleDescription(wb, createHelper, rechercheExécution);
+
+		// Création de la ligne d'entête
+		int colCpt = 0;
+		int rowCpt = 2;
+
+		org.apache.poi.ss.usermodel.Row row = motsSheet.createRow(rowCpt++);
+		for (Object column : motsGrid.getColumns().getChildren()) {
+			String label = ((Column) column).getLabel();
+			if (label != null && !label.isEmpty()) {
+				org.apache.poi.ss.usermodel.Cell cell = row.createCell(colCpt++);
+				cell.setCellStyle(entêteCellStyle);
+				cell.setCellValue(createHelper.createRichTextString(label));
+			}
+		}
+
 		for (Mot mot : mots) {
 			if (!exportationPartielle || mot.sélectionné) {
 				row = motsSheet.createRow(rowCpt++);
 
 				org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
-				cell.setCellValue(createHelper.createRichTextString(mot
-						.getMot()));
+				cell.setCellValue(createHelper.createRichTextString(mot.getMot()));
 
 				cell = row.createCell(1);
 				cell.setCellStyle(apiCellsStyle);
-				cell.setCellValue(createHelper.createRichTextString(mot
-						.getPrononciationsString() != null ? mot
-						.getPrononciationsString() : ""));
-
-				cell = row.createCell(2);
-				cell.setCellValue(createHelper.createRichTextString(mot.isRo() ? "*"
+				cell.setCellValue(createHelper.createRichTextString(mot.getPrononciationsString() != null ? mot.getPrononciationsString()
 						: ""));
 
+				cell = row.createCell(2);
+				cell.setCellValue(createHelper.createRichTextString(mot.isRo() ? "*" : ""));
+
 				cell = row.createCell(3);
-				cell.setCellValue(createHelper.createRichTextString(mot
-						.getCatgram()));
+				cell.setCellValue(createHelper.createRichTextString(mot.getCatgram()));
 
 				cell = row.createCell(4);
-				cell.setCellValue(createHelper.createRichTextString(mot
-						.getGenre() != null ? mot.getGenre() : ""));
+				cell.setCellValue(createHelper.createRichTextString(mot.getGenre() != null ? mot.getGenre() : ""));
 
 				cell = row.createCell(5);
-				cell.setCellValue(createHelper.createRichTextString(mot
-						.getNombre() != null ? mot.getNombre() : ""));
+				cell.setCellValue(createHelper.createRichTextString(mot.getNombre() != null ? mot.getNombre() : ""));
 
 				cell = row.createCell(6);
-				cell.setCellValue(createHelper.createRichTextString(mot
-						.getCatgramPrécision() != null ? mot
-						.getCatgramPrécision() : ""));
+				cell.setCellValue(createHelper.createRichTextString(mot.getCatgramPrécision() != null ? mot.getCatgramPrécision() : ""));
 
 				cell = row.createCell(7);
 				Liste liste = mot.getListePartitionPrimaire();
@@ -858,12 +782,9 @@ public class ListeCtrl extends CorpusCtrl {
 					// supprimer toutes les balises)
 					// http://apache-poi.1045710.n5.nabble.com/SHow-HTML-text-in-one-of-the-excel-cell-td2312138.html
 					// http://jericho.htmlparser.net/docs/index.html
-					nomListePartitionPrimaire = liste.getNom().replaceAll(
-							"<(.|\n)*?>", "");
+					nomListePartitionPrimaire = liste.getNom().replaceAll("<(.|\n)*?>", "");
 				}
-				cell.setCellValue(createHelper
-						.createRichTextString(nomListePartitionPrimaire != null ? nomListePartitionPrimaire
-								: ""));
+				cell.setCellValue(createHelper.createRichTextString(nomListePartitionPrimaire != null ? nomListePartitionPrimaire : ""));
 			}
 		}
 
@@ -874,15 +795,73 @@ public class ListeCtrl extends CorpusCtrl {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			wb.write(baos);
-			Filedownload.save(baos.toByteArray(), "application/vnd.ms-excel",
-					getNomFichier() + ".xls");
+			Filedownload.save(baos.toByteArray(), "application/vnd.ms-excel", getNomFichier() + ".xls");
 			baos.close();
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+	}
+
+	private void insérerTitreRecherche(Workbook wb, CreationHelper createHelper, RechercheExécution rechercheExécution, Sheet motsSheet,
+			boolean exportationPartielle) {
+
+		// Titre de la recherche
+		Font titreFont = wb.createFont();
+		titreFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		CellStyle titreCellStyle = wb.createCellStyle();
+		// titreCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		titreCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		titreCellStyle.setFont(titreFont);
+		titreCellStyle.setWrapText(true);
+
+		Row titreRow = motsSheet.createRow(0);
+		Cell titreCell = titreRow.createCell(0);
+
+		titreRow.setHeightInPoints(motsSheet.getDefaultRowHeightInPoints() * 15);
+
+		titreCell.setCellStyle(titreCellStyle);
+
+		String descriptionTextuelle = "";
+
+		String exportationPartielleTexte = "";
+		if (exportationPartielle) {
+			exportationPartielleTexte = "Une sélection de mots parmi ";
+		}
+		
+		if (rechercheExécution.recherche == null) {
+				descriptionTextuelle = exportationPartielleTexte + "tous les mots";			
+		} else {
+				descriptionTextuelle = exportationPartielleTexte + rechercheExécution.recherche.getDescriptionTextuelle(!exportationPartielle);
+		}
+
+		titreCell.setCellValue(createHelper.createRichTextString(descriptionTextuelle));
+		motsSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+	}
+
+	private void insérerFeuilleDescription(Workbook wb, CreationHelper createHelper, RechercheExécution rechercheExécution) {
+
+		// Création d'une nouvelle feuille de calcul pour contenir des informations meta sur la recherche
+
+		Sheet descriptionSheet = wb.createSheet("description de la recherche");
+
+		org.apache.poi.ss.usermodel.Row descriptionRow = descriptionSheet.createRow(0);
+		descriptionRow.createCell(0).setCellValue(createHelper.createRichTextString("description"));
+		Recherche recherche = rechercheExécution.recherche;
+		descriptionRow.createCell(1).setCellValue(createHelper.createRichTextString(recherche.getDescriptionTextuelle()));
+
+		org.apache.poi.ss.usermodel.Row nbRésultatsRow = descriptionSheet.createRow(1);
+		nbRésultatsRow.createCell(0).setCellValue(createHelper.createRichTextString("nombre de mots trouvés"));
+		nbRésultatsRow.createCell(1).setCellValue(createHelper.createRichTextString("" + rechercheExécution.nbRésultats));
+
+		org.apache.poi.ss.usermodel.Row dateExécutionRow = descriptionSheet.createRow(2);
+		dateExécutionRow.createCell(0).setCellValue(createHelper.createRichTextString("date de l'exécution"));
+		dateExécutionRow.createCell(1).setCellValue(createHelper.createRichTextString(sdf.format(rechercheExécution.dateExécution)));
+
+		for (int i = 0; i <= 2; i++) {
+			descriptionSheet.autoSizeColumn(i);
+		}
 	}
 
 	@Override
@@ -910,8 +889,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 		// Précision chaîne
 
-		Condition précision = MotRepositoryCustom.Condition
-				.valueOf(r.précisionChaîne);
+		Condition précision = MotRepositoryCustom.Condition.valueOf(r.précisionChaîne);
 
 		switch (précision) {
 		case COMMENCE_PAR:

@@ -13,13 +13,17 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -45,6 +49,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.metadata.Metadata;
 import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
@@ -52,9 +57,12 @@ import com.servicelibre.corpus.service.CorpusPhraseService;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
 import com.servicelibre.corpus.service.PhraseService;
+import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.repositories.corpus.DocMetadataRepository;
 import com.servicelibre.zk.controller.renderer.ContexteRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
+import com.servicelibre.zk.recherche.RechercheExécution;
 
 /**
  * 
@@ -82,7 +90,7 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	PhraseService phraseService = new CorpusPhraseService();
 
-	CorpusService corpusService = ServiceLocator.getCorpusService();
+	DocMetadataRepository docMetadataRepo = ServiceLocator.getDocMetadataRepo();
 
 	private static final long serialVersionUID = 779679285074159073L;
 
@@ -109,6 +117,7 @@ public class ContexteCtrl extends CorpusCtrl {
 			
 		}
 	}
+	
 
 
 	private void ajouterContextesSélectionnésAuMotDUneListeExistante() {
@@ -127,6 +136,11 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	public void onOK$condition(Event event) {
 		chercheEtAffiche(true);
+	}
+	
+	public void onSelect$condition(Event event) {
+		cherche.setFocus(true);
+		cherche.select();
 	}
 
 	public void onOK$gp(Event event) {
@@ -682,9 +696,6 @@ public class ContexteCtrl extends CorpusCtrl {
 	@Override
 	protected void exporterRésultatsXls() {
 		Workbook wb = new HSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
-		// Création d'une nouvelle feuille de calcul
-		Sheet sheet = wb.createSheet("contextes");
 
 		// Création des styles, font, etc. pour les cellules de la feuille de
 		// calcul
@@ -697,19 +708,52 @@ public class ContexteCtrl extends CorpusCtrl {
 		CellStyle ligneCellStyle = wb.createCellStyle();
 		ligneCellStyle.setWrapText(true);
 
+		// Récupération de la description de la dernière recherche
+		RechercheExécution rechercheExécution = null;
+		if (this.historiqueRecherche.size() > 0) {
+			rechercheExécution = this.historiqueRecherche.get(0);
+		}
+		else {
+			rechercheExécution = new RechercheExécution();
+		}
+		
+		
+		CreationHelper createHelper = wb.getCreationHelper();
+		// Création d'une nouvelle feuille de calcul
+		Sheet contextesSheet = wb.createSheet("contextes");
+		
+		// Récupération des données
+		@SuppressWarnings("unchecked")
+		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
+		
+		boolean exportationPartielle = false;
+		for (Contexte contexte : contextes) {
+			if(contexte.sélectionné) {
+				exportationPartielle = true;
+				break;
+			}
+		}
+		
+		insérerTitreRecherche(wb, createHelper, rechercheExécution, contextesSheet, exportationPartielle);
+		
+		
 		// Création de la ligne d'entête
 		int colCpt = 0;
-		int rowCpt = 0;
+		int rowCpt = 3;
 
-		org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowCpt++);
+		org.apache.poi.ss.usermodel.Row row = contextesSheet.createRow(rowCpt++);
 		org.apache.poi.ss.usermodel.Cell entêteCell = row.createCell(colCpt++);
 		entêteCell.setCellStyle(entêteCellStyle);
 		entêteCell.setCellValue(createHelper.createRichTextString("Contexte"));
 
-		// TODO scinder les métadonnées
-		entêteCell = row.createCell(colCpt++);
-		entêteCell.setCellStyle(entêteCellStyle);
-		entêteCell.setCellValue(createHelper.createRichTextString("Information sur la source"));
+		// Créer les colonnes pour les métadonnées primaires
+		List<DocMetadata> metadatas = docMetadataRepo.findByCorpusAndPrimaire(corpusService.getCorpus(), true, new Sort("ordre"));
+		for (DocMetadata docMetadata : metadatas) {
+			entêteCell = row.createCell(colCpt++);
+			entêteCell.setCellStyle(entêteCellStyle);
+			entêteCell.setCellValue(createHelper.createRichTextString(docMetadata.getNom()));
+		}
+		
 		
 		//
 		// entêteCell = row.createCell(colCpt++);
@@ -720,31 +764,31 @@ public class ContexteCtrl extends CorpusCtrl {
 		// entêteCell.setCellStyle(entêteCellStyle);
 		// entêteCell.setCellValue(createHelper.createRichTextString("Texte après"));
 
-		// Récupération des données
-		@SuppressWarnings("unchecked")
-		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
 		
-		boolean exportationPartielle = false;
+		
 		for (Contexte contexte : contextes) {
-		    if(contexte.sélectionné) {
-			exportationPartielle = true;
-			break;
-		    }
-		}
-		for (Contexte contexte : contextes) {
+			
+			int dataColCpt = 0;
+			
 		    if(!exportationPartielle || contexte.sélectionné) {	
 			Contexte contextePhraseComplète = getContexteInitial(contexte);
 
-			row = sheet.createRow(rowCpt++);
+			row = contextesSheet.createRow(rowCpt++);
 
-			org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
+			// FIXME ajuster hauteur de la ligne en fonction du nombre de ligne de texte?
+			// cf. http://apache-poi.1045710.n5.nabble.com/Autosize-row-for-HSSF-library-td2308264.html
+			
+			org.apache.poi.ss.usermodel.Cell cell = row.createCell(dataColCpt++);
 			cell.setCellStyle(ligneCellStyle);
 			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.getPhrase().phrase));
 
-			//TODO scinder les métadonnées
-			cell = row.createCell(1);
-			cell.setCellStyle(ligneCellStyle);
-			cell.setCellValue(createHelper.createRichTextString(""+contexte.getDocMétadonnéesPrimaires()));
+			//afficher les métadonnées primaires
+			for(Metadata metadata : contexte.getDocMétadonnéesPrimaires())
+			{
+				cell = row.createCell(dataColCpt++);
+				cell.setCellStyle(ligneCellStyle);
+				cell.setCellValue(createHelper.createRichTextString(metadata.getSimpleString()));
+			}
 			//
 			// cell = row.createCell(2);
 			// cell.setCellStyle(ligneCellStyle);
@@ -757,7 +801,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		}
 
 		for (int i = 0; i <= colCpt; i++) {
-			sheet.autoSizeColumn(i);
+			contextesSheet.autoSizeColumn(i);
 		}
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -772,6 +816,41 @@ public class ContexteCtrl extends CorpusCtrl {
 		}
 	}
 
+	
+	private void insérerTitreRecherche(Workbook wb, CreationHelper createHelper, RechercheExécution rechercheExécution, Sheet motsSheet, boolean exportationPartielle) {
+		// Titre de la recherche
+		Font titreFont = wb.createFont();
+		titreFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		CellStyle titreCellStyle = wb.createCellStyle();
+		//titreCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		titreCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+		titreCellStyle.setFont(titreFont);
+		titreCellStyle.setWrapText(true);
+		
+		Row titreRow = motsSheet.createRow(0);
+		Cell titreCell = titreRow.createCell(0);
+		
+		titreRow.setHeightInPoints(motsSheet.getDefaultRowHeightInPoints() * 15); 
+		
+		titreCell.setCellStyle(titreCellStyle);
+		
+		String descriptionTextuelle = "";
+		
+		String exportationPartielleTexte = "";
+		if (exportationPartielle) {
+			exportationPartielleTexte = "Une sélection de contextes parmi ";
+		}
+		
+		if (rechercheExécution.recherche == null) {
+			descriptionTextuelle = exportationPartielleTexte + "tous les contextes";			
+		} else {
+				descriptionTextuelle = exportationPartielleTexte + rechercheExécution.recherche.getDescriptionTextuelle(!exportationPartielle);
+		}
+		
+		titreCell.setCellValue(createHelper.createRichTextString(descriptionTextuelle));
+		motsSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
+	}
+	
 	// TODO générer un nom de fichier qui représente mieux la recherche
 	private String getNomFichier() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");

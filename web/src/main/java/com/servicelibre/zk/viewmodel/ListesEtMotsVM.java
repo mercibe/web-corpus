@@ -359,7 +359,7 @@ public class ListesEtMotsVM {
 			logger.debug("Traiter l'importation d'un fichier de mots au format XML");
 			Importation importation = new Importation(ServiceLocator.getApplicationContext());
 			
-			importation.importeMots(fichierTéléversé.getReaderData(), com.servicelibre.corpus.Importation.Mode.REMPLACE_TOUT);
+			importation.importeMots(fichierTéléversé.getReaderData(), com.servicelibre.corpus.Importation.Mode.MAJ);
 		}
 		else {
 			// TODO valider qu'il s'agit bien d'un fichier XLS

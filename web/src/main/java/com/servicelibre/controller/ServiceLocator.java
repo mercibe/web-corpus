@@ -5,6 +5,7 @@ import org.zkoss.spring.SpringUtil;
 
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.repositories.corpus.CatégorieListeRepository;
+import com.servicelibre.repositories.corpus.DocMetadataRepository;
 import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
@@ -65,8 +66,13 @@ public class ServiceLocator {
 		return (ListeMotRepository) ctx.getBean("listeMotRepository");
 	}
 	
+	public static DocMetadataRepository getDocMetadataRepo() {
+		return (DocMetadataRepository) ctx.getBean("docMetadataRepository");
+	}
+	
 	public static ApplicationContext getApplicationContext() {
 		return ctx;
 	}
+
 
 }

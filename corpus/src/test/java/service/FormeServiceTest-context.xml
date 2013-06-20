@@ -5,5 +5,6 @@
 
 
 	<bean id="formeService" class="com.servicelibre.corpus.service.FormeService" init-method="init"/>
-
+	<bean id="prononciationService" class="com.servicelibre.corpus.service.PrononciationService" init-method="init"/>
+	
 </beans>

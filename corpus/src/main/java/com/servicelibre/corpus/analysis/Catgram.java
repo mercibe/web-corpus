@@ -33,18 +33,18 @@ public class Catgram {
 		this(id, nom, étiquette, motGrammatical, "");
 	}
 
-	public Catgram(String id, String nom, String étiquette, boolean motGrammatical, String description) {
-		this(id, nom, étiquette, motGrammatical, description, "");
+	public Catgram(String id, String nom, String étiquette, boolean motGrammatical, String abréviation) {
+		this(id, nom, étiquette, motGrammatical, abréviation, "");
 	}
 
-	public Catgram(String id, String nom, String étiquette, boolean motGrammatical, String description, String abréviation) {
+	public Catgram(String id, String nom, String étiquette, boolean motGrammatical, String abréviation, String description) {
 		super();
 		this.id = id;
 		this.nom = nom;
 		this.étiquette = étiquette;
 		this.motGrammatical = motGrammatical;
-		this.description = description;
 		this.abréviation = abréviation;
+		this.description = description;
 	}
 
 	@Override

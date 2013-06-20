@@ -13,30 +13,27 @@ public class RechercheMot extends Recherche {
 	public String getDescriptionChaîne() {
 
 		StringBuilder desc = new StringBuilder();
-		
+
 		// Avec chaîne
 		if (chaîne != null && !chaîne.isEmpty()) {
-			
+
 			desc.append("les mots qui ");
-			
+
 			String enrobée = chaîne;
 			String laCible = "";
 			String préposition = "à ";
-			
+
 			if (cible == Cible.PRONONCIATION) {
 				enrobée = "[" + chaîne + "]";
 				laCible = "la prononciation ";
-			}
-			else {
+			} else {
 				enrobée = "« " + chaîne + " »";
 				// la lettre, les lettres
-				if (chaîne.length() == 1){
-				    laCible = "la lettre ";
-				}
-				else
-				{
-				    préposition = "aux ";
-				    laCible = "les lettres ";
+				if (chaîne.length() == 1) {
+					laCible = "la lettre ";
+				} else {
+					préposition = "aux ";
+					laCible = "les lettres ";
 				}
 			}
 
@@ -46,7 +43,7 @@ public class RechercheMot extends Recherche {
 			case ENTIER:
 				desc.append("correspondent exactement ").append(préposition).append(laCible).append(enrobée);
 				break;
-			case COMMENCE_PAR: 
+			case COMMENCE_PAR:
 				desc.append("commencent par ").append(laCible).append(enrobée);
 				break;
 			case FINIT_PAR:
@@ -58,7 +55,7 @@ public class RechercheMot extends Recherche {
 			}
 
 		} else {
-			
+
 			desc.append("tous les mots");
 
 		}
@@ -139,7 +136,11 @@ public class RechercheMot extends Recherche {
 
 	@Override
 	public String getDescriptionPortéeFiltre() {
-		return "et qui satisfont aux conditions suivantes:";
+		if (filtres.getFiltres().size() > 0) {
+			return "et qui satisfont aux conditions suivantes:";
+		} else {
+			return "";
+		}
 	}
 
 }

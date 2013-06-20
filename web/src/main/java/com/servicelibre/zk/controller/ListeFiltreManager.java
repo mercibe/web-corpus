@@ -68,8 +68,9 @@ public class ListeFiltreManager extends FiltreManager {
 		// Ajout de la liste des nombres
 		List<DefaultKeyValue> nombreClésValeurs = new ArrayList<DefaultKeyValue>(3);
 		// nombreClésValeurs.add(keyValueVide);
-		nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
+		nombreClésValeurs.add(new DefaultKeyValue("s.", "Singulier"));
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "Pluriel"));
+		nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
 		filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
 
 		// Ajout de la liste RO
@@ -77,7 +78,7 @@ public class ListeFiltreManager extends FiltreManager {
 		// roClésValeurs.add(keyValueVide);
 		// FIXME
 		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Nouvelles graphies"));
-		roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "Graphies traditionnelles"));
+		//roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "Graphies traditionnelles"));
 		filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs));
 
 	}

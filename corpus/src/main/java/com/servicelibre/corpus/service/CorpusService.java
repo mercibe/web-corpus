@@ -1,7 +1,11 @@
 package com.servicelibre.corpus.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +19,17 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+import org.dom4j.CDATA;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 
+import com.servicelibre.corpus.analysis.Catgram;
+import com.servicelibre.corpus.analysis.MotInfo;
 import com.servicelibre.corpus.lucene.InformationTerme;
 import com.servicelibre.corpus.lucene.InformationTermeTextComparator;
 import com.servicelibre.corpus.lucene.LuceneIndexManager;
@@ -102,6 +113,10 @@ public class CorpusService {
 	}
 
 	private Corpus ouvreCorpusParDéfaut(CorpusRepository corpusRepo) {
+
+		if (corpusRepo == null) {
+			return new Corpus();
+		}
 
 		Corpus corpusParDéfaut = corpusRepo.findByParDéfaut(true);
 
@@ -199,8 +214,8 @@ public class CorpusService {
 				for (String[] contextParts : ctx) {
 					Contexte contexte = new Contexte(contextParts[1], contextParts[2], contextParts[3]);
 					contexte.setDocMétadonnées(docMétadonnées);
-					contexte.setId(new StringBuilder().append(contexte.mot).append("_").append(résultats.scoreDocs[i].doc).append("_").append(cptContext)
-							.toString());
+					contexte.setId(new StringBuilder().append(contexte.mot).append("_").append(résultats.scoreDocs[i].doc).append("_")
+							.append(cptContext).toString());
 					cptContext++;
 					contextes.add(contexte);
 				}
@@ -250,7 +265,8 @@ public class CorpusService {
 			return new ArrayList<DefaultKeyValue>();
 		}
 
-		List<InformationTerme> topTerms = luceneIndexManager.getTopTerms(champIndex, new InformationTermeTextComparator<InformationTerme>());
+		List<InformationTerme> topTerms = luceneIndexManager
+				.getTopTerms(champIndex, new InformationTermeTextComparator<InformationTerme>());
 
 		List<DefaultKeyValue> valeurs = new ArrayList<DefaultKeyValue>(topTerms.size());
 
@@ -290,7 +306,8 @@ public class CorpusService {
 						// FIXME le champ de la recherche devrait provenir du query parser / analyser
 						manager = new LuceneIndexManager(fsDirectory, perFieldAnalyzerWrapper, TXT_FIELDNAME);
 					} else {
-						logger.error("Le dossier qui contient l'index Lucene pour le corpus {} est introuvable: {}", corpus, dossierLuceneIndex);
+						logger.error("Le dossier qui contient l'index Lucene pour le corpus {} est introuvable: {}", corpus,
+								dossierLuceneIndex);
 					}
 				} else {
 					logger.error("Le dossier qui contient l'index Lucene pour le corpus {} est NULL.", corpus);
@@ -374,6 +391,92 @@ public class CorpusService {
 	// FIXME
 	public List<Liste> getCatégorieListeListes(CatégorieListe catégorieListe) {
 		return listeRepository.findByCatégorie(catégorieListe, new Sort("ordre"));
+	}
+
+	/**
+	 * À partir d'une liste de lemmes, construit un fichier XML complet avec catgrams et prononciations
+	 * prêt à être importé via l'interface Web.
+	 * 
+	 * @throws IOException
+	 */
+	public void créeFichierImportationDeLemmes(String listeMotsChemin, String formesChemin, String prononciationsChemin,
+			String nomPartition, File fichierImportationFichier) throws IOException {
+
+		PrononciationService prononciationService = new PrononciationService(prononciationsChemin);
+		prononciationService.init();
+
+		if (formeService == null) {
+			formeService = new FormeService(formesChemin);
+			formeService.init();
+		}
+
+		org.dom4j.Document document = DocumentHelper.createDocument();
+
+		Element root = document.addElement("mots");
+
+		// Ouvrir le fichier des lemmes
+		InputStream listeMotStream = this.getClass().getClassLoader().getResourceAsStream(listeMotsChemin);
+
+		// Lecture des autres mots
+		BufferedReader in = new BufferedReader(new InputStreamReader(listeMotStream, "UTF-8"));
+		String ligne = null;
+		while ((ligne = in.readLine()) != null) {
+
+			List<MotInfo> lemmesInfo = formeService.getMotInfo(ligne.trim());
+			System.out.println("Rechercher info catgram pour lemme " + ligne + ": " + lemmesInfo.size());
+			for (MotInfo lemmeInfo : lemmesInfo) {
+
+				if (!lemmeInfo.isLemme()) {
+					System.err.println(lemmeInfo.getMot() + " n'est pas un lemme.");
+					continue;
+				}
+
+				Catgram catgram = lemmeInfo.getCatgram();
+				if (catgram == null || catgram.abréviation.isEmpty()) {
+					System.err.println("Catgram null ou vide pour " + lemmeInfo);
+					continue;
+				} else {
+					System.out.println("Catgram de " + lemmeInfo.getLemme() + " == " + catgram);
+				}
+
+				Element motElem = root.addElement("mot");
+
+				motElem.addElement("motGraphie").setText(lemmeInfo.getMot());
+				motElem.addElement("estGraphieRO").setText("false");
+				motElem.addElement("motAutreGraphie").setText("");
+				motElem.addElement("lemmeGraphie").setText(lemmeInfo.getLemme());
+				motElem.addElement("estUnLemme").setText("" + lemmeInfo.isLemme());
+				motElem.addElement("lemmeNote").setText("");
+				motElem.addElement("motNote").setText("");
+
+				motElem.addElement("catgramAffichage").setText(catgram.abréviation);
+				motElem.addElement("catgram").setText(catgram.abréviation);
+
+				String genre = lemmeInfo.getGenre() == null ? "" : lemmeInfo.getGenre().toString();
+				motElem.addElement("genre").setText(genre);
+
+				String nombre = lemmeInfo.getNombre() == null ? "" : lemmeInfo.getNombre().toString();
+				motElem.addElement("nombre").setText(nombre);
+
+				CDATA partitionCDATA = DocumentHelper.createCDATA(nomPartition);
+				motElem.addElement("partition").add(partitionCDATA);
+
+				Element prononciationsElem = motElem.addElement("prononciations");
+				List<String> graphiePrononciations = prononciationService.getGraphiePrononciations(lemmeInfo.getLemme());
+				for (String prononciation : graphiePrononciations) {
+					prononciationsElem.addElement("prononciation").addElement("api").setText(prononciation);
+				}
+
+				System.out.println("\t" + lemmeInfo);
+			}
+		}
+		in.close();
+		listeMotStream.close();
+
+		OutputFormat format = OutputFormat.createPrettyPrint();
+		XMLWriter writer = new XMLWriter(new FileWriter(fichierImportationFichier), format);
+		writer.write(document);
+		writer.close();
 	}
 
 }

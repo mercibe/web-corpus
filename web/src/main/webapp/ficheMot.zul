@@ -1,13 +1,13 @@
 <?page id="ficheMotPage" title="Web corpus - fiche mot" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<window id="ficheMotWindow" border="none" width="100%"
-		height="100%" apply="com.servicelibre.zk.controller.FicheMotCtrl">
+		height="100%" apply="com.servicelibre.zk.controller.FicheMotCtrl" contentStyle="overflow-y:auto">
 		<div align="center" style="margin:10px;" width="100%"> 
 			<label id="titreFicheLabel" sclass="titre3"
 				value="" />
 		</div>
 
-		<div align="center" style="margin:10px;margin-left: auto;margin-right: auto;" width="70%">
+		<div align="center" style="margin:10px; margin-left: auto; margin-right: auto;" width="70%">
 
 			<grid id="formulaireGrid" hflex="true" width="100%" visible="true">
 				<columns>
@@ -80,8 +80,9 @@
 						<label id="nombreLabel" value="Nombre" />
 						<listbox id="nombreListbox" mold="select" disabled="true">
 							<listitem label="" value=""/>
-							<listitem label="inv." value="inv."/>
+							<listitem label="s." value="s."/>
 							<listitem label="pl." value="pl."/>
+							<listitem label="inv." value="inv."/>
 						</listbox>
 						<label id="nombreMessage" value=""	style="color:red" />
 					</row>
@@ -121,8 +122,8 @@
 					</row>					
 				</rows>
 			</grid>
-		
 		</div>
+		
 		
 			<div id="bouttonDiv" align="center" style="margin:10px;" width="100%">
 				<button id="modifierButton" label="Modifier"/>

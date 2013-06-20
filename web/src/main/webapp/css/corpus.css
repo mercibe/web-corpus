@@ -36,7 +36,7 @@ body {
  } 
  
  .z-bandbox .z-bandbox-btn {
- background: transparent url('/corpus/images/combobtn.gif')}) no-repeat 0 0;
+ background: transparent url('../images/combobtn.gif')}) no-repeat 0 0;
  }
  
  .z-bandbox .z-bandbox-btn-over {

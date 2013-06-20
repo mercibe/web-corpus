@@ -12,5 +12,6 @@ public interface DocMetadataRepository extends CrudRepository<DocMetadata, Long>
 
 	List<DocMetadata> findByCorpus(Corpus corpus);
 	List<DocMetadata> findByCorpus(Corpus corpus, Sort sort);
-
+	List<DocMetadata> findByCorpusAndPrimaire(Corpus corpus, boolean primaire, Sort sort);
+	
 }

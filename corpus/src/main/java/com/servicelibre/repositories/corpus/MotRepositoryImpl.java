@@ -88,6 +88,10 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 	@Override
 	public void ajoutePrononciation(Mot mot, String phonétique) {
 
+		if(phonétique == null || mot == null) {
+			return;
+		}
+		
 		Prononciation prononciation = prononciationRepo.findByPrononciation(phonétique);
 		if (prononciation == null) {
 			prononciation = prononciationRepo.save(new Prononciation(phonétique));

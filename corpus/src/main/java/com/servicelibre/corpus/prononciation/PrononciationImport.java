@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.servicelibre.repositories.corpus.MotRepository;
 
 /**
- * Outil d'importation des prononcistions
+ * Outil d'importation des prononciations
  * 
  * format des lignes du fichier:
  * 
