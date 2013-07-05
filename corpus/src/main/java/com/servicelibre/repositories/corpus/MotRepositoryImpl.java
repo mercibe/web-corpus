@@ -228,9 +228,16 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 				}
 				
 				if(filtre.nom.equals("genre")) {
-					logger.debug("ajouter m. ou f. à la liste des valeurs");
+					// ajouter m. ou f. à la liste des valeurs
 					in.value("m. ou f.");
 				}
+				
+				if(filtre.nom.equals("nombre")) {
+					// ajouter s. et pl. à la liste des valeurs
+					in.value("s. et pl.");
+				}
+
+				
 			}
 
 		}

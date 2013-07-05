@@ -20,7 +20,7 @@
 					width="185px">
 					<comboitem label="dans une phrase complète"
 						value="0" />
-					<comboitem label="entouré de 1 mots" value="1" />
+					<comboitem label="entouré de 1 mot" value="1" />
 					<comboitem label="entouré de 2 mots" value="2" />
 					<comboitem label="entouré de 3 mots" value="3" />
 					<comboitem label="entouré de 4 mots" value="4" />

@@ -399,7 +399,7 @@ public class CorpusService {
 	 * 
 	 * @throws IOException
 	 */
-	public void créeFichierImportationDeLemmes(String listeMotsChemin, String formesChemin, String prononciationsChemin,
+	public void créeFichierImportationDeLemmes(String listeLemmesChemin, String formesChemin, String prononciationsChemin,
 			String nomPartition, File fichierImportationFichier) throws IOException {
 
 		PrononciationService prononciationService = new PrononciationService(prononciationsChemin);
@@ -415,10 +415,10 @@ public class CorpusService {
 		Element root = document.addElement("mots");
 
 		// Ouvrir le fichier des lemmes
-		InputStream listeMotStream = this.getClass().getClassLoader().getResourceAsStream(listeMotsChemin);
+		InputStream listeLemmesStream = this.getClass().getClassLoader().getResourceAsStream(listeLemmesChemin);
 
-		// Lecture des autres mots
-		BufferedReader in = new BufferedReader(new InputStreamReader(listeMotStream, "UTF-8"));
+		// Lecture des lemmes
+		BufferedReader in = new BufferedReader(new InputStreamReader(listeLemmesStream, "UTF-8"));
 		String ligne = null;
 		while ((ligne = in.readLine()) != null) {
 
@@ -471,7 +471,7 @@ public class CorpusService {
 			}
 		}
 		in.close();
-		listeMotStream.close();
+		listeLemmesStream.close();
 
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		XMLWriter writer = new XMLWriter(new FileWriter(fichierImportationFichier), format);

@@ -78,7 +78,7 @@ public class MotInfo {
 	}
 
 	public enum Nombre {
-		SINGULIER, PLURIEL;
+		SINGULIER, PLURIEL, SINGULIER_ET_PLURIEL;
 		public static Nombre asNombre(String nombre) {
 			if (nombre == null) {
 				return null;
@@ -90,6 +90,9 @@ public class MotInfo {
 				return SINGULIER;
 			} else if (nombreÀConvertir.equals("p") || nombreÀConvertir.equals("pl") || nombreÀConvertir.equals("plur")) {
 				return PLURIEL;
+			}
+			else if (nombreÀConvertir.equals("s et p") || nombreÀConvertir.equals("s et pl") || nombreÀConvertir.equals("s et plur")) {
+				return SINGULIER_ET_PLURIEL;
 			}
 			return null;
 		}

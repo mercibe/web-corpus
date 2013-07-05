@@ -70,6 +70,7 @@ public class ListeFiltreManager extends FiltreManager {
 		// nombreClésValeurs.add(keyValueVide);
 		nombreClésValeurs.add(new DefaultKeyValue("s.", "Singulier"));
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "Pluriel"));
+		nombreClésValeurs.add(new DefaultKeyValue("s. et pl.", "Singulier et pluriel"));
 		nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
 		filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
 

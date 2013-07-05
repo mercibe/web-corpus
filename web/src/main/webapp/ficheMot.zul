@@ -62,6 +62,7 @@
 							<listitem label="" value=""/>
 							<listitem label="m." value="m."/>
 							<listitem label="f." value="f."/>
+							<listitem label="m. ou f." value="m. ou f."/>
 						</listbox>
 						<label id="genreMessage" value=""	style="color:red" />
 					</row>
@@ -82,6 +83,7 @@
 							<listitem label="" value=""/>
 							<listitem label="s." value="s."/>
 							<listitem label="pl." value="pl."/>
+							<listitem label="s. et pl." value="s. et pl."/>
 							<listitem label="inv." value="inv."/>
 						</listbox>
 						<label id="nombreMessage" value=""	style="color:red" />
