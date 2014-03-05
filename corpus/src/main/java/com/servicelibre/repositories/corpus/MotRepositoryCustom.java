@@ -16,11 +16,11 @@ public interface MotRepositoryCustom {
 	
 	void ajoutePrononciation(Mot mot, String phonétique);
 
-	List<Mot> findByGraphie(String graphie, Condition condition);
+	List<Mot> findByGraphie(String graphie, Condition condition, boolean rôleAdmin);
 
-	List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres);
+	List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres, boolean rôleAdmin);
 
-	List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres);
+	List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres, boolean rôleAdmin);
 
 	
 

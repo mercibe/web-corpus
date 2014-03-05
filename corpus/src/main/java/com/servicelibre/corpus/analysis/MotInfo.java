@@ -27,9 +27,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MotInfo {
+
 	public enum FreqPrecision {
 		EXACTE, CALCULÉE, SANS_OBJET
 	};
@@ -90,8 +96,7 @@ public class MotInfo {
 				return SINGULIER;
 			} else if (nombreÀConvertir.equals("p") || nombreÀConvertir.equals("pl") || nombreÀConvertir.equals("plur")) {
 				return PLURIEL;
-			}
-			else if (nombreÀConvertir.equals("s et p") || nombreÀConvertir.equals("s et pl") || nombreÀConvertir.equals("s et plur")) {
+			} else if (nombreÀConvertir.equals("s et p") || nombreÀConvertir.equals("s et pl") || nombreÀConvertir.equals("s et plur")) {
 				return SINGULIER_ET_PLURIEL;
 			}
 			return null;
@@ -112,19 +117,19 @@ public class MotInfo {
 
 	public String mot;
 	public String lemme;
-	Catgram catgram;
+	public Catgram catgram;
 	public String prononciation;
 
-	double freqMot;
-	double freqLemme;
-	boolean isLemme;
+	public double freqMot;
+	public double freqLemme;
+	public boolean isLemme;
 	public String note;
-	FreqPrecision freqMotprecision;
-	FreqPrecision freqLemmePrecision;
+	public FreqPrecision freqMotprecision;
+	public FreqPrecision freqLemmePrecision;
 
-	Genre genre;
-	Nombre nombre;
-	String personne;
+	public Genre genre;
+	public Nombre nombre;
+	public String personne;
 
 	// Ajouter un tableau de genre/nombre + mode/temps/personne
 
@@ -166,6 +171,9 @@ public class MotInfo {
 		super();
 	}
 
+	/**
+	 * mot|lemme|catgram|freqMot|freqLemme|isLemme|note|prononciation|genre|nombre|personne
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -174,7 +182,7 @@ public class MotInfo {
 
 		// Si catgram NULL, problème à signaler
 		if (catgram == null) {
-			System.err.println("catgram.id == NULL pour " + mot + "|" + lemme + "|" + note);
+			//System.err.println("catgram.id == NULL pour " + mot + "|" + lemme + "|" + note);
 			sb.append("NULL");
 		} else {
 
@@ -308,13 +316,90 @@ public class MotInfo {
 	}
 
 	public static void dumpMotInfos(List<MotInfo> motInfoList, String dumpFilename) {
+		dumpMotInfos(motInfoList, dumpFilename, new MotInfoDéfautExportateur());
+
+	}
+
+	public static void dumpMotInfos(List<MotInfo> motInfoList, String dumpFilename, MotInfoExportateur formateur) {
+
+		if (formateur == null) {
+			return;
+		}
+
+		if (formateur.isDoublonsAutorisés() && formateur.getStringComparator() != null) {
+			throw new UnsupportedOperationException(
+					"Pour l'instant, si les doublons sont autorisés, le tri ne peut se faire que sur MotInfo");
+		}
+
+		if (!formateur.isDoublonsAutorisés() && formateur.getMotInfoComparator() != null) {
+			throw new UnsupportedOperationException(
+					"Pour l'instant, si les doublons ne sont pas autorisés, le tri ne peut se faire que sur String (le résultat du formateur)");
+		}
+
+		if (formateur.isDoublonsAutorisés()) {
+
+			// Doit-on trier?
+			Comparator<MotInfo> motInfoComparator = formateur.getMotInfoComparator();
+			if (motInfoComparator != null) {
+				Collections.sort(motInfoList, motInfoComparator);
+			} else {
+				// Sinon, on force le mélange!
+				Collections.shuffle(motInfoList);
+			}
+
+			// dump liste telle quelle
+			dumpListe(motInfoList, dumpFilename, formateur);
+
+		} else {
+			// Suppressions des doublons
+			// convertir liste en Set puis sauvegarder dans fichier
+			Set<String> motsSansDoublon = new HashSet<String>(motInfoList.size());
+			for (MotInfo motInfo : motInfoList) {
+				if (formateur.isExportable(motInfo)) {
+					motsSansDoublon.add(formateur.getFormatStructuré(motInfo, formateur.getSéparateurDeChamps()));
+				}
+			}
+
+			// Reconversion en Liste pour tri ultérieur éventuel
+			List<String> mots = new ArrayList<String>(motsSansDoublon.size());
+			mots.addAll(motsSansDoublon);
+
+			// Doit-on trier?
+			Comparator<String> stringComparator = formateur.getStringComparator();
+			if (stringComparator != null) {
+				// Trier le Set
+				Collections.sort(mots, stringComparator);
+			} else {
+				// Sinon, on force le mélange!
+				Collections.shuffle(motInfoList);
+			}
+
+			dumpLignes(mots, dumpFilename);
+
+		}
+
+	}
+
+	private static void dumpListe(List<MotInfo> motInfoList, String dumpFilename, MotInfoExportateur formateur) {
+
+		int cptMotsTraités = 0;
+		int nbTotalMots = motInfoList.size();
+
 		File dumpFile = new File(dumpFilename);
 		try {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8"));
+			int dernierAvancement = 0;
 			for (MotInfo motInfo : motInfoList) {
-				// System.out.println(motInfo);
-				writer.append(motInfo.toString());
-				writer.newLine();
+				int pourcentageAvancement = (int) ((100f * cptMotsTraités) / nbTotalMots);
+				if (pourcentageAvancement > dernierAvancement && pourcentageAvancement % 10 == 0) {
+					System.out.println("Avancement exportation : " + pourcentageAvancement + " % (" + dumpFilename + ")");
+					dernierAvancement += 10;
+				}
+				if (formateur.isExportable(motInfo)) {
+					writer.append(formateur.getFormatStructuré(motInfo, formateur.getSéparateurDeChamps()));
+					writer.newLine();
+				}
+				cptMotsTraités++;
 			}
 			writer.close();
 
@@ -325,7 +410,35 @@ public class MotInfo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	private static void dumpLignes(List<String> lignes, String dumpFilename) {
+		int cptLignesTraitées = 0;
+		int nbTotalLignes = lignes.size();
+
+		File dumpFile = new File(dumpFilename);
+		try {
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dumpFile), "UTF-8"));
+			int dernierAvancement = 0;
+			for (String ligne : lignes) {
+				int pourcentageAvancement = (int) ((100f * cptLignesTraitées) / nbTotalLignes);
+				if (pourcentageAvancement > dernierAvancement &&  pourcentageAvancement % 10 == 0) {
+					System.out.println("Avancement exportation : " + pourcentageAvancement + " % (" + dumpFilename + ")");
+					dernierAvancement += 10;
+				}
+				writer.append(ligne);
+				writer.newLine();
+				cptLignesTraitées++;
+			}
+			writer.close();
+
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void dumpMotInfosList(List<List<MotInfo>> motInfoList, String dumpFilename) {

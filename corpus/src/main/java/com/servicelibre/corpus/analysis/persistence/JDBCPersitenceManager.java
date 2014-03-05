@@ -37,6 +37,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.servicelibre.corpus.analysis.Catgram;
 import com.servicelibre.corpus.analysis.CorpusInfo;
 import com.servicelibre.corpus.analysis.DocumentInfo;
 import com.servicelibre.corpus.analysis.MotInfo;
@@ -115,7 +116,7 @@ public abstract class JDBCPersitenceManager {
 		// FIXME générique!!!
 		int cpt = 1;
 		int total = corpusInfo.getDocuments().size();
-
+		
 		for (DocumentInfo doc : corpusInfo.getDocuments()) {
 
 			String[] colonnes = { "doc_id", "titre", "categorie", "chapitre", "auteur", "difficulte", "cycles" };
@@ -138,13 +139,15 @@ public abstract class JDBCPersitenceManager {
 			}
 
 			SqlParameterSource namedParameters = new MapSqlParameterSource(metaCols);
-			String sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id, titre, auteur, categorie, chapitre, difficulte, cycles) "
+			String sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME)
+					+ " (doc_id, titre, auteur, categorie, chapitre, difficulte, cycles) "
 					+ " VALUES(:doc_id, :titre, :auteur, :categorie, :chapitre,  :difficulte, :cycles)";
 
 			// TODO affreux « workaround » pour sauver temporairement
 			// généralisation
 			if (metaCols.size() != colonnes.length) {
-				//sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id, titre, auteur) " + " VALUES(:doc_id, :titre, :auteur)";
+				// sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id, titre, auteur) " +
+				// " VALUES(:doc_id, :titre, :auteur)";
 				sql = "INSERT INTO " + getTableNameWithPrefix(DOCUMENT_TABLENAME) + " (doc_id) " + " VALUES(:doc_id)";
 			}
 
@@ -160,14 +163,27 @@ public abstract class JDBCPersitenceManager {
 			// Les mots de ce document...
 			metaCols = new HashMap<String, Object>(10);
 			for (MotInfo motInfo : doc.getMots()) {
+				
+				
+				
 				metaCols.put("doc_id", doc.docId);
 				metaCols.put("mot", motInfo.getMot());
 				metaCols.put("freqmot", motInfo.getFreqMot());
 				metaCols.put("lemme", motInfo.getLemme());
 				metaCols.put("freqlemme", motInfo.getFreqLemme());
-				metaCols.put("catgram", motInfo.getCatgram().nom);
+				
+				String catgramId = "";
+				String motGrammatical = "";
+				
+				Catgram catgram = motInfo.getCatgram();
+				if (catgram != null) {
+					catgramId = catgram.id;
+					motGrammatical = Boolean.toString(catgram.motGrammatical);
+				}
+				metaCols.put("catgram", catgramId);
+				metaCols.put("motgram", motGrammatical);
+
 				metaCols.put("note", motInfo.getNote());
-				metaCols.put("motgram", motInfo.getCatgram().motGrammatical);
 				metaCols.put("freqmotprecision", motInfo.getFreqMotPrecision().name());
 
 				// FIXME!!! Est-ce nécessaire? Pourquoi?
@@ -179,10 +195,13 @@ public abstract class JDBCPersitenceManager {
 				}
 
 				namedParameters = new MapSqlParameterSource(metaCols);
-				sql = "INSERT INTO " + getTableNameWithPrefix(MOT_TABLENAME)
+				sql = "INSERT INTO "
+						+ getTableNameWithPrefix(MOT_TABLENAME)
 						+ " (doc_id, mot, freqmot, lemme, freqlemme, catgram, note,  motgram, freqmotprecision, freqlemmeprecision) "
 						+ "VALUES(:doc_id, :mot, :freqmot, :lemme, :freqlemme, :catgram, :note, :motgram, :freqmotprecision, :freqlemmeprecision) ";
 				this.namedParameterJdbcTemplate.update(sql, namedParameters);
+				
+				
 			}
 
 			logger.debug("{}/{} données d'analyse textuelles sauvegardées SQL", cpt++, total);
@@ -240,5 +259,11 @@ public abstract class JDBCPersitenceManager {
 			logger.warn("Erreur lors la suppression de la table {}", tableName, e);
 		}
 	}
+	
+    private String getMotLemmeCatgramKey(MotInfo motInfo)
+    {
+
+        return new StringBuilder().append(motInfo.getMot()).append("|").append(motInfo.getLemme()).append("|").append(motInfo.getCatgram()).toString();
+    }
 
 }

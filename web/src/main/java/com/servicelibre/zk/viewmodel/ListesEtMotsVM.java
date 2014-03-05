@@ -266,7 +266,7 @@ public class ListesEtMotsVM {
 			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(), listeSélectionné.getCatégorie()
 					.getNom(), new Long[] { listeSélectionné.getId() }));
 			mots = new ListModelList<Mot>((Collection<? extends Mot>) getMotRepo().findByGraphie("",
-					MotRepositoryCustom.Condition.COMMENCE_PAR, f));
+					MotRepositoryCustom.Condition.COMMENCE_PAR, f, getIndexCtrl().isRôleAdmin()));
 
 		} else {
 			mots = new ListModelList<Mot>();

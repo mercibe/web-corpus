@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.servicelibre.corpus.analysis.CatgramsPivot;
 import com.servicelibre.corpus.analysis.LemmeNaturalComparator;
 import com.servicelibre.corpus.analysis.MotInfo;
-import com.servicelibre.corpus.analysis.MotNaturalComparator;
+import com.servicelibre.corpus.analysis.MotInfoNaturalComparator;
 import com.servicelibre.corpus.liste.LigneSplitter;
 
 public class FormeService {
@@ -47,7 +47,7 @@ public class FormeService {
 	private List<List<MotInfo>> lemmesInfos = new ArrayList<List<MotInfo>>(NB_FORMES);
 	private List<String> lemmes = new ArrayList<String>(NB_FORMES);
 
-	private MotNaturalComparator<MotInfo> motComp = new MotNaturalComparator<MotInfo>();
+	private MotInfoNaturalComparator<MotInfo> motComp = new MotInfoNaturalComparator<MotInfo>();
 	private LemmeNaturalComparator<MotInfo> lemmeComp = new LemmeNaturalComparator<MotInfo>();
 
 	public FormeService() {
@@ -82,6 +82,11 @@ public class FormeService {
 
 	}
 
+	/**
+	 * Retourner tous les graphies uniques des lemmes possibles d'un mot (forme) donné.
+	 * @param mot
+	 * @return
+	 */
 	public List<String> getLemmes(String mot) {
 		Set<String> info = new HashSet<String>();
 

@@ -90,7 +90,12 @@ body {
  .terme {
    font-weight: bold;
  }
- 
+
+ .motGras {
+ 	font-weight: bold;
+ 	text-decoration: none; 
+ }
+
  .mot {
  	cursor:pointer;
  	font-weight: bold;

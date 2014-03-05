@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.zkoss.spring.security.SecurityUtil;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
@@ -120,4 +121,9 @@ public abstract class FiltreManager {
 
 	}
 
+	public boolean isRôleAdmin() {
+		return SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
+	}
+
+	
 }

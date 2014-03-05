@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.servicelibre.corpus.analysis.CatgramsPivot;
 import com.servicelibre.corpus.analysis.LemmeNaturalComparator;
 import com.servicelibre.corpus.analysis.MotInfo;
-import com.servicelibre.corpus.analysis.MotNaturalComparator;
+import com.servicelibre.corpus.analysis.MotInfoNaturalComparator;
 import com.servicelibre.corpus.liste.LigneSplitter;
 
 public class PrononciationService {

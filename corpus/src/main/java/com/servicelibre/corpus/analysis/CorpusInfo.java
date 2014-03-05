@@ -43,8 +43,8 @@ public class CorpusInfo
 
     protected List<DocumentInfo> documents = new ArrayList<DocumentInfo>();
     
-    protected List<MotInfo> mots = new ArrayList<MotInfo>(25000);
-    protected List<MotInfo> lemmes = new ArrayList<MotInfo>(20000);
+    protected List<MotInfo> motsLemmes = new ArrayList<MotInfo>(25000);
+    
     protected List<MotInfo> absents = new ArrayList<MotInfo>(20000);
     
 
@@ -74,27 +74,16 @@ public class CorpusInfo
         this.documents = documents;
     }
 
-    public List<MotInfo> getMots()
-    {
-        return mots;
-    }
 
-    public void setMots(List<MotInfo> mots)
-    {
-        this.mots = mots;
-    }
+    public List<MotInfo> getMotsLemmes() {
+		return motsLemmes;
+	}
 
-    public List<MotInfo> getLemmes()
-    {
-        return lemmes;
-    }
+	public void setMotsLemmes(List<MotInfo> motsLemmes) {
+		this.motsLemmes = motsLemmes;
+	}
 
-    public void setLemmes(List<MotInfo> lemmes)
-    {
-        this.lemmes = lemmes;
-    }
-
-    public List<MotInfo> getAbsents()
+	public List<MotInfo> getAbsents()
     {
         return absents;
     }

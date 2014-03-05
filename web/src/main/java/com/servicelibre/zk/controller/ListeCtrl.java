@@ -24,6 +24,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.zkoss.spring.security.SecurityUtil;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Page;
@@ -106,6 +107,8 @@ public class ListeCtrl extends CorpusCtrl {
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private Column motColumn;
+	
+	boolean rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
 
 	public void onClick$actionButton() {
 		Comboitem selectedItem = actionCombobox.getSelectedItem();
@@ -117,8 +120,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 				ajouterMotsSélectionnésÀUneListeExistante();
 			} else if (action.equals("AJOUTER_UN_MOT")) {
-				Window webCorpusWindow = (Window) Path.getComponent("//webCorpusPage/webCorpusWindow");
-				IndexCtrl indexCtrl = (IndexCtrl) webCorpusWindow.getAttribute("$composer");
+				IndexCtrl indexCtrl = getIndexCtrl();
 				indexCtrl.ouvreOngletMot(Mode.CRÉATION, null);
 			} else {
 				supprimerMotsSélectionnés();
@@ -127,6 +129,12 @@ public class ListeCtrl extends CorpusCtrl {
 			}
 
 		}
+	}
+
+	public IndexCtrl getIndexCtrl() {
+		Window webCorpusWindow = (Window) Path.getComponent("//webCorpusPage/webCorpusWindow");
+		IndexCtrl indexCtrl = (IndexCtrl) webCorpusWindow.getAttribute("$composer");
+		return indexCtrl;
 	}
 
 	private void supprimerMotsSélectionnés() {
@@ -367,10 +375,10 @@ public class ListeCtrl extends CorpusCtrl {
 		String chaîne = recherche.getChaîne();
 		switch (recherche.cible) {
 		case GRAPHIE:
-			mots = motRepository.findByGraphie(chaîne, conditionChaîne, recherche.filtres);
+			mots = motRepository.findByGraphie(chaîne, conditionChaîne, recherche.filtres, rôleAdmin);
 			break;
 		case PRONONCIATION:
-			mots = motRepository.findByPrononciation(chaîne, conditionChaîne, recherche.filtres);
+			mots = motRepository.findByPrononciation(chaîne, conditionChaîne, recherche.filtres, rôleAdmin);
 
 			// Est-ce que la chaîne recherchée contient au moins un des caractères suivant non suivi du « combining
 			// tilde » ou du « : » ?
@@ -402,6 +410,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 		// COMBINING TILDE (̃) http://www.fileformat.info/info/unicode/char/303/index.htm
 
+		// La chaîne devient une expression régulière
 		StringBuffer regexp = new StringBuffer(chaîne.replaceAll("(ɛ(?![\u0303:]))", "(ɛ(?![\u0303:]))")
 				.replaceAll("ɔ(?!\u0303)", "ɔ(?!\u0303)").replaceAll("ɑ(?!\u0303)", "ɑ(?!\u0303)"));
 
@@ -507,7 +516,7 @@ public class ListeCtrl extends CorpusCtrl {
 				{ "o", "[au]t[o], b[eau], c[ô]té, sir[o]p" }, { "ɛ", "acc[è]s, [ai]mer, épin[e]tte" },
 				{ "ɛ:", "bl[ê]me, c[ai]sse, m[è]tre, pr[e]sse" }, { "œ", "bonh[eu]r, jok[e]r, [oeu]f" },
 				{ "ɔ", "h[o]mme, [o]béir, p[o]rt" }, { "ə", "méd[e]cin, ach[e]ter" }, { "ə̠", "caf[e]tière, f[e]nouil, just[e]ment" },
-				{ "a", "[à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "là-b[as], p[â]te, pyjam[a]" },
+				{ "a", "[à], cl[a]v[a]rd[a]ge, p[a]tte" }, { "ɑ", "là-b[a]s, p[â]te, pyjam[a]" },
 				{ "ɛ̃", "cert[ain], fr[ein], [im]pair, [in]di[en]" }, { "œ̃", "br[un], l[un]di, parf[um], [un]" },
 				{ "ɔ̃", "m[on]tagnais, [om]bre, p[on]t" }, { "ɑ̃", "[an], [en], j[am]bon, s[an]g, t[em]ps" },
 
@@ -521,8 +530,8 @@ public class ListeCtrl extends CorpusCtrl {
 				{ "m", "alu[m]iniu[m], fe[mm]e, [m]itaine" }, { "n", "ante[nn]e, caba[n]e, [n]ord" }, { "ɲ", "bei[gn]e, campa[gn]e" },
 				{ "ŋ", "bi[n]go, campi[ng], pi[ng] po[ng]" }, { "'", "sans élision ni liaison : les haches, les huit, le ouaouaron" },
 
-				{ "j", "écureu[il], fi[ll]e, pa[y]er, r[i]en, [y]ogourt" }, { "ɥ", "app[u]i, c[u]isse, t[u]ile" },
-				{ "w", "b[o]is, j[ou]er, [ou]ate, [w]att" }, };
+				{ "j", "écureu[il], fi[ll]e, pa[y]er, r[i]en, [y]ogourt" }, { "ɥ", "ann[u]el, h[u]ile, r[u]elle" },
+				{ "w", "b[oi]s, [ou]ate, [w]att" }, };
 
 		int idCpt = 1;
 		for (String[] apiLettreInfo : apiLettres) {
@@ -653,7 +662,6 @@ public class ListeCtrl extends CorpusCtrl {
 	@Override
 	public void initFiltreManager() {
 		this.filtreManager = ServiceLocator.getListeFiltreManager();
-
 	}
 
 	@Override

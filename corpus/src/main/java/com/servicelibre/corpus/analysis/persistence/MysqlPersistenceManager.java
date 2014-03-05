@@ -40,13 +40,13 @@ public class MysqlPersistenceManager extends JDBCPersitenceManager
             String documentTableName = getTableNameWithPrefix(DOCUMENT_TABLENAME);
 
             //TODO générer dynamiquement la création sur base des métadonnées de corpusInfo
-//
-//            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY,"
-//                    + "titre TEXT NOT NULL," + "categorie varchar(255) DEFAULT NULL," + "chapitre TEXT DEFAULT NULL,"
-//                    + "auteur varchar(255) NOT NULL," + "difficulte smallint DEFAULT NULL,"
-//                    + "cycles varchar(64) DEFAULT NULL) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
 
-            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
+            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY,"
+                    + "titre TEXT NOT NULL," + "categorie varchar(255) DEFAULT NULL," + "chapitre TEXT DEFAULT NULL,"
+                    + "auteur varchar(255) NOT NULL," + "difficulte smallint DEFAULT NULL,"
+                    + "cycles varchar(64) DEFAULT NULL) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
+
+//            this.jdbcTemplate.execute("CREATE TABLE " + documentTableName + "( doc_id varchar(255) PRIMARY KEY) DEFAULT CHARSET=utf8 COLLATE utf8_bin");
             
             // TODO création des index
 //            this.jdbcTemplate.execute("CREATE INDEX document_cycles_idx ON " + documentTableName + "(cycles)");

@@ -11,7 +11,7 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
  * @author mercibe
  * 
  */
-public class Filtre {
+public class Filtre implements Comparable<Filtre>{
 
     public String nom;
     public String description;
@@ -84,5 +84,13 @@ public class Filtre {
 	Filtre copieFiltre = new Filtre(this.nom, this.description, copieKv);
 	return copieFiltre;
     }
+
+	@Override
+	public int compareTo(Filtre autreFiltre) {
+		if(autreFiltre != null) {
+			return this.description.compareTo(autreFiltre.description);
+		}
+		return 0;
+	}
 
 }

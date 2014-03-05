@@ -53,7 +53,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 	}
 
 	@Override
-	//@Transactional
+	// @Transactional
 	public int ajoutePrononciation(String forme, String phonétique) {
 
 		int liaisonCpt = 0;
@@ -75,7 +75,8 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 			MotPrononciation motPrononciation = new MotPrononciation(mot, prononciation);
 			try {
 				motPrononciation = motPrononciationRepo.save(motPrononciation);
-				//logger.debug("liaison de la prononciation {} à la forme {}", motPrononciation.getPrononciation(), forme);
+				// logger.debug("liaison de la prononciation {} à la forme {}", motPrononciation.getPrononciation(),
+				// forme);
 				liaisonCpt++;
 			} catch (org.springframework.dao.DataIntegrityViolationException e) {
 				logger.error("Le prononciation du mot {} exite déjà.", mot);
@@ -84,35 +85,34 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 
 		return liaisonCpt;
 	}
-	
+
 	@Override
 	public void ajoutePrononciation(Mot mot, String phonétique) {
 
-		if(phonétique == null || mot == null) {
+		if (phonétique == null || mot == null) {
 			return;
 		}
-		
+
 		Prononciation prononciation = prononciationRepo.findByPrononciation(phonétique);
 		if (prononciation == null) {
 			prononciation = prononciationRepo.save(new Prononciation(phonétique));
 		}
-		
+
 		MotPrononciation motPrononciation = motPrononciationRepo.findByMotAndPrononciation(mot, prononciation);
-		if(motPrononciation == null) {
+		if (motPrononciation == null) {
 			motPrononciation = new MotPrononciation(mot, prononciation);
-				motPrononciation = motPrononciationRepo.save(motPrononciation);
+			motPrononciation = motPrononciationRepo.save(motPrononciation);
 		}
 
 	}
-	
 
 	@Override
-	public List<Mot> findByGraphie(String graphie, Condition condition) {
-		return findByGraphie(graphie, condition, null);
+	public List<Mot> findByGraphie(String graphie, Condition condition, boolean rôleAdmin) {
+		return findByGraphie(graphie, condition, null, rôleAdmin);
 	}
 
 	@Override
-	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres) {
+	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres, boolean rôleAdmin) {
 
 		final CriteriaBuilder cb = getBuilder();
 		final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
@@ -154,7 +154,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		}
 
 		if (filtres != null) {
-			p = addFiltresToPrédicat(cb, mot, p, filtres);
+			p = addFiltresToPrédicat(cb, mot, p, filtres, rôleAdmin);
 		}
 
 		criteria.where(p);
@@ -174,7 +174,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		return builder;
 	}
 
-	private Predicate addFiltresToPrédicat(CriteriaBuilder cb, Root<Mot> motRacine, Predicate p, FiltreRecherche filtres) {
+	private Predicate addFiltresToPrédicat(CriteriaBuilder cb, Root<Mot> motRacine, Predicate p, FiltreRecherche filtres, boolean rôleAdmin) {
 
 		LinkedHashSet<Filtre> f = filtres.getFiltres();
 
@@ -226,18 +226,17 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 				for (DefaultKeyValue kv : filtre.keyValues) {
 					in.value(kv.getKey());
 				}
-				
-				if(filtre.nom.equals("genre")) {
+
+				if (filtre.nom.equals("genre")) {
 					// ajouter m. ou f. à la liste des valeurs
 					in.value("m. ou f.");
 				}
-				
-				if(filtre.nom.equals("nombre")) {
+
+				if (filtre.nom.equals("nombre")) {
 					// ajouter s. et pl. à la liste des valeurs
 					in.value("s. et pl.");
 				}
 
-				
 			}
 
 		}
@@ -247,12 +246,17 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 			p = cb.and(p, inClauses.get(nomFiltre));
 		}
 
+		// n'afficher que les mots issus des partitions publiques si pas utilisarteur admin
+		if (!rôleAdmin) {
+			p = cb.and(p, cb.equal(motRacine.get("listePartitionPrimaire").get("publique"), Boolean.TRUE));
+		}
+
 		return p;
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres) {
+	public List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres, boolean rôleAdmin) {
 
 		CriteriaBuilder cb = getBuilder();
 		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
@@ -292,7 +296,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		}
 
 		if (filtres != null) {
-			p = addFiltresToPrédicat(cb, mot, p, filtres);
+			p = addFiltresToPrédicat(cb, mot, p, filtres, rôleAdmin);
 		}
 
 		criteria.where(p);
