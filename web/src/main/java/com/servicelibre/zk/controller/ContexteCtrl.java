@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +43,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Iframe;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Tab;
@@ -58,7 +60,9 @@ import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
 import com.servicelibre.corpus.service.PhraseService;
 import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.entities.ui.Paramètre;
 import com.servicelibre.repositories.corpus.DocMetadataRepository;
+import com.servicelibre.repositories.ui.ParamètreRepository;
 import com.servicelibre.zk.controller.renderer.ContexteRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
@@ -80,13 +84,15 @@ public class ContexteCtrl extends CorpusCtrl {
 	// page ZUL
 
 	Combobox voisinage;
-
+	
 	Grid contextesGrid; // autowire car même type/ID que le comgetposant dans la
 	// page ZUL
 
 	Window contexteWindow;
 
 	A cooccurrentLien;
+	
+	Button remarqueContextesButton;
 
 	PhraseService phraseService = new CorpusPhraseService();
 
@@ -100,6 +106,10 @@ public class ContexteCtrl extends CorpusCtrl {
 	
 	Combobox actionCombobox;
 	Button actionButton;
+
+	private String urlRemarque;
+
+	private String titreRemarque;
 	
 	public void onClick$actionButton() {
 		Comboitem selectedItem = actionCombobox.getSelectedItem();
@@ -119,6 +129,32 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 	
 
+	public void onClick$remarqueContextesButton() {
+		
+		// Créér la fenêtre Popup
+		/*
+		 * 
+		 * 		<window id="remarqueContextesWin" width="50%" height="50%" title="Remarque sur les contextes" border="normal" 
+			 maximizable="true"  visible="false"  sizable="true" mode="popup"   >
+			<iframe id="remarqueContextesIframe" src="" height="100%" width="100%"/>
+		</window>
+		 */
+		
+		Window remarqueContextesWin = new Window(this.titreRemarque.toUpperCase(Locale.CANADA_FRENCH), "normal", true);
+		remarqueContextesWin.setPosition("center,center");
+		remarqueContextesWin.setWidth("75%");
+		remarqueContextesWin.setHeight("75%");
+		remarqueContextesWin.setParent(contexteWindow);
+		
+		
+		Iframe remarqueContextesIframe = new Iframe(urlRemarque);
+		remarqueContextesIframe.setWidth("100%");
+		remarqueContextesIframe.setHeight("100%");
+		
+		remarqueContextesWin.appendChild(remarqueContextesIframe);
+		
+		remarqueContextesWin.doModal();
+	}
 
 	private void ajouterContextesSélectionnésAuMotDUneListeExistante() {
 	    Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
@@ -353,7 +389,23 @@ public class ContexteCtrl extends CorpusCtrl {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
+		
+		// Afficher ou non le bouton de remarque
+		Paramètre urlRemarque = paramètreRepo.findByNom("URLRemarqueContexte");
+		if(urlRemarque != null) {
+			this.urlRemarque = urlRemarque.getValeur();
+			remarqueContextesButton.setVisible(true);
+			// A-t-il un libellé spécifique?
+			Paramètre texteBouton = paramètreRepo.findByNom("texteBoutonRemarqueContextes");
+			if(texteBouton != null) {
+				this.titreRemarque = texteBouton.getValeur();
+				remarqueContextesButton.setLabel(titreRemarque);
+			}
+			else {
+				this.titreRemarque = "Remarque sur les contextes";
+			}
+		}
+		
 		initialiseChamps();
 
 		initialiseContexteGrid();
@@ -620,8 +672,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 
 		// SecurityContext ssctx = (SecurityContext) desktop.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-		// Collection<? extends GrantedAuthority> authorities = ssctx.getAuthentication().getAuthorities();
-		// for (GrantedAuthority grantedAuthority : authorities) {
+		// Collection<? extends GrantedAuthority> rôles = ssctx.getAuthentication().getAuthorities();
+		// for (GrantedAuthority grantedAuthority : rôles) {
 		// System.out.println("auth: " + grantedAuthority);
 		// }
 

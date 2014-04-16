@@ -7,8 +7,8 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 	String séparateurDeChamps = "|";
 	private boolean doublonsAutorisés = true;
 	private Comparator<MotInfo> motInfoComparator = new MotInfoFrCaComparator<MotInfo>();
-	private Comparator<String> motComparator = null;//new CanadaFrenchStringComparator();
-	
+	private Comparator<String> motComparator = null;// new CanadaFrenchStringComparator();
+
 	@Override
 	public String getFormatCourt(MotInfo motInfo) {
 		return getFormatLong(motInfo);
@@ -34,8 +34,10 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 			sb.append(motInfo.catgram.id);
 		}
 
-		sb.append(séparateur).append(motInfo.freqMot).append(séparateur).append(motInfo.freqLemme).append(séparateur).append(motInfo.isLemme).append(séparateur).append(motInfo.note).append(séparateur)
-				.append(motInfo.prononciation).append(séparateur).append(motInfo.genre).append(séparateur).append(motInfo.nombre).append(séparateur).append(motInfo.personne);
+		sb.append(séparateur).append(motInfo.freqMot).append(séparateur).append(motInfo.freqLemme).append(séparateur)
+				.append(motInfo.isLemme).append(séparateur).append(motInfo.note).append(séparateur).append(motInfo.prononciation)
+				.append(séparateur).append(motInfo.genre).append(séparateur).append(motInfo.nombre).append(séparateur)
+				.append(motInfo.personne);
 
 		return sb.toString();
 	}
@@ -46,6 +48,11 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 	}
 
 	@Override
+	public boolean isOffensant(MotInfo motInfo) {
+		return false;
+	}
+
+	@Override
 	public boolean isDoublonsAutorisés() {
 		return this.doublonsAutorisés;
 	}
@@ -53,7 +60,7 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 	@Override
 	public void setDoublonsAutorisés(boolean doublonsAutorisés) {
 		this.doublonsAutorisés = doublonsAutorisés;
-		
+
 	}
 
 	@Override
@@ -64,7 +71,7 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 	@Override
 	public void setStringComparator(Comparator<String> stringComparator) {
 		this.motComparator = stringComparator;
-		
+
 	}
 
 	@Override
@@ -75,7 +82,7 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 	@Override
 	public void setMotInfoComparator(Comparator<MotInfo> motInfoComparator) {
 		this.motInfoComparator = motInfoComparator;
-		
+
 	}
 
 	@Override
@@ -86,7 +93,7 @@ public class MotInfoDéfautExportateur implements MotInfoExportateur {
 	@Override
 	public void setSéparateurDeChamps(String séparateurDeChamps) {
 		this.séparateurDeChamps = séparateurDeChamps;
-		
+
 	}
 
 }

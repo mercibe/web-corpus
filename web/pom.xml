@@ -210,8 +210,8 @@
 					<webAppConfig>
 						<!-- overridder le contexte par défaut -->
 						<contextPath>/corpus</contextPath>
-						<defaultsDescriptor>src/main/webapp/WEB-INF/webdefault.xml</defaultsDescriptor>
-						<jettyEnvXmlFile>src/main/webapp/WEB-INF/jetty-env.xml</jettyEnvXmlFile>
+						<defaultsDescriptor>src/main/resources/webdefault.xml</defaultsDescriptor>
+						<jettyEnvXmlFile>src/main/resources/jetty-env.xml</jettyEnvXmlFile>
 					</webAppConfig>
 				</configuration>
 			</plugin>
@@ -229,7 +229,7 @@
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
-					<include>**/*.xml</include>
+					<include>**/logback.xml</include>
 					<include>**/*.properties</include>
 				</includes>
 				<filtering>false</filtering>

@@ -39,6 +39,22 @@ public abstract class FiltreManager {
 
 		return noms;
 	}
+	
+	public List<DefaultKeyValue> getFiltreNomsVisibles(List<String> rôles) {
+		
+		List<DefaultKeyValue> noms = new ArrayList<DefaultKeyValue>(filtres.size());
+		
+		for (Filtre filtre : filtres) {
+			if(filtre.nomRôle == null || filtre.nomRôle.isEmpty() || rôles.contains(filtre.nomRôle)) {
+				noms.add(new DefaultKeyValue(filtre.nom, filtre.description));
+			}
+		}
+
+		return noms;
+	}
+
+	
+	
 
 	/**
 	 * Pour un filtre donné, retourne les valeurs sélectionnables du filtre («
@@ -46,9 +62,10 @@ public abstract class FiltreManager {
 	 * »)
 	 * 
 	 * @param nom
+	 * @param nomsRôles 
 	 * @return
 	 */
-	public List<DefaultKeyValue> getFiltreValeurs(String nom) {
+	public List<DefaultKeyValue> getFiltreValeurs(String nom, boolean afficheCompteurValeurFiltre) {
 		List<DefaultKeyValue> values = new ArrayList<DefaultKeyValue>();
 
 		Filtre f = getFiltre(nom);
@@ -56,9 +73,35 @@ public abstract class FiltreManager {
 		// Si le filtre est trouvé, récupérer ses valeurs
 		if (f != null) {
 			values = getValeursActives(nom, f.keyValues);
+			
+			// Supprimer le nombre entre () à la fin de la valeur du filtre
+			if(!afficheCompteurValeurFiltre) {
+				for (DefaultKeyValue valeurFiltre : values) {
+					valeurFiltre.setValue(valeurFiltre.getValue().toString().replaceAll("\\(.*\\)", ""));
+				}
+			}
+			
+//			// y a-t-il un tri personnalisé à supprimer (tous les caractères avant le premier | ) ?
+//			// Exemple : 001|fragment HTML
+//			for (DefaultKeyValue valeurFiltre : values) {
+//				valeurFiltre.setValue(valeurFiltre.getValue().toString().replaceAll("^(.*\\|)", ""));
+//			}
+			
+			
 		}
 
 		return values;
+	}
+	
+	public String getRemarqueValeursFiltre(String nomDuFiltre) {
+		Filtre f = getFiltre(nomDuFiltre);
+		// Si le filtre est trouvé, récupérer sa remarque éventuelle
+		if (f != null) {
+			if(f.remarqueValeurs != null && !f.remarqueValeurs.isEmpty()) {
+				return f.remarqueValeurs;
+			}
+		}
+		return  null;
 	}
 
 	public Filtre getFiltre(String nom) {
@@ -125,5 +168,4 @@ public abstract class FiltreManager {
 		return SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
 	}
 
-	
 }

@@ -46,6 +46,9 @@ public class Onglet {
 	@Column
 	Boolean visible;
 
+	/**
+	 * Rôle éventuel à qui on doit donner exclusivement l'accès à cet onglet
+	 */
 	@ManyToOne(optional = true)
 	Rôle rôle;
 

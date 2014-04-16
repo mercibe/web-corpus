@@ -137,13 +137,13 @@ public class MotManagerTest implements ApplicationContextAware {
 		// Syntaxe verbeuse
 		List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
 		keyValues.add(new DefaultKeyValue(1L, "Détail: corpus_id=1"));
-		Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues);
+		Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues, "","");
 		f.addFiltre(filtre);
 
 		// Syntaxe allégée
-		f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[] { "n.", "adv." }));
-		f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "m." }));
-		f.addFiltre(new Filtre(CléFiltre.ro.name(), "Rectification ortographique", new Boolean[] { Boolean.TRUE }));
+		f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[] { "n.", "adv." },"",""));
+		f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "m." }, "",""));
+		f.addFiltre(new Filtre(CléFiltre.ro.name(), "Rectification ortographique", new Boolean[] { Boolean.TRUE }, "",""));
 
 		String graphie = "a";
 

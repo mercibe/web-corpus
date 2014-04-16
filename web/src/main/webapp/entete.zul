@@ -12,7 +12,7 @@
 	com.servicelibre.entities.corpus.Corpus corpus = com.servicelibre.controller.ServiceLocator.getCorpusService().getCorpus();
 	com.servicelibre.entities.ui.Paramètre titreParam =  com.servicelibre.controller.ServiceLocator.getParamètreRepo().findByNom("titre");
 	if(titreParam == null) {
-	   titreParam = new com.servicelibre.entities.ui.Paramètre("titre","Gestion de corpus en ligne!");
+	   titreParam = new com.servicelibre.entities.ui.Paramètre("titre","Gestion de corpus en ligne");
 	}
 	
 ]]></zscript>

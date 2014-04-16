@@ -49,9 +49,9 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	
 	boolean rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
 
-	// Collection<? extends GrantedAuthority> authorities =
+	// Collection<? extends GrantedAuthority> rôles =
 	// ssctx.getAuthentication().getAuthorities();
-	// for (GrantedAuthority grantedAuthority : authorities) {
+	// for (GrantedAuthority grantedAuthority : rôles) {
 	// System.out.println("auth: " + grantedAuthority);
 	// }
 
@@ -94,6 +94,7 @@ public class IndexCtrl extends GenericForwardComposer implements VariableResolve
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		initOnglets();
+		getPage().setTitle(ServiceLocator.getParamètreRepo().findByNom("titre").getValeur());
 	}
 
 	public enum Mode {

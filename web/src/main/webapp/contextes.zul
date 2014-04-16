@@ -5,7 +5,9 @@
 		apply="com.servicelibre.zk.controller.ContexteCtrl">
 		<groupbox>
 			<caption>Recherche</caption>
-			<hbox style="margin-top:10px;">
+			<hbox>
+			<vbox>
+			<hbox style="margin-top:10px;" align="center">
 				<combobox id="condition" readonly="true"
 					width="185px">
 					<comboitem label="Exactement le mot"
@@ -18,24 +20,24 @@
 
 				<combobox id="voisinage" readonly="true"
 					width="185px">
-					<comboitem label="dans une phrase complète"
+					<comboitem label="dans une phrase"
 						value="0" />
-					<comboitem label="entouré de 1 mot" value="1" />
-					<comboitem label="entouré de 2 mots" value="2" />
+<!-- 					<comboitem label="entouré de 1 mot" value="1" /> -->
+<!-- 					<comboitem label="entouré de 2 mots" value="2" /> -->
 					<comboitem label="entouré de 3 mots" value="3" />
-					<comboitem label="entouré de 4 mots" value="4" />
-					<comboitem label="entouré de 5 mots" value="5" />
-					<comboitem label="entouré de 6 mots" value="6" />
-					<comboitem label="entouré de 7 mots" value="7" />
-					<comboitem label="entouré de 8 mots" value="8" />
-					<comboitem label="entouré de 9 mots" value="9" />
-					<comboitem label="entouré de 10 mots" value="10" />
-					<comboitem label="entouré de 15 mots" value="15" />
-					<comboitem label="entouré de 20 mots" value="20" />
-					<comboitem label="entouré de 25 mots" value="25" />
-					<comboitem label="entouré de 30 mots" value="30" />
-					<comboitem label="entouré de 40 mots" value="40" />
-					<comboitem label="entouré de 50 mots" value="50" />
+<!-- 					<comboitem label="entouré de 4 mots" value="4" /> -->
+<!-- 					<comboitem label="entouré de 5 mots" value="5" /> -->
+<!-- 					<comboitem label="entouré de 6 mots" value="6" /> -->
+<!-- 					<comboitem label="entouré de 7 mots" value="7" /> -->
+<!-- 					<comboitem label="entouré de 8 mots" value="8" /> -->
+<!-- 					<comboitem label="entouré de 9 mots" value="9" /> -->
+<!-- 					<comboitem label="entouré de 10 mots" value="10" /> -->
+<!-- 					<comboitem label="entouré de 15 mots" value="15" /> -->
+					<comboitem label="entouré d'environ 20 mots" value="20" />
+<!-- 					<comboitem label="entouré de 25 mots" value="25" /> -->
+<!-- 					<comboitem label="entouré de 30 mots" value="30" /> -->
+<!-- 					<comboitem label="entouré de 40 mots" value="40" /> -->
+					<comboitem label="entouré d'environ 50 mots" value="50" />
 				</combobox>
 
 				<button id="boutonRecherche" label="Recherche" />
@@ -51,9 +53,11 @@
 
 			<div id="caractèresSpéciaux" align="center" visible="false"
 				style="margin-top:7px; margin-bottom:7px;" />
-
+			</vbox>
+			<button id="remarqueContextesButton" width="156px" height="63px" style="margin-left: 30px;border-color: red;font-weight: bold;color:red;" 
+			         label="Remarque sur les contextes" visible="false"/>
+			</hbox>
 		</groupbox>
-
 
 		<hbox width="100%" height="100%" style="margin-top:20px;">
 
@@ -85,7 +89,11 @@
 											checkmark="true" id="valeurFiltre" multiple="true">
 											<listhead>
 												<listheader>
-													Tout sélectionner
+													<label>Tout sélectionner</label>
+													<image id="remarqueFiltreImage" src="/images/information-16x16.png" popup="remarqueFiltrePopup" style="margin-left:10px;cursor:pointer;"/>
+													<popup id="remarqueFiltrePopup">
+														<html id="remarqueFiltreHtml"/>
+													</popup>
 												</listheader>
 											</listhead>
 										</listbox>

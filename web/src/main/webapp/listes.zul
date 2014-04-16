@@ -94,7 +94,11 @@
 											checkmark="true" id="valeurFiltre" multiple="true">
 											<listhead>
 												<listheader>
-													Tout sélectionner
+													<label>Tout sélectionner</label>
+													<image id="remarqueFiltreImage" src="/images/information-16x16.png" popup="remarqueFiltrePopup" style="margin-left:10px;"/>
+													<popup id="remarqueFiltrePopup">
+														<html id="remarqueFiltreHtml"/>
+													</popup>
 												</listheader>
 											</listhead>
 										</listbox>
@@ -174,10 +178,12 @@
 					label="afficher la colonne « Nombre »"
 					onClick="colonneNombre.setVisible(!colonneNombre.isVisible())"
 					checked="false" />
-				<menuitem id="menuitemPrécision" autocheck="true"
-					label="afficher la colonne « Précision »"
-					onClick="colonnePrécision.setVisible(!colonnePrécision.isVisible())"
-					checked="false" />
+				<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
+					<menuitem id="menuitemPrécision" autocheck="true"
+						label="afficher la colonne « Précision »"
+						onClick="colonnePrécision.setVisible(!colonnePrécision.isVisible())"
+						checked="false" />
+				</zk>
 			</menupopup>
 
 			<!-- ******************** -->

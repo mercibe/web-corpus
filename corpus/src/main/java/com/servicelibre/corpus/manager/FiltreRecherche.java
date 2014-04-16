@@ -1,8 +1,12 @@
 package com.servicelibre.corpus.manager;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+
+import com.servicelibre.corpus.analysis.CanadaFrenchStringComparator;
 
 public class FiltreRecherche {
 	/**
@@ -20,6 +24,15 @@ public class FiltreRecherche {
 	};
 
 	LinkedHashSet<Filtre> filtres = new LinkedHashSet<Filtre>();
+	
+	final CanadaFrenchStringComparator caFrComp = new CanadaFrenchStringComparator();
+	final Comparator<DefaultKeyValue> dkvComp = new Comparator<DefaultKeyValue>(){
+
+		@Override
+		public int compare(DefaultKeyValue o1, DefaultKeyValue o2) {
+			// On compare sur la clé et non sur la valeur (valeur = ce qui est affiché, key = ce qui est recherché)
+			return caFrComp.compare(o1.getKey().toString(), o2.getKey().toString());
+		}};
 
 	public void addFiltre(Filtre filtre) {
 		// Si le filtre existe déjà, ajouter les éventuelles nouvelles valeurs
@@ -103,12 +116,16 @@ public class FiltreRecherche {
 
 	public Object[][] getFiltreValeurs() {
 
-		Object[][] valeurs = new Object[filtres.size()][1];
+		DefaultKeyValue[][] valeurs = new DefaultKeyValue[filtres.size()][1];
 		int index = 0;
 
 		for (Filtre filtre : filtres) {
 			// valeurs[index] contient un DefaultKeyValue[]
-			valeurs[index] = filtre.keyValues.toArray();
+			DefaultKeyValue[] valeursDuFiltre = (DefaultKeyValue[]) filtre.keyValues.toArray(new DefaultKeyValue[]{});
+			
+			// Trier les valeurs du filtre selon l'ordre alphabétique CA_fr
+			Arrays.sort(valeursDuFiltre, dkvComp);
+			valeurs[index] = valeursDuFiltre;
 			index++;
 		}
 

@@ -11,11 +11,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"corpus_id", "champindex" }))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "corpus_id", "champindex" }))
 public class DocMetadata {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long id;
 
 	@Column
@@ -29,12 +29,27 @@ public class DocMetadata {
 
 	@Column
 	int ordre;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	Boolean primaire = false;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	Boolean filtre = false;
+	
+	@Column(nullable = true)
+	String remarqueValeurFiltre;
+
+	/**
+	 * Rôle dont il faut disposer pour accéder à cette métadonnée
+	 */
+	@ManyToOne(optional = true)
+	Rôle rôle;
+	
+	/**
+	 * Liste de valeurs (id séparés par des virgules) qu'il faut cacher. 
+	 */
+	@Column
+	String valeursCachées;
 
 	/*
 	 * DocMetadata est maître de la relation OneToMany (il n'a pas le « mappedBy») Il
@@ -105,7 +120,7 @@ public class DocMetadata {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public Boolean isPrimaire() {
 		return this.primaire;
 	}
@@ -113,7 +128,7 @@ public class DocMetadata {
 	public void setPrimaire(Boolean primaire) {
 		this.primaire = primaire;
 	}
-	
+
 	public Boolean isFiltre() {
 		return filtre;
 	}
@@ -122,13 +137,36 @@ public class DocMetadata {
 		this.filtre = filtre;
 	}
 
-	@Override
-	public String toString() {
-		return "DocMetadata [id=" + id + ", nom=" + nom + ", description="
-				+ description + ", champIndex=" + champIndex + ", ordre="
-				+ ordre + ", primaire=" + primaire + "]";
+	public Rôle getRôle() {
+		return rôle;
 	}
 
+	public void setRôle(Rôle rôle) {
+		this.rôle = rôle;
+	}
+	
 
+	public String getRemarqueValeurFiltre() {
+		return remarqueValeurFiltre;
+	}
+
+	public void setRemarqueValeurFiltre(String remarqueValeurFiltre) {
+		this.remarqueValeurFiltre = remarqueValeurFiltre;
+	}
+	
+
+	public String getValeursCachées() {
+		return valeursCachées;
+	}
+
+	public void setValeursCachées(String valeursCachées) {
+		this.valeursCachées = valeursCachées;
+	}
+
+	@Override
+	public String toString() {
+		return "DocMetadata [id=" + id + ", nom=" + nom + ", description=" + description + ", champIndex=" + champIndex + ", ordre="
+				+ ordre + ", primaire=" + primaire + "]";
+	}
 
 }

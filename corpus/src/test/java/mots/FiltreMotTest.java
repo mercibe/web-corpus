@@ -25,7 +25,7 @@ public class FiltreMotTest {
 		kv.add(new DefaultKeyValue("clé1", "valeur1"));
 		kv.add(new DefaultKeyValue("clé2", "valeur2"));
 		
-		Filtre filtre1 = new Filtre("Filtre1", "La description du Filtre1", kv);
+		Filtre filtre1 = new Filtre("Filtre1", "La description du Filtre1", kv, "","");
 		
 		System.err.println(filtre1);
 		

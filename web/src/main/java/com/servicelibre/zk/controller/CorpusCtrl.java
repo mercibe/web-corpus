@@ -2,11 +2,14 @@ package com.servicelibre.zk.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.springframework.security.core.GrantedAuthority;
+import org.zkoss.spring.security.SecurityUtil;
 import org.zkoss.xel.VariableResolver;
 import org.zkoss.xel.XelException;
 import org.zkoss.zk.ui.Component;
@@ -40,6 +43,9 @@ import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.LigatureService;
+import com.servicelibre.entities.corpus.Rôle;
+import com.servicelibre.entities.ui.Paramètre;
+import com.servicelibre.repositories.ui.ParamètreRepository;
 import com.servicelibre.zk.controller.renderer.FiltreGridRowRenderer;
 import com.servicelibre.zk.controller.renderer.HistoriqueRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
@@ -56,6 +62,12 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	SimpleDateFormat df_historique = new SimpleDateFormat("HH:mm:ss");
 
+	protected ParamètreRepository paramètreRepo =  ServiceLocator.getParamètreRepo();
+	
+	String afficheCompteurValeurFiltrePourRôle = "";
+	
+	List<String> nomsRôles = new ArrayList<String>();
+
 	Textbox cherche; // autowire car même type/ID que le composant dans la page
 	// ZUL
 
@@ -69,6 +81,9 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	// page ZUL
 	Listbox valeurFiltre;// autowire car même type/ID que le composant dans la
 	// page ZUL
+	
+	Html remarqueFiltreHtml;
+	Image remarqueFiltreImage;
 
 	Button boutonAjoutFiltre;// autowire car même type/ID que le composant dans
 	// la page ZUL
@@ -155,7 +170,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 			String nom = filtreNomActuel.getValue().toString();
 			String description = filtreNomActuel.getLabel();
 
-			Filtre filtre = new Filtre(nom, description, new ArrayList<DefaultKeyValue>(1)); // filtreActifModel.getFiltre(nom);
+			Filtre filtre = new Filtre(nom, description, new ArrayList<DefaultKeyValue>(1),"",""); // filtreActifModel.getFiltre(nom);
 
 			// Quelles sont les valeurs à ajouter?
 			for (@SuppressWarnings("unchecked")
@@ -272,16 +287,41 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		actualiseValeursFiltreCourant();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void actualiseValeursFiltreCourant() {
 
 		Listitem currentItem = nomFiltre.getItemAtIndex(nomFiltre.getSelectedIndex());
 
 		if (currentItem != null && currentItem.getValue() != null) {
-			List<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(currentItem.getValue().toString());
+			
+			String nomDuFiltre = currentItem.getValue().toString();
+			
+			List<DefaultKeyValue> filtreValeurs = filtreManager.getFiltreValeurs(nomDuFiltre, nomsRôles.contains(afficheCompteurValeurFiltrePourRôle));
 			SimpleListModel simpleListModel = new SimpleListModel(filtreValeurs.toArray());
 			simpleListModel.setMultiple(true);
 			valeurFiltre.setModel(simpleListModel);
+			
+			// masquer la flèche à côté du nom du filtre si un seul choix possible
+			if(nomFiltre.getItemCount() == 1) {
+				nomFiltreBandbox.setButtonVisible(false);
+			}
+			else {
+				nomFiltreBandbox.setButtonVisible(true);
+			}
+			
+			// Afficher/masquer la remarque éventuelle pour les valeurs du filtre
+			String remarqueValeursFiltre = filtreManager.getRemarqueValeursFiltre(nomDuFiltre);
+			if(remarqueValeursFiltre != null) {
+				remarqueFiltreImage.setVisible(true);
+				remarqueFiltreHtml.setContent(filtreManager.getFiltre(nomDuFiltre).remarqueValeurs);
+				
+			}
+			else {
+				remarqueFiltreImage.setVisible(false);
+			}
+				
 		}
+		
 	}
 
 	/**
@@ -342,7 +382,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	protected void initialiseFiltre() {
 
 		// Initialisation des filtres (noms)
-		nomFiltre.setModel(new SimpleListModel(filtreManager.getFiltreNoms()));
+		nomFiltre.setModel(new SimpleListModel(getFiltreNomsVisible()));
 
 		nomFiltre.setItemRenderer(new ListitemRenderer() {
 
@@ -359,9 +399,16 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 			@Override
 			public void render(Listitem item, Object keyValue, int index) throws Exception {
+				
 				DefaultKeyValue kv = (DefaultKeyValue) keyValue;
 				item.setValue(kv.getKey());
 				String fragmentHTML = kv.getValue().toString();
+				
+				
+				// y a-t-il un tri personnalisé à supprimer (tous les caractères avant le premier | ) ?
+				// Exemple : 001|fragment HTML
+				//fragmentHTML = fragmentHTML.replaceAll("^(.*\\|)", "");
+				
 				item.setAttribute("label", fragmentHTML);
 
 				Listcell lc = new Listcell();
@@ -401,6 +448,11 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	}
 
+	private List<DefaultKeyValue> getFiltreNomsVisible() {
+		
+		return filtreManager.getFiltreNomsVisibles(nomsRôles);
+	}
+
 	abstract public void chercheEtAffiche(boolean ajouterHistorique);
 
 	abstract public Recherche getRecherche();
@@ -427,8 +479,16 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
+
 		super.doAfterCompose(comp);
 
+		
+		Collection<? extends GrantedAuthority> rôles = SecurityUtil.getAuthentication().getAuthorities();
+		for (GrantedAuthority rôle : rôles) {
+			nomsRôles.add(rôle.getAuthority());
+		}
+
+		
 		initFiltreManager();
 
 		initialiseRecherche();
@@ -444,6 +504,13 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		initialiseClavierCaractèresSpéciaux();
 
 		caractèresSpéciaux.setVisible(true);
+		
+		Paramètre afficheCompteurValeurFiltrePourRôleParam = paramètreRepo.findByNom("afficheCompteurValeurFiltrePourRôle");
+		if(afficheCompteurValeurFiltrePourRôleParam != null) {
+			afficheCompteurValeurFiltrePourRôle = afficheCompteurValeurFiltrePourRôleParam.getValeur();
+		}
+		
+		getPage().setTitle(paramètreRepo.findByNom("titre").getValeur());
 
 	}
 
@@ -451,10 +518,23 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		String[][] caractères = { { "à", "à" }, { "â", "â" }, { "é", "é" }, { "è", "è" }, { "ê", "ê" }, { "ë", "ë" }, { "ï", "ï" }, { "î", "î" }, { "ô", "ô" },
 				{ "ù", "ù" }, { "û", "û" }, { "ç", "ç" }, { "œ", "œ" }, { "æ", "æ" } };
 
+		int idCpt = 1;
 		for (String[] caractère : caractères) {
 
 			Label label = new Label(caractère[0]);
-			label.setTooltiptext(caractère[1]);
+			
+			
+			Popup popup = new Popup();
+			popup.setHeight("25px");
+			popup.setId(this.getClass().getSimpleName() +"Car_" + idCpt);
+			idCpt++;
+			
+			popup.setParent(this.webCorpusWindow);
+			Html html = new Html("<div align=\"center\">Cliquer pour insérer le caractère «&nbsp;<span style=\"color:red\">"+ caractère[1] +"</span>&nbsp;»  dans la zone de recherche.</div>");
+			//html.setStyle("background-color:lightblue;");
+			html.setParent(popup);
+			label.setTooltip(popup.getId() + ", position=after_start, delay=50");
+
 			label.setParent(caractèresSpéciaux);
 			label.setSclass("caractèreSpécial");
 			label.addEventListener(Events.ON_CLICK, new EventListener() {

@@ -182,7 +182,7 @@ public class MotInfo {
 
 		// Si catgram NULL, problème à signaler
 		if (catgram == null) {
-			//System.err.println("catgram.id == NULL pour " + mot + "|" + lemme + "|" + note);
+			// System.err.println("catgram.id == NULL pour " + mot + "|" + lemme + "|" + note);
 			sb.append("NULL");
 		} else {
 
@@ -356,7 +356,10 @@ public class MotInfo {
 			Set<String> motsSansDoublon = new HashSet<String>(motInfoList.size());
 			for (MotInfo motInfo : motInfoList) {
 				if (formateur.isExportable(motInfo)) {
-					motsSansDoublon.add(formateur.getFormatStructuré(motInfo, formateur.getSéparateurDeChamps()));
+					String formatStructuré = formateur.getFormatStructuré(motInfo, formateur.getSéparateurDeChamps());
+					if (formatStructuré != null && !formatStructuré.isEmpty()) {
+						motsSansDoublon.add(formatStructuré);
+					}
 				}
 			}
 
@@ -396,8 +399,11 @@ public class MotInfo {
 					dernierAvancement += 10;
 				}
 				if (formateur.isExportable(motInfo)) {
-					writer.append(formateur.getFormatStructuré(motInfo, formateur.getSéparateurDeChamps()));
-					writer.newLine();
+					String formatStructuré = formateur.getFormatStructuré(motInfo, formateur.getSéparateurDeChamps());
+					if (formatStructuré != null && !formatStructuré.isEmpty()) {
+						writer.append(formatStructuré);
+						writer.newLine();
+					} 
 				}
 				cptMotsTraités++;
 			}
@@ -422,7 +428,7 @@ public class MotInfo {
 			int dernierAvancement = 0;
 			for (String ligne : lignes) {
 				int pourcentageAvancement = (int) ((100f * cptLignesTraitées) / nbTotalLignes);
-				if (pourcentageAvancement > dernierAvancement &&  pourcentageAvancement % 10 == 0) {
+				if (pourcentageAvancement > dernierAvancement && pourcentageAvancement % 10 == 0) {
 					System.out.println("Avancement exportation : " + pourcentageAvancement + " % (" + dumpFilename + ")");
 					dernierAvancement += 10;
 				}

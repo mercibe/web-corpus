@@ -60,7 +60,7 @@ public class ListeFiltreManager extends FiltreManager {
 						listesClésValeurs.add(new DefaultKeyValue(liste.getId(), liste.getNom()));
 					}
 				}
-				filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name() + "_" + catégorie.getNom(), catégorie.getNom(), listesClésValeurs));
+				filtres.add(new Filtre(FiltreRecherche.CléFiltre.liste.name() + "_" + catégorie.getNom(), catégorie.getNom(), listesClésValeurs,"",""));
 			}
 		}
 	}
@@ -72,7 +72,7 @@ public class ListeFiltreManager extends FiltreManager {
 		// FIXME
 		roClésValeurs.add(new DefaultKeyValue(Boolean.TRUE, "Nouvelles graphies"));
 		//roClésValeurs.add(new DefaultKeyValue(Boolean.FALSE, "Graphies traditionnelles"));
-		filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.ro.name(), "Orthographe rectifiée", roClésValeurs,"",""));
 	}
 
 	private void ajoutFiltreNombre() {
@@ -83,7 +83,7 @@ public class ListeFiltreManager extends FiltreManager {
 		nombreClésValeurs.add(new DefaultKeyValue("pl.", "Pluriel"));
 		nombreClésValeurs.add(new DefaultKeyValue("s. et pl.", "Singulier et pluriel"));
 		nombreClésValeurs.add(new DefaultKeyValue("inv.", "Invariable"));
-		filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.nombre.name(), "Nombre", nombreClésValeurs,"",""));
 	}
 
 	private void ajoutFiltreGenre() {
@@ -93,7 +93,7 @@ public class ListeFiltreManager extends FiltreManager {
 		genreClésValeurs.add(new DefaultKeyValue("f.", "Féminin"));
 		genreClésValeurs.add(new DefaultKeyValue("m.", "Masculin"));
 		genreClésValeurs.add(new DefaultKeyValue("m. ou f.", "Masculin ou féminin"));
-		filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.genre.name(), "Genre", genreClésValeurs,"",""));
 	}
 
 	private void ajoutFiltreClasseDeMot() {
@@ -111,7 +111,7 @@ public class ListeFiltreManager extends FiltreManager {
 		catgramClésValeurs.add(new DefaultKeyValue("prép.", "préposition"));
 		catgramClésValeurs.add(new DefaultKeyValue("pron.", "pronom"));
 		catgramClésValeurs.add(new DefaultKeyValue("v.", "verbe"));
-		filtres.add(new Filtre(FiltreRecherche.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs));
+		filtres.add(new Filtre(FiltreRecherche.CléFiltre.catgram.name(), "Classe de mot", catgramClésValeurs,"",""));
 		
 		
 	}

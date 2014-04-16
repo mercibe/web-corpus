@@ -14,7 +14,9 @@
 		<param-value>/WEB-INF/system-context.xml</param-value>
 	</context-param>
 
-
+    <session-config>
+		<session-timeout>10</session-timeout>
+	</session-config>
 
 	<!-- Permet de charger dynamiquement les beans Spring lors du chargement 
 		du contexte (avant l'initialisation de la servlet) -->

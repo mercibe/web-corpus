@@ -17,6 +17,8 @@ public interface MotInfoExportateur {
 	String getFormatStructuré(MotInfo motInfo, String séparateur);
 
 	boolean isExportable(MotInfo motInfo);
+	
+	boolean isOffensant(MotInfo motInfo);
 
 	boolean isDoublonsAutorisés();
 	
