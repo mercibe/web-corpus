@@ -79,7 +79,7 @@ public class CorpusServiceTest {
 	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
 	String mot = "chien";
-	ContexteSet contexteSet = cs.getContextesMot(mot);
+	ContexteSet contexteSet = cs.getContextesMot(mot,-1,-1);
 
 	assertNotNull("La liste des contextes ne peut être null.  Le dossier des données existe-t-il ? " + dossierData, contexteSet.getContextes());
 	assertTrue("La liste des contextes de ne peut être vide.  Le dossier des données existe-t-il ? " + dossierData, contexteSet.size() > 0);
@@ -115,7 +115,7 @@ public class CorpusServiceTest {
 
 	String lemme = "manger";
 
-	ContexteSet contexteSet = cs.getContextesLemme(lemme);
+	ContexteSet contexteSet = cs.getContextesLemme(lemme,-1,-1);
 
 	assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 	assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
@@ -314,7 +314,7 @@ public class CorpusServiceTest {
 
 	for (String mot : mots) {
 
-	    ContexteSet contexteSet = cs.getContextesMot(mot);
+	    ContexteSet contexteSet = cs.getContextesMot(mot,-1,-1);
 
 	    assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 	    assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);
@@ -376,10 +376,10 @@ public class CorpusServiceTest {
 
 	CorpusService cs = new CorpusService(corpusRepo, corpus);
 
-	ContexteSet contexteSet = cs.getContextesMot("E");
+	ContexteSet contexteSet = cs.getContextesMot("E",-1,-1);
 
 	cs.setTailleVoisinage(50);
-	contexteSet = cs.getContextesMot("Raphaël");
+	contexteSet = cs.getContextesMot("Raphaël",-1,-1);
 
 	assertNotNull("La liste des contextes ne peut être null.", contexteSet.getContextes());
 	assertTrue("La liste des contextes de ne peut être vide.", contexteSet.size() > 0);

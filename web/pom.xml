@@ -95,7 +95,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
 					<configuration>
 						<aggregate>true</aggregate>
 					</configuration>
@@ -148,6 +148,7 @@
 								<include>webcorpus-servlet-context.xml</include>
 								<include>application-security.xml</include>
 								<include>web.xml</include>
+								<include>logback.xml</include>
 							</includes>
 						</resource>
 					</webResources>
@@ -223,13 +224,13 @@
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
 					<include>version.txt</include>
+					<include>**/logback.xml</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
-					<include>**/logback.xml</include>
 					<include>**/*.properties</include>
 				</includes>
 				<filtering>false</filtering>
@@ -469,13 +470,15 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<pom.jpa.showSql>true</pom.jpa.showSql>
+				<pom.jpa.showSql>false</pom.jpa.showSql>
+				<pom.log.rootlevel>DEBUG</pom.log.rootlevel>
 			</properties>
 		</profile>
 		<profile>
 			<id>prod</id>
 			<properties>
 				<pom.jpa.showSql>false</pom.jpa.showSql>
+				<pom.log.rootlevel>INFO</pom.log.rootlevel>
 			</properties>
 		</profile>
 	</profiles>

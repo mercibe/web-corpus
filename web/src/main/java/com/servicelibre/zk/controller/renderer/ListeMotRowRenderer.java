@@ -10,6 +10,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Html;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Window;
@@ -25,6 +26,7 @@ public class ListeMotRowRenderer implements RowRenderer<Object> {
 	private static Logger logger = LoggerFactory.getLogger(ListeMotRowRenderer.class);
 
 	protected ListeCtrl listeCtrl;
+	protected final Paging grilleRésultatsPaging ;
 
 	private boolean rôleAdmin;
 
@@ -32,24 +34,36 @@ public class ListeMotRowRenderer implements RowRenderer<Object> {
 		super();
 		this.listeCtrl = listeCtrl;
 		this.rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
+		this.grilleRésultatsPaging = listeCtrl.getGrilleRésultatsPaging();
 		logger.debug("this.checkbox = " + this.rôleAdmin);
 
 	}
 
 	@Override
-	public void render(Row row, Object model, int index) throws Exception {
+	public void render(Row row, Object model, final int index) throws Exception {
 
 		final Mot mot = (Mot) model;
 
 		final Checkbox cb = new Checkbox();
 		cb.setValue(mot.getId());
-		cb.setChecked(mot.sélectionné);
-
+		
+		
+		Integer sélectionIdx = (grilleRésultatsPaging.getActivePage() * grilleRésultatsPaging.getPageSize()) + index;
+		cb.setChecked(listeCtrl.getRésultatsSélectionnés().contains(sélectionIdx));
+		
 		cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
 
 			@Override
 			public void onEvent(Event arg0) throws Exception {
-				mot.sélectionné = cb.isChecked();
+				Integer sélectionIdx = (grilleRésultatsPaging.getActivePage() * grilleRésultatsPaging.getPageSize()) + index;
+				if (cb.isChecked()) {
+					System.out.println("Sélectionner " + sélectionIdx);
+					listeCtrl.getRésultatsSélectionnés().add(sélectionIdx);
+				} else {
+					System.out.println("Désélectionner " + sélectionIdx);
+					listeCtrl.getRésultatsSélectionnés().remove(sélectionIdx);
+				}
+				System.out.println(listeCtrl.getRésultatsSélectionnés());
 			}
 		});
 

@@ -1,9 +1,15 @@
 package com.servicelibre.zk.recherche;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.zkoss.zul.Paging;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.manager.Ordre;
+import com.servicelibre.zk.controller.CorpusCtrl;
 
 public abstract class Recherche {
 
@@ -25,6 +31,10 @@ public abstract class Recherche {
 
 	// Les filtres à appliquer
 	public FiltreRecherche filtres;
+	
+	public List<Ordre> ordres = new ArrayList<Ordre>();
+	
+	public Paging grilleRésultatsPaging;
 
 	public abstract String getDescriptionChaîne();
 	public abstract String getDescriptionPortéeFiltre();
@@ -112,6 +122,12 @@ public abstract class Recherche {
 		return getDescriptionTextuelle(true);
 	}
 	
+	public List<Ordre> getOrdres() {
+		return ordres;
+	}
+	public void setOrdres(List<Ordre> ordres) {
+		this.ordres = ordres;
+	}
 	public String getDescriptionTextuelle(boolean majusculeInitiale) {
 		String description = getDescriptionChaîne() + " " + getDescriptionPortéeFiltre() + "\n\n" + getDescriptionFiltre();
 		if(majusculeInitiale)

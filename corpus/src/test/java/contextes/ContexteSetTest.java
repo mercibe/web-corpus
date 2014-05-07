@@ -38,13 +38,13 @@ public class ContexteSetTest {
 
 		cs.setTailleVoisinage(2);
 
-		ContexteSet contextesSet = cs.getContextesMot("pommes");
+		ContexteSet contextesSet = cs.getContextesMot("pommes",-1,-1);
 		contextesSet.setMaxCooccurrent(15);
 		Map<Position, List<InfoCooccurrent>> infoCooccurrents = contextesSet.getInfoCooccurrents();
 
 		afficheCooccurrents(infoCooccurrents);
 
-		contextesSet = cs.getContextesLemme("pomme");
+		contextesSet = cs.getContextesLemme("pomme",-1,-1);
 		contextesSet.setMaxCooccurrent(15);
 		infoCooccurrents = contextesSet.getInfoCooccurrents();
 

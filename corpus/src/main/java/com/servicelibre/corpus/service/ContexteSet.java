@@ -29,6 +29,8 @@ public class ContexteSet {
 	List<Contexte> contextes = new ArrayList<Contexte>();
 
 	int documentCount;
+	
+	int totalContextesCount;
 
 	String motCherché = "";
 
@@ -86,6 +88,16 @@ public class ContexteSet {
 
 	public void setFormesDuLemme(boolean formesDuLemme) {
 		this.formesDuLemme = formesDuLemme;
+	}
+	
+	
+
+	public int getTotalContextesCount() {
+		return totalContextesCount;
+	}
+
+	public void setTotalContextesCount(int totalContextesCount) {
+		this.totalContextesCount = totalContextesCount;
 	}
 
 	/**

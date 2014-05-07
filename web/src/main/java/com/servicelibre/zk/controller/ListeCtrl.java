@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -43,13 +41,15 @@ import org.zkoss.zul.Html;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModel;
-import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Menuitem;
-import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.event.PagingEvent;
+import org.zkoss.zul.event.ZulEvents;
 
 import com.servicelibre.controller.ServiceLocator;
+import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.ListeMot;
@@ -60,6 +60,7 @@ import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom.Condition;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom.MotRésultat;
 import com.servicelibre.zk.controller.IndexCtrl.Mode;
 import com.servicelibre.zk.controller.renderer.ListeMotRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
@@ -88,6 +89,7 @@ public class ListeCtrl extends CorpusCtrl {
 	Button actionButton;
 
 	Grid motsGrid; // autowire car même type/ID que le composant dans la page
+
 	// ZUL
 	Column mot;
 
@@ -107,7 +109,7 @@ public class ListeCtrl extends CorpusCtrl {
 	private static final long serialVersionUID = 779679285074159073L;
 
 	private Column motColumn;
-	
+
 	boolean rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
 
 	public void onClick$actionButton() {
@@ -335,119 +337,6 @@ public class ListeCtrl extends CorpusCtrl {
 		return sb.toString();
 	}
 
-	// private List<Mot> getMotsRecherchés() {
-	//
-	// List<Mot> mots = new ArrayList<Mot>();
-	//
-	// System.out.println(getDescriptionRecherche());
-	//
-	// String conditionActive = getPrécisionChaîne();
-	//
-	// // TODO historique des recherches
-	// // créer une méthode getRecherche() et ensuite appeler
-	// exécuterRecherche();
-	// // Créer l'objet recherche / cette méthode devrait prendre l'objet
-	// Recherche en paramètre et s'appeler exécuterRecherche()
-	//
-	//
-	// FiltreRecherche filtres = getFiltres();
-	//
-	// if (getCible() == Recherche.Cible.GRAPHIE) {
-	// mots = motRepository.findByGraphie(getMotCherché(),
-	// MotManager.Condition.valueOf(conditionActive), filtres);
-	// } else {
-	// mots = motRepository.findByPrononciation(getMotCherché(),
-	// MotManager.Condition.valueOf(conditionActive), filtres);
-	// }
-	//
-	// return mots;
-	// }
-
-	public List<Mot> exécuterRecherche(Recherche recherche, boolean ajouterHistorique) {
-
-		List<Mot> mots = new ArrayList<Mot>();
-
-		logger.info(recherche.getDescriptionChaîne());
-		Condition conditionChaîne = MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne);
-		logger.debug("MotRepositoryCustom.Condition.valueOf(recherche.précisionChaîne) = " + conditionChaîne);
-		logger.debug("filtres: " + recherche.filtres);
-
-		String chaîne = recherche.getChaîne();
-		switch (recherche.cible) {
-		case GRAPHIE:
-			mots = motRepository.findByGraphie(chaîne, conditionChaîne, recherche.filtres, rôleAdmin);
-			break;
-		case PRONONCIATION:
-			mots = motRepository.findByPrononciation(chaîne, conditionChaîne, recherche.filtres, rôleAdmin);
-
-			// Est-ce que la chaîne recherchée contient au moins un des caractères suivant non suivi du « combining
-			// tilde » ou du « : » ?
-			Pattern pattern = Pattern.compile("ɛ(?![\u0303:])|ɔ(?!\u0303)|ɑ(?!\u0303)");
-			Matcher matcher = pattern.matcher(chaîne);
-
-			// Filtrer les résultats si un des caractères problématiques non suivi d'un caractère combiné est détecté
-			// dans la chaîne
-			if (matcher.find()) {
-				mots = filtrePrononciations(chaîne, conditionChaîne, mots);
-			}
-
-			break;
-		default:
-			logger.error("Cible invalide pour une recherche de mots: " + recherche.cible);
-			break;
-		}
-
-		if (ajouterHistorique) {
-			ajouterRechercheHistorique(recherche, mots.size());
-		}
-
-		return mots;
-	}
-
-	private List<Mot> filtrePrononciations(String chaîne, Condition conditionChaîne, List<Mot> mots) {
-
-		List<Mot> motsFiltrés = new ArrayList<Mot>(mots.size());
-
-		// COMBINING TILDE (̃) http://www.fileformat.info/info/unicode/char/303/index.htm
-
-		// La chaîne devient une expression régulière
-		StringBuffer regexp = new StringBuffer(chaîne.replaceAll("(ɛ(?![\u0303:]))", "(ɛ(?![\u0303:]))")
-				.replaceAll("ɔ(?!\u0303)", "ɔ(?!\u0303)").replaceAll("ɑ(?!\u0303)", "ɑ(?!\u0303)"));
-
-		// Convertir la chaîne en un pattern
-		switch (conditionChaîne) {
-		case COMMENCE_PAR:
-			regexp.insert(0, "^\\[").append(".*");
-			break;
-		case CONTIENT:
-			regexp.insert(0, ".*").append(".*");
-			break;
-		case ENTIER:
-			regexp.insert(0, "^\\[").append("\\]$");
-			break;
-		case FINIT_PAR:
-			regexp.insert(0, ".*").append("\\]$");
-			break;
-		default:
-			break;
-
-		}
-
-		Pattern pattern = Pattern.compile(regexp.toString());
-		Matcher matcher;
-
-		logger.debug("Ne conserver que les prononciations qui matchent {}", regexp.toString());
-
-		for (Mot mot : mots) {
-			// FIXME: KO si prononciations multiples
-			matcher = pattern.matcher(mot.getPrononciationsString());
-			if (matcher.matches()) {
-				motsFiltrés.add(mot);
-			}
-		}
-		return motsFiltrés;
-	}
-
 	@Override
 	public Recherche getRecherche() {
 
@@ -502,9 +391,32 @@ public class ListeCtrl extends CorpusCtrl {
 
 		initialiseChamps();
 
+		créeEventListenerRésultatsPaging();
+
 		initialiseMotsGrid();
 
 		initialiseClavierPhonétique();
+
+	}
+
+	private void créeEventListenerRésultatsPaging() {
+		grilleRésultatsPaging.addEventListener(ZulEvents.ON_PAGING, new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event event) throws Exception {
+				PagingEvent e = (PagingEvent) event;
+
+				Recherche recherche = (Recherche) motsGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+				if (recherche != null) {
+					// Les requêtes de pagination ne doivent pas être mise dans l'historique!
+					recherche.grilleRésultatsPaging = (Paging) e.getPageable();
+					remplisGrilleMots(recherche);
+				} else {
+					System.err.println("L'objet recherche associé au Grid est introuvable");
+				}
+
+			}
+		});
 
 	}
 
@@ -553,7 +465,7 @@ public class ListeCtrl extends CorpusCtrl {
 			label.setTooltip(popup.getId() + ", position=after_start, delay=50");
 			label.setParent(api);
 			label.setSclass("apiLettre");
-			label.addEventListener(Events.ON_CLICK, new EventListener() {
+			label.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
 
 				@Override
 				public void onEvent(Event arg0) throws Exception {
@@ -590,18 +502,31 @@ public class ListeCtrl extends CorpusCtrl {
 	private void initialiseMotsGrid() {
 
 		Recherche recherche = getRecherche();
+		recherche.grilleRésultatsPaging = grilleRésultatsPaging;
+		recherche.grilleRésultatsPaging.setActivePage(PREMIÈRE_PAGE);
+		int nbMots = remplisGrilleMots(recherche);
 
-		ListModelList modelList = new ListModelList(exécuterRecherche(recherche, false));
+		// Stockage de la recherche comme attribut du grid pour réutilisation par le composant Paging
+		motsGrid.setAttribute("recherche", recherche, Component.COMPONENT_SCOPE);
 
-		motsGrid.setModel(modelList);
-
-		infoRésultats.setValue(getInfoRésultat(recherche, modelList.size()));
+		infoRésultats.setValue(getInfoRésultat(recherche, nbMots));
 
 		motsGrid.setRowRenderer(new ListeMotRowRenderer(this));
 
 		// Enregistrement événement pour lien vers contextes
 		motColumn = (Column) motsGrid.getColumns().getFellow("mot");
 
+	}
+
+	private int remplisGrilleMots(Recherche recherche) {
+
+		MotsModelList<Mot> modelList = new MotsModelList<Mot>();
+
+		int nbMots = modelList.rafraîchi(recherche);
+
+		motsGrid.setModel(modelList);
+
+		return nbMots;
 	}
 
 	public void afficheContexte(String lemme) {
@@ -618,7 +543,6 @@ public class ListeCtrl extends CorpusCtrl {
 
 	@SuppressWarnings("unused")
 	private void displayChildren(Component comp, String sep) {
-		@SuppressWarnings("unchecked")
 		List<Component> children = comp.getChildren();
 
 		System.out.println("Children of " + comp.getUuid() + "(" + comp.getId() + ")");
@@ -633,15 +557,27 @@ public class ListeCtrl extends CorpusCtrl {
 	public void chercheEtAffiche(boolean ajouterHistorique) {
 
 		Recherche recherche = getRecherche();
-		ListModelList<Object> modelList = new ListModelList<Object>(exécuterRecherche(recherche, ajouterHistorique));
+		recherche.grilleRésultatsPaging = grilleRésultatsPaging;
+		recherche.grilleRésultatsPaging.setActivePage(PREMIÈRE_PAGE);
+		int nbMots = remplisGrilleMots(recherche);
+		grilleRésultatsPaging.setActivePage(PREMIÈRE_PAGE);
 
-		motsGrid.setModel(modelList);
-		motsGrid.getPaginal().setActivePage(0);
+		if (ajouterHistorique) {
+			ajouterRechercheHistorique(recherche, nbMots);
+		}
+
+		// Stockage de la recherche comme attribut du grid pour réutilisation par le composant Paging
+		motsGrid.setAttribute("recherche", recherche, Component.COMPONENT_SCOPE);
+
 		// les mots sont toujours retournés par ordre alphabétique =>
 		// refléter dans la colonne (réinitialisation du marqueur de tri)
 		motColumn.setSortDirection("ascending");
 
-		infoRésultats.setValue(getInfoRésultat(recherche, modelList.size()));
+		infoRésultats.setValue(getInfoRésultat(recherche, nbMots));
+
+		// réinitialiser la sélection
+		résultatsSélectionnés.clear();
+
 	}
 
 	@Override
@@ -673,20 +609,39 @@ public class ListeCtrl extends CorpusCtrl {
 
 		csv.append(getEntêteCsv(motsGrid, séparateur));
 
-		// Récupération des données
-		@SuppressWarnings("unchecked")
-		List<Mot> mots = (List<Mot>) motsGrid.getModel();
-		for (Mot mot : mots) {
-			csv.append(ajouteGuillemetsCsv(mot.getMot())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getPrononciationsString())).append(séparateur);
-			csv.append("\"").append(mot.isRo() ? "*" : "").append("\"").append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getCatgram())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getGenre())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getNombre())).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(mot.getCatgramPrécision())).append("\n");
-			// FIXME
-			// csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
+		// Récupération des données / lignes
+		List<Mot> mots = new ArrayList<Mot>();
 
+		@SuppressWarnings("unchecked")
+		MotsModelList<Mot> mml = (MotsModelList) motsGrid.getModel();
+
+		Recherche recherche = (Recherche) motsGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+		// La recherche devrait TOUJOURS être présente
+		if (recherche != null) {
+			MotRésultat motRésultat = mml.exécuterRecherche(recherche, -1, -1);
+			mots = motRésultat.mots;
+		}
+
+		// Est-ce une exportation partielle
+		boolean exportationPartielle = false;
+		if (résultatsSélectionnés.size() > 0) {
+			exportationPartielle = true;
+		}
+
+		Integer motCpt = 0;
+		for (Mot mot : mots) {
+			if (!exportationPartielle || résultatsSélectionnés.contains(motCpt)) {
+				csv.append(ajouteGuillemetsCsv(mot.getMot())).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(mot.getPrononciationsString())).append(séparateur);
+				csv.append("\"").append(mot.isRo() ? "*" : "").append("\"").append(séparateur);
+				csv.append(ajouteGuillemetsCsv(mot.getCatgram())).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(mot.getGenre())).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(mot.getNombre())).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(mot.getCatgramPrécision())).append("\n");
+				// FIXME
+				// csv.append(ajouteGuillemetsCsv(mot.getListe().getNom())).append("\n");
+			}
+			motCpt++;
 		}
 		Filedownload.save(csv.toString().getBytes(), "text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
 	}
@@ -726,15 +681,22 @@ public class ListeCtrl extends CorpusCtrl {
 		Sheet motsSheet = wb.createSheet("mots");
 
 		// Récupération des données / lignes
+		List<Mot> mots = new ArrayList<Mot>();
+
 		@SuppressWarnings("unchecked")
-		List<Mot> mots = (List<Mot>) motsGrid.getModel();
+		MotsModelList<Mot> mml = (MotsModelList) motsGrid.getModel();
+
+		Recherche recherche = (Recherche) motsGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+		// La recherche devrait TOUJOURS être présente
+		if (recherche != null) {
+			MotRésultat motRésultat = mml.exécuterRecherche(recherche, -1, -1);
+			mots = motRésultat.mots;
+		}
+
+		// Est-ce une exportation partielle
 		boolean exportationPartielle = false;
-		// Si un mot au moins sélectionné => sélection partielle
-		for (Mot mot : mots) {
-			if (mot.sélectionné) {
-				exportationPartielle = true;
-				break;
-			}
+		if (résultatsSélectionnés.size() > 0) {
+			exportationPartielle = true;
 		}
 
 		insérerTitreRecherche(wb, createHelper, rechercheExécution, motsSheet, exportationPartielle);
@@ -755,8 +717,9 @@ public class ListeCtrl extends CorpusCtrl {
 			}
 		}
 
+		Integer motCpt = 0;
 		for (Mot mot : mots) {
-			if (!exportationPartielle || mot.sélectionné) {
+			if (!exportationPartielle || résultatsSélectionnés.contains(motCpt)) {
 				row = motsSheet.createRow(rowCpt++);
 
 				org.apache.poi.ss.usermodel.Cell cell = row.createCell(0);
@@ -794,6 +757,7 @@ public class ListeCtrl extends CorpusCtrl {
 				}
 				cell.setCellValue(createHelper.createRichTextString(nomListePartitionPrimaire != null ? nomListePartitionPrimaire : ""));
 			}
+			motCpt++;
 		}
 
 		for (int i = 0; i <= colCpt; i++) {
@@ -837,17 +801,20 @@ public class ListeCtrl extends CorpusCtrl {
 		if (exportationPartielle) {
 			exportationPartielleTexte = "Une sélection de mots parmi ";
 		}
-		
+
 		if (rechercheExécution.recherche == null) {
-				descriptionTextuelle = exportationPartielleTexte + "tous les mots";			
+			descriptionTextuelle = exportationPartielleTexte + "tous les mots";
 		} else {
-				descriptionTextuelle = exportationPartielleTexte + rechercheExécution.recherche.getDescriptionTextuelle(!exportationPartielle);
+			String descriptionTextuelleHtml = rechercheExécution.recherche.getDescriptionTextuelle(!exportationPartielle);
+			// Supprimer les balises HTML sup - idéalement supprimer toutes les balises HTML...
+			descriptionTextuelle = exportationPartielleTexte + descriptionTextuelleHtml.replaceAll("<sup>", "").replaceAll("</sup>", "");
 		}
 
 		titreCell.setCellValue(createHelper.createRichTextString(descriptionTextuelle));
 		motsSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
 	}
 
+	@SuppressWarnings("unused")
 	private void insérerFeuilleDescription(Workbook wb, CreationHelper createHelper, RechercheExécution rechercheExécution) {
 
 		// Création d'une nouvelle feuille de calcul pour contenir des informations meta sur la recherche

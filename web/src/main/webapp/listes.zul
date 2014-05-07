@@ -204,8 +204,9 @@
 					</div>
 				</hbox>
 
-				<grid id="motsGrid" mold="paging" pageSize="16"
-					height="550px" width="700px" emptyMessage="Aucun mot trouvé.">
+				<!-- mold="paging" pageSize="16" -->
+				<grid id="motsGrid"  
+					height="513px" width="700px" emptyMessage="Aucun mot trouvé.">
 
 					<columns sizable="true" menupopup="editPopup">
 					
@@ -214,7 +215,7 @@
 							</column>
 					
 						<column width="250px" id="mot" label="Mot"
-							sortDirection="ascending" sort="auto" />
+							sortDirection="ascending" sort="auto(mot)" />
 						<column width="100px" id="colonnePrononciation"
 							label="Phonétique" sort="auto(prononciationsString,lemme)"
 							tooltiptext="transcription phonétique" visible="false" />
@@ -240,7 +241,10 @@
 					</columns>
 					<rows />
 				</grid>
-				
+				<paging id="grilleRésultatsPaging" width="100%" pageSize="16" detailed="true" 
+					style="padding-top:5px;padding-bottom:5px;padding-left:0px;padding-right:0px;border-style:none;background:none"
+				/>
+							
 				<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
 					<hbox>
 						 <combobox id="actionCombobox" readonly="true"

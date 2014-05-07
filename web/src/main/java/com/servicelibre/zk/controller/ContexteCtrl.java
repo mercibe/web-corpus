@@ -3,15 +3,11 @@ package com.servicelibre.zk.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,11 +21,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.zkoss.spring.security.SecurityUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
@@ -46,9 +37,12 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
+import org.zkoss.zul.event.PagingEvent;
+import org.zkoss.zul.event.ZulEvents;
 
 import com.servicelibre.controller.ServiceLocator;
 import com.servicelibre.corpus.metadata.Metadata;
@@ -56,13 +50,12 @@ import com.servicelibre.corpus.service.Contexte;
 import com.servicelibre.corpus.service.ContexteSet;
 import com.servicelibre.corpus.service.ContexteSet.Position;
 import com.servicelibre.corpus.service.CorpusPhraseService;
-import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.corpus.service.InfoCooccurrent;
 import com.servicelibre.corpus.service.PhraseService;
 import com.servicelibre.entities.corpus.DocMetadata;
+import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.entities.ui.Paramètre;
 import com.servicelibre.repositories.corpus.DocMetadataRepository;
-import com.servicelibre.repositories.ui.ParamètreRepository;
 import com.servicelibre.zk.controller.renderer.ContexteRowRenderer;
 import com.servicelibre.zk.recherche.Recherche;
 import com.servicelibre.zk.recherche.RechercheContexte;
@@ -80,18 +73,16 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	private static final int MAX_COOCCURRENTS = 100;
 
-	Combobox condition; // autowire car même type/ID que le composant dans la
-	// page ZUL
+	Combobox condition; // autowire car même type/ID que le composant dans la page ZUL
 
 	Combobox voisinage;
-	
-	Grid contextesGrid; // autowire car même type/ID que le comgetposant dans la
-	// page ZUL
+
+	Grid contextesGrid; // autowire car même type/ID que le comgetposant dans la page ZUL
 
 	Window contexteWindow;
 
 	A cooccurrentLien;
-	
+
 	Button remarqueContextesButton;
 
 	PhraseService phraseService = new CorpusPhraseService();
@@ -103,64 +94,60 @@ public class ContexteCtrl extends CorpusCtrl {
 	private ContexteSet contexteSetCourant;
 
 	private boolean phraseComplète;
-	
+
 	Combobox actionCombobox;
 	Button actionButton;
 
 	private String urlRemarque;
 
 	private String titreRemarque;
-	
+
 	public void onClick$actionButton() {
 		Comboitem selectedItem = actionCombobox.getSelectedItem();
 		if (selectedItem != null) {
 			String action = selectedItem.getValue();
 			logger.debug(" exécuter l'action demandée : {}", action);
 
-			if(action.equals("AJOUTER_AU_MOT")) {
-				
+			if (action.equals("AJOUTER_AU_MOT")) {
+
 				ajouterContextesSélectionnésAuMotDUneListeExistante();
+			} else {
+				Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
 			}
-			else {
-			   Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
-			}
-			
+
 		}
 	}
-	
 
 	public void onClick$remarqueContextesButton() {
-		
+
 		// Créér la fenêtre Popup
 		/*
 		 * 
-		 * 		<window id="remarqueContextesWin" width="50%" height="50%" title="Remarque sur les contextes" border="normal" 
-			 maximizable="true"  visible="false"  sizable="true" mode="popup"   >
-			<iframe id="remarqueContextesIframe" src="" height="100%" width="100%"/>
-		</window>
+		 * <window id="remarqueContextesWin" width="50%" height="50%" title="Remarque sur les contextes" border="normal"
+		 * maximizable="true" visible="false" sizable="true" mode="popup" >
+		 * <iframe id="remarqueContextesIframe" src="" height="100%" width="100%"/>
+		 * </window>
 		 */
-		
+
 		Window remarqueContextesWin = new Window(this.titreRemarque.toUpperCase(Locale.CANADA_FRENCH), "normal", true);
 		remarqueContextesWin.setPosition("center,center");
 		remarqueContextesWin.setWidth("75%");
 		remarqueContextesWin.setHeight("75%");
 		remarqueContextesWin.setParent(contexteWindow);
-		
-		
+
 		Iframe remarqueContextesIframe = new Iframe(urlRemarque);
 		remarqueContextesIframe.setWidth("100%");
 		remarqueContextesIframe.setHeight("100%");
-		
+
 		remarqueContextesWin.appendChild(remarqueContextesIframe);
-		
+
 		remarqueContextesWin.doModal();
 	}
 
 	private void ajouterContextesSélectionnésAuMotDUneListeExistante() {
-	    Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
-	    
-	}
+		Messagebox.show("Fonctionnalité en cours d'implémentation.", "En cours...", Messagebox.OK, Messagebox.INFORMATION);
 
+	}
 
 	public void onOK$liste(Event event) {
 		chercheEtAffiche(true);
@@ -173,7 +160,7 @@ public class ContexteCtrl extends CorpusCtrl {
 	public void onOK$condition(Event event) {
 		chercheEtAffiche(true);
 	}
-	
+
 	public void onSelect$condition(Event event) {
 		cherche.setFocus(true);
 		cherche.select();
@@ -213,9 +200,10 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		// TODO rendre plus « intelligent » (cf. listes)
 		String terminaison = contexteSet.size() > 1 ? "s" : "";
-		sb.append(contexteSet.size()).append(" occurrence").append(terminaison).append(contexteSet.isFormesDuLemme() ? " des formes du mot « " : " du mot « ")
-				.append(contexteSet.getMotCherché()).append(" » trouvée").append(terminaison).append(" dans ").append(contexteSet.getDocumentCount())
-				.append(" document").append(contexteSet.getDocumentCount() > 1 ? "s" : "").append(".");
+		sb.append(contexteSet.getTotalContextesCount()).append(" occurrence").append(terminaison)
+				.append(contexteSet.isFormesDuLemme() ? " des formes du mot « " : " du mot « ").append(contexteSet.getMotCherché())
+				.append(" » trouvée").append(terminaison).append(" dans ").append(contexteSet.getDocumentCount()).append(" document")
+				.append(contexteSet.getDocumentCount() > 1 ? "s" : "").append(".");
 
 		return sb.toString();
 	}
@@ -296,6 +284,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 		// Filtres
 		recherche.setFiltres(getFiltres());
+		
+		recherche.grilleRésultatsPaging = grilleRésultatsPaging;
 
 		return recherche;
 	}
@@ -304,7 +294,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		return condition.getItemAtIndex(condition.getSelectedIndex()).getValue().toString();
 	}
 
-	public ContexteSet exécuterRecherche(Recherche recherche, boolean ajouterHistorique) {
+	public ContexteSet exécuterRecherche(Recherche recherche, boolean ajouterHistorique, boolean retournerTousLesRésultats) {
 
 		ContexteSet contexteSet = new ContexteSet();
 
@@ -313,7 +303,17 @@ public class ContexteCtrl extends CorpusCtrl {
 			return contexteSet;
 		}
 
+		int taillePage = recherche.grilleRésultatsPaging.getPageSize();
+		int pageActive = recherche.grilleRésultatsPaging.getActivePage();
+		int deIndex = Math.max(0, pageActive * taillePage);
+		
+		if(retournerTousLesRésultats) {
+			deIndex = -1;
+			taillePage = -1;
+		}
+
 		logger.info(recherche.getDescriptionChaîne());
+		logger.debug("Recherche page {} (à partir de {}), {} éléments par page", new int[] {pageActive, deIndex, taillePage});
 
 		corpusService.setTailleVoisinage(Integer.parseInt(recherche.précisionRésultat));
 
@@ -321,10 +321,10 @@ public class ContexteCtrl extends CorpusCtrl {
 		case CONTEXTE:
 			switch (RechercheContexte.PrécisionChaîne.valueOf(recherche.précisionChaîne)) {
 			case EXACTEMENT_LE_MOT:
-				contexteSet = corpusService.getContextesMot(prépareChaîneMot(recherche.chaîne), recherche.filtres);
+				contexteSet = corpusService.getContextesMot(prépareChaîneMot(recherche.chaîne), recherche.filtres, deIndex, taillePage);
 				break;
 			case TOUTES_LES_FORMES_DU_MOT:
-				contexteSet = corpusService.getContextesLemme(prépareChaîneLemme(recherche.chaîne), recherche.filtres);
+				contexteSet = corpusService.getContextesLemme(prépareChaîneLemme(recherche.chaîne), recherche.filtres, deIndex, taillePage);
 				break;
 			default:
 				logger.error("PrécisionChaîne invalide pour une recherche de contextes: " + recherche.précisionChaîne);
@@ -340,6 +340,9 @@ public class ContexteCtrl extends CorpusCtrl {
 			ajouterRechercheHistorique(recherche, contexteSet.size());
 		}
 
+		logger.debug("contexteSet.getTotalContextesCount() = {}",contexteSet.getTotalContextesCount());
+		recherche.grilleRésultatsPaging.setTotalSize(contexteSet.getTotalContextesCount());
+		
 		return contexteSet;
 	}
 
@@ -389,27 +392,50 @@ public class ContexteCtrl extends CorpusCtrl {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
+
 		// Afficher ou non le bouton de remarque
 		Paramètre urlRemarque = paramètreRepo.findByNom("URLRemarqueContexte");
-		if(urlRemarque != null) {
+		if (urlRemarque != null) {
 			this.urlRemarque = urlRemarque.getValeur();
 			remarqueContextesButton.setVisible(true);
 			// A-t-il un libellé spécifique?
 			Paramètre texteBouton = paramètreRepo.findByNom("texteBoutonRemarqueContextes");
-			if(texteBouton != null) {
+			if (texteBouton != null) {
 				this.titreRemarque = texteBouton.getValeur();
 				remarqueContextesButton.setLabel(titreRemarque);
-			}
-			else {
+			} else {
 				this.titreRemarque = "Remarque sur les contextes";
 			}
 		}
-		
+
 		initialiseChamps();
+		
+		créeEventListenerRésultatsPaging();
 
 		initialiseContexteGrid();
 
+	}
+
+	private void créeEventListenerRésultatsPaging() {
+		
+		grilleRésultatsPaging.addEventListener(ZulEvents.ON_PAGING, new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event event) throws Exception {
+				PagingEvent e = (PagingEvent) event;
+
+				Recherche recherche = (Recherche) contextesGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+				if (recherche != null) {
+					// Les requêtes de pagination ne doivent pas être mise dans l'historique!
+					recherche.grilleRésultatsPaging = (Paging) e.getPageable();
+					remplisGrilleContextes(exécuterRecherche(recherche, false, false), recherche.grilleRésultatsPaging.getActivePage(), grilleRésultatsTaillePage);
+				} else {
+					System.err.println("L'objet recherche associé au Grid est introuvable");
+				}
+
+			}
+		});
+		
 	}
 
 	private void initialiseChamps() {
@@ -419,17 +445,36 @@ public class ContexteCtrl extends CorpusCtrl {
 	}
 
 	private void initialiseContexteGrid() {
+		
+		Recherche recherche = getRecherche();
+		remplisGrilleContextes(new ContexteSet(), PREMIÈRE_PAGE, grilleRésultatsTaillePage);
 
-		contextesGrid.setModel(new ListModelList(exécuterRecherche(getRecherche(), false).getContextes()));
-
+		// Stockage de la recherche comme attribut du grid pour réutilisation par le composant Paging
+		contextesGrid.setAttribute("recherche", recherche, Component.COMPONENT_SCOPE);
+		
 		contextesGrid.setRowRenderer(new ContexteRowRenderer(this));
 
+	}
+	
+	private int remplisGrilleContextes(ContexteSet contextes, int pageActive, int taillePage) {
+
+		int nbContextes = contextes.getTotalContextesCount();
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		ListModelList modelList = new ListModelList(contextes.getContextes());//.subList(deIndex, àIndex));
+
+		grilleRésultatsPaging.setTotalSize(nbContextes);
+		grilleRésultatsPaging.setActivePage(pageActive);
+
+		contextesGrid.setModel(modelList);
+
+		return nbContextes;
 	}
 
 	public Contexte getContexteInitial(Contexte contexte) {
 
 		if (phraseComplète) {
-		    contexte = phraseService.getContextePhraseComplète(contexte);
+			contexte = phraseService.getContextePhraseComplète(contexte);
 		}
 		return contexte;
 	}
@@ -454,7 +499,7 @@ public class ContexteCtrl extends CorpusCtrl {
 		// Relancer la recherche avec voisinage = 3 par défaut
 		Recherche recherche = getRecherche();
 		recherche.setPrécisionRésultat("3");
-		ContexteSet contexteSetCooccurrent = exécuterRecherche(recherche, false);
+		ContexteSet contexteSetCooccurrent = exécuterRecherche(recherche, false, false);
 
 		if (contexteSetCooccurrent == null) {
 			return;
@@ -663,19 +708,21 @@ public class ContexteCtrl extends CorpusCtrl {
 	@Override
 	public void chercheEtAffiche(boolean ajouterHistorique) {
 
-		contexteSetCourant = exécuterRecherche(getRecherche(), ajouterHistorique);
+		Recherche recherche = getRecherche();
+		
+		grilleRésultatsPaging.setActivePage(PREMIÈRE_PAGE);
+		
+		contexteSetCourant = exécuterRecherche(recherche, ajouterHistorique, false);
+		
+		remplisGrilleContextes(contexteSetCourant, PREMIÈRE_PAGE, grilleRésultatsTaillePage);
 
-		contextesGrid.setModel(new ListModelList(contexteSetCourant.getContextes()));
-		contextesGrid.getPaginal().setActivePage(0);
+		// Stockage de la recherche comme attribut du grid pour réutilisation par le composant Paging
+		contextesGrid.setAttribute("recherche", recherche, Component.COMPONENT_SCOPE);
 
 		infoRésultats.setValue(getInfoRésultat(contexteSetCourant));
-
-
-		// SecurityContext ssctx = (SecurityContext) desktop.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-		// Collection<? extends GrantedAuthority> rôles = ssctx.getAuthentication().getAuthorities();
-		// for (GrantedAuthority grantedAuthority : rôles) {
-		// System.out.println("auth: " + grantedAuthority);
-		// }
+		
+		// réinitialiser la sélection
+		résultatsSélectionnés.clear();
 
 		if (cooccurrentLien != null) {
 			if (contexteSetCourant.getContextes().size() > 0) {
@@ -684,17 +731,6 @@ public class ContexteCtrl extends CorpusCtrl {
 				cooccurrentLien.setVisible(false);
 			}
 		}
-
-		// mettre à jour les informations sur les résultats
-
-		// les contextes sont toujours retournés par ordre de documents =>
-		// refléter dans la colonne (réinitialisation du marqueur de tri)
-		// tri ZK
-		// TODO conserver le tri de l'utilisateur avant de lancer la recherche
-		// et le réappliquer après
-		// Column motColumn = (Column)
-		// contextesGrid.getColumns().getFellow("mot");
-		// motColumn.sort(true);
 
 	}
 
@@ -726,20 +762,18 @@ public class ContexteCtrl extends CorpusCtrl {
 		@SuppressWarnings("unchecked")
 		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
 		boolean exportationPartielle = false;
-		for (Contexte contexte : contextes) {
-		    if(contexte.sélectionné) {
+		if(résultatsSélectionnés.size() > 0) {
 			exportationPartielle = true;
-			break;
-		    }
 		}
+		
 		for (Contexte contexte : contextes) {
-		    if(!exportationPartielle || contexte.sélectionné) {			
-			Contexte contextePhraseComplète = getContexteInitial(contexte);
-			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.getPhrase().phrase)).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAvant)).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.mot)).append(séparateur);
-			csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAprès)).append("\n");
-		    }
+			if (!exportationPartielle || contexte.sélectionné) {
+				Contexte contextePhraseComplète = getContexteInitial(contexte);
+				csv.append(ajouteGuillemetsCsv(contextePhraseComplète.getPhrase().phrase)).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAvant)).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(contextePhraseComplète.mot)).append(séparateur);
+				csv.append(ajouteGuillemetsCsv(contextePhraseComplète.texteAprès)).append("\n");
+			}
 
 		}
 		Filedownload.save(csv.toString().getBytes(), "text/csv, charset=UTF-8; encoding=UTF-8", getNomFichier() + ".csv");
@@ -764,31 +798,32 @@ public class ContexteCtrl extends CorpusCtrl {
 		RechercheExécution rechercheExécution = null;
 		if (this.historiqueRecherche.size() > 0) {
 			rechercheExécution = this.historiqueRecherche.get(0);
-		}
-		else {
+		} else {
 			rechercheExécution = new RechercheExécution();
 		}
-		
-		
+
 		CreationHelper createHelper = wb.getCreationHelper();
 		// Création d'une nouvelle feuille de calcul
 		Sheet contextesSheet = wb.createSheet("contextes");
-		
+
 		// Récupération des données
 		@SuppressWarnings("unchecked")
 		List<Contexte> contextes = (List<Contexte>) contextesGrid.getModel();
 		
+		Recherche recherche = (Recherche) contextesGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+		if (recherche != null) {
+			ContexteSet contexteSet = exécuterRecherche(recherche, false, true);
+			contextes = contexteSet.getContextes();
+		}	
+
+		// Est-ce une exportation partielle
 		boolean exportationPartielle = false;
-		for (Contexte contexte : contextes) {
-			if(contexte.sélectionné) {
-				exportationPartielle = true;
-				break;
-			}
+		if(résultatsSélectionnés.size() > 0) {
+			exportationPartielle = true;
 		}
-		
+
 		insérerTitreRecherche(wb, createHelper, rechercheExécution, contextesSheet, exportationPartielle);
-		
-		
+
 		// Création de la ligne d'entête
 		int colCpt = 0;
 		int rowCpt = 3;
@@ -805,8 +840,7 @@ public class ContexteCtrl extends CorpusCtrl {
 			entêteCell.setCellStyle(entêteCellStyle);
 			entêteCell.setCellValue(createHelper.createRichTextString(docMetadata.getNom()));
 		}
-		
-		
+
 		//
 		// entêteCell = row.createCell(colCpt++);
 		// entêteCell.setCellStyle(entêteCellStyle);
@@ -816,40 +850,39 @@ public class ContexteCtrl extends CorpusCtrl {
 		// entêteCell.setCellStyle(entêteCellStyle);
 		// entêteCell.setCellValue(createHelper.createRichTextString("Texte après"));
 
-		
-		
+		Integer contexteCpt = 0;
 		for (Contexte contexte : contextes) {
-			
+
 			int dataColCpt = 0;
-			
-		    if(!exportationPartielle || contexte.sélectionné) {	
-			Contexte contextePhraseComplète = getContexteInitial(contexte);
 
-			row = contextesSheet.createRow(rowCpt++);
+			if (!exportationPartielle || résultatsSélectionnés.contains(contexteCpt)) {
+				Contexte contextePhraseComplète = getContexteInitial(contexte);
 
-			// FIXME ajuster hauteur de la ligne en fonction du nombre de ligne de texte?
-			// cf. http://apache-poi.1045710.n5.nabble.com/Autosize-row-for-HSSF-library-td2308264.html
-			
-			org.apache.poi.ss.usermodel.Cell cell = row.createCell(dataColCpt++);
-			cell.setCellStyle(ligneCellStyle);
-			cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.getPhrase().phrase));
+				row = contextesSheet.createRow(rowCpt++);
 
-			//afficher les métadonnées primaires
-			for(Metadata metadata : contexte.getDocMétadonnéesPrimaires())
-			{
-				cell = row.createCell(dataColCpt++);
+				// FIXME ajuster hauteur de la ligne en fonction du nombre de ligne de texte?
+				// cf. http://apache-poi.1045710.n5.nabble.com/Autosize-row-for-HSSF-library-td2308264.html
+
+				org.apache.poi.ss.usermodel.Cell cell = row.createCell(dataColCpt++);
 				cell.setCellStyle(ligneCellStyle);
-				cell.setCellValue(createHelper.createRichTextString(metadata.getSimpleString()));
+				cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.getPhrase().phrase));
+
+				// afficher les métadonnées primaires
+				for (Metadata metadata : contexte.getDocMétadonnéesPrimaires()) {
+					cell = row.createCell(dataColCpt++);
+					cell.setCellStyle(ligneCellStyle);
+					cell.setCellValue(createHelper.createRichTextString(metadata.getSimpleString()));
+				}
+				//
+				// cell = row.createCell(2);
+				// cell.setCellStyle(ligneCellStyle);
+				// cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.mot));
+				//
+				// cell = row.createCell(3);
+				// cell.setCellStyle(ligneCellStyle);
+				// cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAprès));
 			}
-			//
-			// cell = row.createCell(2);
-			// cell.setCellStyle(ligneCellStyle);
-			// cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.mot));
-			//
-			// cell = row.createCell(3);
-			// cell.setCellStyle(ligneCellStyle);
-			// cell.setCellValue(createHelper.createRichTextString(contextePhraseComplète.texteAprès));
-		    }
+			contexteCpt++;
 		}
 
 		for (int i = 0; i <= colCpt; i++) {
@@ -868,41 +901,41 @@ public class ContexteCtrl extends CorpusCtrl {
 		}
 	}
 
-	
-	private void insérerTitreRecherche(Workbook wb, CreationHelper createHelper, RechercheExécution rechercheExécution, Sheet motsSheet, boolean exportationPartielle) {
+	private void insérerTitreRecherche(Workbook wb, CreationHelper createHelper, RechercheExécution rechercheExécution, Sheet motsSheet,
+			boolean exportationPartielle) {
 		// Titre de la recherche
 		Font titreFont = wb.createFont();
 		titreFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		CellStyle titreCellStyle = wb.createCellStyle();
-		//titreCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		// titreCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
 		titreCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
 		titreCellStyle.setFont(titreFont);
 		titreCellStyle.setWrapText(true);
-		
+
 		Row titreRow = motsSheet.createRow(0);
 		Cell titreCell = titreRow.createCell(0);
-		
-		titreRow.setHeightInPoints(motsSheet.getDefaultRowHeightInPoints() * 15); 
-		
+
+		titreRow.setHeightInPoints(motsSheet.getDefaultRowHeightInPoints() * 15);
+
 		titreCell.setCellStyle(titreCellStyle);
-		
+
 		String descriptionTextuelle = "";
-		
+
 		String exportationPartielleTexte = "";
 		if (exportationPartielle) {
 			exportationPartielleTexte = "Une sélection de contextes parmi ";
 		}
-		
+
 		if (rechercheExécution.recherche == null) {
-			descriptionTextuelle = exportationPartielleTexte + "tous les contextes";			
+			descriptionTextuelle = exportationPartielleTexte + "tous les contextes";
 		} else {
-				descriptionTextuelle = exportationPartielleTexte + rechercheExécution.recherche.getDescriptionTextuelle(!exportationPartielle);
+			descriptionTextuelle = exportationPartielleTexte + rechercheExécution.recherche.getDescriptionTextuelle(!exportationPartielle);
 		}
-		
+
 		titreCell.setCellValue(createHelper.createRichTextString(descriptionTextuelle));
 		motsSheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
 	}
-	
+
 	// TODO générer un nom de fichier qui représente mieux la recherche
 	private String getNomFichier() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
@@ -911,7 +944,8 @@ public class ContexteCtrl extends CorpusCtrl {
 
 	@Override
 	protected Grid getHistoriqueRecherchesGrid() {
-		return (Grid) Path.getComponent("//webCorpusPage/webCorpusWindow/contexteInclude/contexteWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
+		return (Grid) Path
+				.getComponent("//webCorpusPage/webCorpusWindow/contexteInclude/contexteWindow/historiqueRechercheInclude/historiqueRecherchesGrid");
 	}
 
 	@Override

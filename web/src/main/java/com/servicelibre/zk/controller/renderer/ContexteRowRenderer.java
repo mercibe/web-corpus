@@ -6,6 +6,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.Span;
@@ -15,65 +16,75 @@ import com.servicelibre.zk.controller.ContexteCtrl;
 
 public class ContexteRowRenderer implements RowRenderer<Object> {
 
-    // private static Logger logger =
-    // LoggerFactory.getLogger(ContexteRowRenderer.class);
+	// private static Logger logger =
+	// LoggerFactory.getLogger(ContexteRowRenderer.class);
 
-    protected ContexteCtrl contexteCtrl;
-    private boolean rôleAdmin;
+	protected final ContexteCtrl contexteCtrl;
+	protected final Paging grilleRésultatsPaging;
 
-    public ContexteRowRenderer(ContexteCtrl contexteCtrl) {
-	super();
-	this.contexteCtrl = contexteCtrl;
-	this.rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
-    }
+	private boolean rôleAdmin;
 
-    @Override
-    public void render(Row row, Object model, int index) throws Exception {
+	public ContexteRowRenderer(ContexteCtrl contexteCtrl) {
+		super();
+		this.contexteCtrl = contexteCtrl;
+		this.rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
+		this.grilleRésultatsPaging = contexteCtrl.getGrilleRésultatsPaging();
+	}
 
-	final Contexte contexte = (Contexte) model;
-	final Contexte contexteInitial = contexteCtrl.getContexteInitial(contexte);
+	@Override
+	public void render(Row row, Object model, final int index) throws Exception {
 
-	final Checkbox cb = new Checkbox();
-	cb.setValue(contexteInitial);
-	cb.setChecked(contexte.sélectionné);
+		final Contexte contexte = (Contexte) model;
+		final Contexte contexteInitial = contexteCtrl.getContexteInitial(contexte);
 
-	cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
+		final Checkbox cb = new Checkbox();
+		cb.setValue(contexteInitial);
 
-	    @Override
-	    public void onEvent(Event arg0) throws Exception {
-		contexte.sélectionné = cb.isChecked();
-	    }
-	});
+		Integer sélectionIdx = (grilleRésultatsPaging.getActivePage() * grilleRésultatsPaging.getPageSize()) + index;
+		cb.setChecked(contexteCtrl.getRésultatsSélectionnés().contains(sélectionIdx));
 
-	row.appendChild(cb);
+		cb.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
 
-	Span ctxSpan = new Span();
-	ctxSpan.appendChild(new Label(contexteInitial.texteAvant));
+			@Override
+			public void onEvent(Event arg0) throws Exception {
+				Integer sélectionIdx = (grilleRésultatsPaging.getActivePage() * grilleRésultatsPaging.getPageSize()) + index;
+				if (cb.isChecked()) {
+					contexteCtrl.getRésultatsSélectionnés().add(sélectionIdx);
+				} else {
+					contexteCtrl.getRésultatsSélectionnés().remove(sélectionIdx);
+				}
+			}
+		});
 
-	Label mot = new Label(contexteInitial.mot);
-	mot.setTooltiptext(contexteInitial.getId());
-	mot.setSclass("mot");
+		row.appendChild(cb);
 
-	mot.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+		Span ctxSpan = new Span();
+		ctxSpan.appendChild(new Label(contexteInitial.texteAvant));
 
-	    @Override
-	    public void onEvent(Event arg0) throws Exception {
-		// Label l = (Label) arg0.getTarget();
-		contexteCtrl.créeEtAfficheOngletInfoContexte(contexteInitial);
-	    }
+		Label mot = new Label(contexteInitial.mot);
+		mot.setTooltiptext(contexteInitial.getId());
+		mot.setSclass("mot");
 
-	});
+		mot.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
 
-	// mot.setHeight("20px");
-	ctxSpan.appendChild(mot);
+			@Override
+			public void onEvent(Event arg0) throws Exception {
+				// Label l = (Label) arg0.getTarget();
+				contexteCtrl.créeEtAfficheOngletInfoContexte(contexteInitial);
+			}
 
-	ctxSpan.appendChild(new Label(contexteInitial.texteAprès));
+		});
 
-	row.appendChild(ctxSpan);
+		// mot.setHeight("20px");
+		ctxSpan.appendChild(mot);
 
-	// row.appendChild(new Label(contexte.texteAvant + contexte.mot
-	// + contexte.texteAprès));
+		ctxSpan.appendChild(new Label(contexteInitial.texteAprès));
 
-    }
+		row.appendChild(ctxSpan);
+
+		// row.appendChild(new Label(contexte.texteAvant + contexte.mot
+		// + contexte.texteAprès));
+
+	}
 
 }

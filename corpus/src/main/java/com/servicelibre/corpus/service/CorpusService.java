@@ -17,6 +17,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.dom4j.CDATA;
@@ -136,8 +137,8 @@ public class CorpusService {
 		}
 	}
 
-	public ContexteSet getContextesMot(String mot) {
-		return getContextesMot(mot, null);
+	public ContexteSet getContextesMot(String mot, int deIndex, int taillePage) {
+		return getContextesMot(mot, null, deIndex, taillePage);
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class CorpusService {
 	 * @param filtres
 	 * @return
 	 */
-	public ContexteSet getContextesMot(String mot, FiltreRecherche filtres) {
+	public ContexteSet getContextesMot(String mot, FiltreRecherche filtres, int deIndex, int taillePage) {
 
 		// connecter à l'index Lucene et faire la recherche
 		LuceneIndexManager manager = getLuceneIndexManager();
@@ -156,22 +157,23 @@ public class CorpusService {
 			return new ContexteSet();
 		}
 
-		RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, 1, tailleVoisinage, filtres);
+		RésultatRecherche résultats = manager.getDocumentsWithContexts(mot, 1, tailleVoisinage, filtres, deIndex, taillePage);
 
-		logger.debug("Trouvé " + résultats.scoreDocs.length + " documents (mot) => " + résultats.spanCount);
+		logger.info("Trouvé {} spans depuis {} sur {} spans dans {} documents", new int[]{résultats.spanCount,deIndex, résultats.nbTotalContextes,résultats.nbTotalDocs});
 
 		ContexteSet contexteSet = getContextes(résultats);
 		contexteSet.setMotCherché(mot);
 		contexteSet.setFormesDuLemme(false);
 		contexteSet.tailleVoisinage = tailleVoisinage;
+		
 		return contexteSet;
 	}
 
-	public ContexteSet getContextesLemme(String lemme) {
-		return getContextesLemme(lemme, null);
+	public ContexteSet getContextesLemme(String lemme, int deIndex, int taillePage) {
+		return getContextesLemme(lemme, null, deIndex, taillePage);
 	}
 
-	public ContexteSet getContextesLemme(String lemme, FiltreRecherche filtres) {
+	public ContexteSet getContextesLemme(String lemme, FiltreRecherche filtres, int deIndex, int taillePage) {
 
 		// rechercher toutes les formes du lemme
 		LuceneIndexManager luceneIndexManager = getLuceneIndexManager();
@@ -180,9 +182,11 @@ public class CorpusService {
 			return new ContexteSet();
 		}
 
-		RésultatRecherche résultats = luceneIndexManager.getDocumentsWithContexts(formeService.getFormes(lemme), tailleVoisinage, filtres);
+		RésultatRecherche résultats = luceneIndexManager.getDocumentsWithContexts(formeService.getFormes(lemme), tailleVoisinage, filtres,
+				deIndex, taillePage);
 
-		logger.debug("Trouvé " + résultats.scoreDocs.length + " documents (lemme) => " + résultats.spanCount);
+		logger.debug("Trouvé " + résultats.scoreDocs.length + "/" + résultats.nbTotalContextes + " documents (lemme) => "
+				+ résultats.spanCount);
 
 		ContexteSet contexteSet = getContextes(résultats);
 		contexteSet.setMotCherché(lemme);
@@ -199,31 +203,36 @@ public class CorpusService {
 	private ContexteSet getContextes(RésultatRecherche résultats) {
 
 		ContexteSet contexteSet = new ContexteSet();
+		
 		List<Contexte> contextes = new ArrayList<Contexte>(résultats.spanCount);
 
-		// Pour chaque document du résultat de recherche...
-		for (int i = 0; i < résultats.scoreDocs.length; i++) {
-			// récupérer les métadonnées du document d'où sont extraits les
-			// contextes
-			List<Metadata> docMétadonnées = getMétadonnéesDocument(résultats.scoreDocs[i].doc);
+		Map<Integer, List<Metadata>> docMétadonnéesCache = new HashMap<Integer, List<Metadata>>();
 
-			List<String[]> ctx = résultats.documentContexts.get(résultats.scoreDocs[i].doc);
-			if (ctx != null && ctx.size() > 0) {
-				// ... extraire les contextes trouvés pour ce document
-				int cptContext = 1;
-				for (String[] contextParts : ctx) {
-					Contexte contexte = new Contexte(contextParts[1], contextParts[2], contextParts[3]);
-					contexte.setDocMétadonnées(docMétadonnées);
-					contexte.setId(new StringBuilder().append(contexte.mot).append("_").append(résultats.scoreDocs[i].doc).append("_")
-							.append(cptContext).toString());
-					cptContext++;
-					contextes.add(contexte);
-				}
+		// Pour chaque contexte du résultat de recherche...
+		for (RésultatRecherche.Contexte contexte : résultats.contextes) {
+			// récupérer les métadonnées du document d'où provient le contexte
+
+
+			logger.debug("Recherce les métadonnées du document {}", contexte.docId);
+
+			List<Metadata> docMétadonnées = docMétadonnéesCache.get(contexte.docId);
+			if (docMétadonnées == null) {
+				docMétadonnées = getMétadonnéesDocument(contexte.docId);
 			}
+
+			// ... extraire les contextes 
+			int cptContext = 1;
+			Contexte ctx = new Contexte(contexte.partiesDeContexte[1], contexte.partiesDeContexte[2], contexte.partiesDeContexte[3]);
+			ctx.setDocMétadonnées(docMétadonnées);
+			ctx.setId(new StringBuilder().append(ctx.mot).append("_").append(contexte.docId).append("_").append(cptContext).toString());
+			cptContext++;
+			contextes.add(ctx);
+
 		}
 
 		contexteSet.setContextes(contextes);
-		contexteSet.setDocumentCount(résultats.scoreDocs.length);
+		contexteSet.setDocumentCount(résultats.nbTotalDocs);
+		contexteSet.setTotalContextesCount(résultats.nbTotalContextes);
 
 		return contexteSet;
 	}

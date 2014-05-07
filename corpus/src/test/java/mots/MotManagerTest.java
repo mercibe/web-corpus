@@ -27,6 +27,7 @@ import com.servicelibre.entities.corpus.Liste;
 import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom.MotRésultat;
 
 @ContextConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -84,22 +85,22 @@ public class MotManagerTest implements ApplicationContextAware {
 	@Test
 	@Transactional
 	public void motManagerGraphieTest() {
-		List<Mot> mots = motRepository.findByGraphie("acheminement", MotRepositoryCustom.Condition.ENTIER, true);
-		assertEquals("acheminement", mots.get(0).lemme);
-		System.out.println(mots);
+		MotRésultat mr = motRepository.findByGraphie("acheminement", MotRepositoryCustom.Condition.ENTIER, true);
+		assertEquals("acheminement", mr.mots.get(0).lemme);
+		System.out.println(mr.mots);
 
 		// FIXME ajouter assertions
-		mots = motRepository.findByGraphie("ache", MotRepositoryCustom.Condition.COMMENCE_PAR, true);
-		assertTrue(mots.size() > 0);
-		System.out.println(mots);
+		mr = motRepository.findByGraphie("ache", MotRepositoryCustom.Condition.COMMENCE_PAR, true);
+		assertTrue(mr.mots.size() > 0);
+		System.out.println(mr.mots);
 
-		mots = motRepository.findByGraphie("ment", MotRepositoryCustom.Condition.FINIT_PAR, true);
-		assertTrue(mots.size() > 0);
-		System.out.println(mots);
+		mr = motRepository.findByGraphie("ment", MotRepositoryCustom.Condition.FINIT_PAR, true);
+		assertTrue(mr.mots.size() > 0);
+		System.out.println(mr.mots);
 
-		mots = motRepository.findByGraphie("min", MotRepositoryCustom.Condition.CONTIENT, true);
-		assertTrue(mots.size() > 0);
-		System.out.println(mots);
+		mr = motRepository.findByGraphie("min", MotRepositoryCustom.Condition.CONTIENT, true);
+		assertTrue(mr.mots.size() > 0);
+		System.out.println(mr.mots);
 
 	}
 
@@ -108,9 +109,9 @@ public class MotManagerTest implements ApplicationContextAware {
 	@Rollback(value = false)
 	public void motManagerPrononciationTest() {
 
-		List<Mot> mots = motRepository.findByPrononciation("vɛʀ", MotRepositoryCustom.Condition.ENTIER, null, true);
+		MotRésultat mr = motRepository.findByPrononciation("vɛʀ", MotRepositoryCustom.Condition.ENTIER, null, true);
 		// assertEquals("pomme", mots.get(0).lemme);
-		System.out.println(mots);
+		System.out.println(mr.mots);
 
 		// FIXME ajouter assertions
 		// mots = motRepository.findByGraphie("pom",
@@ -137,44 +138,44 @@ public class MotManagerTest implements ApplicationContextAware {
 		// Syntaxe verbeuse
 		List<DefaultKeyValue> keyValues = new ArrayList<DefaultKeyValue>(1);
 		keyValues.add(new DefaultKeyValue(1L, "Détail: corpus_id=1"));
-		Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues, "","");
+		Filtre filtre = new Filtre(CléFiltre.liste.name(), "Liste de mots", keyValues, "", "");
 		f.addFiltre(filtre);
 
 		// Syntaxe allégée
-		f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[] { "n.", "adv." },"",""));
-		f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "m." }, "",""));
-		f.addFiltre(new Filtre(CléFiltre.ro.name(), "Rectification ortographique", new Boolean[] { Boolean.TRUE }, "",""));
+		f.addFiltre(new Filtre(CléFiltre.catgram.name(), "Catégorie grammaticale", new String[] { "n.", "adv." }, "", ""));
+		f.addFiltre(new Filtre(CléFiltre.genre.name(), "Genre", new String[] { "m." }, "", ""));
+		f.addFiltre(new Filtre(CléFiltre.ro.name(), "Rectification ortographique", new Boolean[] { Boolean.TRUE }, "", ""));
 
 		String graphie = "a";
 
-		List<Mot> mots = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
-				+ f);
-		assertEquals(1, mots.size());
+		MotRésultat mr = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
+		System.out.println("Trouvé " + mr.mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie
+				+ " » et valident le filtre " + f);
+		assertEquals(1, mr.mots.size());
 
 		f.removeFiltre(CléFiltre.ro.name(), Boolean.TRUE);
-		mots = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
-				+ f);
-		assertEquals(21, mots.size());
+		mr = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
+		System.out.println("Trouvé " + mr.mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie
+				+ " » et valident le filtre " + f);
+		assertEquals(21, mr.mots.size());
 
 		f.removeFiltre(CléFiltre.genre.name(), "m.");
-		mots = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
-				+ f);
-		assertEquals(36, mots.size());
+		mr = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
+		System.out.println("Trouvé " + mr.mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie
+				+ " » et valident le filtre " + f);
+		assertEquals(36, mr.mots.size());
 
 		f.removeFiltre(CléFiltre.catgram.name(), "adv.");
-		mots = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
-				+ f);
-		assertEquals(35, mots.size());
+		mr = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
+		System.out.println("Trouvé " + mr.mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie
+				+ " » et valident le filtre " + f);
+		assertEquals(35, mr.mots.size());
 
 		f.removeFiltre(CléFiltre.catgram.name(), "n.");
-		mots = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
-		System.out.println("Trouvé " + mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie + " » et valident le filtre "
-				+ f);
-		assertEquals(46, mots.size());
+		mr = motRepository.findByGraphie(graphie, MotRepositoryCustom.Condition.COMMENCE_PAR, f, true);
+		System.out.println("Trouvé " + mr.mots.size() + " mots qui " + MotRepositoryCustom.Condition.COMMENCE_PAR + " « " + graphie
+				+ " » et valident le filtre " + f);
+		assertEquals(46, mr.mots.size());
 
 	}
 

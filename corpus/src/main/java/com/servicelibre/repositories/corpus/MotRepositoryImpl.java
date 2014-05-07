@@ -1,5 +1,6 @@
 package com.servicelibre.repositories.corpus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -14,6 +15,7 @@ import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.manager.Ordre;
 import com.servicelibre.entities.corpus.Mot;
 import com.servicelibre.entities.corpus.MotPrononciation;
 import com.servicelibre.entities.corpus.Prononciation;
@@ -107,22 +110,40 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 	}
 
 	@Override
-	public List<Mot> findByGraphie(String graphie, Condition condition, boolean rôleAdmin) {
-		return findByGraphie(graphie, condition, null, rôleAdmin);
+	public MotRésultat findByGraphie(String graphie, Condition condition, boolean rôleAdmin) {
+		return findByGraphie(graphie, condition, null, rôleAdmin, new ArrayList<Ordre>());
 	}
 
 	@Override
-	public List<Mot> findByGraphie(String graphie, Condition condition, FiltreRecherche filtres, boolean rôleAdmin) {
+	public MotRésultat findByGraphie(String graphie, Condition condition, FiltreRecherche filtres, boolean rôleAdmin) {
+		return findByGraphie(graphie, condition, filtres, rôleAdmin, new ArrayList<Ordre>());
+	}
+
+	@Override
+	public MotRésultat findByGraphie(String graphie, Condition condition, FiltreRecherche filtres, boolean rôleAdmin, List<Ordre> ordres) {
+		return findByGraphie(graphie, condition, filtres, rôleAdmin, ordres, -1, -1);
+	}
+
+	@Override
+	public MotRésultat findByGraphie(String graphie, Condition condition, FiltreRecherche filtres, boolean rôleAdmin, List<Ordre> ordres,
+			int deIndex, int taillePage) {
 
 		final CriteriaBuilder cb = getBuilder();
-		final CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
+		final CriteriaQuery<Mot> motQuery = cb.createQuery(Mot.class);
 
-		final Root<Mot> mot = criteria.from(Mot.class);
-		criteria.distinct(true);
-		criteria.select(mot);
+		final Root<Mot> mot = motQuery.from(Mot.class);
+		motQuery.distinct(true);
+		motQuery.select(mot);
+
+		// Préparer une requête count
+		CriteriaQuery<Long> motCountQuery = cb.createQuery(Long.class);
+		Predicate pCount;
+		final Root<Mot> motCount = motCountQuery.from(Mot.class);
+		motCountQuery.select(cb.countDistinct(motCount));
 
 		// chargement EAGER des prononciations => DISTINCT dans le critère
 		mot.fetch("motPrononciations", JoinType.LEFT).fetch("prononciation", JoinType.LEFT);
+		motCount.join("motPrononciations", JoinType.LEFT).join("prononciation", JoinType.LEFT);
 
 		// chargement EAGER de la liste primaire du mot
 		// mot.join("listeMots", JoinType.LEFT).fetch("liste", JoinType.LEFT);
@@ -135,6 +156,7 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		Predicate p;
 		if (condition == Condition.ENTIER) {
 			p = cb.equal(mot.get("mot"), graphie);
+			pCount = cb.equal(motCount.get("mot"), graphie);
 		} else {
 			String likeCondition = "";
 			switch (condition) {
@@ -150,21 +172,58 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 
 			}
 			p = cb.like(mot.get("mot").as(String.class), likeCondition);
+			pCount = cb.like(motCount.get("mot").as(String.class), likeCondition);
 
 		}
 
 		if (filtres != null) {
 			p = addFiltresToPrédicat(cb, mot, p, filtres, rôleAdmin);
+			pCount = addFiltresToPrédicat(cb, motCount, pCount, filtres, rôleAdmin);
 		}
 
-		criteria.where(p);
+		motQuery.where(p);
 
+		// Exécuter requête count
+		motCountQuery.where(pCount);
+		Long nbTotalMots = entityManager.createQuery(motCountQuery).getSingleResult();
+
+		// trier en fonction des arguments de tri
 		// Order by
-		criteria.orderBy(cb.asc(mot.get("mot")));
+		// criteria.orderBy(cb.asc(mot.get("mot")));
 
-		TypedQuery<Mot> q = entityManager.createQuery(criteria);
+		if (ordres.size() == 0) {
+			motQuery.orderBy(cb.asc(mot.get("mot")));
+		} else {
+			List<Order> orders = new ArrayList<Order>();
+			for (Ordre ordre : ordres) {
+				if (ordre.ascendant) {
+					orders.add(cb.asc(mot.get(ordre.nomColonne)));
+				} else {
+					orders.add(cb.desc(mot.get(ordre.nomColonne)));
+				}
+			}
+			motQuery.orderBy(orders);
 
-		return q.getResultList();
+		}
+
+		TypedQuery<Mot> q = entityManager.createQuery(motQuery);
+
+		MotRésultat résultat = new MotRésultat();
+		résultat.nbTotalMots = nbTotalMots;
+		résultat.deIndex = deIndex;
+		résultat.taillePage = taillePage;
+
+		// si deIndex + taillePage précisés <> -1 => limiter
+		if (deIndex >= 0 && taillePage > 0) {
+			résultat.mots = q.setFirstResult(deIndex) // offset
+					.setMaxResults(taillePage) // limit
+					.getResultList();
+			return résultat;
+		} else {
+			résultat.mots = q.getResultList();
+			return résultat;
+		}
+
 	}
 
 	public CriteriaBuilder getBuilder() {
@@ -254,29 +313,51 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 		return p;
 	}
 
+	@Override
+	public MotRésultat findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres, boolean rôleAdmin) {
+		return findByPrononciation(prononciation, condition, filtres, rôleAdmin, new ArrayList<Ordre>(), -1, -1);
+	}
+
+	@Override
+	public MotRésultat findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres, boolean rôleAdmin,
+			List<Ordre> ordres) {
+		return findByPrononciation(prononciation, condition, filtres, rôleAdmin, ordres, -1, -1);
+	}
+
 	@Transactional(readOnly = true)
 	@Override
-	public List<Mot> findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres, boolean rôleAdmin) {
+	public MotRésultat findByPrononciation(String prononciation, Condition condition, FiltreRecherche filtres, boolean rôleAdmin,
+			List<Ordre> ordres, int deIndex, int taillePage) {
 
 		CriteriaBuilder cb = getBuilder();
-		CriteriaQuery<Mot> criteria = cb.createQuery(Mot.class);
+		CriteriaQuery<Mot> motQuery = cb.createQuery(Mot.class);
 
-		Root<Mot> mot = criteria.from(Mot.class);
-		criteria.distinct(true);
-		criteria.select(mot);
+		Root<Mot> mot = motQuery.from(Mot.class);
+		motQuery.distinct(true);
+		motQuery.select(mot);
+
+		// Préparer une requête count
+		CriteriaQuery<Long> motCountQuery = cb.createQuery(Long.class);
+		Predicate pCount;
+		final Root<Mot> motCount = motCountQuery.from(Mot.class);
+		motCountQuery.select(cb.countDistinct(motCount));
 
 		// chargement EAGER des prononciations => DISTINCT dans le critère (cf. ci-dessus)
 		mot.fetch("motPrononciations").fetch("prononciation");
+		motCount.join("motPrononciations").join("prononciation");
 
 		// chargement EAGER de la liste primaire du mot
 		// mot.join("listeMots", JoinType.LEFT).fetch("liste", JoinType.LEFT);
 
 		// Pas d'utilisation de metamodel => pas typesafe pour l'instant
 		Path<Object> prononciationPath = mot.join("motPrononciations").get("prononciation").get("prononciation");
+		Path<Object> prononciationCountPath = motCount.join("motPrononciations").get("prononciation").get("prononciation");
 
 		Predicate p;
 		if (condition == Condition.ENTIER) {
 			p = cb.equal(prononciationPath, prononciation);
+			pCount = cb.equal(prononciationCountPath, prononciation);
+			;
 		} else {
 			String likeCondition = "";
 			switch (condition) {
@@ -292,21 +373,56 @@ public class MotRepositoryImpl implements MotRepositoryCustom {
 
 			}
 			p = cb.like(prononciationPath.as(String.class), likeCondition);
-
+			pCount = cb.like(prononciationCountPath.as(String.class), likeCondition);
 		}
 
 		if (filtres != null) {
 			p = addFiltresToPrédicat(cb, mot, p, filtres, rôleAdmin);
+			pCount = addFiltresToPrédicat(cb, motCount, pCount, filtres, rôleAdmin);
 		}
 
-		criteria.where(p);
+		motQuery.where(p);
 
+		// Exécuter requête count
+		motCountQuery.where(pCount);
+		Long nbTotalMots = entityManager.createQuery(motCountQuery).getSingleResult();
+
+		// trier en fonction des arguments de tri
 		// Order by
-		criteria.orderBy(cb.asc(mot.get("mot")));
+		// criteria.orderBy(cb.asc(mot.get("mot")));
 
-		TypedQuery<Mot> q = entityManager.createQuery(criteria);
+		if (ordres.size() == 0) {
+			motQuery.orderBy(cb.asc(mot.get("mot")));
+		} else {
+			List<Order> orders = new ArrayList<Order>();
+			for (Ordre ordre : ordres) {
+				if (ordre.ascendant) {
+					orders.add(cb.asc(mot.get(ordre.nomColonne)));
+				} else {
+					orders.add(cb.desc(mot.get(ordre.nomColonne)));
+				}
+			}
+			motQuery.orderBy(orders);
 
-		return q.getResultList();
+		}
+
+		TypedQuery<Mot> q = entityManager.createQuery(motQuery);
+
+		MotRésultat résultat = new MotRésultat();
+		résultat.nbTotalMots = nbTotalMots;
+		résultat.deIndex = deIndex;
+		résultat.taillePage = taillePage;
+
+		// si deIndex + taillePage précisés <> -1 => limiter
+		if (deIndex >= 0 && taillePage > 0) {
+			résultat.mots = q.setFirstResult(deIndex) // offset
+					.setMaxResults(taillePage) // limit
+					.getResultList();
+			return résultat;
+		} else {
+			résultat.mots = q.getResultList();
+			return résultat;
+		}
 	}
 
 }

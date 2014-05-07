@@ -16,6 +16,7 @@
 	<http security="none" pattern="/authentification.zul"/>
 	<http security="none" pattern="/ficheMot.zul"/>
 	<http security="none" pattern="/filtre.zul"/>
+	<http security="none" pattern="/statut.zul"/>
 	<http security="none" pattern="/historiqueRecherches.zul"/>
 	<http security="none" pattern="/infoContexte.zul"/>
 	<http security="none" pattern="/infoCooccurrents.zul"/>

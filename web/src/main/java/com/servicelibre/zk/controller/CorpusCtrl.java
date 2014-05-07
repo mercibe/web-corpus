@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +31,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Paging;
 import org.zkoss.zul.Popup;
 import org.zkoss.zul.SimpleGroupsModel;
 import org.zkoss.zul.SimpleListModel;
@@ -58,6 +61,15 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	 */
 	private static final long serialVersionUID = -5225701427150774798L;
 
+	protected static final int PREMIÈRE_PAGE = 0;
+	
+	protected Paging grilleRésultatsPaging;
+	
+	protected int grilleRésultatsTaillePage = 0;
+	
+	protected Set<Integer> résultatsSélectionnés = new TreeSet<Integer>();
+	
+	
 	protected final static LigatureService ligatureService = new LigatureService();
 
 	SimpleDateFormat df_historique = new SimpleDateFormat("HH:mm:ss");
@@ -96,7 +108,7 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 	Grid historiqueRecherchesGrid;
 	Button boutonEffacerHistorique;
 
-	Label infoRésultats;
+	final Label infoRésultats = null;
 
 	// Composants de l'historique de recherche
 	public Popup popupHistorique;
@@ -511,6 +523,17 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 		}
 		
 		getPage().setTitle(paramètreRepo.findByNom("titre").getValeur());
+		
+		
+		// Initialisation du paging des résultats
+		grilleRésultatsTaillePage = grilleRésultatsPaging.getPageSize();
+
+		// Le composant paging doit toujours être visible
+		grilleRésultatsPaging.setAutohide(false);
+		grilleRésultatsPaging.setActivePage(PREMIÈRE_PAGE);
+		
+		// association du controller
+		grilleRésultatsPaging.setAttribute("controller", this);
 
 	}
 
@@ -597,4 +620,22 @@ public abstract class CorpusCtrl extends GenericForwardComposer implements Varia
 
 	}
 
+	public Paging getGrilleRésultatsPaging() {
+		return grilleRésultatsPaging;
+	}
+
+	public void setGrilleRésultatsPaging(Paging grilleRésultatsPaging) {
+		this.grilleRésultatsPaging = grilleRésultatsPaging;
+	}
+
+	public Set<Integer> getRésultatsSélectionnés() {
+		return résultatsSélectionnés;
+	}
+
+	public void setRésultatsSélectionnés(Set<Integer> résultatsSélectionnés) {
+		this.résultatsSélectionnés = résultatsSélectionnés;
+	}
+
+	
+	
 }

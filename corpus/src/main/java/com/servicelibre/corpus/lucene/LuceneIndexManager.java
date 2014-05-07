@@ -22,14 +22,13 @@ package com.servicelibre.corpus.lucene;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.apache.lucene.analysis.Analyzer;
@@ -65,6 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.servicelibre.corpus.helpers.LuceneHelper;
+import com.servicelibre.corpus.lucene.RésultatRecherche.Contexte;
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
 
@@ -251,7 +251,8 @@ public class LuceneIndexManager
 	 * @param filtres
 	 * @return
 	 */
-	public RésultatRecherche getDocumentsWithContexts(String query, int slop, int tailleVoisinage, FiltreRecherche filtres) {
+	public RésultatRecherche getDocumentsWithContexts(String query, int slop, int tailleVoisinage, FiltreRecherche filtres, int deIndex,
+			int taillePage) {
 
 		RésultatRecherche résultat = new RésultatRecherche();
 
@@ -285,19 +286,19 @@ public class LuceneIndexManager
 
 			// SpanQueryFilter spanQueryFilter = new
 			// SpanQueryFilter(spanNearQuery);
-			return executeSpanQuery(tailleVoisinage, résultat, spanNearQuery, bQueryFilter);
+			return executeSpanQuery(tailleVoisinage, résultat, spanNearQuery, bQueryFilter, deIndex, taillePage);
 
 		} else {
 
 			logger.debug("Query Span {}", spanNearQuery);
 
-			return executeSpanQuery(tailleVoisinage, résultat, spanNearQuery);
+			return executeSpanQuery(tailleVoisinage, résultat, spanNearQuery, deIndex, taillePage);
 		}
 
 	}
 
-	// TODO gérer le filtre
-	public RésultatRecherche getDocumentsWithContexts(List<String> formes, int tailleVoisinage, FiltreRecherche filtres) {
+	public RésultatRecherche getDocumentsWithContexts(List<String> formes, int tailleVoisinage, FiltreRecherche filtres, int deIndex,
+			int taillePage) {
 		RésultatRecherche résultat = new RésultatRecherche();
 
 		logger.debug("formes à chercher: " + formes);
@@ -315,11 +316,11 @@ public class LuceneIndexManager
 
 			logger.debug("SpanOrQuery filtré avec boolean. {} - {}", spanOrQuery, bQueryFilter);
 
-			return executeSpanQuery(tailleVoisinage, résultat, spanOrQuery, bQueryFilter);
+			return executeSpanQuery(tailleVoisinage, résultat, spanOrQuery, bQueryFilter, deIndex, taillePage);
 
 		} else {
 
-			return executeSpanQuery(tailleVoisinage, résultat, spanOrQuery);
+			return executeSpanQuery(tailleVoisinage, résultat, spanOrQuery, deIndex, taillePage);
 		}
 	}
 
@@ -374,11 +375,12 @@ public class LuceneIndexManager
 		return spanNearQuery;
 	}
 
-	private RésultatRecherche executeSpanQuery(int window, RésultatRecherche result, SpanQuery spanQuery) {
-		return executeSpanQuery(window, result, spanQuery, null);
+	private RésultatRecherche executeSpanQuery(int window, RésultatRecherche result, SpanQuery spanQuery, int deIndex, int taillePage) {
+		return executeSpanQuery(window, result, spanQuery, null, deIndex, taillePage);
 	}
 
-	private RésultatRecherche executeSpanQuery(int window, RésultatRecherche result, SpanQuery spanQuery, QueryWrapperFilter bQueryFilter) {
+	private RésultatRecherche executeSpanQuery(int window, RésultatRecherche result, SpanQuery spanQuery, QueryWrapperFilter bQueryFilter,
+			int deIndex, int taillePage) {
 
 		if (spanQuery == null || spanQuery.toString().trim().isEmpty()) {
 			return result;
@@ -390,6 +392,11 @@ public class LuceneIndexManager
 		} else {
 			result.scoreDocs = lh.getScoreDocs(searcher, spanQuery);
 		}
+
+		result.nbTotalDocs = result.scoreDocs.length;
+
+		logger.debug("Trouvé {} scoreDocs.", result.nbTotalDocs);
+		//System.err.println("Trouvé " + result.nbTotalDocs + " scoreDocs.");
 
 		if (result.scoreDocs.length > 0) {
 
@@ -404,6 +411,47 @@ public class LuceneIndexManager
 				// finalement par ordre croissant de position finale (end)
 
 				Spans spans = spanQuery.getSpans(reader);
+				List<Span> spanObjets = new ArrayList<Span>(50);
+				
+				// Conversion du tableau de documents (scoreDoc) uniquement si filtre 
+				int[] scoreDocs = new int[result.scoreDocs.length];
+				if (bQueryFilter != null) {
+					for (int i =0 ; i< result.scoreDocs.length;i++) {
+						scoreDocs[i] = result.scoreDocs[i].doc;
+					}
+					Arrays.sort(scoreDocs);
+				}
+				
+				while (spans.next()) {
+					// Ne conserver que les spans des documents retournés si filtre actif
+					ScoreDoc d;
+					if(bQueryFilter == null || Arrays.binarySearch(scoreDocs,spans.doc()) >= 0)
+					{
+						spanObjets.add(new Span(spans.doc(), spans.start(), spans.end()));
+					}
+				}
+
+				result.nbTotalContextes = spanObjets.size();
+
+				logger.debug("Trouvé {} spans.", result.nbTotalContextes);
+
+				int àIndex = result.nbTotalContextes;
+
+				// Ne conserver que les spans
+				if (deIndex >= 0 && taillePage > 0) {
+
+					àIndex = Math.min(deIndex + taillePage, result.nbTotalContextes);
+
+					logger.debug("Ne conserver que {} sur {} de ces spans (pagination)", (àIndex - deIndex), result.nbTotalContextes);
+					
+				} else {
+					deIndex = Math.max(deIndex, 0);
+				}
+				
+				result.spanCount = àIndex-deIndex;
+
+				// Création de la liste des contextes à retourner
+				result.contextes = new ArrayList<RésultatRecherche.Contexte>(àIndex);
 
 				List<Integer> docs = new ArrayList<Integer>(result.scoreDocs.length);
 
@@ -420,7 +468,6 @@ public class LuceneIndexManager
 
 				}
 
-				int spanCount = 0;
 
 				long start = System.currentTimeMillis();
 				logger.debug("Avant search : {}", start);
@@ -430,12 +477,13 @@ public class LuceneIndexManager
 				Map<Integer, TVPositionInfo> tokenPositions = null;
 				String txtField = "";
 
-				while (spans.next() == true) {
+				for (int spanIdx = deIndex; spanIdx < àIndex; spanIdx++) {
 
-					if (bQueryFilter == null || docs.contains(spans.doc())) {
-						spanCount++;
+					Span span = spanObjets.get(spanIdx);
 
-						int currentDocId = spans.doc();
+					if (bQueryFilter == null || docs.contains(span.doc)) {
+
+						int currentDocId = span.doc;
 
 						// Ne faire qu'une fois par doc
 						if (oldDoc != currentDocId) {
@@ -471,21 +519,21 @@ public class LuceneIndexManager
 
 						// TODO gérer ici voisinage / window en terme de phrase
 
-						int startWindow = spans.start() - window;
-						int stopWindow = spans.end() + window - 1;
+						int startWindow = span.start - window;
+						int stopWindow = span.end + window - 1;
 
 						// Rechercher l'offset du début de la fenêtre
 						TVPositionInfo tvPositionInfo;
 						while ((tvPositionInfo = tokenPositions.get(startWindow++)) == null)
 							;
 						int startContextIndex = tvPositionInfo.getOffsets().get(0).getStartOffset();
-						int startSpanIndex = tokenPositions.get(spans.start()).getOffsets().get(0).getStartOffset();
+						int startSpanIndex = tokenPositions.get(span.start).getOffsets().get(0).getStartOffset();
 
 						while ((tvPositionInfo = tokenPositions.get(stopWindow--)) == null)
 							;
 						int stopContextIndex = tvPositionInfo.getOffsets().get(0).getEndOffset();
 						// FIXME pourquoi -1 ???
-						TVPositionInfo endPosInfo = tokenPositions.get(spans.end() - 1);
+						TVPositionInfo endPosInfo = tokenPositions.get(span.end - 1);
 						List<TermVectorOffsetInfo> endOffsets = endPosInfo.getOffsets();
 						// FIXME quid si plusieurs offsets ???
 						TermVectorOffsetInfo endOffsetInfo = endOffsets.get(0);
@@ -499,19 +547,14 @@ public class LuceneIndexManager
 							System.err.println("txtField.length() = " + txtField.length() + ", startContextIndex=" + startContextIndex
 									+ ", stopContextIndex=" + stopContextIndex);
 							System.err.println(txtField.substring(startContextIndex));
-							for (int i : result.documentContexts.keySet()) {
+							for (Contexte contexte : result.contextes) {
+								System.err.println(contexte.partiesDeContexte[1] + "=>" + contexte.partiesDeContexte[2] + "<="
+										+ contexte.partiesDeContexte[3]);
 
-								System.err.println(i + "    ************************ ");
-								for (String[] c : result.documentContexts.get(i)) {
-
-									System.err.println(c[1] + "=>" + c[2] + "<=" + c[3]);
-
-									// for(String s : c)
-									// {
-									// System.err.println("=====================");
-									// }
-
-								}
+								// for(String s : c)
+								// {
+								// System.err.println("=====================");
+								// }
 
 							}
 						}
@@ -525,21 +568,24 @@ public class LuceneIndexManager
 						contextParts[2] = txtField.substring(startSpanIndex, stopSpanIndex); // mot
 						contextParts[3] = txtField.substring(stopSpanIndex, stopContextIndex); // droite
 
-						List<String[]> docContexts = result.documentContexts.get(currentDocId);
+						result.contextes.add(new RésultatRecherche().new Contexte(currentDocId, contextParts));
 
-						if (docContexts == null) {
-							docContexts = new ArrayList<String[]>(5);
-						}
-						docContexts.add(contextParts);
-						result.documentContexts.put(currentDocId, docContexts);
+						// List<String[]> docContexts = result.documentContexts.get(currentDocId);
+						//
+						// if (docContexts == null) {
+						// docContexts = new ArrayList<String[]>(5);
+						// }
+						// docContexts.add(contextParts);
+						// result.documentContexts.put(currentDocId, docContexts);
 
+					} else {
+						System.err.println("NE FAIT RIEN!!!!!");
 					}
 				}
 
 				stop = System.currentTimeMillis();
 				logger.debug("Après search : {}", stop + " => " + (stop - start) + "ms");
 
-				result.spanCount = spanCount;
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -548,239 +594,6 @@ public class LuceneIndexManager
 		}
 
 		return result;
-	}
-
-	/**
-	 * 
-	 * @param query
-	 * @param booleanQuery
-	 * @param slop
-	 * @param window
-	 * @return
-	 */
-	@Deprecated
-	public RésultatRecherche getDocumentsWithContextsOld(String query, BooleanQuery booleanQuery, int slop, int window) {
-		RésultatRecherche result = new RésultatRecherche();
-
-		// TODO idéalement le query devrait être parsé par un Query Parser
-		// «amélioré» (SpanNearQuery à la place d'un PhraseQuery
-		// il serait ensuite filtré par l'éventuel BooleanQuery
-
-		// Si un blanc pas entre "" dans le query => SpanNearQuery
-		// Si un * => wildcard Query - Compatible avec Span???
-
-		logger.debug("Query string = {}", query);
-
-		BooleanQuery bQuery = new BooleanQuery();
-		SpanNearQuery spanNearQuery = null;
-		QueryWrapperFilter bQueryFilter = null;
-
-		boolean hasBooleanQuery = false;
-		boolean hasContextualQuery = false;
-
-		if (booleanQuery != null && booleanQuery.getClauses().length > 0) {
-			bQuery.add(booleanQuery, Occur.MUST);
-			hasBooleanQuery = true;
-		}
-
-		if (query != null && query.trim().length() > 0) {
-			// FIXME créer/étendre un QueryParser spécifique pour s'assurer
-			// d'utiliser l'analyseur utilisé pour l'indexation!!!
-			query = query.toLowerCase();
-
-			// Parse query
-			// Si tout entre guillemets ou un seul mot => SpanTermQuery
-			SpanTermQuery clauses[] = new SpanTermQuery[0];
-
-			query = query.replaceAll("\"", "").trim();
-			if (query.indexOf(" ") > 0) {
-				String[] strings = query.split(" ");
-				clauses = new SpanTermQuery[strings.length];
-				for (int i = 0; i < strings.length; i++) {
-					clauses[i] = new SpanTermQuery(new Term(champRecherche, strings[i]));
-				}
-			} else {
-				clauses = new SpanTermQuery[1];
-				clauses[0] = new SpanTermQuery(new Term(champRecherche, query));
-			}
-
-			// FIXME configurable
-			boolean spanInOrder = false;
-			spanNearQuery = new SpanNearQuery(clauses, slop, spanInOrder);
-
-			hasContextualQuery = true;
-		}
-
-		long start = System.currentTimeMillis();
-		logger.debug("Avant search : {}", start);
-		if (hasBooleanQuery && !hasContextualQuery) {
-			// Exécution d'un simple BooleanQuery - pas de Span
-			logger.debug("d'un simple BooleanQuery - pas de Span. {}", bQuery);
-			result.scoreDocs = lh.getScoreDocs(searcher, bQuery);
-		} else if (hasContextualQuery && !hasBooleanQuery) {
-			// Exécution d'un simple Query
-			logger.debug("Exécution d'un simple Query : {}", spanNearQuery);
-			result.scoreDocs = lh.getScoreDocs(searcher, spanNearQuery);
-
-		} else if (hasBooleanQuery && hasContextualQuery) {
-			// Query Span filtré avec boolean
-			bQueryFilter = new QueryWrapperFilter(bQuery);
-
-			logger.debug("Query Span filtré avec boolean. {} - {}", spanNearQuery, bQueryFilter);
-
-			// SpanQueryFilter spanQueryFilter = new
-			// SpanQueryFilter(spanNearQuery);
-			result.scoreDocs = lh.getScoreDocs(searcher, spanNearQuery, bQueryFilter);
-
-		}
-		long stop = System.currentTimeMillis();
-		logger.debug("Après search : {}", stop + " => " + (stop - start) + "ms");
-
-		if (hasContextualQuery) {
-			/*
-			 * I think maybe you could reverse this around. Get a filter from
-			 * your BooleanQuery and get the DocIdSet and then advance through
-			 * the Spans and the DocIdSetIterator, as they will both be forward
-			 * facing. For each span, check to see whether that doc is in the
-			 * filter or not.
-			 * http://lucene.apache.org/java/3_0_1/api/contrib-queries
-			 * /org/apache/lucene/search/BooleanFilter.html DocIdSet docIdSet =
-			 * bQueryFilter.getDocIdSet(reader); DocIdSetIterator
-			 * docIdSetIterator = docIdSet.iterator(); int docId; List<Integer>
-			 * docs = new ArrayList<Integer>(scoreDocs.length); while((docId =
-			 * docIdSetIterator.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS){
-			 * logger.debug("conserver les spans du doc {}", docId);
-			 * docs.add(docId); }
-			 */
-			try {
-
-				Spans spans = spanNearQuery.getSpans(reader);
-
-				List<Integer> docs = new ArrayList<Integer>(result.scoreDocs.length);
-
-				if (hasBooleanQuery) {
-					// filtrer les spans conserver uniquement ceux des docs
-					// retournés par le query
-					logger.debug("Il faut filtrer les Spans");
-
-					for (ScoreDoc scoreDoc : result.scoreDocs) {
-						docs.add(scoreDoc.doc);
-					}
-
-				}
-				PositionBasedTermVectorMapper tvm = new PositionBasedTermVectorMapper(false);
-				int spanCount = 0;
-
-				start = System.currentTimeMillis();
-				logger.debug("Avant getContexte : {}", start);
-
-				while (spans.next() == true) {
-
-					if (!hasBooleanQuery || docs.contains(spans.doc())) {
-						spanCount++;
-
-						// FIXME lent...
-						String[] contextes = getContexte(reader, champRecherche, spans, tvm, window);
-
-						List<String[]> docContexts = result.documentContexts.get(spans.doc());
-
-						if (docContexts == null) {
-							docContexts = new ArrayList<String[]>(5);
-						}
-						docContexts.add(contextes);
-						result.documentContexts.put(spans.doc(), docContexts);
-					}
-
-				}
-
-				stop = System.currentTimeMillis();
-				logger.debug("Après getContexte : {}", stop + " => " + (stop - start) + "ms");
-
-				result.spanCount = spanCount;
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-
-		return result;
-	}
-
-	/**
-	 * 
-	 * @param indexReader
-	 * @param fieldName
-	 * @param spans
-	 * @param tvm
-	 * @param window
-	 * @return
-	 */
-	private String[] getContexte(IndexReader indexReader, String fieldName, Spans spans, PositionBasedTermVectorMapper tvm, int window) {
-		// System.out.println("Doc: " + spans.doc() + " Start: " + spans.start()
-		// + " End: " + spans.end());
-
-		String[] contextParts = new String[4];
-		int startWindow = spans.start() - window;
-		int stopWindow = spans.end() + window - 1;
-
-		String txtField = "";
-
-		// extraire le voisinage avec un TermVectorMapper
-		// (PositionBasedTermVectorMapper)
-		try {
-
-			indexReader.getTermFreqVector(spans.doc(), fieldName, tvm);
-			txtField = indexReader.document(spans.doc(), new MapFieldSelector(fieldName)).getField(fieldName).stringValue();
-
-		} catch (IOException e) {
-			logger.error("Erreur lors de l'accès à l'index Lucene", e);
-		}
-
-		Map<String, Map<Integer, TVPositionInfo>> fieldToTerms = tvm.getFieldToTerms();
-		Map<Integer, TVPositionInfo> tokenPositions = fieldToTerms.get(fieldName);
-
-		// Rechercher l'offset du début de la fenêtre
-		TVPositionInfo tvPositionInfo;
-		while ((tvPositionInfo = tokenPositions.get(startWindow++)) == null)
-			;
-		int startContextIndex = tvPositionInfo.getOffsets().get(0).getStartOffset();
-		int startSpanIndex = tokenPositions.get(spans.start()).getOffsets().get(0).getStartOffset();
-
-		// FIXME quid si plusieurs offsets ???
-		// List<TermVectorOffsetInfo> startOffsets =
-		// tvPositionInfo.getOffsets();
-		// System.out.println("start offsetinfo : " + startOffsets);
-		// for (TermVectorOffsetInfo termVectorOffsetInfo : startOffsets)
-		// {
-		// System.out.println(termVectorOffsetInfo.getStartOffset() + "=>" +
-		// termVectorOffsetInfo.getEndOffset());
-		// }
-
-		while ((tvPositionInfo = tokenPositions.get(stopWindow--)) == null)
-			;
-		int stopContextIndex = tvPositionInfo.getOffsets().get(0).getEndOffset();
-		// FIXME pourquoi -1 ???
-		TVPositionInfo endPosInfo = tokenPositions.get(spans.end() - 1);
-		List<TermVectorOffsetInfo> endOffsets = endPosInfo.getOffsets();
-		TermVectorOffsetInfo endOffsetInfo = endOffsets.get(0);
-		int stopSpanIndex = endOffsetInfo.getEndOffset();
-		// FIXME quid si plusieurs offsets ???
-		// List<TermVectorOffsetInfo> stopOffsets = tvPositionInfo.getOffsets();
-		// System.out.println("stop offsetinfo : " + stopOffsets);
-		// for (TermVectorOffsetInfo termVectorOffsetInfo : stopOffsets)
-		// {
-		// System.out.println(termVectorOffsetInfo.getStartOffset() + "=>" +
-		// termVectorOffsetInfo.getEndOffset());
-		// }
-
-		contextParts[0] = txtField.substring(startContextIndex, stopContextIndex);
-		contextParts[1] = txtField.substring(startContextIndex, startSpanIndex);
-		contextParts[2] = txtField.substring(startSpanIndex, stopSpanIndex);
-		contextParts[3] = txtField.substring(stopSpanIndex, stopContextIndex);
-
-		return contextParts;
 	}
 
 	public Document getDocument(int luceneDocId) {
@@ -895,6 +708,20 @@ public class LuceneIndexManager
 
 	public IndexReader getReader() {
 		return reader;
+	}
+
+	public class Span {
+		public int doc;
+		public int start;
+		public int end;
+
+		public Span(int doc, int start, int end) {
+			super();
+			this.doc = doc;
+			this.start = start;
+			this.end = end;
+		}
+
 	}
 
 }

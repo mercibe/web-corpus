@@ -184,8 +184,8 @@
 					</div>
 				</hbox>
 
-				<grid id="contextesGrid" mold="paging" pageSize="15"
-					height="540px" width="700px"
+				<grid id="contextesGrid" 
+					height="503px" width="700px"
 					emptyMessage="Aucun contexte trouvé.">
 
 					<columns sizable="true">
@@ -198,6 +198,9 @@
 					</columns>
 					<rows />
 				</grid>
+				<paging id="grilleRésultatsPaging" width="100%" pageSize="15" detailed="true" 
+					style="padding-top:5px;padding-bottom:5px;padding-left:0px;padding-right:0px;border-style:none;background:none"
+				/>
 				
 				<zk if="${sec:isAnyGranted('ROLE_ADMINISTRATEUR')}">
 					<hbox>

@@ -126,7 +126,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
+					<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
 					<configuration>
 						<aggregate>true</aggregate>
 					</configuration>
@@ -237,6 +237,9 @@
 				<includes>
 					<include>**/*.xml</include>
 				</includes>
+				<excludes>
+					<exclude>**/logback.xml</exclude>
+				</excludes>
 				<filtering>false</filtering>
 			</resource>
 			<resource>
