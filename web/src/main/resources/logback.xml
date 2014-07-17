@@ -29,12 +29,12 @@
         <level value="INFO" />
     </logger>
     
-    <logger name="com.servicelibre.">
+    <logger name="com.servicelibre">
         <level value="${pom.log.rootlevel}" />
     </logger>
  
     <root>
-        <level value="INFO" />
+        <level value="INFO" />        
         <appender-ref ref="FICHIER" />
     </root>
 </configuration>

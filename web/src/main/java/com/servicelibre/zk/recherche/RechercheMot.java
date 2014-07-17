@@ -41,7 +41,7 @@ public class RechercheMot extends Recherche {
 
 			switch (précision) {
 			case ENTIER:
-				desc.append("correspondent exactement ").append(préposition).append(laCible).append(enrobée);
+				desc.append("correspondent exactement ").append((préposition + laCible).replaceFirst("aux les", "aux")).append(enrobée);
 				break;
 			case COMMENCE_PAR:
 				desc.append("commencent par ").append(laCible).append(enrobée);

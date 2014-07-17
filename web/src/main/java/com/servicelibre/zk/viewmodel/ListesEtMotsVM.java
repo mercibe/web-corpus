@@ -53,6 +53,7 @@ import com.servicelibre.repositories.corpus.ListeMotRepository;
 import com.servicelibre.repositories.corpus.ListeRepository;
 import com.servicelibre.repositories.corpus.MotRepository;
 import com.servicelibre.repositories.corpus.MotRepositoryCustom;
+import com.servicelibre.repositories.corpus.MotRepositoryCustom.MotRésultat;
 import com.servicelibre.zk.controller.IndexCtrl;
 import com.servicelibre.zk.controller.IndexCtrl.Mode;
 
@@ -265,8 +266,9 @@ public class ListesEtMotsVM {
 
 			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(), listeSélectionné.getCatégorie()
 					.getNom(), new Long[] { listeSélectionné.getId() },"",""));
-			mots = new ListModelList<Mot>((Collection<? extends Mot>) getMotRepo().findByGraphie("",
-					MotRepositoryCustom.Condition.COMMENCE_PAR, f, getIndexCtrl().isRôleAdmin()));
+			MotRésultat motRésultat = getMotRepo().findByGraphie("",
+					MotRepositoryCustom.Condition.COMMENCE_PAR, f, getIndexCtrl().isRôleAdmin());
+			mots = new ListModelList<Mot>((Collection<? extends Mot>) motRésultat.mots);
 
 		} else {
 			mots = new ListModelList<Mot>();

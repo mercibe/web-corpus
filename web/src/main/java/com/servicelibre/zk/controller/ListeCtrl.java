@@ -113,7 +113,10 @@ public class ListeCtrl extends CorpusCtrl {
 	boolean rôleAdmin = SecurityUtil.isAnyGranted("ROLE_ADMINISTRATEUR");
 
 	public void onClick$actionButton() {
+		
+		
 		Comboitem selectedItem = actionCombobox.getSelectedItem();
+		
 		if (selectedItem != null) {
 			String action = selectedItem.getValue();
 			logger.debug(" exécuter l'action demandée : {}", action);
@@ -141,25 +144,32 @@ public class ListeCtrl extends CorpusCtrl {
 
 	private void supprimerMotsSélectionnés() {
 
-		@SuppressWarnings("unchecked")
-		List<Mot> mots = (List<Mot>) motsGrid.getModel();
-		List<Integer> idxSupprimés = new ArrayList<Integer>();
-		for (int i = 0; i < mots.size(); i++) {
-			Mot mot = mots.get(i);
-			if (mot.sélectionné) {
+		// parcourir résultatsSélectionnés 
+		List<Mot> mots = new ArrayList<Mot>();
+		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		MotsModelList<Mot> mml = (MotsModelList) motsGrid.getModel();
+		
+		Recherche recherche = (Recherche) motsGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+		// La recherche devrait TOUJOURS être présente
+		if (recherche != null) {
+			MotRésultat motRésultat = mml.exécuterRecherche(recherche, -1, -1);
+			mots = motRésultat.mots;
+		}
+		
+		Integer motCpt = 0;
+		for (Mot mot : mots) {
+			if (résultatsSélectionnés.contains(motCpt)) {
 				logger.debug("{} => {}", new Object[] { "supprimer le mot sélectionné", mot });
-				idxSupprimés.add(i);
-				motRepository.delete(mot);
+				motRepository.delete(mot);				
 			}
+			motCpt++;
 		}
-
-		// Suppression du Grid
-		for (Integer index : idxSupprimés) {
-			mots.remove((int) index);
-		}
-
-		// Rafraîchir les données (page courante)
-		motsGrid.setModel((ListModel<?>) mots);
+		
+		// Rafraîchir les données
+		résultatsSélectionnés.clear();
+		mml.rafraîchi(recherche);
+		motsGrid.setModel(mml);
 
 	}
 
@@ -167,11 +177,22 @@ public class ListeCtrl extends CorpusCtrl {
 
 		Comboitem actionItem = listesCombobox.getSelectedItem();
 		Liste listeSélectionnée = actionItem.getValue();
+		
+		List<Mot> mots = new ArrayList<Mot>();
 
-		ListModel<Mot> mots = motsGrid.getModel();
-		for (int i = 0; i < mots.getSize(); i++) {
-			Mot mot = mots.getElementAt(i);
-			if (mot.sélectionné) {
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		MotsModelList<Mot> mml = (MotsModelList) motsGrid.getModel();
+		
+		Recherche recherche = (Recherche) motsGrid.getAttribute("recherche", Component.COMPONENT_SCOPE);
+		// La recherche devrait TOUJOURS être présente
+		if (recherche != null) {
+			MotRésultat motRésultat = mml.exécuterRecherche(recherche, -1, -1);
+			mots = motRésultat.mots;
+		}
+		
+		Integer motCpt = 0;
+		for (Mot mot : mots) {
+			if (résultatsSélectionnés.contains(motCpt)) {
 				logger.debug("{} => {} - {}", new Object[] { "ajouter mots sélectionnés à une liste existante", mot, listeSélectionnée });
 				ListeMot lm = new ListeMot(mot, listeSélectionnée);
 
@@ -191,9 +212,13 @@ public class ListeCtrl extends CorpusCtrl {
 				// Mise à jour du modèle
 				mot.sélectionné = false;
 			}
+			motCpt++;
 		}
+		
 		// Rafraîchir les données (page courante)
-		motsGrid.setModel(mots);
+		résultatsSélectionnés.clear();
+		motsGrid.setModel(mml);
+		
 	}
 
 	public void onSelect$actionCombobox() {
