@@ -1,0 +1,1 @@
+Application de gestion de corpus et d'analyse lexicale.
