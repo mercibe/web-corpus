@@ -48,8 +48,8 @@
 		<lucene.version>3.3.0</lucene.version>
 		<logback.version>0.9.26</logback.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<spring.version>3.1.2.RELEASE</spring.version>
-		<spring-security.version>3.1.2.RELEASE</spring-security.version>
+		<spring.version>4.2.5.RELEASE</spring.version>
+		<spring-security.version>4.0.4.RELEASE</spring-security.version>
 		<poi-version>3.5-FINAL</poi-version>
 		<ooo-version>3.1.0</ooo-version>
 	</properties>
@@ -95,7 +95,7 @@
 			<dependency>
 				<groupId>xalan</groupId>
 				<artifactId>xalan</artifactId>
-				<version>2.7.1</version>
+				<version>2.7.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.poi</groupId>
@@ -142,7 +142,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.7</version>
+				<version>4.9</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -328,9 +328,9 @@
 			</dependency>
 
 			<dependency>
-				<groupId>net.sf.saxon</groupId>
-				<artifactId>saxon</artifactId>
-				<version>9.3.0.2j</version>
+			      <groupId>net.sf.saxon</groupId>
+			      <artifactId>Saxon-HE</artifactId>
+			      <version>9.7.0-4</version>
 			</dependency>
 
 			<dependency>
@@ -481,7 +481,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-scm-plugin</artifactId>
-					<version>1.4</version>
+					<version>1.9.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
