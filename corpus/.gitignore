@@ -1,1 +1,4 @@
 /target/
+/.classpath
+/.pom.xml.un~
+/.project

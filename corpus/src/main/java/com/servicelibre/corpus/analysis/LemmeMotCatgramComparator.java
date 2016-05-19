@@ -37,14 +37,26 @@ public class LemmeMotCatgramComparator<T extends MotInfo> implements Comparator<
 
 	private Collator collator = Collator.getInstance(Locale.CANADA_FRENCH);
 
+	
 	@Override
 	public int compare(MotInfo o1, MotInfo o2) {
 
+		if(o1 == o2) {
+			return 0;
+		}
+		
+		if(o2 == null) {
+			return 1;
+		}
+		
 		if (o1.equals(o2)) {
 			return 0;
 		} else {
 			// Trier par lemme / mot /catgram
-			int comparaisonLemme = collator.compare(o1.lemme, o2.lemme);
+			int comparaisonLemme = 0;
+			if(o1.lemme != null && o2.lemme != null) {
+				comparaisonLemme = collator.compare(o1.lemme, o2.lemme);
+			}
 			if (comparaisonLemme == 0) {
 				int comparaisonMot = collator.compare(o1.mot, o2.mot);
 				if (comparaisonMot == 0) {

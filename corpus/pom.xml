@@ -126,7 +126,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>pertest</forkMode>
-					<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
+					<argLine>-Xmx5096m -XX:MaxPermSize=2048m</argLine>
 					<configuration>
 						<aggregate>true</aggregate>
 					</configuration>
@@ -257,7 +257,7 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
@@ -382,8 +382,9 @@
 
 
 		<dependency>
-			<groupId>hsqldb</groupId>
+			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
+			<version>2.3.3</version>
 		</dependency>
 
 		<!-- TODO move to Google code web-corpus/common -->
@@ -403,24 +404,36 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>3.6.4.Final</version>
+			<version>5.1.0.Final</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.6.4.Final</version>
+			<version>5.1.0.Final</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
 			<version>1.0.0.Final</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>2.2.4</version>
+		</dependency>
+
 
 		<!-- <dependency> -->
 		<!-- <groupId>org.eclipse.persistence</groupId> -->
@@ -469,18 +482,18 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>1.2.0.RELEASE</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 

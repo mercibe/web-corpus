@@ -16,13 +16,15 @@
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="true" />
 				<property name="generateDdl" value="true" />
-				<property name="database" value="HSQL"></property>
+				<property name="database" value="HSQL"></property>				
 			</bean>
-		</property>
+		</property>		
+		
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.EJB3NamingStrategy</prop>
 			</props>
 		</property>
 	</bean>

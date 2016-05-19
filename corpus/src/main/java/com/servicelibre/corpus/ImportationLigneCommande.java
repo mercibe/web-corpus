@@ -26,5 +26,11 @@ public class ImportationLigneCommande {
 
 	@Parameter(names = "-pi", description = "nom du fichier qui contient les prononciations à importer", converter = FileConverter.class)
 	File prononciationsFichier;
+	
+//	@Parameter(names = "-lsimp", description = "nom du fichier qui contient la liste de mots à importer dans la liste secondaire (-ls)", converter = FileConverter.class)
+//	File listeFicher;
+//	
+//	@Parameter(names = "-lsnom", description = "nom de la liste de mots secondaire (-ls)", converter = FileConverter.class)
+//	String nomListeSecondaire;
 
 }

@@ -28,6 +28,10 @@ public class Catgram {
 	public String étiquette;
 	public String abréviation;
 	public boolean motGrammatical;
+	
+	public Catgram() {
+		super();
+	}
 
 	public Catgram(String id, String nom, String étiquette, boolean motGrammatical) {
 		this(id, nom, étiquette, motGrammatical, "");

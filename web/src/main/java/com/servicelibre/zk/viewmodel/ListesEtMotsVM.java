@@ -2,6 +2,8 @@ package com.servicelibre.zk.viewmodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.zkoss.bind.Validator;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -88,8 +91,8 @@ public class ListesEtMotsVM {
 
 	public ListModelList<Liste> getListes() {
 		if (listes == null) {
-			listes = new ListModelList<Liste>((Collection<? extends Liste>) getListeRepo().findAll(
-					new Sort(new Order(Direction.ASC, "Catégorie.ordre"), new Order(Direction.ASC, "ordre"),
+			listes = new ListModelList<Liste>((Collection<? extends Liste>) getListeRepo()
+					.findAll(new Sort(new Order(Direction.ASC, "Catégorie.ordre"), new Order(Direction.ASC, "ordre"),
 							new Order(Direction.ASC, "nom"))));
 		}
 		return listes;
@@ -97,15 +100,17 @@ public class ListesEtMotsVM {
 
 	public ListModelList<CatégorieListe> getCatégories() {
 		if (catégories == null) {
-			catégories = new ListModelList<CatégorieListe>((Collection<? extends CatégorieListe>) getCatégorieListeRepo().findAll(
-					new Sort(new Order(Direction.ASC, "ordre"), new Order(Direction.ASC, "nom"))));
+			catégories = new ListModelList<CatégorieListe>(
+					(Collection<? extends CatégorieListe>) getCatégorieListeRepo()
+							.findAll(new Sort(new Order(Direction.ASC, "ordre"), new Order(Direction.ASC, "nom"))));
 		}
 		return catégories;
 	}
 
 	private CatégorieListeRepository getCatégorieListeRepo() {
 		if (catégorieListeRepo == null) {
-			catégorieListeRepo = (CatégorieListeRepository) SpringUtil.getBean("catégorieListeRepository", CatégorieListeRepository.class);
+			catégorieListeRepo = (CatégorieListeRepository) SpringUtil.getBean("catégorieListeRepository",
+					CatégorieListeRepository.class);
 		}
 		return catégorieListeRepo;
 	}
@@ -264,10 +269,10 @@ public class ListesEtMotsVM {
 
 			FiltreRecherche f = new FiltreRecherche();
 
-			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(), listeSélectionné.getCatégorie()
-					.getNom(), new Long[] { listeSélectionné.getId() },"",""));
-			MotRésultat motRésultat = getMotRepo().findByGraphie("",
-					MotRepositoryCustom.Condition.COMMENCE_PAR, f, getIndexCtrl().isRôleAdmin());
+			f.addFiltre(new Filtre(CléFiltre.liste.name() + "_" + listeSélectionné.getCatégorie().getNom(),
+					listeSélectionné.getCatégorie().getNom(), new Long[] { listeSélectionné.getId() }, "", ""));
+			MotRésultat motRésultat = getMotRepo().findByGraphie("", MotRepositoryCustom.Condition.COMMENCE_PAR, f,
+					getIndexCtrl().isRôleAdmin());
 			mots = new ListModelList<Mot>((Collection<? extends Mot>) motRésultat.mots);
 
 		} else {
@@ -313,27 +318,27 @@ public class ListesEtMotsVM {
 	public void ajouterMot() {
 		getIndexCtrl().ouvreOngletMot(Mode.CRÉATION, null);
 	}
-	
+
 	@Command
 	public void exporterTousLesMots() {
 		Exportation exp = new Exportation();
-		
+
 		try {
-			//Date maintenant = new Date();
-			//SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-hhmmss");
-			
+			// Date maintenant = new Date();
+			// SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-hhmmss");
+
 			File temp = File.createTempFile("mots", ".xml");
 			exp.exporteMots(temp);
-			
+
 			// envoyer à l'usager
 			// http://www.ietf.org/rfc/rfc3023.txt
-			Filedownload.save(temp,"application/xml");
-			
+			Filedownload.save(temp, "application/xml");
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@NotifyChange("messageRapportImportation")
@@ -345,7 +350,7 @@ public class ListesEtMotsVM {
 	enum TypeRapport {
 		FAIT, ERREUR, MOT_INCONNU
 	};
-	
+
 	@Command
 	@NotifyChange({ "mots", "messageRapportImportation" })
 	@Transactional
@@ -353,22 +358,108 @@ public class ListesEtMotsVM {
 		logger.debug("Événement {} ", v);
 		logger.debug("Média {}", v.getMedia());
 
-
 		Media fichierTéléversé = v.getMedia();
 
-
-		if(fichierTéléversé.getName().endsWith("xml")) {
+		if (fichierTéléversé.getName().endsWith("xml")) {
 			logger.debug("Traiter l'importation d'un fichier de mots au format XML");
 			Importation importation = new Importation(ServiceLocator.getApplicationContext());
-			
+
 			importation.importeMots(fichierTéléversé.getReaderData(), com.servicelibre.corpus.Importation.Mode.MAJ);
-		}
-		else {
+		} else {
 			// TODO valider qu'il s'agit bien d'un fichier XLS
 			Map<TypeRapport, List<String>> rapports = importationXls(fichierTéléversé);
 		}
-		
-		
+
+	}
+
+	/**
+	 * Travail sur autres mots du corpus
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+		try {
+			Workbook wb = new HSSFWorkbook(new FileInputStream(new File(
+					"/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/AutresMots-B-recomposé.xls")));
+
+			Sheet sheet = wb.getSheet("mots");
+
+			int rowIdx = 1;
+			int motGraphieIdx = 0;
+			int motGraphie2Idx = 5;
+			int catgramIdx = 7;
+			int genreIdx = 8;
+
+			Row row = sheet.getRow(rowIdx);
+			Cell cell = row.getCell(motGraphieIdx);
+			String motÀImporter = (cell == null ? "" : cell.getStringCellValue().trim());
+
+			Cell cell2 = row.getCell(motGraphie2Idx);
+			String motÀImporter2 = (cell2 == null ? "" : cell2.getStringCellValue().trim());
+
+			while (!motÀImporter.isEmpty()) {
+
+				Cell catgramCell = row.getCell(catgramIdx);
+				String catgram = (catgramCell == null ? "" : catgramCell.getStringCellValue().trim());
+				Cell genreCell = row.getCell(genreIdx);
+				String genre = (genreCell == null ? "" : genreCell.getStringCellValue().trim());
+
+				if (!motÀImporter.equals(motÀImporter2)) {
+					// Rechercher le motÀImporter dans la colonne motGraphie2Idx
+					// et comparer les row pour savoir combien de ligne à
+					// insérer
+					int cptlignesÀInsérer = 1;
+					int rowIdxStart = rowIdx;
+					Row rowRech = sheet.getRow(++rowIdxStart);
+					
+					// tester NPE + récupérer valeur
+					rowRech.getCell(motGraphieIdx);
+					
+					String motRech = "";
+					while (StringUtils.hasLength(motRech) && !motÀImporter.equals(motRech)) {
+						cptlignesÀInsérer++;
+					}
+					System.err.println("corriger ligne " + rowIdx + " - " + motÀImporter + " vs " + motÀImporter2);
+					break;
+				}
+
+				System.out.println("Mot à traiter : " + motÀImporter + " => " + cell.getCellStyle().getFontIndex());
+
+				// si police est barrée => mettre un x dans colonne supprimer
+				// 13 = bleu
+				// 8 = barré
+				// 0 = normal
+				switch (cell.getCellStyle().getFontIndex()) {
+				case 0:
+				case 13:
+					break;
+				case 8:
+					System.out.println("Mettre un « x » dans la colonne « supprimer » du mot " + motÀImporter);
+					break;
+				default:
+					System.err.println(
+							"Style non traité : " + cell.getCellStyle().getFontIndex() + " pour " + motÀImporter);
+				}
+
+				rowIdx++;
+				row = sheet.getRow(rowIdx);
+				if (row == null) {
+					break;
+				}
+				cell = row.getCell(motGraphieIdx);
+				motÀImporter = (cell == null ? "" : cell.getStringCellValue().trim());
+				cell2 = row.getCell(motGraphie2Idx);
+				motÀImporter2 = (cell2 == null ? "" : cell2.getStringCellValue().trim());
+			}
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -377,7 +468,7 @@ public class ListesEtMotsVM {
 		List<String> rapportFait = new ArrayList<String>();
 		List<String> rapportErreur = new ArrayList<String>();
 		List<String> rapportMotInconnu = new ArrayList<String>();
-		
+
 		// Supprimer tous les mots de la liste actuelle
 		getListeMotRepo().deleteByListe(listeSélectionné);
 
@@ -400,22 +491,20 @@ public class ListesEtMotsVM {
 			while (!motÀImporter.isEmpty()) {
 
 				Cell catgramCell = row.getCell(catgramIdx);
-				String catgram = (catgramCell == null?"":catgramCell.getStringCellValue().trim());
+				String catgram = (catgramCell == null ? "" : catgramCell.getStringCellValue().trim());
 				Cell genreCell = row.getCell(genreIdx);
-				String genre = (genreCell == null? "" : genreCell.getStringCellValue().trim());
+				String genre = (genreCell == null ? "" : genreCell.getStringCellValue().trim());
 
 				// Retrouver le mot
 				// tenir compte également du genre au besoin
 				// Est-ce un nom?
 				List<Mot> mots = null;
-				if(catgram.equals("n.") || catgram.equals("adj.")) {
+				if (catgram.equals("n.") || catgram.equals("adj.")) {
 					mots = motRepo.findByMotAndCatgramAndGenre(motÀImporter, catgram, genre);
-				}
-				else {
+				} else {
 					mots = motRepo.findByMotAndCatgram(motÀImporter, catgram);
 				}
-				
-				
+
 				if (mots.size() == 1) {
 					// TODO Lier ce mot à la liste courante
 					logger.debug("Le mot {} va être ajouté à la liste {}", motÀImporter, listeSélectionné.getId());
@@ -424,7 +513,8 @@ public class ListesEtMotsVM {
 					rapportFait.add(motÀImporter);
 				} else if (mots.size() > 1) {
 					// erreur / ambiguité. Quel mot associer à la liste?
-					// TODO conserver le ou les mots problématiques et afficher un rapport à la fin de l'importation
+					// TODO conserver le ou les mots problématiques et afficher
+					// un rapport à la fin de l'importation
 					logger.error("Le mot {} correspond à plusieurs mots dans la BD", motÀImporter, mots);
 					rapportErreur.add(motÀImporter + "\t correspond à plusieurs mot dans la BD");
 				} else {
@@ -448,13 +538,13 @@ public class ListesEtMotsVM {
 			rapports.put(TypeRapport.MOT_INCONNU, rapportMotInconnu);
 			rapports.put(TypeRapport.ERREUR, rapportErreur);
 
-			messageRapportImportation = getRapportImportationString(fichierTéléversé.getName(),rapports);
+			messageRapportImportation = getRapportImportationString(fichierTéléversé.getName(), rapports);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return rapports;
 	}
 
@@ -467,38 +557,37 @@ public class ListesEtMotsVM {
 
 		Media fichierTéléversé = v.getMedia();
 
-		//Map<TypeRapport, List<String>> rapports = 
+		// Map<TypeRapport, List<String>> rapports =
 
-		if(fichierTéléversé.getName().endsWith("txt")) {
-			// TODO valider qu'il s'agit bien d'un fichier TXT de prononciations!!!
+		if (fichierTéléversé.getName().endsWith("txt")) {
+			// TODO valider qu'il s'agit bien d'un fichier TXT de
+			// prononciations!!!
 			logger.debug("Traiter l'importation d'un fichier de prononciations au format TXT");
 			PrononciationImport pi = new PrononciationImport();
 			pi.setMotRepository(getMotRepo());
 			pi.execute(fichierTéléversé.getReaderData());
 		}
-		
-		
 
 	}
-	
-	
+
 	private String getRapportImportationString(String source, Map<TypeRapport, List<String>> rapports) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Source: ").append(source).append("\n\n");
-;		sb.append("Mots importés: ").append(rapports.get(TypeRapport.FAIT).size()).append("\n");
+		;
+		sb.append("Mots importés: ").append(rapports.get(TypeRapport.FAIT).size()).append("\n");
 
 		List<String> motsInconnus = rapports.get(TypeRapport.MOT_INCONNU);
 		if (motsInconnus.size() > 0) {
 			sb.append("Mots inconnus: ").append(motsInconnus.size()).append("\n");
-			for(String motInconnu : motsInconnus) {
+			for (String motInconnu : motsInconnus) {
 				sb.append("\t- ").append(motInconnu).append("\n");
 			}
 		}
 
 		List<String> erreurs = rapports.get(TypeRapport.ERREUR);
-		if(erreurs.size() > 0) {
+		if (erreurs.size() > 0) {
 			sb.append("Erreurs: ").append(erreurs.size()).append("\n");
-			for(String erreur:erreurs) {
+			for (String erreur : erreurs) {
 				sb.append("\t- ").append(erreur).append("\n");
 			}
 		}

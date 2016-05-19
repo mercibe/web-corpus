@@ -101,6 +101,14 @@ public class ImportationListe {
 		this.nomCorpus = corpus;
 	}
 
+	public ApplicationContext getCtx() {
+		return ctx;
+	}
+
+	public void setCtx(ApplicationContext ctx) {
+		this.ctx = ctx;
+	}
+
 	private String run() {
 
 		String message = "";
@@ -191,7 +199,7 @@ public class ImportationListe {
 		return ligneSplitter;
 	}
 
-	private Liste getListe(String nom, String description, Corpus corpus) {
+	protected Liste getListe(String nom, String description, Corpus corpus) {
 		listeRepo = (ListeRepository) ctx.getBean("listeRepository");
 		Liste dbListe = listeRepo.findByNom(nom);
 
@@ -206,7 +214,7 @@ public class ImportationListe {
 		}
 	}
 
-	private Corpus getCorpus(String nomCorpus) {
+	protected Corpus getCorpus(String nomCorpus) {
 
 		corpusRepo = (CorpusRepository) ctx.getBean("corpusRepository");
 
