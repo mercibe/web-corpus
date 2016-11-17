@@ -38,6 +38,27 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	
+	<!-- Forcer l'encodage des URLs en UTF-8 (ainsi que la réponse) -->
+	<!-- http://docs.spring.io/spring/docs/3.2.x/javadoc-api/index.html?org/springframework/web/filter/GenericFilterBean.html -->
+	<filter>
+	    <filter-name>CharacterEncodingFilter</filter-name>
+	    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	    <init-param>
+	        <param-name>encoding</param-name>
+	        <param-value>UTF-8</param-value>
+	    </init-param>
+	    <init-param>
+	        <param-name>forceEncoding</param-name>
+	        <param-value>true</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+	    <filter-name>CharacterEncodingFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	    <dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
 
 	<!-- Configuration ZK -->
 	
@@ -45,6 +66,22 @@
         <description>ZK listener for session cleanup</description>
         <listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
     </listener>
+
+	<!-- Déploiement de la servlet DispatcherServlet de Spring MVC -->
+	<servlet>
+		<servlet-name>webcorpus</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/webcorpus-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+
+	<!-- Mapping de la servlet Spring MVC avec une URL -->
+	<servlet-mapping>
+		<servlet-name>webcorpus</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<description>ZK loader for ZUML pages</description>
@@ -79,20 +116,6 @@
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- Déploiement de la servlet DispatcherServlet de Spring MVC -->
-	<servlet>
-		<servlet-name>webcorpus</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/webcorpus-servlet-context.xml</param-value>
-		</init-param>
-	</servlet>
 
-	<!-- Mapping de la servlet Spring MVC avec une URL -->
-	<servlet-mapping>
-		<servlet-name>webcorpus</servlet-name>
-		<url-pattern>/corpus-srv/*</url-pattern>
-	</servlet-mapping>
 
 </web-app>

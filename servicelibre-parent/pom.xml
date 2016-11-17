@@ -55,7 +55,7 @@
 		<poi-version>3.5-FINAL</poi-version>
 		<ooo-version>3.1.0</ooo-version>
 	</properties>
-
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -310,7 +310,7 @@
 			<dependency>
 				<groupId>jaxen</groupId>
 				<artifactId>jaxen</artifactId>
-				<version>1.1.1</version>
+				<version>1.1.6</version>
 				<exclusions>
 					<exclusion>
 						<groupId>xom</groupId>
@@ -511,18 +511,8 @@
 	</build>
 
 	<distributionManagement>
-		<!-- Site omis - chaque projet doit fournir le sien -->
-		<repository>
-			<id>web-corpus</id>
-			<name>Alternate Maven repository of releases</name>
-			<url>dav:https://web-corpus.googlecode.com/svn/maven2/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>web-corpus-snapshots</id>
-			<name>Alternate Maven repository of snapshots</name>
-			<url>dav:https://web-corpus.googlecode.com/svn/maven2/snapshots</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
+
+		
 	</distributionManagement>
 
 	<scm>

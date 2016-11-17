@@ -78,17 +78,8 @@
 	<!-- </repositories> -->
 
 	<distributionManagement>
-		<repository>
-			<id>web-corpus</id>
-			<name>Alternate Maven repository of releases</name>
-			<url>dav:https://web-corpus.googlecode.com/svn/maven2/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>web-corpus-snapshots</id>
-			<name>Alternate Maven repository of snapshots</name>
-			<url>dav:https://web-corpus.googlecode.com/svn/maven2/snapshots</url>
-			<uniqueVersion>true</uniqueVersion>
-		</snapshotRepository>
+
+
 		<site>
 			<id>web-corpus-website</id>
 			<name>web-corpus website</name>
@@ -107,6 +98,12 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -473,13 +470,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>13.0.1</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>ca.usherbrooke.flsh.franqus</groupId>
-			<artifactId>analyseur</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 

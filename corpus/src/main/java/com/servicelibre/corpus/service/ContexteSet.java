@@ -14,13 +14,15 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 
-import ca.franqus.lexique.FranqusLexicalAnalyzer;
-
+import com.servicelibre.corpus.analysis.FrenchAnalyzer;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+
 
 public class ContexteSet {
 
-	private static FranqusLexicalAnalyzer lexicalAnalyzer = new FranqusLexicalAnalyzer(Version.LUCENE_33);
+	// Analyseur propriétaire projet de recherche Franqus
+	//private static FranqusLexicalAnalyzer lexicalAnalyzer = new FranqusLexicalAnalyzer(Version.LUCENE_33);
+	private static FrenchAnalyzer lexicalAnalyzer = new FrenchAnalyzer(Version.LUCENE_33);
 
 	public enum Position {
 		AVANT, APRÈS, AVANT_APRÈS
@@ -29,7 +31,7 @@ public class ContexteSet {
 	List<Contexte> contextes = new ArrayList<Contexte>();
 
 	int documentCount;
-	
+
 	int totalContextesCount;
 
 	String motCherché = "";
@@ -89,8 +91,6 @@ public class ContexteSet {
 	public void setFormesDuLemme(boolean formesDuLemme) {
 		this.formesDuLemme = formesDuLemme;
 	}
-	
-	
 
 	public int getTotalContextesCount() {
 		return totalContextesCount;
@@ -149,7 +149,8 @@ public class ContexteSet {
 		for (InfoCooccurrent info : ics) {
 
 			// N'ajouter que les fréquences > 0
-			if ((position == Position.AVANT && info.freqAvant > 0) || (position == Position.AVANT_APRÈS && info.freq > 0)
+			if ((position == Position.AVANT && info.freqAvant > 0)
+					|| (position == Position.AVANT_APRÈS && info.freq > 0)
 					|| (position == Position.APRÈS && info.freqAprès > 0)) {
 				nIcs.add(info);
 			}
@@ -226,7 +227,8 @@ public class ContexteSet {
 		return null;
 	}
 
-	private void putInfoCooccurents(Map<String, InfoCooccurrent> infoCooccurents, String terme, List<String> tokens, Position position) {
+	private void putInfoCooccurents(Map<String, InfoCooccurrent> infoCooccurents, String terme, List<String> tokens,
+			Position position) {
 
 		for (String token : tokens) {
 			// vérifier si terme déjà repéré

@@ -61,7 +61,7 @@ public class Mot implements Comparable<Mot> {
 	 * traditionnelle, ce champ contient la graphie rectifiée.
 	 */
 	@Column
-	String autreGraphie;
+	String autreGraphie = "";
 
 	@Column
 	public String lemme;
@@ -99,13 +99,13 @@ public class Mot implements Comparable<Mot> {
 	String catgramPrécision;
 
 	@Column
-	String lemmeNote;
+	String lemmeNote = "";
 	
 	@Column
-	String motNote;
+	String motNote = "";
 	
 	@Column
-	String note;
+	String note = "";
 
 	@ManyToOne
 	Utilisateur utilisateur;
@@ -123,6 +123,8 @@ public class Mot implements Comparable<Mot> {
 		this.lemme = lemme;
 		this.estUnLemme = isLemme;
 		this.catgram = catgram;
+		// On affiche seulement le genre lorsqu'il s'agit d'un nom
+		this.catgramAffichage = (catgram + (catgram.equals("n.")?genre:"")).replaceAll("\\.", "\\. ").trim();
 		this.genre = genre;
 		this.nombre = nombre;
 		this.catgramPrécision = catgramPrécision;

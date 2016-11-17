@@ -1,11 +1,9 @@
 package com.servicelibre.utils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,14 +14,20 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.util.StringUtils;
-import org.zkoss.zul.Column;
-import org.zkoss.zul.Filedownload;
 
 public class XlsRecomp {
 
 	File source;
 	File dest;
+
+	int tamponRowIdx = 1;
+	int motGraphieIdx = 0;
+	int noteIdx = 1;
+	int note2Idx = 2;
+	int destSupIdx = 3;
+	int destAjoIdx = 4;
+	int destVérIdx = 5;
+	int motGraphie2Idx = 6;
 
 	public XlsRecomp(String source, String dest) {
 		this(new File(source), new File(dest));
@@ -62,16 +66,10 @@ public class XlsRecomp {
 		// Le première feuille doit s'appeler « mots »
 		Sheet sourceMotSheet = sourceWb.getSheet("mots");
 
-		// initialisation des index des colonnes
-		int tamponRowIdx = 1;
-		int motGraphieIdx = 0;
-		int noteIdx = 1;
-		int destSupIdx = 2;
-		int destAjoIdx = 3;
-		int destVérIdx = 4;
-		int motGraphie2Idx = 5;
-		int catgramIdx = 7;
-		int genreIdx = 8;
+		if (sourceMotSheet == null) {
+			System.err.println("La feuille « mots » est introuvable - arrêt.");
+			return;
+		}
 
 		// Récupération de la première ligne significative du fichier source
 		Row tamponRow = sourceMotSheet.getRow(tamponRowIdx);
@@ -80,47 +78,57 @@ public class XlsRecomp {
 		// significative
 
 		int cptRow = 1;
+		int startIdx = 1;
 		Row curRow = null;
-		boolean bris = false;
-		int ligneTampon = cptRow;
-		String tampon = null;
-		Cell tamponCell = null;
 		while ((curRow = sourceMotSheet.getRow(cptRow)) != null) {
-			Cell curMotCell = curRow.getCell(motGraphie2Idx);
+			// Pour chaque ligne du MELS, rechercher la correspondance dans
+			// colonnes suivantes
+			Cell curMotCell = curRow.getCell(motGraphieIdx);
 			if (curMotCell == null) {
 				break;
 			}
 			String mot = curMotCell.getStringCellValue().trim();
 
-			tamponRow = sourceMotSheet.getRow(ligneTampon);
-			tamponCell = tamponRow.getCell(motGraphieIdx);
-			if (tamponCell != null) {
-				tampon = tamponCell.getStringCellValue().trim();
-			}
-
 			// Créer la ligne dans le fichier de destination
 			Row destRow = destMotsSheet.createRow(cptRow);
 
-			System.out.println("Traiter le mot " + mot + " - " + tampon + " - " + ligneTampon + "/" + cptRow);
-			// tampon = ref => recopier toutes les cellules
-			if (tampon != null && tamponCell != null && tampon.equals(mot)) {
+			System.out.println("Traiter le mot " + mot + " " + cptRow);
+			int motRecompRowIdx = getMotRecompRowIdx(mot, sourceMotSheet, startIdx);
 
-				CellStyle cellStyle = tamponCell.getCellStyle();
+			// recopier 3 premières colonnes
+			Cell destCell = destRow.createCell(motGraphieIdx);
+			destCell.setCellValue(mot);
+			destCell = destRow.createCell(noteIdx);
+			Cell noteCell = curRow.getCell(noteIdx);
+			if (noteCell != null) {
+				destCell.setCellValue(noteCell.getStringCellValue());
+			}
+
+			destCell = destRow.createCell(note2Idx);
+			Cell note2Cell = curRow.getCell(note2Idx);
+			if (note2Cell != null) {
+				destCell.setCellValue(note2Cell.getStringCellValue());
+			}
+
+			if (motRecompRowIdx < 0) {
+				// nouveau mot
+				System.out.println("Créer le mot " + mot);
+
+				destCell = destRow.createCell(destAjoIdx);
+				destCell.setCellValue("x");
+			} else {
+
+				CellStyle cellStyle = curMotCell.getCellStyle();
 				short fontIndex = cellStyle.getFontIndex();
-				Font fontAt = tamponCell.getSheet().getWorkbook().getFontAt(fontIndex);
+				Font fontAt = curMotCell.getSheet().getWorkbook().getFontAt(fontIndex);
 
-				// ajouter note + mot
-				Cell destCell = destRow.createCell(motGraphieIdx);
-				destCell.setCellValue(mot);
-				destCell = destRow.createCell(noteIdx);
-				Cell cell = tamponRow.getCell(1);
-				if (cell != null) {
-					destCell.setCellValue(cell.getStringCellValue());
-				}
+				Row rowRecomp = sourceMotSheet.getRow(motRecompRowIdx);
+				System.out.println("Recopier les infos de la ligne " + motRecompRowIdx + " : "
+						+ rowRecomp.getCell(motGraphie2Idx).getStringCellValue());
 
-				for (int i = 2; i < 15; i++) {
+				for (int i = 3; i < 17; i++) {
 					destCell = destRow.createCell(i);
-					Cell srcCell = curRow.getCell(i);
+					Cell srcCell = rowRecomp.getCell(i);
 
 					if (i == destSupIdx) {
 						// si police est barrée => mettre un x dans colonne
@@ -132,31 +140,12 @@ public class XlsRecomp {
 						destCell.setCellValue(srcCell.getStringCellValue());
 					}
 				}
-				ligneTampon++;
 
-			} else {
-
-				// Conserver les colonnes de 5 à 15 de la ligne courante
-				for (int i = 5; i < 15; i++) {
-					Cell destCell = destRow.createCell(i);
-					Cell srcCell = curRow.getCell(i);
-					if (srcCell != null) {
-						destCell.setCellValue(srcCell.getStringCellValue());
-					}
-				}
-
-				// ajouter note + mot
-				Cell destCell = destRow.createCell(motGraphieIdx);
-				destCell.setCellValue(mot);
-				destCell = destRow.createCell(noteIdx);
-				destCell.setCellValue("À VÉRIFIER");
-
+				startIdx = motRecompRowIdx + 1;
 			}
 
 			cptRow++;
 
-			// if (cptRow == 515)
-			// break;
 		}
 
 		// Sauvegarder le document
@@ -164,9 +153,44 @@ public class XlsRecomp {
 
 	}
 
+	private int getMotRecompRowIdx(String mot, Sheet sourceMotSheet, int startIdx) {
+		int cptRow = startIdx;
+		Row curRow;
+		while ((curRow = sourceMotSheet.getRow(cptRow)) != null) {
+			Cell curMotCell = curRow.getCell(motGraphie2Idx);
+			if (curMotCell == null) {
+				return -1;
+			}
+			String mot2 = curMotCell.getStringCellValue().trim();
+			if (mot2.equalsIgnoreCase(mot)) {
+				return cptRow;
+			}
+			cptRow++;
+		}
+		return -1;
+	}
+
+	private boolean isNouveauMot(String tampon, Sheet sourceMotSheet, int cptRow, int ligneTampon) {
+
+		Row curRow;
+
+		while ((curRow = sourceMotSheet.getRow(cptRow)) != null) {
+			Cell curMotCell = curRow.getCell(motGraphie2Idx);
+			if (curMotCell == null) {
+				return true;
+			}
+			String mot = curMotCell.getStringCellValue().trim();
+			if (mot.equalsIgnoreCase(tampon)) {
+				return false;
+			}
+			cptRow++;
+		}
+		return true;
+	}
+
 	private void insèreLigneEntête(Sheet destMotsSheet, CreationHelper createHelper, CellStyle entêteCellStyle) {
-		String[] entêtes = { "Mots", "Notes", "supprimer", "ajouter", "Vérification", "Mot", "Phonétique", "OR",
-				"Classe de mot", "Genre", "Nombre", "Précision", "Année scolaire" };
+		String[] entêtes = { "Mots", "Notes", "Notes2", "supprimer", "ajouter", "Vérification", "Mot", "Lemme",
+				"Phonétique", "OR", "Classe de mot", "Genre", "Nombre", "Précision", "Année scolaire" };
 		int colCpt = 0;
 
 		org.apache.poi.ss.usermodel.Row row = destMotsSheet.createRow(0);
@@ -204,12 +228,12 @@ public class XlsRecomp {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 
 		XlsRecomp recomp = new XlsRecomp(
-		 "/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/AutresMots-B-recomposé-tmp.xls",
-		 "/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/AutresMots-B-recomposé.xls");
+				"/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/DEV/V-Final-recomposé-tmp.xls",
+				"/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/DEV/V-Final-recomposé.xls");
 
-//		XlsRecomp recomp = new XlsRecomp(
-//				"/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/coucou-recomposé-tmp.xls",
-//				"/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/coucou-recomposé.xls");
+		// XlsRecomp recomp = new XlsRecomp(
+		// "/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/coucou-recomposé-tmp.xls",
+		// "/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/coucou-recomposé.xls");
 
 		recomp.exécute();
 

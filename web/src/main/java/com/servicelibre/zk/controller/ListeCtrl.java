@@ -556,7 +556,7 @@ public class ListeCtrl extends CorpusCtrl {
 
 	public void afficheContexte(String lemme) {
 
-		logger.debug("Afficher les contextes de « {} »", lemme);
+		logger.info("Afficher les contextes de « {} »", lemme);
 
 		Include contexteInclude = (Include) webCorpusWindow.getFellow("contexteInclude");
 		Window contexteWindow = (Window) contexteInclude.getFellow("contexteWindow");

@@ -20,8 +20,12 @@
 
 package com.servicelibre.corpus.analysis;
 
-public class Catgram {
+import java.io.Serializable;
 
+public class Catgram implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	public String id;
 	public String nom;
 	public String description;

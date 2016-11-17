@@ -264,7 +264,9 @@ public class ListesEtMotsVM {
 	@NotifyChange("mots")
 	@Command
 	public ListModelList<Mot> getMots() {
+
 		logger.debug("MISE à JOUR DES MOTS pour la liste {}", listeSélectionné);
+
 		if (listeSélectionné != null && listeSélectionné.getId() != 0) {
 
 			FiltreRecherche f = new FiltreRecherche();
@@ -348,7 +350,7 @@ public class ListesEtMotsVM {
 	}
 
 	enum TypeRapport {
-		FAIT, ERREUR, MOT_INCONNU
+		FAIT, ERREUR, MOT_INCONNU, MOT_IGNORÉ
 	};
 
 	@Command
@@ -366,104 +368,194 @@ public class ListesEtMotsVM {
 
 			importation.importeMots(fichierTéléversé.getReaderData(), com.servicelibre.corpus.Importation.Mode.MAJ);
 		} else {
-			// TODO valider qu'il s'agit bien d'un fichier XLS
-			Map<TypeRapport, List<String>> rapports = importationXls(fichierTéléversé);
+
+			Map<TypeRapport, List<String>> rapports = new HashMap<ListesEtMotsVM.TypeRapport, List<String>>();
+
+			logger.info("Téléversement du fichier à importer : {}", fichierTéléversé.getName());
+			if (isImportationPartition(fichierTéléversé)) {
+				// analyser fichier XLS - convention nom pour nouvelle routine
+				// importation : partition-liste_id-A.xls
+				String[] jetons = fichierTéléversé.getName().split("-");
+				long partition = Long.parseLong(jetons[1]);
+				String lettre = jetons[2];
+				rapports = importationPartition(partition, lettre, fichierTéléversé);
+			} else {
+				rapports = importationXls(fichierTéléversé);
+			}
+
 		}
 
 	}
 
-	/**
-	 * Travail sur autres mots du corpus
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	private boolean isImportationPartition(Media fichierTéléversé) {
+		if (fichierTéléversé != null && fichierTéléversé.getName().startsWith("partition-")) {
+			return true;
+		}
+		return false;
+	}
 
+	private Map<TypeRapport, List<String>> importationPartition(long partition, String lettre, Media fichierTéléversé) {
+
+		Map<TypeRapport, List<String>> rapports = new HashMap<ListesEtMotsVM.TypeRapport, List<String>>(3);
+		List<String> rapportFait = new ArrayList<String>();
+		List<String> rapportErreur = new ArrayList<String>();
+		List<String> rapportMotIgnoré = new ArrayList<String>();
+
+		logger.info("Importation de la lettre {} de la partition {}...", lettre, partition);
+
+		// TODO Vérifier nom de la 3e colonne, première ligne : « supprimer » ou
+		// « notes2 » ?
+		// Ajuster les indices de colonnes en fonction
+
+		int rowIdx = 1;
+		int supprimerIdx = 2;
+		int motGraphieIdx = 5;
+		int lemmeGraphieIdx = 6;
+		int orGraphieIdx = 8;
+		int catgramIdx = 9;
+		int genreIdx = 10;
+		int nombreIdx = 11;
+		int précisionIdx = 12;
+
+		listeMotRepo = getListeMotRepo();
+
+		// Lecture du fichier
+		Workbook wb;
 		try {
-			Workbook wb = new HSSFWorkbook(new FileInputStream(new File(
-					"/home/benoitm/Dropbox/ServiceLibre/contrats/2015-02-MEESR-EnvRech/travail/AutresMots-B-recomposé.xls")));
-
+			wb = new HSSFWorkbook(new ByteArrayInputStream(fichierTéléversé.getByteData()));
 			Sheet sheet = wb.getSheet("mots");
 
-			int rowIdx = 1;
-			int motGraphieIdx = 0;
-			int motGraphie2Idx = 5;
-			int catgramIdx = 7;
-			int genreIdx = 8;
+			if (sheet == null) {
+				logger.error("Le fichier Excel ne contient pas de feuille (sheet) nommée « mots »!");
+				return null;
+			}
 
+			Row entêteRow = sheet.getRow(0);
+			String titreColonne3 = entêteRow.getCell(2).getStringCellValue().trim().toLowerCase();
+			if (titreColonne3.startsWith("notes2")) {
+				motGraphieIdx += 1;
+				lemmeGraphieIdx += 1;
+				orGraphieIdx += 1;
+				supprimerIdx += 1;
+				catgramIdx += 1;
+				genreIdx += 1;
+				nombreIdx += 1;
+				précisionIdx += 1;
+			}
+
+			// Boucler sur les lignes et créer les mots qui e contiennent pas de
+			// X dans la colonne supprimer
 			Row row = sheet.getRow(rowIdx);
 			Cell cell = row.getCell(motGraphieIdx);
 			String motÀImporter = (cell == null ? "" : cell.getStringCellValue().trim());
 
-			Cell cell2 = row.getCell(motGraphie2Idx);
-			String motÀImporter2 = (cell2 == null ? "" : cell2.getStringCellValue().trim());
-
 			while (!motÀImporter.isEmpty()) {
+
+				Cell supprimerCell = row.getCell(supprimerIdx);
+				String supprimer = (supprimerCell == null ? "" : supprimerCell.getStringCellValue().trim());
+
+				if (StringUtils.hasText(supprimer)) {
+					rapportMotIgnoré.add(motÀImporter);
+					rowIdx++;
+					row = sheet.getRow(rowIdx);
+					if (row == null) {
+						break;
+					}
+
+					cell = row.getCell(motGraphieIdx);
+					motÀImporter = (cell == null ? "" : cell.getStringCellValue().trim());
+					continue;
+				}
+
+				Cell lemmeCell = row.getCell(lemmeGraphieIdx);
+				String lemme = (lemmeCell == null ? "" : lemmeCell.getStringCellValue().trim());
+
+				Cell orCell = row.getCell(orGraphieIdx);
+				String or = (orCell == null ? "" : orCell.getStringCellValue().trim());
 
 				Cell catgramCell = row.getCell(catgramIdx);
 				String catgram = (catgramCell == null ? "" : catgramCell.getStringCellValue().trim());
+
 				Cell genreCell = row.getCell(genreIdx);
 				String genre = (genreCell == null ? "" : genreCell.getStringCellValue().trim());
 
-				if (!motÀImporter.equals(motÀImporter2)) {
-					// Rechercher le motÀImporter dans la colonne motGraphie2Idx
-					// et comparer les row pour savoir combien de ligne à
-					// insérer
-					int cptlignesÀInsérer = 1;
-					int rowIdxStart = rowIdx;
-					Row rowRech = sheet.getRow(++rowIdxStart);
-					
-					// tester NPE + récupérer valeur
-					rowRech.getCell(motGraphieIdx);
-					
-					String motRech = "";
-					while (StringUtils.hasLength(motRech) && !motÀImporter.equals(motRech)) {
-						cptlignesÀInsérer++;
-					}
-					System.err.println("corriger ligne " + rowIdx + " - " + motÀImporter + " vs " + motÀImporter2);
-					break;
+				Cell nombreCell = row.getCell(nombreIdx);
+				String nombre = (nombreCell == null ? "" : nombreCell.getStringCellValue().trim());
+
+				Cell précisionCell = row.getCell(précisionIdx);
+				String précision = (précisionCell == null ? "" : précisionCell.getStringCellValue().trim());
+
+				/*   => 
+				 * - supprimer tous les mots qui commencent par A/à/â + partition/liste primaire AutreMot (id liste)
+				 * - ajouter tous les mots depuis fichier XLS
+				 * - ajouter dans listemot
+				 * 
+				 */
+
+				// Créer le mot
+
+				Mot mot = new Mot(motÀImporter, lemme, isLemme(motÀImporter, lemme, catgram, genre, nombre), catgram,
+						genre, nombre, précision, StringUtils.hasText(or), "");
+
+				if (StringUtils.hasText(or)) {
+					mot.setAutreGraphie(or);
 				}
 
-				System.out.println("Mot à traiter : " + motÀImporter + " => " + cell.getCellStyle().getFontIndex());
+				Liste partitionListe = getListeRepo().findOne(partition);
+				mot.setListePartitionPrimaire(partitionListe);
 
-				// si police est barrée => mettre un x dans colonne supprimer
-				// 13 = bleu
-				// 8 = barré
-				// 0 = normal
-				switch (cell.getCellStyle().getFontIndex()) {
-				case 0:
-				case 13:
-					break;
-				case 8:
-					System.out.println("Mettre un « x » dans la colonne « supprimer » du mot " + motÀImporter);
-					break;
-				default:
-					System.err.println(
-							"Style non traité : " + cell.getCellStyle().getFontIndex() + " pour " + motÀImporter);
-				}
+				logger.debug("Il faut créer le mot {}", mot);
+				mot = getMotRepo().save(mot);
+				// logger.debug("Le mot {} va être ajouté à la liste {}",
+				// motÀImporter, partitionListe.getId());
+				ListeMot lm = new ListeMot(mot, partitionListe);
+				listeMotRepo.save(lm);
+
+				rapportFait.add(motÀImporter);
 
 				rowIdx++;
 				row = sheet.getRow(rowIdx);
 				if (row == null) {
 					break;
 				}
+
 				cell = row.getCell(motGraphieIdx);
 				motÀImporter = (cell == null ? "" : cell.getStringCellValue().trim());
-				cell2 = row.getCell(motGraphie2Idx);
-				motÀImporter2 = (cell2 == null ? "" : cell2.getStringCellValue().trim());
+
 			}
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			rapports.put(TypeRapport.FAIT, rapportFait);
+			rapports.put(TypeRapport.MOT_IGNORÉ, rapportMotIgnoré);
+			rapports.put(TypeRapport.ERREUR, rapportErreur);
+
+			messageRapportImportation = getRapportImportationString(fichierTéléversé.getName(), rapports);
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	private boolean isLemme(String motÀImporter, String lemme, String catgram, String genre, String nombre) {
+		if (motÀImporter.equals(lemme)) {
+			if (catgram.equalsIgnoreCase("v") || catgram.equalsIgnoreCase("adv.") || catgram.equalsIgnoreCase("conj.")
+					|| catgram.equalsIgnoreCase("prép.")) {
+				return true;
+			} else if (catgram.equalsIgnoreCase("n.") && genre.equalsIgnoreCase("m.")
+					&& (nombre.startsWith("s.") || nombre.trim().length() == 0)) {
+				return true;
+			} else if (catgram.equalsIgnoreCase("adj.") && genre.equalsIgnoreCase("m.")
+					&& (nombre.startsWith("s.") || nombre.trim().length() == 0)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private Map<TypeRapport, List<String>> importationXls(Media fichierTéléversé) {
+
 		Map<TypeRapport, List<String>> rapports = new HashMap<ListesEtMotsVM.TypeRapport, List<String>>(3);
 		List<String> rapportFait = new ArrayList<String>();
 		List<String> rapportErreur = new ArrayList<String>();
@@ -506,7 +598,7 @@ public class ListesEtMotsVM {
 				}
 
 				if (mots.size() == 1) {
-					// TODO Lier ce mot à la liste courante
+					// Lier ce mot à la liste courante
 					logger.debug("Le mot {} va être ajouté à la liste {}", motÀImporter, listeSélectionné.getId());
 					ListeMot lm = new ListeMot(mots.get(0), listeSélectionné);
 					listeMotRepo.save(lm);
@@ -522,8 +614,6 @@ public class ListesEtMotsVM {
 					logger.warn("Le mot {} est introuvable dans la BD", motÀImporter);
 					rapportMotInconnu.add(motÀImporter + "\t" + "introuvable dans la BD");
 				}
-
-				// Associer à la liste courante
 
 				rowIdx++;
 				row = sheet.getRow(rowIdx);
@@ -577,10 +667,18 @@ public class ListesEtMotsVM {
 		sb.append("Mots importés: ").append(rapports.get(TypeRapport.FAIT).size()).append("\n");
 
 		List<String> motsInconnus = rapports.get(TypeRapport.MOT_INCONNU);
-		if (motsInconnus.size() > 0) {
+		if (motsInconnus != null && motsInconnus.size() > 0) {
 			sb.append("Mots inconnus: ").append(motsInconnus.size()).append("\n");
 			for (String motInconnu : motsInconnus) {
 				sb.append("\t- ").append(motInconnu).append("\n");
+			}
+		}
+
+		List<String> motsIgnorés = rapports.get(TypeRapport.MOT_IGNORÉ);
+		if (motsIgnorés != null && motsIgnorés.size() > 0) {
+			sb.append("Mots ignorés: ").append(motsIgnorés.size()).append("\n");
+			for (String motIgnoré : motsIgnorés) {
+				sb.append("\t- ").append(motIgnoré).append("\n");
 			}
 		}
 

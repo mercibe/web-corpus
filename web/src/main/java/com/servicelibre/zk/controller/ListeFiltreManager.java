@@ -10,8 +10,10 @@ import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 
 import com.servicelibre.corpus.manager.Filtre;
 import com.servicelibre.corpus.manager.FiltreRecherche;
+import com.servicelibre.corpus.service.CorpusService;
 import com.servicelibre.entities.corpus.CatégorieListe;
 import com.servicelibre.entities.corpus.Liste;
+import com.servicelibre.repositories.corpus.ListeRepository;
 
 /**
  * Cette classe fournit les filtres (Filtre), disponibles pour filtrer les mots
@@ -115,5 +117,27 @@ public class ListeFiltreManager extends FiltreManager {
 		
 		
 	}
+
+	@Override
+	public CorpusService getCorpusService() {
+		return super.getCorpusService();
+	}
+
+	@Override
+	public ListeRepository getListeRepository() {
+		return super.getListeRepository();
+	}
+
+	@Override
+	public void setCorpusService(CorpusService corpusService) {
+		super.setCorpusService(corpusService);
+	}
+
+	@Override
+	public void setListeRepository(ListeRepository listeRepo) {
+		super.setListeRepository(listeRepo);
+	}
+	
+	
 
 }
