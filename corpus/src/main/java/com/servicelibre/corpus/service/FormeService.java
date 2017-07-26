@@ -329,5 +329,9 @@ public class FormeService {
 	public void setFormesFilePath(String formesFilePath) {
 		this.formesFilePath = formesFilePath;
 	}
+	
+	public boolean isInitialisé() {
+		return mots.size() > 0 && lemmes.size() > 0;
+	}
 
 }
